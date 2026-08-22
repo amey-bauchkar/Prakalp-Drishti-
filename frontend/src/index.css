@@ -1,0 +1,79 @@
+@import "leaflet/dist/leaflet.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   JHARKHAND CIVIC PORTAL — CORPORATE GOVERNMENT DESIGN SYSTEM TOKENS
+   
+   Style Guide Reference:
+   - Primary Background: #FFFFFF / #F7F8FA
+   - Primary Navy:       #1E2A45 (Headings, Headers, Footers, Solid CTAs)
+   - Accent Highlight:   #C5D86D (Active tags, highlights, accent buttons)
+   - Muted Slate Blue:   #5B6B8C (Info cards, borders, secondary badges)
+   - Body Text:          #4B5563 (Clean, readable sans-serif)
+   - Flat Design Rules:  NO gradients, NO emojis (flat line SVG icons only),
+                         generous whitespace, 8-12px rounded corners.
+   ========================================================================== */
+
+:root {
+  --color-bg: #FFFFFF;
+  --color-surface: #F7F8FA;
+  --color-navy: #1E2A45;
+  --color-navy-dark: #141D30;
+  --color-navy-light: #28385C;
+  --color-accent: #C5D86D;
+  --color-accent-hover: #B5C85D;
+  --color-muted-blue: #5B6B8C;
+  --color-border: #E2E8F0;
+  --color-text-main: #1E2A45;
+  --color-text-body: #4B5563;
+  --radius-default: 10px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    @apply antialiased font-sans;
+    background-color: #F7F8FA;
+    color: #4B5563;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: inherit;
+  }
+}
+
+/* Flat UI Utilities */
+@layer utilities {
+  .gov-nav-link {
+    @apply text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-gov-navy transition-colors;
+  }
+  
+  .gov-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider;
+  }
+
+  /* Flat custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F1F5F9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+}

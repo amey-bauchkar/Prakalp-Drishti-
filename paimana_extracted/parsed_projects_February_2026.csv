@@ -1,0 +1,58 @@
+sl_no,project_id,project_name,original_cost_cr,revised_cost_cr,expenditure_cr,physical_progress_pct,sector,ministry,section,month
+1,705728,MUMBAI-AHMEDABAD HIGH SPEED RAIL PROJECT- 508 KM,108000,108000,87755,58,Logistics,,physical_progress,February_2026
+2,702668,CHENNAI METRO RAIL PHASE-II DEVELOPMENT PROJECT,63246,3145,1,49,Logistics,,physical_progress,February_2026
+3,705237,WESTERN DEDICATED FREIGHT CORRIDOR,51101,124005,124623,96,Logistics,,physical_progress,February_2026
+4,705429,RISHIKESH-KARNAPRAYAG NEW RAIL LINE- 125 KM,38953,38953,27881,73,Logistics,,physical_progress,February_2026
+5,706780,MUMBAI URBAN TRANSPORT PROJECT [MUTP] PHASE-IIIA,33690,33690,3218,20,Logistics,,physical_progress,February_2026
+1,709798,ETHYLENE CRACKER PROJECT AT BINA REFINERY INCLUDING,43367,43367,2940,21,Energy Storage,,physical_progress,February_2026
+2,701263,RAJASTHAN REFINERY PROJECT,43129,79459,66553,91,Energy Storage,,physical_progress,February_2026
+3,701289,CAPACITY EXPANSION OF PANIPAT REFINERY FROM 15 TO 25,34627,36225,26028,92,Energy Storage,,physical_progress,February_2026
+4,400120,KG-DWN-98/2 CLUSTER - II DEVELOPMENT PROJECT - NELP BLOCK,34012,34012,32765,96,Energy Storage,,physical_progress,February_2026
+5,602182,DIBANG MULTIPURPOSE PROJECT,31876,411,9,17,Energy Storage,,physical_progress,February_2026
+1,701530,KEN-BETWA LINKING DEVELOPMENT PROJECT,21030,853,1,0,Waste & Water,,physical_progress,February_2026
+2,701372,SARDAR SAROVAR PROJECT,20718,33413,31861,93,Waste & Water,,physical_progress,February_2026
+3,701415,POLAVARAM IRRIGATION PROJECT,10151,55549,26152,85,Waste & Water,,physical_progress,February_2026
+4,701405,J. CHOKKA RAO DEVADULA LIFT IRRIGATION SCHEME,8201,14730,4665,87,Waste & Water,,physical_progress,February_2026
+5,400112,JIGAON IRRIGATION PROJECT,7223,939,1,91,Waste & Water,,physical_progress,February_2026
+1,706775,BHARATNET,61109,188000,46432,81,Telecommunication,,physical_progress,February_2026
+2,701593,4G SERVICES BY BSNL,28466,19592,8471,97,Telecommunication,,physical_progress,February_2026
+3,400013,SATURATION 4G MOBILE COVERAGE OF UNCOVERED VILLAGES,26316,30620,9792,83,Telecommunication,,physical_progress,February_2026
+4,709857,"PLANNING, ENGINEERING, SUPPLY, INSTALLATION, TESTING,",24545,847,2,97,Telecommunication,,physical_progress,February_2026
+5,701602,"PROVISION OF 4G BASED MOBILE SERVICES IN 7,287 UNCOVERED",3685,135,7,83,Telecommunication,,physical_progress,February_2026
+1,400188,REDEVELOPMENT OF SEVEN GENERAL POOL RESIDENTIAL,32850,32841,12975,45,Tourism,,physical_progress,February_2026
+2,617883,REDEVELOPMENT OF RESIDENTIAL COLONIES AT AYUR VIGYAN,4441,2,5,61,Tourism,,physical_progress,February_2026
+3,701658,KRISHNAPATNAM NODE - PHASE 1 - ROADS AND SERVICES,2139,68,8,33,Tourism,,physical_progress,February_2026
+4,701167,AIIMS KASHMIR AT AWANTIPORA JAMMU & KASHMIR,1828,2161,1517,74,Tourism,,physical_progress,February_2026
+5,701657,TUMAKURU NODE - PHASE 1 - ROADS AND SERVICES DEVELOPMENT,1702,20,8,19,Tourism,,physical_progress,February_2026
+1,619032,JAYANT EXPN. [20 TO 38 MTPA],25560,5,6,0,Construction,,physical_progress,February_2026
+2,400424,GEVRA OC [70 MTY],11816,684,7,78,Construction,,physical_progress,February_2026
+3,400185,GOPALJI KANIHA OCP [10 TO 30 M,8416,6108,1765,31,Construction,,physical_progress,February_2026
+4,400150,RPR MAGADH EXP OCP,7254,162,8,38,Construction,,physical_progress,February_2026
+5,617416,"REVISED JHARIA MASTER PLAN FOR DEALING WITH FIRE,",5940,4,0,22,Construction,,physical_progress,February_2026
+1,618738,6L BRIDGE AND ITS APPROACHES ACROSS RIVER GANGA AS PART OF PATNA RING,6292,3352,502,16,Coal,Ministry of Road Transport & Highways,physical_progress,February_2026
+2,618934,GUWAHATI RING ROAD IN THE STATE OF ASSAM,5729,5729,2,0,Coal,Ministry of Road Transport & Highways,physical_progress,February_2026
+3,618373,CONSTRUCTION OF 4-LANE BRIDGE INCLUDING APPROACHES OVER RIVER,4997,4997,2681,72,Construction,Ministry of Road Transport & Highways,physical_progress,February_2026
+4,618599,6L OF RAMANATUKKARA JUNCTION TO START OF VALANCHERY BYPASS SECTION OF,4924,4919,1763,99,Construction,Ministry of Road Transport & Highways,physical_progress,February_2026
+5,618914,4L ELEVATED CORRIDOR AND AT-GRADE IMPROVEMENTS FROM DESIGN CH0000 TO,4433,2625,1227,49,Construction,Ministry of Road Transport & Highways,physical_progress,February_2026
+1,705728,MUMBAI-AHMEDABAD HIGH SPEED RAIL PROJECT- 508 KM,108000,108000,87755,58,Railways,Ministry of Railways,physical_progress,February_2026
+2,705237,WESTERN DEDICATED FREIGHT CORRIDOR,51101,124005,124623,96,Railways,Ministry of Railways,physical_progress,February_2026
+3,705429,RISHIKESH-KARNAPRAYAG NEW RAIL LINE- 125 KM,38953,38953,27881,73,Railways,Ministry of Railways,physical_progress,February_2026
+4,706780,MUMBAI URBAN TRANSPORT PROJECT [MUTP] PHASE-IIIA,33690,33690,3218,20,Railways,Ministry of Railways,physical_progress,February_2026
+5,705941,BANGALORE SUBURBAN RAILWAY PROJECT,15767,15767,2659,19,Railways,Ministry of Railways,physical_progress,February_2026
+1,400231,NLC TALABIRA THERMAL POWER PROJECT,27213,27213,2820,1,Coal,Ministry of Coal,physical_progress,February_2026
+2,619032,JAYANT EXPN. [20 TO 38 MTPA],25560,25560,56,0,Coal,Ministry of Coal,physical_progress,February_2026
+3,400259,GHATAMPUR THERMAL POWER PLANT 3 X 660 MW,17238,21781,20991,94,Coal,Ministry of Coal,physical_progress,February_2026
+4,400424,GEVRA OC [70 MTY],11816,11816,6847,78,Coal,Ministry of Coal,physical_progress,February_2026
+5,400185,GOPALJI KANIHA OCP [10 TO 30 M,8416,6108,1765,31,Coal,Ministry of Coal,physical_progress,February_2026
+1,709798,ETHYLENE CRACKER PROJECT AT BINA REFINERY INCLUDING DOWNSTREAM,43367,43367,2940,21,Coal,Ministry of Petroleum & Natural Gas,physical_progress,February_2026
+2,701263,RAJASTHAN REFINERY PROJECT,43129,79459,66553,91,Coal,Ministry of Petroleum & Natural Gas,physical_progress,February_2026
+3,701289,CAPACITY EXPANSION OF PANIPAT REFINERY FROM 15 TO 25 MMTPA,34627,36225,26028,92,Coal,Ministry of Petroleum & Natural Gas,physical_progress,February_2026
+4,400120,KG-DWN-98/2 CLUSTER - II DEVELOPMENT PROJECT - NELP BLOCK,34012,34012,32765,96,Coal,Ministry of Petroleum & Natural Gas,physical_progress,February_2026
+5,604795,CBR 9 MMTPA PROJECT,31580,36354,1528,10,Coal,Ministry of Petroleum & Natural Gas,physical_progress,February_2026
+1,602182,DIBANG MULTIPURPOSE PROJECT,31876,31876,4119,17,Coal,Ministry of Power,physical_progress,February_2026
+2,619051,"NABINAGAR SUPER THERMAL POWER PROJECT, STAGE-II [3X800 MW]",29948,29948,2034,7,Coal,Ministry of Power,physical_progress,February_2026
+3,619025,RAJASTHAN PART I POWER TRANSMISSION LIMITED,25000,25000,90,0,Coal,Ministry of Power,physical_progress,February_2026
+4,615347,TRANSMISSION SYSTEM FOR EVACUATION OF POWER FROM POTENTIAL RENEWABLE,24819,24819,2234,7,Coal,Ministry of Power,physical_progress,February_2026
+5,618976,"GADARWARA SUPER THERMAL POWER PROJECT, STAGE-II [2X800 MW]",20446,20446,1295,5,Coal,Ministry of Power,physical_progress,February_2026
+160,274610,to Km 287000 in the state of Manipur on EPC mode Pkg-4B Manipur,,,,,Construction,Ministry of Road Transport & Highways,state_wise,February_2026
+1587,362420,Punjab 941.19 43,,,,,Construction,Ministry of Road Transport & Highways,physical_progress,February_2026

@@ -1,0 +1,85 @@
+{
+  "NTPC.NS": {
+    "short_name": "NTPC",
+    "paimana_company_names": [
+      "National Thermal Power Corporation [NTPC]"
+    ]
+  },
+  "POWERGRID.NS": {
+    "short_name": "Power Grid Corporation",
+    "paimana_company_names": [
+      "Power Grid Corporation of India Limited [POWERGRID]"
+    ]
+  },
+  "ONGC.NS": {
+    "short_name": "ONGC",
+    "paimana_company_names": [
+      "Oil and Natural Gas Corporation Limited [ONGC]"
+    ]
+  },
+  "NHPC.NS": {
+    "short_name": "NHPC",
+    "paimana_company_names": [
+      "National Hydroelectric Power Corporation Limited [NHPC]"
+    ]
+  },
+  "SJVN.NS": {
+    "short_name": "SJVN",
+    "paimana_company_names": [
+      "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited"
+    ]
+  },
+  "IRCON.NS": {
+    "short_name": "IRCON International",
+    "paimana_company_names": [
+      "Indian Railway Construction International Limited [IRCON]"
+    ]
+  },
+  "RVNL.NS": {
+    "short_name": "RVNL",
+    "paimana_company_names": [
+      "RVNL - II"
+    ]
+  },
+  "SAIL.NS": {
+    "short_name": "SAIL",
+    "paimana_company_names": [
+      "Steel Authority of India Limited [SAIL]"
+    ]
+  },
+  "COALINDIA.NS": {
+    "short_name": "Coal India",
+    "paimana_company_names": [
+      "WCL - CIL",
+      "SECL - CIL",
+      "ECL - CIL",
+      "Mahanadi Coalfields Limited (MCL)",
+      "South Eastern Coalfields Limited [SECL]",
+      "Eastern Coal Fields Limited [ECL]"
+    ]
+  },
+  "BPCL.NS": {
+    "short_name": "BPCL",
+    "paimana_company_names": [
+      "Bharat Petroleum Corporation Limited [BPCL]"
+    ]
+  },
+  "HINDPETRO.NS": {
+    "short_name": "HPCL",
+    "paimana_company_names": [
+      "Hindustan Petroleum Corporation Limited"
+    ]
+  },
+  "NLCIL.NS": {
+    "short_name": "NLC India",
+    "paimana_company_names": [
+      "NLC India Limited [NLCIL]"
+    ]
+  },
+  "ADANIT.NS": {
+    "short_name": "Adani Transmission",
+    "paimana_company_names": [
+      "Adani Transmission Limited"
+    ]
+  }
+}

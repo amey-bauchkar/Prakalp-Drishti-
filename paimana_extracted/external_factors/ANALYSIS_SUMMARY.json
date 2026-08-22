@@ -1,0 +1,138 @@
+{
+  "fetch_timestamp": "2026-08-22T15:12:30.799178",
+  "sources_fetched": 12,
+  "correlations_computed": 24,
+  "top_correlations": [
+    {
+      "Factor": "Copper Futures (USD/lb) (YoY Change %)",
+      "Spearman_rho": -1.0,
+      "p_value": 0.0,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 5,
+      "abs_corr": 1.0
+    },
+    {
+      "Factor": "Gold Futures (USD/oz)",
+      "Spearman_rho": -1.0,
+      "p_value": 0.0,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 1.0
+    },
+    {
+      "Factor": "USD/INR Exchange Rate",
+      "Spearman_rho": -1.0,
+      "p_value": 0.0,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 1.0
+    },
+    {
+      "Factor": "US 10-Year Treasury Yield (proxy for global rates)",
+      "Spearman_rho": -1.0,
+      "p_value": 0.0,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 1.0
+    },
+    {
+      "Factor": "NIFTY Infrastructure Index",
+      "Spearman_rho": -0.943,
+      "p_value": 0.0048,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 0.943
+    },
+    {
+      "Factor": "Cement Proxy: ULTRACEMCO.NS",
+      "Spearman_rho": -0.943,
+      "p_value": 0.0048,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 0.943
+    },
+    {
+      "Factor": "US 10-Year Treasury Yield (proxy for global rates) (YoY Change %)",
+      "Spearman_rho": 0.9,
+      "p_value": 0.0374,
+      "Strength": "STRONG",
+      "Direction": "POSITIVE (factor up = overruns up)",
+      "N_years": 5,
+      "abs_corr": 0.9
+    },
+    {
+      "Factor": "Gold Futures (USD/oz) (YoY Change %)",
+      "Spearman_rho": -0.9,
+      "p_value": 0.0374,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 5,
+      "abs_corr": 0.9
+    },
+    {
+      "Factor": "Steel Proxy: MT (YoY Change %)",
+      "Spearman_rho": -0.9,
+      "p_value": 0.0374,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 5,
+      "abs_corr": 0.9
+    },
+    {
+      "Factor": "NIFTY BeES ETF",
+      "Spearman_rho": -0.886,
+      "p_value": 0.0188,
+      "Strength": "STRONG",
+      "Direction": "NEGATIVE (factor up = overruns down)",
+      "N_years": 6,
+      "abs_corr": 0.886
+    }
+  ],
+  "sector_commodity_map": {
+    "Roads & Highways": [
+      "Brent Crude Oil",
+      "Steel",
+      "Bitumen"
+    ],
+    "Railways": [
+      "Steel",
+      "Copper"
+    ],
+    "Electricity Generation": [
+      "Brent Crude Oil",
+      "Steel"
+    ],
+    "Electricity Transmission & Distribution": [
+      "Copper",
+      "Steel"
+    ],
+    "Oil & Gas": [
+      "Brent Crude Oil"
+    ],
+    "Coal": [
+      "Brent Crude Oil"
+    ],
+    "Shipping": [
+      "Brent Crude Oil",
+      "Steel"
+    ],
+    "Aviation": [
+      "Brent Crude Oil",
+      "Steel"
+    ],
+    "Water Resources": [
+      "Steel",
+      "Cement"
+    ],
+    "Real Estate": [
+      "Steel",
+      "Cement"
+    ]
+  }
+}

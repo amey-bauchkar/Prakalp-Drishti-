@@ -1,0 +1,34 @@
+{
+  "WPI_Inflation_Correlation_rho": 0.047115628045603666,
+  "WPI_Inflation_Correlation_p": 0.1113757693613648,
+  "Election_Timing_Summary": {
+    "Projects": {
+      "Sanctioned in Election Year": 235,
+      "Sanctioned in Mid-Term": 627,
+      "Sanctioned in Pre-Election Year (Rush)": 268
+    },
+    "Overrun_Rate": {
+      "Sanctioned in Election Year": "26.8%",
+      "Sanctioned in Mid-Term": "33.3%",
+      "Sanctioned in Pre-Election Year (Rush)": "28.4%"
+    },
+    "Avg_Overrun_Pct": {
+      "Sanctioned in Election Year": "21.8%",
+      "Sanctioned in Mid-Term": "21.3%",
+      "Sanctioned in Pre-Election Year (Rush)": "20.5%"
+    },
+    "Delay_Rate": {
+      "Sanctioned in Election Year": "63.8%",
+      "Sanctioned in Mid-Term": "71.0%",
+      "Sanctioned in Pre-Election Year (Rush)": "79.1%"
+    },
+    "Avg_Delay_Months": {
+      "Sanctioned in Election Year": "27.1 mos",
+      "Sanctioned in Mid-Term": "27.4 mos",
+      "Sanctioned in Pre-Election Year (Rush)": "27.4 mos"
+    }
+  },
+  "Rainfall_Anomaly_Correlation_rho": -0.1973462873564698,
+  "Rainfall_Anomaly_Correlation_p": 2.478444705204704e-11,
+  "Total_Enriched_Projects": 2207
+}

@@ -1,0 +1,25 @@
+Factor,Spearman_rho,p_value,Strength,Direction,N_years,abs_corr
+Copper Futures (USD/lb) (YoY Change %),-1.0,0.0,STRONG,NEGATIVE (factor up = overruns down),5,1.0
+Gold Futures (USD/oz),-1.0,0.0,STRONG,NEGATIVE (factor up = overruns down),6,1.0
+USD/INR Exchange Rate,-1.0,0.0,STRONG,NEGATIVE (factor up = overruns down),6,1.0
+US 10-Year Treasury Yield (proxy for global rates),-1.0,0.0,STRONG,NEGATIVE (factor up = overruns down),6,1.0
+NIFTY Infrastructure Index,-0.943,0.0048,STRONG,NEGATIVE (factor up = overruns down),6,0.943
+Cement Proxy: ULTRACEMCO.NS,-0.943,0.0048,STRONG,NEGATIVE (factor up = overruns down),6,0.943
+US 10-Year Treasury Yield (proxy for global rates) (YoY Change %),0.9,0.0374,STRONG,POSITIVE (factor up = overruns up),5,0.9
+Gold Futures (USD/oz) (YoY Change %),-0.9,0.0374,STRONG,NEGATIVE (factor up = overruns down),5,0.9
+Steel Proxy: MT (YoY Change %),-0.9,0.0374,STRONG,NEGATIVE (factor up = overruns down),5,0.9
+NIFTY BeES ETF,-0.886,0.0188,STRONG,NEGATIVE (factor up = overruns down),6,0.886
+Bitumen/Fuel Proxy: Indian Oil,-0.886,0.0188,STRONG,NEGATIVE (factor up = overruns down),6,0.886
+NIFTY 50,-0.886,0.0188,STRONG,NEGATIVE (factor up = overruns down),6,0.886
+iShares MSCI India ETF,-0.6,0.208,MODERATE,NEGATIVE (factor up = overruns down),6,0.6
+Copper Futures (USD/lb),-0.6,0.208,MODERATE,NEGATIVE (factor up = overruns down),6,0.6
+Steel Proxy: MT,-0.486,0.3287,MODERATE,NEGATIVE (factor up = overruns down),6,0.486
+Brent Crude Oil (USD/barrel) (YoY Change %),-0.3,0.6238,WEAK,NEGATIVE (factor up = overruns down),5,0.3
+NIFTY Infrastructure Index (YoY Change %),-0.2,0.7471,WEAK,NEGATIVE (factor up = overruns down),5,0.2
+USD/INR Exchange Rate (YoY Change %),-0.1,0.8729,WEAK,NEGATIVE (factor up = overruns down),5,0.1
+iShares MSCI India ETF (YoY Change %),-0.1,0.8729,WEAK,NEGATIVE (factor up = overruns down),5,0.1
+NIFTY 50 (YoY Change %),-0.1,0.8729,WEAK,NEGATIVE (factor up = overruns down),5,0.1
+Bitumen/Fuel Proxy: Indian Oil (YoY Change %),0.1,0.8729,WEAK,POSITIVE (factor up = overruns up),5,0.1
+Cement Proxy: ULTRACEMCO.NS (YoY Change %),-0.1,0.8729,WEAK,NEGATIVE (factor up = overruns down),5,0.1
+NIFTY BeES ETF (YoY Change %),-0.1,0.8729,WEAK,NEGATIVE (factor up = overruns down),5,0.1
+Brent Crude Oil (USD/barrel),0.029,0.9572,WEAK,POSITIVE (factor up = overruns up),6,0.029

@@ -1,0 +1,78 @@
+{
+  "fetch_timestamp": "2026-08-22T14:45:42.197300",
+  "period": "5y",
+  "results": {
+    "NTPC.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "POWERGRID.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "ONGC.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "NHPC.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "SJVN.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "IRCON.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "RVNL.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "SAIL.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "COALINDIA.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "BPCL.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "HINDPETRO.NS": {
+      "status": "success",
+      "days": 1240,
+      "start": "2021-08-23",
+      "end": "2026-08-21"
+    },
+    "NLCIL.NS": {
+      "status": "failed"
+    },
+    "ADANIT.NS": {
+      "status": "failed"
+    }
+  }
+}

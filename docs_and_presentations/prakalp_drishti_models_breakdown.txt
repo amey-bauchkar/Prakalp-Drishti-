@@ -1,0 +1,195 @@
+================================================================================
+PRAKALP-DRISHTI: TECHNICAL MODEL ARCHITECTURE & COMPREHENSIVE RECONSTRUCTION
+================================================================================
+An Architectural Breakdown, Real-World Scenarios, and Strategic Add-ons 
+Designed for the Smart India Hackathon (SIH) 2026 Evaluation Framework.
+================================================================================
+
+--------------------------------------------------------------------------------
+TIER 1: CORE DECISION ENGINE (Must-Have Live Demos)
+--------------------------------------------------------------------------------
+
+1. MODEL NAME: KAAL-CHAKRA (Probabilistic Schedule Risk & Survival Analysis)
+   - ROLE: 
+     Replaces misleading single-date deadlines with probabilistic forecast curves.
+     It applies Reference Class Forecasting (RCF) to group ongoing infrastructure
+     works into empirical cohorts based on Sector, Cost Band, and Terrain. Using 
+     the open-source `lifelines` survival analysis library, it generates P10/P50/P80/P95 
+     fan charts indicating true completion probabilities.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     A new Metro Project in Mumbai announces an official completion deadline of 
+     December 2027. KAAL-CHAKRA evaluates historical metro project timelines across 
+     similar dense urban terrains. It calculates that the official deadline has a 
+     nominal completion probability of <18% (sitting in the 4th percentile of 
+     historical classes). It flags a P50 (Expected) completion of June 2028 and a 
+     P80 (Safe Provisioning) completion of March 2029 for capital budgeting.
+   - SUGGESTED ENHANCEMENTS:
+     * Dynamic Feature Refreshing: Connect a time-varying feature loop where the 
+       survival probability distribution curve shifts live as key prerequisites 
+       (like securing 90% land possession) are achieved.
+   - PROPOSED ADD-ON MODEL: 
+     * The Choke-Point Detector: Incorporate a tree-based SHAP (Shapley Additive 
+       exPlanations) model alongside the survival curve to explicitly print out 
+       the top variables (e.g., IMD Monsoon Departure) driving that specific 
+       project's tail risk.
+
+2. MODEL NAME: PRATIBIMB / SATYA (Independent Earth-Observation Evidence Signal)
+   - ROLE: 
+     Serves as an objective, multi-sensor verification engine that challenges 
+     self-reported web forms via orbital monitoring. It processes Sentinel-2 
+     (10m Optical) and Sentinel-1 SAR (Radar) imagery to calculate surface 
+     footprint changes (using NDBI/NDVI spectral differencing) and vertical radar 
+     backscatter variations over time.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     A private contractor executing a 100km linear highway corridor submits a 
+     monthly Common Upload Form (CUF) claiming 74.0% physical progress to trigger 
+     their milestone payout. PRATIBIMB pulls cloud-penetrating radar and optical 
+     baselines, calculating that the active earthworks and paving cover only 
+     31.2% of the coordinates. It triggers a 42.8 percentage-point Divergence Alert, 
+     issuing a high-priority physical field audit recommendation.
+   - SUGGESTED ENHANCEMENTS:
+     * EO-Eligibility Classifier Hardcoding: Ensure your UI highlights why certain 
+       projects (like underground tunnels, deep mining, or software platforms) 
+       are marked "EO-Ineligible" to prevent the jury from viewing a 0% surface activity 
+       reading as a false positive.
+   - PROPOSED ADD-ON MODEL: 
+     * Nighttime Lights Index: Integrate VIIRS (Visible Infrared Imaging Radiometer Suite) 
+       nighttime light data. For mega-ports, industrial zones, and multi-shift power 
+       projects, a reduction in night illumination footprints serves as a proxy 
+       signal for active operational slowdowns.
+
+3. MODEL NAME: SETU-GRAPH (Cross-Project Dependency & Systemic Exposure Engine)
+   - ROLE: 
+     Maps macro-infrastructure interdependencies using spatial buffers and logic 
+     linkages. Built on GeoPandas, it establishes structural nodes to trace spatial 
+     corridor overlaps and inter-sector value chains, quantifying downstream economic 
+     contagion when an anchor project stalls.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     A dedicated coal evacuation railway line in Odisha faces an 18-month delay due 
+     to forest clearance disputes. SETU-GRAPH traces the logistics graph to reveal 
+     that this specific rail link feeds three critical thermal power plants and two 
+     heavy manufacturing zones. The model instantly outputs: "Systemic Exposure Alert: 
+     ₹8,420 Crore downstream economic asset value locked due to transport bottleneck."
+   - SUGGESTED ENHANCEMENTS:
+     * Weighted Network Edges: Don't just show connecting lines between project nodes. 
+       Use varied line thicknesses to represent active operational flow volumes 
+       (such as millions of metric tonnes of cargo or megawatts of power grids).
+   - PROPOSED ADD-ON MODEL: 
+     * Critical Path Isolation Model: Use network centrality algorithms (e.g., Betweenness 
+       Centrality) to rank all 1,847 projects. This isolated list reveals the single 
+       "Linchpin Project" in India that, if delayed by a single month, triggers the worst 
+       multi-ministry gridlock nationwide.
+
+4. MODEL NAME: PRAGATI-SAARTHI (Deterministic Governance Briefing Engine)
+   - ROLE: 
+     Automates the generation of official, audit-ready civil service executive briefs 
+     for apex PMO reviews. It operates strictly on deterministic data pipelines to 
+     eliminate LLM hallucinations, embedding direct data lineage to ensure institutional trust.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     Ahead of the monthly PRAGATI monitoring session, the Cabinet Secretary requests 
+     an operational brief on the Western Dedicated Freight Corridor. PRAGATI-SAARTHI 
+     instantly generates a structured, formatted executive brief. Every core metric, 
+     such as the projected cost "₹73,000 Cr", is embedded with a clickable token. Clicking 
+     it displays the exact raw SQL database query, record IDs, and data snapshots.
+   - SUGGESTED ENHANCEMENTS:
+     * Actionable PDF QR Codes: Generate a secure, encrypted QR code on the final PDF brief. 
+       When an official scans it, they are instantly routed to the live, secure interactive 
+       dashboard view of that specific project.
+
+
+--------------------------------------------------------------------------------
+TIER 2: INTEGRITY & PRESCRIBED OPTIMIZATION (Should-Have Modules)
+--------------------------------------------------------------------------------
+
+5. MODEL NAME: SATYA-KAVACH (Statistical Threshold Bunching & Clause 10CC Auditor)
+   - ROLE: 
+     Acts as an institutional integrity monitor. It runs statistical distribution density 
+     tests (McCrary Bunching Signal) to detect projects engineered to intentionally bypass 
+     cabinet audit thresholds, while auditing private contractor price variations against 
+     strict statutory guidelines.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     Indian administrative law states that any project budget revision exceeding 20% 
+     triggers a mandatory Cabinet Committee on Economic Affairs (CCEA) re-appraisal. 
+     SATYA-KAVACH scans the entire historical database and flags an unnatural statistical 
+     density spike (a 1.49x ratio) of budget adjustments clustering at exactly 19.8% and 
+     19.9%. It automatically flags these projects for audit avoidance. Concurrently, it 
+     runs the CPWD Clause 10CC formula to ensure contractor claims do not exceed legal price 
+     variation limits.
+   - SUGGESTED ENHANCEMENTS:
+     * Vendor Behavior Profiling: Map these 19.9% threshold-bunching patterns against 
+       the unique IDs of private construction contractors to identify recurring bad actors 
+       across separate ministries.
+
+6. MODEL NAME: VITTA-VYUHA (Prescriptive Capital Allocation Optimizer)
+   - ROLE: 
+     Solves the complex decision problem of distributing finite public capital across 
+     competing stuck projects. It utilizes a Mixed-Integer Linear Programming (MILP) 
+     solver (HiGHS) to maximize national completion velocity under realistic legal and 
+     operational boundaries.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     MoSPI is allocated ₹10,000 Crore in supplementary infrastructure funds. Instead of 
+     distributing it evenly or via political lobbying, VITTA-VYUHA models each project's 
+     risk-adjusted completion probability and agency burn rate. It outputs an optimal allocation 
+     distribution within 2 seconds, while guaranteeing mandatory statutory parameters like 
+     North-East Region regional funding floors.
+   - SUGGESTED ENHANCEMENTS:
+     * Interative "What-If" Sliders: Incorporate live parameter sliders on the UI frontend. 
+       Let the judges alter the available pool of capex from ₹10,000 Cr to ₹5,000 Cr and observe 
+       the MILP engine re-allocate the optimal project funding path dynamically.
+
+
+--------------------------------------------------------------------------------
+TIER 3: RESEARCH & SCENARIO PROTOTYPES
+--------------------------------------------------------------------------------
+
+7. MODEL NAME: HETU (Experimental Policy Scenario Simulator)
+   - ROLE: 
+     An advanced causal inference testing lab using Double Machine Learning (DML) 
+     architectures. It allows policymakers to test "counterfactual" regulatory decisions 
+     by isolating major historical legal shifts as natural experiments.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     A MoSPI administrator wants to simulate the impact of altering land acquisition compensation 
+     multipliers on railway timelines. HETU models the structural break caused by the Land Act 
+     of 2013 (RFCTLARR). It isolates confounding factors and projects that increasing payouts 
+     reduces acquisition delays by 14 months but expands tail-risk project cost variance by 12%.
+
+8. MODEL NAME: ARTHA-NETRA (PSU Financial Leverage Early-Warning Feature)
+   - ROLE: 
+     Bridges corporate capital markets data with public asset monitoring. It tracks daily 
+     Debt-to-Equity ratios, stock drawdowns, and market capitalizations of listed public sector 
+     companies to catch corporate stress before it causes a site slowdown.
+   - CONCRETE REAL-WORLD EXAMPLE: 
+     ARTHA-NETRA detects that a power-sector PSU has experienced severe equity drawdowns 
+     and carries a highly stressed Debt-to-Equity ratio of 227. When this PSU bids on or manages 
+     a mega hydroelectric project, the system raises its baseline execution risk tier. Highly 
+     leveraged corporate entities show a statistically higher rate of project modifications.
+
+
+--------------------------------------------------------------------------------
+HIGH-UTILITY ADD-ON MODELS FOR A WINNING ADVANTAGE
+--------------------------------------------------------------------------------
+
+ADD-ON 1: THE DPR-QUALITY SCORER (Natural Language Processing Module)
+   - THE MISSION: 
+     The MoSPI problem statement explicitly proves that infrastructure projects rushed 
+     through approval during pre-election cycles experience a 79.1% delay rate due to 
+     flawed, incomplete Detailed Project Reports (DPRs).
+   - HOW IT WORKS: 
+     Deploy a localized, open-weight Large Language Model (e.g., Llama-3-8B / Mistral-7B) 
+     via an offline LangChain pipeline to parse incoming PDF project proposals. Have the LLM 
+     scan for missing statutory prerequisites, lack of comprehensive soil engineering records, 
+     and vague environment maps. The system outputs a 0-100 "DPR Quality Score." If the 
+     document scores below 60, it triggers an early alert flagging high vulnerability to 
+     future structural overruns.
+
+ADD-ON 2: VARSHA-SPEED (Weather Working-Window Optimizer)
+   - THE MISSION: 
+     Infrastructure works are tightly constrained by Indian seasonal weather patterns, 
+     compressing the true active construction calendar.
+   - HOW IT WORKS: 
+     Utilize the 630 state-years of historical IMD monsoon rainfall departure data mentioned 
+     in your dataset. Build a time-series model that projects regional work season windows. 
+     If a highway project in Assam is hit with an extended monsoon season that runs 25 days over 
+     the Long Period Average, the system scales down the expected physical capability for that 
+     quarter. This provides highly accurate timeline projections aligned with physical climate realities.
+================================================================================
