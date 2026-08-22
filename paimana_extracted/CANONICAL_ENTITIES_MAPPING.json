@@ -1,0 +1,2672 @@
+{
+  "total_raw_entities": 225,
+  "total_canonical_entities": 108,
+  "mapping_by_raw_string": {
+    "Airport Authority of India [AAI]": {
+      "canonical_id": "AAI",
+      "canonical_name": "Airports Authority of India",
+      "sector": "Civil Aviation",
+      "entity_type": "Central PSU",
+      "raw_name": "Airport Authority of India [AAI]"
+    },
+    "Adani Airport Holdings Limited": {
+      "canonical_id": "AAI",
+      "canonical_name": "Airports Authority of India",
+      "sector": "Civil Aviation",
+      "entity_type": "Central PSU",
+      "raw_name": "Adani Airport Holdings Limited"
+    },
+    "SECL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "SECL - CIL"
+    },
+    "NLC India Limited": {
+      "canonical_id": "NLC_INDIA_LIMITED",
+      "canonical_name": "NLC India Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NLC India Limited"
+    },
+    "Ministry of Coal": {
+      "canonical_id": "MINISTRY_OF_COAL",
+      "canonical_name": "Ministry of Coal",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Ministry of Coal"
+    },
+    "WCL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "WCL - CIL"
+    },
+    "South Eastern Coalfields Limited [SECL]": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "South Eastern Coalfields Limited [SECL]"
+    },
+    "Western Coalfields Limited [WCL]": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Western Coalfields Limited [WCL]"
+    },
+    "MCL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "MCL - CIL"
+    },
+    "Mahanadi Coalfields Limited (MCL)": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Mahanadi Coalfields Limited (MCL)"
+    },
+    "NCL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "NCL - CIL"
+    },
+    "Eastern Coal Fields Limited [ECL]": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Eastern Coal Fields Limited [ECL]"
+    },
+    "CCL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "CCL - CIL"
+    },
+    "ECL - CIL": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "ECL - CIL"
+    },
+    "Singareni Collieries Company Limited [SCCL]": {
+      "canonical_id": "SINGARENI_COLLIERIES_COMPANY_L",
+      "canonical_name": "Singareni Collieries Company Limited [SCCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Singareni Collieries Company Limited [SCCL]"
+    },
+    "Mahanadi Coalfields Limited [MCL]": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Mahanadi Coalfields Limited [MCL]"
+    },
+    "Bharat Coking Coal Limited [BCCL]": {
+      "canonical_id": "BHARAT_COKING_COAL_LIMITED_BCC",
+      "canonical_name": "Bharat Coking Coal Limited [BCCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Bharat Coking Coal Limited [BCCL]"
+    },
+    "Bharat Coking Coal Limited (BCCL)": {
+      "canonical_id": "BHARAT_COKING_COAL_LIMITED_BCC",
+      "canonical_name": "Bharat Coking Coal Limited (BCCL)",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Bharat Coking Coal Limited (BCCL)"
+    },
+    "NLC India Limited [NLCIL]": {
+      "canonical_id": "NLC_INDIA_LIMITED_NLCIL",
+      "canonical_name": "NLC India Limited [NLCIL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NLC India Limited [NLCIL]"
+    },
+    "MIS MoCoal Integration Logins": {
+      "canonical_id": "MIS_MOCOAL_INTEGRATION_LOGINS",
+      "canonical_name": "MIS MoCoal Integration Logins",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "MIS MoCoal Integration Logins"
+    },
+    "INVALID CO.": {
+      "canonical_id": "INVALID_CO",
+      "canonical_name": "INVALID CO.",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "INVALID CO."
+    },
+    "National Thermal Power Corporation [NTPC]": {
+      "canonical_id": "NTPC",
+      "canonical_name": "NTPC Limited",
+      "sector": "Power & Thermal",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "National Thermal Power Corporation [NTPC]"
+    },
+    "Damodar Valley Corporation": {
+      "canonical_id": "DAMODAR_VALLEY_CORPORATION",
+      "canonical_name": "Damodar Valley Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Damodar Valley Corporation"
+    },
+    "Central Public Works Department [CPWD]": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Public Works Department [CPWD]"
+    },
+    "Central Public Works Department - CPWD": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Public Works Department - CPWD"
+    },
+    "Central Public Works Department (CPWD)": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Public Works Department (CPWD)"
+    },
+    "NIT Rourkela": {
+      "canonical_id": "NIT_ROURKELA",
+      "canonical_name": "NIT Rourkela",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NIT Rourkela"
+    },
+    "Indian Institute of Technology, Bombay": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Bombay",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Bombay"
+    },
+    "NIT Patna": {
+      "canonical_id": "NIT_PATNA",
+      "canonical_name": "NIT Patna",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NIT Patna"
+    },
+    "IISC Bangalore": {
+      "canonical_id": "IISC_BANGALORE",
+      "canonical_name": "IISC Bangalore",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "IISC Bangalore"
+    },
+    "Banaras Hindu University": {
+      "canonical_id": "BANARAS_HINDU_UNIVERSITY",
+      "canonical_name": "Banaras Hindu University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Banaras Hindu University"
+    },
+    "National Institute of Technology Uttarakhand": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology Uttarakhand",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Institute of Technology Uttarakhand"
+    },
+    "National Institute of Technology, Meghalaya": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology, Meghalaya",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Institute of Technology, Meghalaya"
+    },
+    "Central University of Punjab": {
+      "canonical_id": "CENTRAL_UNIVERSITY_OF_PUNJAB",
+      "canonical_name": "Central University of Punjab",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Central University of Punjab"
+    },
+    "Indian Institute of Technology, Bhubaneshwar": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Bhubaneshwar",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Bhubaneshwar"
+    },
+    "Indian Institute of Management, Jammu": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_MANAGEMENT",
+      "canonical_name": "Indian Institute of Management, Jammu",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Management, Jammu"
+    },
+    "INDIAN INSTITUTE OF TECHNOLOGY PALAKKAD": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "INDIAN INSTITUTE OF TECHNOLOGY PALAKKAD",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "INDIAN INSTITUTE OF TECHNOLOGY PALAKKAD"
+    },
+    "Ministry of Education": {
+      "canonical_id": "MINISTRY_OF_EDUCATION",
+      "canonical_name": "Ministry of Education",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Ministry of Education"
+    },
+    "Central Tribal University of Andhra Pradesh": {
+      "canonical_id": "CENTRAL_TRIBAL_UNIVERSITY_OF_A",
+      "canonical_name": "Central Tribal University of Andhra Pradesh",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Central Tribal University of Andhra Pradesh"
+    },
+    "Central University of Gujarat": {
+      "canonical_id": "CENTRAL_UNIVERSITY_OF_GUJARAT",
+      "canonical_name": "Central University of Gujarat",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Central University of Gujarat"
+    },
+    "Central University, Himachal Pradesh": {
+      "canonical_id": "CENTRAL_UNIVERSITY_HIMACHAL_PR",
+      "canonical_name": "Central University, Himachal Pradesh",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Central University, Himachal Pradesh"
+    },
+    "Indian intitue of Management, Amritsar": {
+      "canonical_id": "INDIAN_INTITUE_OF_MANAGEMENT_A",
+      "canonical_name": "Indian intitue of Management, Amritsar",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian intitue of Management, Amritsar"
+    },
+    "National Institute of Technology, Arunachal Pradesh": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology, Arunachal Pradesh",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Institute of Technology, Arunachal Pradesh"
+    },
+    "Indian Institute of Technology, Hyderabad": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Hyderabad",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Hyderabad"
+    },
+    "Sikkim University": {
+      "canonical_id": "SIKKIM_UNIVERSITY",
+      "canonical_name": "Sikkim University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Sikkim University"
+    },
+    "Delhi University": {
+      "canonical_id": "DELHI_UNIVERSITY",
+      "canonical_name": "Delhi University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Delhi University"
+    },
+    "NIT Nagaland": {
+      "canonical_id": "NIT_NAGALAND",
+      "canonical_name": "NIT Nagaland",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NIT Nagaland"
+    },
+    "National Institute of Technology, Puducherry": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology, Puducherry",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Institute of Technology, Puducherry"
+    },
+    "Indian Institute of Management, Sirmaur": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_MANAGEMENT",
+      "canonical_name": "Indian Institute of Management, Sirmaur",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Management, Sirmaur"
+    },
+    "Indian Institute of Technology, Kharagpur": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Kharagpur",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Kharagpur"
+    },
+    "Indian Institute of Technology, Mandi": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Mandi",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Mandi"
+    },
+    "Indian Institutes of Science Education and Research, Behrampur": {
+      "canonical_id": "INDIAN_INSTITUTES_OF_SCIENCE_E",
+      "canonical_name": "Indian Institutes of Science Education and Research, Behrampur",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institutes of Science Education and Research, Behrampur"
+    },
+    "National Institute of Technology Delhi": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology Delhi",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Institute of Technology Delhi"
+    },
+    "Indian Institute of Technology, Bhilai": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Bhilai",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Bhilai"
+    },
+    "Indian Institute of Technology, Indore": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Indore",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Institute of Technology, Indore"
+    },
+    "Tezpur University": {
+      "canonical_id": "TEZPUR_UNIVERSITY",
+      "canonical_name": "Tezpur University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Tezpur University"
+    },
+    "Department of Sports & Youth Affairs": {
+      "canonical_id": "DEPARTMENT_OF_SPORTS_YOUTH_AFF",
+      "canonical_name": "Department of Sports & Youth Affairs",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Department of Sports & Youth Affairs"
+    },
+    "North Eastern Electric Power Corporation Limited": {
+      "canonical_id": "NORTH_EASTERN_ELECTRIC_POWER_C",
+      "canonical_name": "North Eastern Electric Power Corporation Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "North Eastern Electric Power Corporation Limited"
+    },
+    "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited": {
+      "canonical_id": "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T",
+      "canonical_name": "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited"
+    },
+    "National Highways & Infrastructure Development Corporation Ltd. [NHIDCL]": {
+      "canonical_id": "NHIDCL",
+      "canonical_name": "National Highways & Infrastructure Development Corp",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_name": "National Highways & Infrastructure Development Corporation Ltd. [NHIDCL]"
+    },
+    "THDC India Limited": {
+      "canonical_id": "THDC_INDIA_LIMITED",
+      "canonical_name": "THDC India Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "THDC India Limited"
+    },
+    "National Hydroelectric Power Corporation Limited [NHPC]": {
+      "canonical_id": "NATIONAL_HYDROELECTRIC_POWER_C",
+      "canonical_name": "National Hydroelectric Power Corporation Limited [NHPC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Hydroelectric Power Corporation Limited [NHPC]"
+    },
+    "Ministry of Petroleum & Natural Gas": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Ministry of Petroleum & Natural Gas"
+    },
+    "Hindustan Petroleum Corporation Limited": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Hindustan Petroleum Corporation Limited"
+    },
+    "Indian Oil Corporation Limited [IOCL]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Indian Oil Corporation Limited [IOCL]"
+    },
+    "Department of Water Resources, River Development & GR": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of Water Resources, River Development & GR"
+    },
+    "Hindustan Petroleum Corporation Limited [HPCL]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Hindustan Petroleum Corporation Limited [HPCL]"
+    },
+    "MinistryofPetroleumNaturalGas": {
+      "canonical_id": "MINISTRYOFPETROLEUMNATURALGAS",
+      "canonical_name": "MinistryofPetroleumNaturalGas",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "MinistryofPetroleumNaturalGas"
+    },
+    "Bharat Petroleum Corporation Limited [BPCL]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Bharat Petroleum Corporation Limited [BPCL]"
+    },
+    "Ministry of Health & Family Welfare": {
+      "canonical_id": "MOHFW",
+      "canonical_name": "Ministry of Health and Family Welfare",
+      "sector": "Healthcare & Institutions",
+      "entity_type": "Central Ministry",
+      "raw_name": "Ministry of Health & Family Welfare"
+    },
+    "PMSSY AND Institute of NATIONAL Importance": {
+      "canonical_id": "PMSSY_AND_INSTITUTE_OF_NATIONA",
+      "canonical_name": "PMSSY AND Institute of NATIONAL Importance",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "PMSSY AND Institute of NATIONAL Importance"
+    },
+    "Medical Education, Ministry of Health and Family Welfare": {
+      "canonical_id": "MOHFW",
+      "canonical_name": "Ministry of Health and Family Welfare",
+      "sector": "Healthcare & Institutions",
+      "entity_type": "Central Ministry",
+      "raw_name": "Medical Education, Ministry of Health and Family Welfare"
+    },
+    "Employee's State Insurance Company [ESIC]": {
+      "canonical_id": "EMPLOYEE_S_STATE_INSURANCE_COM",
+      "canonical_name": "Employee's State Insurance Company [ESIC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Employee's State Insurance Company [ESIC]"
+    },
+    "Mumbai Port Trust [MPT]": {
+      "canonical_id": "MUMBAI_PORT_TRUST_MPT",
+      "canonical_name": "Mumbai Port Trust [MPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Mumbai Port Trust [MPT]"
+    },
+    "Chennai Metro Rail Limited [CMRL]": {
+      "canonical_id": "CHENNAI_METRO_RAIL_LIMITED_CMR",
+      "canonical_name": "Chennai Metro Rail Limited [CMRL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Chennai Metro Rail Limited [CMRL]"
+    },
+    "Deendayal Port Trust": {
+      "canonical_id": "DEENDAYAL_PORT_TRUST",
+      "canonical_name": "Deendayal Port Trust",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Deendayal Port Trust"
+    },
+    "Inland Waterways Authority of India [IWAI]": {
+      "canonical_id": "PORTS_SHIPPING",
+      "canonical_name": "Ministry of Ports, Shipping and Waterways",
+      "sector": "Ports & Shipping",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Inland Waterways Authority of India [IWAI]"
+    },
+    "East Coast Railway [ECoR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "East Coast Railway [ECoR] - II"
+    },
+    "National Industrial Corridor Development Corporation": {
+      "canonical_id": "NATIONAL_INDUSTRIAL_CORRIDOR_D",
+      "canonical_name": "National Industrial Corridor Development Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Industrial Corridor Development Corporation"
+    },
+    "Deendayal Port Trust [DPT]": {
+      "canonical_id": "DEENDAYAL_PORT_TRUST_DPT",
+      "canonical_name": "Deendayal Port Trust [DPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Deendayal Port Trust [DPT]"
+    },
+    "National Aluminium Company Limited [NALCO]": {
+      "canonical_id": "NATIONAL_ALUMINIUM_COMPANY_LIM",
+      "canonical_name": "National Aluminium Company Limited [NALCO]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Aluminium Company Limited [NALCO]"
+    },
+    "Ministry of Mines": {
+      "canonical_id": "MINISTRY_OF_MINES",
+      "canonical_name": "Ministry of Mines",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Ministry of Mines"
+    },
+    "Hindustan Copper Limited [HCL]": {
+      "canonical_id": "HINDUSTAN_COPPER_LIMITED_HCL",
+      "canonical_name": "Hindustan Copper Limited [HCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Hindustan Copper Limited [HCL]"
+    },
+    "National Mineral Development Corporation Limited [NMDC]": {
+      "canonical_id": "NATIONAL_MINERAL_DEVELOPMENT_C",
+      "canonical_name": "National Mineral Development Corporation Limited [NMDC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Mineral Development Corporation Limited [NMDC]"
+    },
+    "Ministry of Petroleum and Natural Gas": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Ministry of Petroleum and Natural Gas"
+    },
+    "Chennai Petroleum Corporation Limited [CPCL]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Chennai Petroleum Corporation Limited [CPCL]"
+    },
+    "IOCL": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "IOCL"
+    },
+    "GAIL Gas": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "GAIL Gas"
+    },
+    "Oil and Natural Gas Corporation Limited [ONGC]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Oil and Natural Gas Corporation Limited [ONGC]"
+    },
+    "NRL": {
+      "canonical_id": "NRL",
+      "canonical_name": "NRL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NRL"
+    },
+    "Gas Authority of India Limited [GAIL]": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Gas Authority of India Limited [GAIL]"
+    },
+    "Mangalore Refinary and Petrochemicals Limited": {
+      "canonical_id": "MANGALORE_REFINARY_AND_PETROCH",
+      "canonical_name": "Mangalore Refinary and Petrochemicals Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Mangalore Refinary and Petrochemicals Limited"
+    },
+    "Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Railway"
+    },
+    "SECR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "SECR"
+    },
+    "South Central Railway [SCR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Central Railway [SCR] - II"
+    },
+    "Central Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Railway"
+    },
+    "Central Railway [CR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Railway [CR] - II"
+    },
+    "Western Railway WR - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Western Railway WR - II"
+    },
+    "South East Central Railway [SECR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South East Central Railway [SECR] - II"
+    },
+    "Western Railway (WR) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Western Railway (WR) - II"
+    },
+    "CAO/C/NCR": {
+      "canonical_id": "CAO_C_NCR",
+      "canonical_name": "CAO/C/NCR",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "CAO/C/NCR"
+    },
+    "Northeast Frontier Railway [NFR]": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Northeast Frontier Railway [NFR]"
+    },
+    "North Western Railway [NWR]": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "North Western Railway [NWR]"
+    },
+    "North Central Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "North Central Railway"
+    },
+    "CAO/C/NR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAO/C/NR"
+    },
+    "Construction NER": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Construction NER"
+    },
+    "East Central Railway [ECR] - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "East Central Railway [ECR] - I"
+    },
+    "CentralRailway": {
+      "canonical_id": "CENTRALRAILWAY",
+      "canonical_name": "CentralRailway",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "CentralRailway"
+    },
+    "CAO/C/SER": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAO/C/SER"
+    },
+    "South Western Railway [SWR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Western Railway [SWR] - II"
+    },
+    "CAO/C/ECoR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAO/C/ECoR"
+    },
+    "North Eastern Railway [NER]": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "North Eastern Railway [NER]"
+    },
+    "North Eastern Railway (NER) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "North Eastern Railway (NER) - II"
+    },
+    "Karnataka Rail Infrastructure Development Company Limited [K-RIDE]": {
+      "canonical_id": "KARNATAKA_RAIL_INFRASTRUCTURE_",
+      "canonical_name": "Karnataka Rail Infrastructure Development Company Limited [K-RIDE]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Karnataka Rail Infrastructure Development Company Limited [K-RIDE]"
+    },
+    "East Central Railway (ECR) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "East Central Railway (ECR) - II"
+    },
+    "RVNL - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "RVNL - II"
+    },
+    "North Central Railway (NCR) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "North Central Railway (NCR) - II"
+    },
+    "RVNL - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "RVNL - I"
+    },
+    "EDTK[MC]/RB": {
+      "canonical_id": "EDTK_MC_RB",
+      "canonical_name": "EDTK[MC]/RB",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "EDTK[MC]/RB"
+    },
+    "South Eastern Railway [SER] - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Eastern Railway [SER] - I"
+    },
+    "Northen Railway [NR]": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Northen Railway [NR]"
+    },
+    "Western Railway [WR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Western Railway [WR] - II"
+    },
+    "PCE/WR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "PCE/WR"
+    },
+    "CPM/ICF": {
+      "canonical_id": "CPM_ICF",
+      "canonical_name": "CPM/ICF",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "CPM/ICF"
+    },
+    "CAOC/SWR SWR mor": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAOC/SWR SWR mor"
+    },
+    "Rail Vikas Nigam Limited": {
+      "canonical_id": "RAIL_VIKAS_NIGAM_LIMITED",
+      "canonical_name": "Rail Vikas Nigam Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Rail Vikas Nigam Limited"
+    },
+    "Northern Railways": {
+      "canonical_id": "NORTHERN_RAILWAYS",
+      "canonical_name": "Northern Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Northern Railways"
+    },
+    "CERL": {
+      "canonical_id": "CERL",
+      "canonical_name": "CERL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "CERL"
+    },
+    "M/S SRC company Infra Private Limited": {
+      "canonical_id": "M_S_SRC_COMPANY_INFRA_PRIVATE_",
+      "canonical_name": "M/S SRC company Infra Private Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "M/S SRC company Infra Private Limited"
+    },
+    "Central Railway (CR) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Railway (CR) - II"
+    },
+    "South Eastern Railway - JH": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Eastern Railway - JH"
+    },
+    "Indian Railway Construction International Limited [IRCON]": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Indian Railway Construction International Limited [IRCON]"
+    },
+    "SR-ERS": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "SR-ERS"
+    },
+    "Ministry of Railways": {
+      "canonical_id": "MINISTRY_OF_RAILWAYS",
+      "canonical_name": "Ministry of Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Ministry of Railways"
+    },
+    "East Central Railway [ECR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "East Central Railway [ECR] - II"
+    },
+    "South Eastern Central Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Eastern Central Railway"
+    },
+    "South East Central Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South East Central Railway"
+    },
+    "NER": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "NER"
+    },
+    "Central Organisation for Railway Electrification (CORE)": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Central Organisation for Railway Electrification (CORE)"
+    },
+    "GM/C/ NFR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "GM/C/ NFR"
+    },
+    "RVNL": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "RVNL"
+    },
+    "CAO/C/II/NR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAO/C/II/NR"
+    },
+    "Indian Railways": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Indian Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Railways"
+    },
+    "Eastern Railway [ER] - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Eastern Railway [ER] - I"
+    },
+    "West Central Railway WCR I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "West Central Railway WCR I"
+    },
+    "CAO/C/SECR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CAO/C/SECR"
+    },
+    "Indian Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Indian Railway"
+    },
+    "Ministry of Railways-": {
+      "canonical_id": "MINISTRY_OF_RAILWAYS",
+      "canonical_name": "Ministry of Railways-",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Ministry of Railways-"
+    },
+    "Southern Railway [SR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Southern Railway [SR] - II"
+    },
+    "WPO/Patna": {
+      "canonical_id": "WPO_PATNA",
+      "canonical_name": "WPO/Patna",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "WPO/Patna"
+    },
+    "Southern Railway [SR] - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Southern Railway [SR] - I"
+    },
+    "Western Railway": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Western Railway"
+    },
+    "Mumbai Rail Vikas Corporation Ltd.[MRVC]": {
+      "canonical_id": "MUMBAI_RAIL_VIKAS_CORPORATION_",
+      "canonical_name": "Mumbai Rail Vikas Corporation Ltd.[MRVC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Mumbai Rail Vikas Corporation Ltd.[MRVC]"
+    },
+    "National High Speed Rail Corporation [NHSRC]": {
+      "canonical_id": "NATIONAL_HIGH_SPEED_RAIL_CORPO",
+      "canonical_name": "National High Speed Rail Corporation [NHSRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National High Speed Rail Corporation [NHSRC]"
+    },
+    "Eastern Railway [ER] - II ": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Eastern Railway [ER] - II"
+    },
+    "Northeast Frontier Railway (NFR) - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Northeast Frontier Railway (NFR) - II"
+    },
+    "MRIDC": {
+      "canonical_id": "MRIDC",
+      "canonical_name": "MRIDC",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "MRIDC"
+    },
+    "Indian Railway and Govt of Odisha": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Indian Railway and Govt of Odisha"
+    },
+    "PCE/NCR": {
+      "canonical_id": "PCE_NCR",
+      "canonical_name": "PCE/NCR",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "PCE/NCR"
+    },
+    "Metro Railway, Kolkata": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Metro Railway, Kolkata"
+    },
+    "RCIL": {
+      "canonical_id": "RCIL",
+      "canonical_name": "RCIL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "RCIL"
+    },
+    "CR": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "CR"
+    },
+    "West Central Railway [WCR] - II": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "West Central Railway [WCR] - II"
+    },
+    "Rail Land Development Authority": {
+      "canonical_id": "RAIL_LAND_DEVELOPMENT_AUTHORIT",
+      "canonical_name": "Rail Land Development Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Rail Land Development Authority"
+    },
+    "South Central Railway [SCR] - I": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "South Central Railway [SCR] - I"
+    },
+    "Central Railways": {
+      "canonical_id": "CENTRAL_RAILWAYS",
+      "canonical_name": "Central Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Central Railways"
+    },
+    "DFCCIL": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "DFCCIL"
+    },
+    "NICDC": {
+      "canonical_id": "NICDC",
+      "canonical_name": "NICDC",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NICDC"
+    },
+    "PMAY, Ministry of Housing and Urban Affairs": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "PMAY, Ministry of Housing and Urban Affairs"
+    },
+    "ministry of housing and urban affairs": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "ministry of housing and urban affairs"
+    },
+    "National Buildings Construction Corporation [NBCC]": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "National Buildings Construction Corporation [NBCC]"
+    },
+    "Haldia Dock Complex, Syama Prasad Mookerjee Port Authority": {
+      "canonical_id": "HALDIA_DOCK_COMPLEX_SYAMA_PRAS",
+      "canonical_name": "Haldia Dock Complex, Syama Prasad Mookerjee Port Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Haldia Dock Complex, Syama Prasad Mookerjee Port Authority"
+    },
+    "Cochin Shipyard": {
+      "canonical_id": "PORTS_SHIPPING",
+      "canonical_name": "Ministry of Ports, Shipping and Waterways",
+      "sector": "Ports & Shipping",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Cochin Shipyard"
+    },
+    "Paradip Port Trust [PPT]": {
+      "canonical_id": "PARADIP_PORT_TRUST_PPT",
+      "canonical_name": "Paradip Port Trust [PPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Paradip Port Trust [PPT]"
+    },
+    "Syama Prasad Mookerjee Port Kolkata": {
+      "canonical_id": "SYAMA_PRASAD_MOOKERJEE_PORT_KO",
+      "canonical_name": "Syama Prasad Mookerjee Port Kolkata",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Syama Prasad Mookerjee Port Kolkata"
+    },
+    "New Mangalore Port Authority": {
+      "canonical_id": "NEW_MANGALORE_PORT_AUTHORITY",
+      "canonical_name": "New Mangalore Port Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "New Mangalore Port Authority"
+    },
+    "Jawaharlal Nehru Port Authority [JNPA]": {
+      "canonical_id": "PORTS_SHIPPING",
+      "canonical_name": "Ministry of Ports, Shipping and Waterways",
+      "sector": "Ports & Shipping",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Jawaharlal Nehru Port Authority [JNPA]"
+    },
+    "Reliance Industries Ltd": {
+      "canonical_id": "RELIANCE_INDUSTRIES_LTD",
+      "canonical_name": "Reliance Industries Ltd",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Reliance Industries Ltd"
+    },
+    "Steel Authority of India Limited [SAIL]": {
+      "canonical_id": "STEEL_MINISTRY",
+      "canonical_name": "Ministry of Steel / Steel Authority of India",
+      "sector": "Steel & Metals",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Steel Authority of India Limited [SAIL]"
+    },
+    "Department of Telecommunications [DoT]": {
+      "canonical_id": "TELECOM_DOT",
+      "canonical_name": "Department of Telecommunications / BSNL",
+      "sector": "Telecommunications",
+      "entity_type": "Central PSU",
+      "raw_name": "Department of Telecommunications [DoT]"
+    },
+    "Department of Telecommunications": {
+      "canonical_id": "DEPARTMENT_OF_TELECOMMUNICATIO",
+      "canonical_name": "Department of Telecommunications",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Department of Telecommunications"
+    },
+    "BSNL": {
+      "canonical_id": "TELECOM_DOT",
+      "canonical_name": "Department of Telecommunications / BSNL",
+      "sector": "Telecommunications",
+      "entity_type": "Central PSU",
+      "raw_name": "BSNL"
+    },
+    "National Communication Academy - Finance (Erstwhile NICF)": {
+      "canonical_id": "NATIONAL_COMMUNICATION_ACADEMY",
+      "canonical_name": "National Communication Academy - Finance (Erstwhile NICF)",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Communication Academy - Finance (Erstwhile NICF)"
+    },
+    "India International Convention & Expo Centre": {
+      "canonical_id": "INDIA_INTERNATIONAL_CONVENTION",
+      "canonical_name": "India International Convention & Expo Centre",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "India International Convention & Expo Centre"
+    },
+    "Indian Port Rail & Ropeway Corporation Ltd. [IPRCL]": {
+      "canonical_id": "INDIAN_PORT_RAIL_ROPEWAY_CORPO",
+      "canonical_name": "Indian Port Rail & Ropeway Corporation Ltd. [IPRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Indian Port Rail & Ropeway Corporation Ltd. [IPRCL]"
+    },
+    "Power Grid Corporation of India Limited [POWERGRID]": {
+      "canonical_id": "POWERGRID",
+      "canonical_name": "Power Grid Corporation of India Limited",
+      "sector": "Power & Transmission",
+      "entity_type": "Maharatna PSU",
+      "raw_name": "Power Grid Corporation of India Limited [POWERGRID]"
+    },
+    "Adani Transmission Limited": {
+      "canonical_id": "ADANI_TRANSMISSION_LIMITED",
+      "canonical_name": "Adani Transmission Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Adani Transmission Limited"
+    },
+    "Sterlite Power": {
+      "canonical_id": "STERLITE_POWER",
+      "canonical_name": "Sterlite Power",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Sterlite Power"
+    },
+    "Uttar Pradesh metro rail corporation [UPMRC]": {
+      "canonical_id": "UTTAR_PRADESH_METRO_RAIL_CORPO",
+      "canonical_name": "Uttar Pradesh metro rail corporation [UPMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Uttar Pradesh metro rail corporation [UPMRC]"
+    },
+    "Gujarat Metro Rail Corporation Limited [GMRCL]": {
+      "canonical_id": "GUJARAT_METRO_RAIL_CORPORATION",
+      "canonical_name": "Gujarat Metro Rail Corporation Limited [GMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Gujarat Metro Rail Corporation Limited [GMRCL]"
+    },
+    "Bengaluru Metro Rail": {
+      "canonical_id": "BENGALURU_METRO_RAIL",
+      "canonical_name": "Bengaluru Metro Rail",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Bengaluru Metro Rail"
+    },
+    "Madhya Pradesh Metro Rail Co Limited [MPMRCL]": {
+      "canonical_id": "MADHYA_PRADESH_METRO_RAIL_CO_L",
+      "canonical_name": "Madhya Pradesh Metro Rail Co Limited [MPMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Madhya Pradesh Metro Rail Co Limited [MPMRCL]"
+    },
+    "Delhi Metro Rail Corporation Limited [DMRC]": {
+      "canonical_id": "DELHI_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Delhi Metro Rail Corporation Limited [DMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Delhi Metro Rail Corporation Limited [DMRC]"
+    },
+    "National Capital Region Transport Corporation [NCRTC]": {
+      "canonical_id": "NATIONAL_CAPITAL_REGION_TRANSP",
+      "canonical_name": "National Capital Region Transport Corporation [NCRTC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Capital Region Transport Corporation [NCRTC]"
+    },
+    "Noida Metro Rail Corporation Ltd. [NMRCL]": {
+      "canonical_id": "NOIDA_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Noida Metro Rail Corporation Ltd. [NMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Noida Metro Rail Corporation Ltd. [NMRCL]"
+    },
+    "Jaipur Metro Rail Corporation": {
+      "canonical_id": "JAIPUR_METRO_RAIL_CORPORATION",
+      "canonical_name": "Jaipur Metro Rail Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Jaipur Metro Rail Corporation"
+    },
+    "CSPCC Projects": {
+      "canonical_id": "CSPCC_PROJECTS",
+      "canonical_name": "CSPCC Projects",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "CSPCC Projects"
+    },
+    "Gurugram Metro Rail Limited (GMRL)": {
+      "canonical_id": "GURUGRAM_METRO_RAIL_LIMITED_GM",
+      "canonical_name": "Gurugram Metro Rail Limited (GMRL)",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Gurugram Metro Rail Limited (GMRL)"
+    },
+    "Mumbai Metro Rail Corporation Limited [MMRC]": {
+      "canonical_id": "MUMBAI_METRO_RAIL_CORPORATION_",
+      "canonical_name": "Mumbai Metro Rail Corporation Limited [MMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Mumbai Metro Rail Corporation Limited [MMRC]"
+    },
+    "Maharashtra Metro Rail Corporation Limited [MMRCL]": {
+      "canonical_id": "MAHARASHTRA_METRO_RAIL_CORPORA",
+      "canonical_name": "Maharashtra Metro Rail Corporation Limited [MMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Maharashtra Metro Rail Corporation Limited [MMRCL]"
+    },
+    "Patna Metro Rail Corporation Ltd. [PMRCL]": {
+      "canonical_id": "PATNA_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Patna Metro Rail Corporation Ltd. [PMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Patna Metro Rail Corporation Ltd. [PMRCL]"
+    },
+    "National Mission for Clean Ganga": {
+      "canonical_id": "NATIONAL_MISSION_FOR_CLEAN_GAN",
+      "canonical_name": "National Mission for Clean Ganga",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "National Mission for Clean Ganga"
+    },
+    "NMCG1": {
+      "canonical_id": "NMCG1",
+      "canonical_name": "NMCG1",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "NMCG1"
+    },
+    "Ministry of Housing & Urban Affairs": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_name": "Ministry of Housing & Urban Affairs"
+    },
+    "Irrigation & Water Resources-UP": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Irrigation & Water Resources-UP"
+    },
+    "Department of water resources-MH - II": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of water resources-MH - II"
+    },
+    "Water Resources-MP": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-MP"
+    },
+    "Department of Water Resources-MH": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of Water Resources-MH"
+    },
+    "Irrigation and CAD-TG": {
+      "canonical_id": "IRRIGATION_AND_CAD_TG",
+      "canonical_name": "Irrigation and CAD-TG",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Irrigation and CAD-TG"
+    },
+    "Water Resources-AP": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-AP"
+    },
+    "Water Resources-OR": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-OR"
+    },
+    "Irrigation-UK": {
+      "canonical_id": "IRRIGATION_UK",
+      "canonical_name": "Irrigation-UK",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Irrigation-UK"
+    },
+    "Water Resources-CT": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-CT"
+    },
+    "Department of Water Resources, River Development, ": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of Water Resources, River Development,"
+    },
+    "Water resource-mp": {
+      "canonical_id": "WATER_RESOURCE_MP",
+      "canonical_name": "Water resource-mp",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_name": "Water resource-mp"
+    },
+    "Water Resources-BR": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-BR"
+    },
+    "Department of Water Resources-PB": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of Water Resources-PB"
+    },
+    "Narmada and Water Resources, Water Supply and Kalpsar Department-GJ": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Narmada and Water Resources, Water Supply and Kalpsar Department-GJ"
+    },
+    "Department of Water Resources-JH": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Department of Water Resources-JH"
+    },
+    "Water Resources Department-MN": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources Department-MN"
+    },
+    "Water Resources-KA": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_name": "Water Resources-KA"
+    },
+    "NHIDCL": {
+      "canonical_id": "NHIDCL",
+      "canonical_name": "National Highways & Infrastructure Development Corp",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_name": "NHIDCL"
+    },
+    "National Highways Authority of India [NHAI]": {
+      "canonical_id": "NHAI",
+      "canonical_name": "National Highways Authority of India",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_name": "National Highways Authority of India [NHAI]"
+    },
+    "NHAI": {
+      "canonical_id": "NHAI",
+      "canonical_name": "National Highways Authority of India",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_name": "NHAI"
+    },
+    "MoRTH": {
+      "canonical_id": "MoRTH",
+      "canonical_name": "Ministry of Road Transport and Highways",
+      "sector": "Roads & Highways",
+      "entity_type": "Central Ministry",
+      "raw_name": "MoRTH"
+    }
+  },
+  "canonical_clusters": {
+    "AAI": {
+      "canonical_id": "AAI",
+      "canonical_name": "Airports Authority of India",
+      "sector": "Civil Aviation",
+      "entity_type": "Central PSU",
+      "raw_variations": [
+        "Airport Authority of India [AAI]",
+        "Adani Airport Holdings Limited"
+      ]
+    },
+    "COAL_INDIA": {
+      "canonical_id": "COAL_INDIA",
+      "canonical_name": "Coal India Limited & Subsidiaries",
+      "sector": "Coal & Mining",
+      "entity_type": "Maharatna PSU",
+      "raw_variations": [
+        "SECL - CIL",
+        "WCL - CIL",
+        "South Eastern Coalfields Limited [SECL]",
+        "Western Coalfields Limited [WCL]",
+        "MCL - CIL",
+        "Mahanadi Coalfields Limited (MCL)",
+        "NCL - CIL",
+        "Eastern Coal Fields Limited [ECL]",
+        "CCL - CIL",
+        "ECL - CIL",
+        "Mahanadi Coalfields Limited [MCL]"
+      ]
+    },
+    "NLC_INDIA_LIMITED": {
+      "canonical_id": "NLC_INDIA_LIMITED",
+      "canonical_name": "NLC India Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NLC India Limited"
+      ]
+    },
+    "MINISTRY_OF_COAL": {
+      "canonical_id": "MINISTRY_OF_COAL",
+      "canonical_name": "Ministry of Coal",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Ministry of Coal"
+      ]
+    },
+    "SINGARENI_COLLIERIES_COMPANY_L": {
+      "canonical_id": "SINGARENI_COLLIERIES_COMPANY_L",
+      "canonical_name": "Singareni Collieries Company Limited [SCCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Singareni Collieries Company Limited [SCCL]"
+      ]
+    },
+    "BHARAT_COKING_COAL_LIMITED_BCC": {
+      "canonical_id": "BHARAT_COKING_COAL_LIMITED_BCC",
+      "canonical_name": "Bharat Coking Coal Limited [BCCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Bharat Coking Coal Limited [BCCL]",
+        "Bharat Coking Coal Limited (BCCL)"
+      ]
+    },
+    "NLC_INDIA_LIMITED_NLCIL": {
+      "canonical_id": "NLC_INDIA_LIMITED_NLCIL",
+      "canonical_name": "NLC India Limited [NLCIL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NLC India Limited [NLCIL]"
+      ]
+    },
+    "MIS_MOCOAL_INTEGRATION_LOGINS": {
+      "canonical_id": "MIS_MOCOAL_INTEGRATION_LOGINS",
+      "canonical_name": "MIS MoCoal Integration Logins",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "MIS MoCoal Integration Logins"
+      ]
+    },
+    "INVALID_CO": {
+      "canonical_id": "INVALID_CO",
+      "canonical_name": "INVALID CO.",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "INVALID CO."
+      ]
+    },
+    "NTPC": {
+      "canonical_id": "NTPC",
+      "canonical_name": "NTPC Limited",
+      "sector": "Power & Thermal",
+      "entity_type": "Maharatna PSU",
+      "raw_variations": [
+        "National Thermal Power Corporation [NTPC]"
+      ]
+    },
+    "DAMODAR_VALLEY_CORPORATION": {
+      "canonical_id": "DAMODAR_VALLEY_CORPORATION",
+      "canonical_name": "Damodar Valley Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Damodar Valley Corporation"
+      ]
+    },
+    "MOHUA": {
+      "canonical_id": "MOHUA",
+      "canonical_name": "Ministry of Housing and Urban Affairs",
+      "sector": "Urban Infrastructure",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_variations": [
+        "Central Public Works Department [CPWD]",
+        "Central Public Works Department - CPWD",
+        "Central Public Works Department (CPWD)",
+        "PMAY, Ministry of Housing and Urban Affairs",
+        "ministry of housing and urban affairs",
+        "National Buildings Construction Corporation [NBCC]",
+        "Ministry of Housing & Urban Affairs"
+      ]
+    },
+    "NIT_ROURKELA": {
+      "canonical_id": "NIT_ROURKELA",
+      "canonical_name": "NIT Rourkela",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NIT Rourkela"
+      ]
+    },
+    "INDIAN_INSTITUTE_OF_TECHNOLOGY": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_TECHNOLOGY",
+      "canonical_name": "Indian Institute of Technology, Bombay",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Indian Institute of Technology, Bombay",
+        "Indian Institute of Technology, Bhubaneshwar",
+        "INDIAN INSTITUTE OF TECHNOLOGY PALAKKAD",
+        "Indian Institute of Technology, Hyderabad",
+        "Indian Institute of Technology, Kharagpur",
+        "Indian Institute of Technology, Mandi",
+        "Indian Institute of Technology, Bhilai",
+        "Indian Institute of Technology, Indore"
+      ]
+    },
+    "NIT_PATNA": {
+      "canonical_id": "NIT_PATNA",
+      "canonical_name": "NIT Patna",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NIT Patna"
+      ]
+    },
+    "IISC_BANGALORE": {
+      "canonical_id": "IISC_BANGALORE",
+      "canonical_name": "IISC Bangalore",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "IISC Bangalore"
+      ]
+    },
+    "BANARAS_HINDU_UNIVERSITY": {
+      "canonical_id": "BANARAS_HINDU_UNIVERSITY",
+      "canonical_name": "Banaras Hindu University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Banaras Hindu University"
+      ]
+    },
+    "NATIONAL_INSTITUTE_OF_TECHNOLO": {
+      "canonical_id": "NATIONAL_INSTITUTE_OF_TECHNOLO",
+      "canonical_name": "National Institute of Technology Uttarakhand",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Institute of Technology Uttarakhand",
+        "National Institute of Technology, Meghalaya",
+        "National Institute of Technology, Arunachal Pradesh",
+        "National Institute of Technology, Puducherry",
+        "National Institute of Technology Delhi"
+      ]
+    },
+    "CENTRAL_UNIVERSITY_OF_PUNJAB": {
+      "canonical_id": "CENTRAL_UNIVERSITY_OF_PUNJAB",
+      "canonical_name": "Central University of Punjab",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Central University of Punjab"
+      ]
+    },
+    "INDIAN_INSTITUTE_OF_MANAGEMENT": {
+      "canonical_id": "INDIAN_INSTITUTE_OF_MANAGEMENT",
+      "canonical_name": "Indian Institute of Management, Jammu",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Indian Institute of Management, Jammu",
+        "Indian Institute of Management, Sirmaur"
+      ]
+    },
+    "MINISTRY_OF_EDUCATION": {
+      "canonical_id": "MINISTRY_OF_EDUCATION",
+      "canonical_name": "Ministry of Education",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Ministry of Education"
+      ]
+    },
+    "CENTRAL_TRIBAL_UNIVERSITY_OF_A": {
+      "canonical_id": "CENTRAL_TRIBAL_UNIVERSITY_OF_A",
+      "canonical_name": "Central Tribal University of Andhra Pradesh",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Central Tribal University of Andhra Pradesh"
+      ]
+    },
+    "CENTRAL_UNIVERSITY_OF_GUJARAT": {
+      "canonical_id": "CENTRAL_UNIVERSITY_OF_GUJARAT",
+      "canonical_name": "Central University of Gujarat",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Central University of Gujarat"
+      ]
+    },
+    "CENTRAL_UNIVERSITY_HIMACHAL_PR": {
+      "canonical_id": "CENTRAL_UNIVERSITY_HIMACHAL_PR",
+      "canonical_name": "Central University, Himachal Pradesh",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Central University, Himachal Pradesh"
+      ]
+    },
+    "INDIAN_INTITUE_OF_MANAGEMENT_A": {
+      "canonical_id": "INDIAN_INTITUE_OF_MANAGEMENT_A",
+      "canonical_name": "Indian intitue of Management, Amritsar",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Indian intitue of Management, Amritsar"
+      ]
+    },
+    "SIKKIM_UNIVERSITY": {
+      "canonical_id": "SIKKIM_UNIVERSITY",
+      "canonical_name": "Sikkim University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Sikkim University"
+      ]
+    },
+    "DELHI_UNIVERSITY": {
+      "canonical_id": "DELHI_UNIVERSITY",
+      "canonical_name": "Delhi University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Delhi University"
+      ]
+    },
+    "NIT_NAGALAND": {
+      "canonical_id": "NIT_NAGALAND",
+      "canonical_name": "NIT Nagaland",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NIT Nagaland"
+      ]
+    },
+    "INDIAN_INSTITUTES_OF_SCIENCE_E": {
+      "canonical_id": "INDIAN_INSTITUTES_OF_SCIENCE_E",
+      "canonical_name": "Indian Institutes of Science Education and Research, Behrampur",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Indian Institutes of Science Education and Research, Behrampur"
+      ]
+    },
+    "TEZPUR_UNIVERSITY": {
+      "canonical_id": "TEZPUR_UNIVERSITY",
+      "canonical_name": "Tezpur University",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Tezpur University"
+      ]
+    },
+    "DEPARTMENT_OF_SPORTS_YOUTH_AFF": {
+      "canonical_id": "DEPARTMENT_OF_SPORTS_YOUTH_AFF",
+      "canonical_name": "Department of Sports & Youth Affairs",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Department of Sports & Youth Affairs"
+      ]
+    },
+    "NORTH_EASTERN_ELECTRIC_POWER_C": {
+      "canonical_id": "NORTH_EASTERN_ELECTRIC_POWER_C",
+      "canonical_name": "North Eastern Electric Power Corporation Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "North Eastern Electric Power Corporation Limited"
+      ]
+    },
+    "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T": {
+      "canonical_id": "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T",
+      "canonical_name": "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Satluj Jal Vidyut Nigam [SJVN] Thermal Limited"
+      ]
+    },
+    "NHIDCL": {
+      "canonical_id": "NHIDCL",
+      "canonical_name": "National Highways & Infrastructure Development Corp",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_variations": [
+        "National Highways & Infrastructure Development Corporation Ltd. [NHIDCL]",
+        "NHIDCL"
+      ]
+    },
+    "THDC_INDIA_LIMITED": {
+      "canonical_id": "THDC_INDIA_LIMITED",
+      "canonical_name": "THDC India Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "THDC India Limited"
+      ]
+    },
+    "NATIONAL_HYDROELECTRIC_POWER_C": {
+      "canonical_id": "NATIONAL_HYDROELECTRIC_POWER_C",
+      "canonical_name": "National Hydroelectric Power Corporation Limited [NHPC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Hydroelectric Power Corporation Limited [NHPC]"
+      ]
+    },
+    "PETROLEUM_GAS": {
+      "canonical_id": "PETROLEUM_GAS",
+      "canonical_name": "Ministry of Petroleum & Natural Gas / OMCs",
+      "sector": "Petroleum & Natural Gas",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_variations": [
+        "Ministry of Petroleum & Natural Gas",
+        "Hindustan Petroleum Corporation Limited",
+        "Indian Oil Corporation Limited [IOCL]",
+        "Hindustan Petroleum Corporation Limited [HPCL]",
+        "Bharat Petroleum Corporation Limited [BPCL]",
+        "Ministry of Petroleum and Natural Gas",
+        "Chennai Petroleum Corporation Limited [CPCL]",
+        "IOCL",
+        "GAIL Gas",
+        "Oil and Natural Gas Corporation Limited [ONGC]",
+        "Gas Authority of India Limited [GAIL]"
+      ]
+    },
+    "JAL_SHAKTI": {
+      "canonical_id": "JAL_SHAKTI",
+      "canonical_name": "Ministry of Jal Shakti",
+      "sector": "Water & Irrigation",
+      "entity_type": "Central Ministry",
+      "raw_variations": [
+        "Department of Water Resources, River Development & GR",
+        "Irrigation & Water Resources-UP",
+        "Department of water resources-MH - II",
+        "Water Resources-MP",
+        "Department of Water Resources-MH",
+        "Water Resources-AP",
+        "Water Resources-OR",
+        "Water Resources-CT",
+        "Department of Water Resources, River Development, ",
+        "Water Resources-BR",
+        "Department of Water Resources-PB",
+        "Narmada and Water Resources, Water Supply and Kalpsar Department-GJ",
+        "Department of Water Resources-JH",
+        "Water Resources Department-MN",
+        "Water Resources-KA"
+      ]
+    },
+    "MINISTRYOFPETROLEUMNATURALGAS": {
+      "canonical_id": "MINISTRYOFPETROLEUMNATURALGAS",
+      "canonical_name": "MinistryofPetroleumNaturalGas",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "MinistryofPetroleumNaturalGas"
+      ]
+    },
+    "MOHFW": {
+      "canonical_id": "MOHFW",
+      "canonical_name": "Ministry of Health and Family Welfare",
+      "sector": "Healthcare & Institutions",
+      "entity_type": "Central Ministry",
+      "raw_variations": [
+        "Ministry of Health & Family Welfare",
+        "Medical Education, Ministry of Health and Family Welfare"
+      ]
+    },
+    "PMSSY_AND_INSTITUTE_OF_NATIONA": {
+      "canonical_id": "PMSSY_AND_INSTITUTE_OF_NATIONA",
+      "canonical_name": "PMSSY AND Institute of NATIONAL Importance",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "PMSSY AND Institute of NATIONAL Importance"
+      ]
+    },
+    "EMPLOYEE_S_STATE_INSURANCE_COM": {
+      "canonical_id": "EMPLOYEE_S_STATE_INSURANCE_COM",
+      "canonical_name": "Employee's State Insurance Company [ESIC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Employee's State Insurance Company [ESIC]"
+      ]
+    },
+    "MUMBAI_PORT_TRUST_MPT": {
+      "canonical_id": "MUMBAI_PORT_TRUST_MPT",
+      "canonical_name": "Mumbai Port Trust [MPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Mumbai Port Trust [MPT]"
+      ]
+    },
+    "CHENNAI_METRO_RAIL_LIMITED_CMR": {
+      "canonical_id": "CHENNAI_METRO_RAIL_LIMITED_CMR",
+      "canonical_name": "Chennai Metro Rail Limited [CMRL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Chennai Metro Rail Limited [CMRL]"
+      ]
+    },
+    "DEENDAYAL_PORT_TRUST": {
+      "canonical_id": "DEENDAYAL_PORT_TRUST",
+      "canonical_name": "Deendayal Port Trust",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Deendayal Port Trust"
+      ]
+    },
+    "PORTS_SHIPPING": {
+      "canonical_id": "PORTS_SHIPPING",
+      "canonical_name": "Ministry of Ports, Shipping and Waterways",
+      "sector": "Ports & Shipping",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_variations": [
+        "Inland Waterways Authority of India [IWAI]",
+        "Cochin Shipyard",
+        "Jawaharlal Nehru Port Authority [JNPA]"
+      ]
+    },
+    "INDIAN_RAILWAYS": {
+      "canonical_id": "INDIAN_RAILWAYS",
+      "canonical_name": "Ministry of Railways / Executing PSUs",
+      "sector": "Railways",
+      "entity_type": "Central Ministry & PSUs",
+      "raw_variations": [
+        "East Coast Railway [ECoR] - II",
+        "Railway",
+        "SECR",
+        "South Central Railway [SCR] - II",
+        "Central Railway",
+        "Central Railway [CR] - II",
+        "Western Railway WR - II",
+        "South East Central Railway [SECR] - II",
+        "Western Railway (WR) - II",
+        "Northeast Frontier Railway [NFR]",
+        "North Western Railway [NWR]",
+        "North Central Railway",
+        "CAO/C/NR",
+        "Construction NER",
+        "East Central Railway [ECR] - I",
+        "CAO/C/SER",
+        "South Western Railway [SWR] - II",
+        "CAO/C/ECoR",
+        "North Eastern Railway [NER]",
+        "North Eastern Railway (NER) - II",
+        "East Central Railway (ECR) - II",
+        "RVNL - II",
+        "North Central Railway (NCR) - II",
+        "RVNL - I",
+        "South Eastern Railway [SER] - I",
+        "Northen Railway [NR]",
+        "Western Railway [WR] - II",
+        "PCE/WR",
+        "CAOC/SWR SWR mor",
+        "Central Railway (CR) - II",
+        "South Eastern Railway - JH",
+        "Indian Railway Construction International Limited [IRCON]",
+        "SR-ERS",
+        "East Central Railway [ECR] - II",
+        "South Eastern Central Railway",
+        "South East Central Railway",
+        "NER",
+        "Central Organisation for Railway Electrification (CORE)",
+        "GM/C/ NFR",
+        "RVNL",
+        "CAO/C/II/NR",
+        "Indian Railways",
+        "Eastern Railway [ER] - I",
+        "West Central Railway WCR I",
+        "CAO/C/SECR",
+        "Indian Railway",
+        "Southern Railway [SR] - II",
+        "Southern Railway [SR] - I",
+        "Western Railway",
+        "Eastern Railway [ER] - II ",
+        "Northeast Frontier Railway (NFR) - II",
+        "Indian Railway and Govt of Odisha",
+        "Metro Railway, Kolkata",
+        "CR",
+        "West Central Railway [WCR] - II",
+        "South Central Railway [SCR] - I",
+        "DFCCIL"
+      ]
+    },
+    "NATIONAL_INDUSTRIAL_CORRIDOR_D": {
+      "canonical_id": "NATIONAL_INDUSTRIAL_CORRIDOR_D",
+      "canonical_name": "National Industrial Corridor Development Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Industrial Corridor Development Corporation"
+      ]
+    },
+    "DEENDAYAL_PORT_TRUST_DPT": {
+      "canonical_id": "DEENDAYAL_PORT_TRUST_DPT",
+      "canonical_name": "Deendayal Port Trust [DPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Deendayal Port Trust [DPT]"
+      ]
+    },
+    "NATIONAL_ALUMINIUM_COMPANY_LIM": {
+      "canonical_id": "NATIONAL_ALUMINIUM_COMPANY_LIM",
+      "canonical_name": "National Aluminium Company Limited [NALCO]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Aluminium Company Limited [NALCO]"
+      ]
+    },
+    "MINISTRY_OF_MINES": {
+      "canonical_id": "MINISTRY_OF_MINES",
+      "canonical_name": "Ministry of Mines",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Ministry of Mines"
+      ]
+    },
+    "HINDUSTAN_COPPER_LIMITED_HCL": {
+      "canonical_id": "HINDUSTAN_COPPER_LIMITED_HCL",
+      "canonical_name": "Hindustan Copper Limited [HCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Hindustan Copper Limited [HCL]"
+      ]
+    },
+    "NATIONAL_MINERAL_DEVELOPMENT_C": {
+      "canonical_id": "NATIONAL_MINERAL_DEVELOPMENT_C",
+      "canonical_name": "National Mineral Development Corporation Limited [NMDC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Mineral Development Corporation Limited [NMDC]"
+      ]
+    },
+    "NRL": {
+      "canonical_id": "NRL",
+      "canonical_name": "NRL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NRL"
+      ]
+    },
+    "MANGALORE_REFINARY_AND_PETROCH": {
+      "canonical_id": "MANGALORE_REFINARY_AND_PETROCH",
+      "canonical_name": "Mangalore Refinary and Petrochemicals Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Mangalore Refinary and Petrochemicals Limited"
+      ]
+    },
+    "CAO_C_NCR": {
+      "canonical_id": "CAO_C_NCR",
+      "canonical_name": "CAO/C/NCR",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "CAO/C/NCR"
+      ]
+    },
+    "CENTRALRAILWAY": {
+      "canonical_id": "CENTRALRAILWAY",
+      "canonical_name": "CentralRailway",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "CentralRailway"
+      ]
+    },
+    "KARNATAKA_RAIL_INFRASTRUCTURE_": {
+      "canonical_id": "KARNATAKA_RAIL_INFRASTRUCTURE_",
+      "canonical_name": "Karnataka Rail Infrastructure Development Company Limited [K-RIDE]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Karnataka Rail Infrastructure Development Company Limited [K-RIDE]"
+      ]
+    },
+    "EDTK_MC_RB": {
+      "canonical_id": "EDTK_MC_RB",
+      "canonical_name": "EDTK[MC]/RB",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "EDTK[MC]/RB"
+      ]
+    },
+    "CPM_ICF": {
+      "canonical_id": "CPM_ICF",
+      "canonical_name": "CPM/ICF",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "CPM/ICF"
+      ]
+    },
+    "RAIL_VIKAS_NIGAM_LIMITED": {
+      "canonical_id": "RAIL_VIKAS_NIGAM_LIMITED",
+      "canonical_name": "Rail Vikas Nigam Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Rail Vikas Nigam Limited"
+      ]
+    },
+    "NORTHERN_RAILWAYS": {
+      "canonical_id": "NORTHERN_RAILWAYS",
+      "canonical_name": "Northern Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Northern Railways"
+      ]
+    },
+    "CERL": {
+      "canonical_id": "CERL",
+      "canonical_name": "CERL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "CERL"
+      ]
+    },
+    "M_S_SRC_COMPANY_INFRA_PRIVATE_": {
+      "canonical_id": "M_S_SRC_COMPANY_INFRA_PRIVATE_",
+      "canonical_name": "M/S SRC company Infra Private Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "M/S SRC company Infra Private Limited"
+      ]
+    },
+    "MINISTRY_OF_RAILWAYS": {
+      "canonical_id": "MINISTRY_OF_RAILWAYS",
+      "canonical_name": "Ministry of Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Ministry of Railways",
+        "Ministry of Railways-"
+      ]
+    },
+    "WPO_PATNA": {
+      "canonical_id": "WPO_PATNA",
+      "canonical_name": "WPO/Patna",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "WPO/Patna"
+      ]
+    },
+    "MUMBAI_RAIL_VIKAS_CORPORATION_": {
+      "canonical_id": "MUMBAI_RAIL_VIKAS_CORPORATION_",
+      "canonical_name": "Mumbai Rail Vikas Corporation Ltd.[MRVC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Mumbai Rail Vikas Corporation Ltd.[MRVC]"
+      ]
+    },
+    "NATIONAL_HIGH_SPEED_RAIL_CORPO": {
+      "canonical_id": "NATIONAL_HIGH_SPEED_RAIL_CORPO",
+      "canonical_name": "National High Speed Rail Corporation [NHSRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National High Speed Rail Corporation [NHSRC]"
+      ]
+    },
+    "MRIDC": {
+      "canonical_id": "MRIDC",
+      "canonical_name": "MRIDC",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "MRIDC"
+      ]
+    },
+    "PCE_NCR": {
+      "canonical_id": "PCE_NCR",
+      "canonical_name": "PCE/NCR",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "PCE/NCR"
+      ]
+    },
+    "RCIL": {
+      "canonical_id": "RCIL",
+      "canonical_name": "RCIL",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "RCIL"
+      ]
+    },
+    "RAIL_LAND_DEVELOPMENT_AUTHORIT": {
+      "canonical_id": "RAIL_LAND_DEVELOPMENT_AUTHORIT",
+      "canonical_name": "Rail Land Development Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Rail Land Development Authority"
+      ]
+    },
+    "CENTRAL_RAILWAYS": {
+      "canonical_id": "CENTRAL_RAILWAYS",
+      "canonical_name": "Central Railways",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Central Railways"
+      ]
+    },
+    "NICDC": {
+      "canonical_id": "NICDC",
+      "canonical_name": "NICDC",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NICDC"
+      ]
+    },
+    "HALDIA_DOCK_COMPLEX_SYAMA_PRAS": {
+      "canonical_id": "HALDIA_DOCK_COMPLEX_SYAMA_PRAS",
+      "canonical_name": "Haldia Dock Complex, Syama Prasad Mookerjee Port Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Haldia Dock Complex, Syama Prasad Mookerjee Port Authority"
+      ]
+    },
+    "PARADIP_PORT_TRUST_PPT": {
+      "canonical_id": "PARADIP_PORT_TRUST_PPT",
+      "canonical_name": "Paradip Port Trust [PPT]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Paradip Port Trust [PPT]"
+      ]
+    },
+    "SYAMA_PRASAD_MOOKERJEE_PORT_KO": {
+      "canonical_id": "SYAMA_PRASAD_MOOKERJEE_PORT_KO",
+      "canonical_name": "Syama Prasad Mookerjee Port Kolkata",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Syama Prasad Mookerjee Port Kolkata"
+      ]
+    },
+    "NEW_MANGALORE_PORT_AUTHORITY": {
+      "canonical_id": "NEW_MANGALORE_PORT_AUTHORITY",
+      "canonical_name": "New Mangalore Port Authority",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "New Mangalore Port Authority"
+      ]
+    },
+    "RELIANCE_INDUSTRIES_LTD": {
+      "canonical_id": "RELIANCE_INDUSTRIES_LTD",
+      "canonical_name": "Reliance Industries Ltd",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Reliance Industries Ltd"
+      ]
+    },
+    "STEEL_MINISTRY": {
+      "canonical_id": "STEEL_MINISTRY",
+      "canonical_name": "Ministry of Steel / Steel Authority of India",
+      "sector": "Steel & Metals",
+      "entity_type": "Maharatna PSU",
+      "raw_variations": [
+        "Steel Authority of India Limited [SAIL]"
+      ]
+    },
+    "TELECOM_DOT": {
+      "canonical_id": "TELECOM_DOT",
+      "canonical_name": "Department of Telecommunications / BSNL",
+      "sector": "Telecommunications",
+      "entity_type": "Central PSU",
+      "raw_variations": [
+        "Department of Telecommunications [DoT]",
+        "BSNL"
+      ]
+    },
+    "DEPARTMENT_OF_TELECOMMUNICATIO": {
+      "canonical_id": "DEPARTMENT_OF_TELECOMMUNICATIO",
+      "canonical_name": "Department of Telecommunications",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Department of Telecommunications"
+      ]
+    },
+    "NATIONAL_COMMUNICATION_ACADEMY": {
+      "canonical_id": "NATIONAL_COMMUNICATION_ACADEMY",
+      "canonical_name": "National Communication Academy - Finance (Erstwhile NICF)",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Communication Academy - Finance (Erstwhile NICF)"
+      ]
+    },
+    "INDIA_INTERNATIONAL_CONVENTION": {
+      "canonical_id": "INDIA_INTERNATIONAL_CONVENTION",
+      "canonical_name": "India International Convention & Expo Centre",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "India International Convention & Expo Centre"
+      ]
+    },
+    "INDIAN_PORT_RAIL_ROPEWAY_CORPO": {
+      "canonical_id": "INDIAN_PORT_RAIL_ROPEWAY_CORPO",
+      "canonical_name": "Indian Port Rail & Ropeway Corporation Ltd. [IPRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Indian Port Rail & Ropeway Corporation Ltd. [IPRCL]"
+      ]
+    },
+    "POWERGRID": {
+      "canonical_id": "POWERGRID",
+      "canonical_name": "Power Grid Corporation of India Limited",
+      "sector": "Power & Transmission",
+      "entity_type": "Maharatna PSU",
+      "raw_variations": [
+        "Power Grid Corporation of India Limited [POWERGRID]"
+      ]
+    },
+    "ADANI_TRANSMISSION_LIMITED": {
+      "canonical_id": "ADANI_TRANSMISSION_LIMITED",
+      "canonical_name": "Adani Transmission Limited",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Adani Transmission Limited"
+      ]
+    },
+    "STERLITE_POWER": {
+      "canonical_id": "STERLITE_POWER",
+      "canonical_name": "Sterlite Power",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Sterlite Power"
+      ]
+    },
+    "UTTAR_PRADESH_METRO_RAIL_CORPO": {
+      "canonical_id": "UTTAR_PRADESH_METRO_RAIL_CORPO",
+      "canonical_name": "Uttar Pradesh metro rail corporation [UPMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Uttar Pradesh metro rail corporation [UPMRC]"
+      ]
+    },
+    "GUJARAT_METRO_RAIL_CORPORATION": {
+      "canonical_id": "GUJARAT_METRO_RAIL_CORPORATION",
+      "canonical_name": "Gujarat Metro Rail Corporation Limited [GMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Gujarat Metro Rail Corporation Limited [GMRCL]"
+      ]
+    },
+    "BENGALURU_METRO_RAIL": {
+      "canonical_id": "BENGALURU_METRO_RAIL",
+      "canonical_name": "Bengaluru Metro Rail",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Bengaluru Metro Rail"
+      ]
+    },
+    "MADHYA_PRADESH_METRO_RAIL_CO_L": {
+      "canonical_id": "MADHYA_PRADESH_METRO_RAIL_CO_L",
+      "canonical_name": "Madhya Pradesh Metro Rail Co Limited [MPMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Madhya Pradesh Metro Rail Co Limited [MPMRCL]"
+      ]
+    },
+    "DELHI_METRO_RAIL_CORPORATION_L": {
+      "canonical_id": "DELHI_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Delhi Metro Rail Corporation Limited [DMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Delhi Metro Rail Corporation Limited [DMRC]"
+      ]
+    },
+    "NATIONAL_CAPITAL_REGION_TRANSP": {
+      "canonical_id": "NATIONAL_CAPITAL_REGION_TRANSP",
+      "canonical_name": "National Capital Region Transport Corporation [NCRTC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Capital Region Transport Corporation [NCRTC]"
+      ]
+    },
+    "NOIDA_METRO_RAIL_CORPORATION_L": {
+      "canonical_id": "NOIDA_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Noida Metro Rail Corporation Ltd. [NMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Noida Metro Rail Corporation Ltd. [NMRCL]"
+      ]
+    },
+    "JAIPUR_METRO_RAIL_CORPORATION": {
+      "canonical_id": "JAIPUR_METRO_RAIL_CORPORATION",
+      "canonical_name": "Jaipur Metro Rail Corporation",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Jaipur Metro Rail Corporation"
+      ]
+    },
+    "CSPCC_PROJECTS": {
+      "canonical_id": "CSPCC_PROJECTS",
+      "canonical_name": "CSPCC Projects",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "CSPCC Projects"
+      ]
+    },
+    "GURUGRAM_METRO_RAIL_LIMITED_GM": {
+      "canonical_id": "GURUGRAM_METRO_RAIL_LIMITED_GM",
+      "canonical_name": "Gurugram Metro Rail Limited (GMRL)",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Gurugram Metro Rail Limited (GMRL)"
+      ]
+    },
+    "MUMBAI_METRO_RAIL_CORPORATION_": {
+      "canonical_id": "MUMBAI_METRO_RAIL_CORPORATION_",
+      "canonical_name": "Mumbai Metro Rail Corporation Limited [MMRC]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Mumbai Metro Rail Corporation Limited [MMRC]"
+      ]
+    },
+    "MAHARASHTRA_METRO_RAIL_CORPORA": {
+      "canonical_id": "MAHARASHTRA_METRO_RAIL_CORPORA",
+      "canonical_name": "Maharashtra Metro Rail Corporation Limited [MMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Maharashtra Metro Rail Corporation Limited [MMRCL]"
+      ]
+    },
+    "PATNA_METRO_RAIL_CORPORATION_L": {
+      "canonical_id": "PATNA_METRO_RAIL_CORPORATION_L",
+      "canonical_name": "Patna Metro Rail Corporation Ltd. [PMRCL]",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Patna Metro Rail Corporation Ltd. [PMRCL]"
+      ]
+    },
+    "NATIONAL_MISSION_FOR_CLEAN_GAN": {
+      "canonical_id": "NATIONAL_MISSION_FOR_CLEAN_GAN",
+      "canonical_name": "National Mission for Clean Ganga",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "National Mission for Clean Ganga"
+      ]
+    },
+    "NMCG1": {
+      "canonical_id": "NMCG1",
+      "canonical_name": "NMCG1",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "NMCG1"
+      ]
+    },
+    "IRRIGATION_AND_CAD_TG": {
+      "canonical_id": "IRRIGATION_AND_CAD_TG",
+      "canonical_name": "Irrigation and CAD-TG",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Irrigation and CAD-TG"
+      ]
+    },
+    "IRRIGATION_UK": {
+      "canonical_id": "IRRIGATION_UK",
+      "canonical_name": "Irrigation-UK",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Irrigation-UK"
+      ]
+    },
+    "WATER_RESOURCE_MP": {
+      "canonical_id": "WATER_RESOURCE_MP",
+      "canonical_name": "Water resource-mp",
+      "sector": "Infrastructure",
+      "entity_type": "Executing Entity",
+      "raw_variations": [
+        "Water resource-mp"
+      ]
+    },
+    "NHAI": {
+      "canonical_id": "NHAI",
+      "canonical_name": "National Highways Authority of India",
+      "sector": "Roads & Highways",
+      "entity_type": "Central PSU",
+      "raw_variations": [
+        "National Highways Authority of India [NHAI]",
+        "NHAI"
+      ]
+    },
+    "MoRTH": {
+      "canonical_id": "MoRTH",
+      "canonical_name": "Ministry of Road Transport and Highways",
+      "sector": "Roads & Highways",
+      "entity_type": "Central Ministry",
+      "raw_variations": [
+        "MoRTH"
+      ]
+    }
+  }
+}
