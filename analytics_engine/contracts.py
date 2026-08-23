@@ -99,6 +99,7 @@ class AllocationRequest(BaseModel):
     risk_dial_kappa: float = Field(default=0.70, ge=0.0, le=1.0, description="Weight on CVaR90 tail loss vs expected loss")
     enforce_ner_floor: bool = Field(default=True, description="Enforce statutory 10% capex floor for North-Eastern Region")
     agency_absorption_multiplier: float = Field(default=1.25, description="Agency historical burn rate multiplier ceiling")
+    delay_shock_months: float = Field(default=0.0, ge=0.0, description="Simulated delay shock in months to stress-test the allocation")
 
 class ProjectAllocation(BaseModel):
     project_id: str

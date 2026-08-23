@@ -306,14 +306,35 @@ class SetuGraphEngine:
 
         sub_g = self.dag.subgraph(nodes_set)
         
+        # Compute cascaded delay shocks via BFS from center node through successors
+        cascaded_shocks = {}
+        if delay_shock_months > 0.0:
+            cascaded_shocks[pid] = float(delay_shock_months)
+            # BFS topological cascade: propagated delay flows to successors
+            bfs_queue = [pid]
+            visited_cascade = {pid}
+            while bfs_queue:
+                curr = bfs_queue.pop(0)
+                curr_shock = cascaded_shocks.get(curr, 0.0)
+                curr_ff = sub_g.nodes[curr].get("free_float", 0.0) if curr != pid else 0.0
+                propagated_from_curr = max(0.0, curr_shock - curr_ff)
+                if propagated_from_curr > 0.0:
+                    for succ in sub_g.successors(curr):
+                        if succ not in visited_cascade:
+                            # Downstream receives the propagated delay (attenuated by edge lead time uncertainty)
+                            edge_data = sub_g.edges[curr, succ] if sub_g.has_edge(curr, succ) else {}
+                            attenuation = 0.85  # ~15% absorbed per hop by schedule buffers
+                            succ_shock = propagated_from_curr * attenuation
+                            cascaded_shocks[succ] = cascaded_shocks.get(succ, 0.0) + succ_shock
+                            visited_cascade.add(succ)
+                            bfs_queue.append(succ)
+
         nodes = []
         tot_p50 = 0.0
         tot_p95 = 0.0
 
         for n, d in sub_g.nodes(data=True):
-            node_delay = d.get("delay_months", 0.0)
-            if str(n) == pid and delay_shock_months > 0.0:
-                node_delay += float(delay_shock_months)
+            node_delay = d.get("delay_months", 0.0) + cascaded_shocks.get(str(n), 0.0)
             
             ff = d.get("free_float", 0.0)
             tf = d.get("total_float", 0.0)

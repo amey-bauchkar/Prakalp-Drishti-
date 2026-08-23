@@ -305,10 +305,28 @@ export default function PragatiSaarthiView({ selectedProjectId = "400188" }) {
                     onClick={async () => {
                       const inputVal = document.getElementById('tamperInput').value;
                       const resEl = document.getElementById('tamperResult');
-                      if (parseFloat(inputVal) === parseFloat(activeFact.value)) {
-                        resEl.innerHTML = '<span class="text-emerald-400 font-bold">✅ CRYPTOGRAPHIC MATCH: Validated against immutable SHA-256 Merkle Root!</span>';
-                      } else {
-                        resEl.innerHTML = '<span class="text-rose-400 font-bold">🚨 CRYPTOGRAPHIC MISMATCH DETECTED: Computed leaf hash does NOT match Merkle Root! Fact modification rejected.</span>';
+                      resEl.innerHTML = '<span class="text-sky-400 font-bold animate-pulse">⏳ Verifying against SHA-256 Merkle Root via backend...</span>';
+                      try {
+                        const docHash = data?.doc_hash || 'unknown';
+                        const factId = activeFact.fact_id;
+                        const verifyUrl = `http://127.0.0.1:8000/api/amey/verify/${docHash}/${factId}?project_id=${projectId}`;
+                        const resp = await fetch(verifyUrl);
+                        if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+                        const result = await resp.json();
+                        
+                        const serverValue = result.value;
+                        const proofValid = result.proof_valid;
+                        const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
+                        
+                        if (proofValid && valuesMatch) {
+                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ CRYPTOGRAPHIC MATCH: Merkle inclusion proof verified (${result.proof_steps_count} sibling hashes). Root: ${result.merkle_root?.slice(0, 16)}...</span>`;
+                        } else if (proofValid && !valuesMatch) {
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 TAMPER DETECTED: Input "${inputVal}" ≠ audited value "${serverValue}". Merkle root intact but fact was modified client-side. Fact modification rejected.</span>`;
+                        } else {
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 CRYPTOGRAPHIC MISMATCH: Merkle inclusion proof FAILED server-side verification. ${result.cag_cvc_compliance || 'VERIFICATION_FAILED'}</span>`;
+                        }
+                      } catch (err) {
+                        resEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Verification endpoint error: ${err.message}. Ensure backend is running.</span>`;
                       }
                     }}
                     className="bg-gov-accent text-gov-navy hover:bg-yellow-400 px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors shrink-0"

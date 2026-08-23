@@ -40,7 +40,16 @@ class VittaVyuhaEngine:
         self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
         self.df["Expenditure"] = pd.to_numeric(self.df["Expenditure"], errors="coerce").fillna(0.0)
         self.df["PhysicalProgress"] = pd.to_numeric(self.df["PhysicalProgress"], errors="coerce").fillna(20.0)
-        self.df["DELAYED_TIME"] = pd.to_numeric(self.df["DELAYED_TIME"], errors="coerce").fillna(0.0)
+        
+        # Compute real schedule delay from official milestone dates (DELAYED_TIME column is all zeros)
+        def compute_schedule_delay(row):
+            orig_dt = pd.to_datetime(row.get("OriginalEndDate"), errors="coerce", dayfirst=True)
+            rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
+            if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
+                return max(0.0, (rev_dt - orig_dt).days / 30.4375)
+            return float(row.get("OnboardingDelay", 0.0) or 0.0)
+        
+        self.df["REAL_DELAY_MONTHS"] = self.df.apply(compute_schedule_delay, axis=1)
 
         # Map Canonical Entities
         entity_map = {}
@@ -76,7 +85,11 @@ class VittaVyuhaEngine:
         costs = self.candidate_df["RevisedCost"].values
         is_ner = self.candidate_df["IsNER"].values.astype(float)
         progress = self.candidate_df["PhysicalProgress"].values
-        delays = self.candidate_df["DELAYED_TIME"].values
+        delays = self.candidate_df["REAL_DELAY_MONTHS"].values.copy()
+        
+        # Apply delay shock: stress all project delays by the simulated shock
+        if req.delay_shock_months > 0.0:
+            delays = delays + req.delay_shock_months
         
         # Remaining Capex Demand
         remaining_demand = np.maximum(costs * (1.0 - progress / 100.0), costs * 0.15)
@@ -192,8 +205,8 @@ class VittaVyuhaEngine:
             pi_budget = round(float(np.clip(-np.mean(c_x) * 1.15, 0.45, 2.80)), 3)
             pi_ner = 0.850 if req.enforce_ner_floor else 0.0
 
-        if pi_budget < 0.10:
-            pi_budget = round(float(np.clip(np.mean(marginal_yield) * 0.4, 0.45, 1.95)), 3)
+        # pi_budget = 0 is mathematically correct when the budget constraint is non-binding
+        # (i.e., total allocation < budget pool). Do NOT override with a hardcoded floor.
         
         # Compute Yield and CVaR
         total_allocated = float(np.sum(allocations_raw))
@@ -206,9 +219,9 @@ class VittaVyuhaEngine:
         # Exact Duality Gap / Linearization Closure Error Diagnostic (from Primal-Dual Gap)
         if res_lp.success and abs(res_lp.fun) > 1e-3:
             raw_duality_gap = abs(res_lp.fun - milp_obj) / abs(res_lp.fun) * 100.0
-            closure_error = round(float(np.clip(raw_duality_gap + 0.5, 0.5, 4.8)), 1)
+            closure_error = round(float(raw_duality_gap), 2)
         else:
-            closure_error = 2.4
+            closure_error = 0.0  # Identical primal-dual → zero gap
 
         # Compute Dynamic Agency Shadow Prices from Exact Dual Multipliers and Marginal Return
         agency_shadow_prices = {}
