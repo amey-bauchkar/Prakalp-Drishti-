@@ -99,16 +99,21 @@ class VittaVyuhaEngine:
                 delays = delays + req.delay_shock_months
             # else: shocked project isn't a VITTA-VYUHA candidate -> no effect on this engine (honest no-op)
         
-        # Remaining Capex Demand
+        # Remaining Capex Demand & Absorptive Capacity per Project (realistic quarterly demand)
         remaining_demand = np.maximum(costs * (1.0 - progress / 100.0), costs * 0.15)
-        # Rescale demand to fit within realistic budget shock range
-        scale_factor = B / (np.sum(remaining_demand) * 0.70) if np.sum(remaining_demand) > 0 else 1.0
-        demands = remaining_demand * min(scale_factor, 1.2)
+        demands = np.clip(remaining_demand * 0.20, 50.0, 2500.0)
 
         # Shapley systemic multiplier gamma_i
         pids = self.candidate_df["ProjectId"].astype(str).values
         gammas = np.array([self.shapley_scores.get(p, 100.0) for p in pids])
         gammas = (gammas / np.mean(gammas)) if np.mean(gammas) > 0 else np.ones(N)
+
+        # Project Risk Metric derived from empirical milestone delays and physical progress
+        risk_score = (delays / 25.0) + np.maximum(0.0, (50.0 - progress) / 50.0)
+        risk_normalized = (risk_score / np.mean(risk_score)) if np.mean(risk_score) > 0 else np.ones(N)
+
+        # Base Completion Yield (driven by progress, schedule lead times, and Shapley network vitality gamma)
+        base_yield = np.maximum(0.20, (0.5 + (progress / 100.0) - (delays / 200.0)) * gammas)
 
         # Scenarios for Two-Stage Stochastic Loss (S=3: Baseline, Moderate Shock, Severe Tail Shock)
         # Fix M3: Normalized so sum_s p_s * theta_s = 1.0
@@ -123,15 +128,16 @@ class VittaVyuhaEngine:
         S = 3
         num_vars = N + 1 + S
         
-        # Linear Yield coefficient per project: c_i = - [ (1-kappa)*Mean_Yield + (Marginal Return) ]
-        # Higher progress & lower delay = higher completion return
-        marginal_yield = (0.5 + (progress / 200.0) - (delays / 200.0)) * gammas
-        c_x = - (marginal_yield * (1.0 - 0.3 * kappa))
+        # Risk Dial (kappa in [0, 1]):
+        # kappa = 0.0 -> Risk-Neutral: prioritize highest expected completion yield
+        # kappa = 1.0 -> Tail-Risk Protection (CVaR90): penalize delayed/high-risk projects, prioritize safe execution
+        effective_yield = np.maximum(0.05, base_yield * (1.0 - 0.70 * kappa * (risk_normalized - 0.5)))
+        c_x = - effective_yield
         
         c = np.zeros(num_vars)
         c[:N] = c_x
-        c[N] = kappa # eta coefficient
-        c[N+1:] = kappa * (p_scenarios / (1.0 - 0.90)) # 1/(1-alpha) * sum p_s * zeta_s
+        c[N] = kappa * 0.1 # eta coefficient
+        c[N+1:] = kappa * 0.1 * (p_scenarios / (1.0 - 0.90)) # 1/(1-alpha) * sum p_s * zeta_s
 
         # Constraints
         # 1. Total Budget Cap: sum(x_i) <= B
@@ -160,7 +166,7 @@ class VittaVyuhaEngine:
 
         for s in range(S):
             theta_s = theta_scenarios[0, s]
-            A_cvar[s, :N] = theta_s * marginal_yield * 0.15
+            A_cvar[s, :N] = theta_s * base_yield * 0.15
             A_cvar[s, N] = 1.0 # eta
             A_cvar[s, N + 1 + s] = 1.0 # zeta_s
             b_cvar_l[s] = B * 0.10 * (s + 1) # Minimum tail protection threshold
@@ -221,8 +227,9 @@ class VittaVyuhaEngine:
         ner_allocated = float(np.sum(allocations_raw * is_ner))
         ner_share = (ner_allocated / total_allocated * 100.0) if total_allocated > 0 else 0.0
         
-        expected_yield = float(np.sum(allocations_raw * marginal_yield) / max(total_allocated, 1.0) * 100.0)
-        cvar_loss = float(max(B - total_allocated, 0.0) * 0.25 + (1.0 - kappa) * 120.0)
+        expected_yield = float(np.sum(allocations_raw * base_yield) / max(total_allocated, 1.0) * 100.0)
+        portfolio_risk = float(np.sum(allocations_raw * risk_normalized) / max(total_allocated, 1.0))
+        cvar_loss = float(round(portfolio_risk * 100.0, 1))
         
         # Exact Duality Gap / Linearization Closure Error Diagnostic (from Primal-Dual Gap)
         if res_lp.success and abs(res_lp.fun) > 1e-3:
@@ -238,7 +245,7 @@ class VittaVyuhaEngine:
                 continue
             mask = (self.candidate_df["CANONICAL_ENTITY"] == entity).values
             if np.any(mask):
-                ent_yield = float(np.mean(marginal_yield[mask]))
+                ent_yield = float(np.mean(base_yield[mask]))
                 agency_shadow_prices[str(entity)] = round(float(np.clip(ent_yield * pi_budget * 1.15, 0.35, 3.50)), 2)
 
         # Fallback keys if sparse
@@ -259,7 +266,7 @@ class VittaVyuhaEngine:
                 is_ner=bool(is_ner[i]),
                 requested_capex_cr=float(round(demands[i], 2)),
                 allocated_capex_cr=allocated_val,
-                completion_yield_phi=float(round(marginal_yield[i] * 10.0, 1)),
+                completion_yield_phi=float(round(base_yield[i] * 10.0, 1)),
                 systemic_benefit_gamma=float(round(gammas[i], 2))
             ))
 
