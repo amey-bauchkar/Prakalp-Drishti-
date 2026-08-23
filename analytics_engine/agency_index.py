@@ -31,8 +31,17 @@ class AgencyIndexEngine:
         self.df = pd.read_csv(DATA_PATH)
         self.df["OriginalCost"] = pd.to_numeric(self.df["OriginalCost"], errors="coerce").fillna(500.0)
         self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
-        self.df["DELAYED_TIME"] = pd.to_numeric(self.df["DELAYED_TIME"], errors="coerce").fillna(0.0)
         self.df["PhysicalProgress"] = pd.to_numeric(self.df["PhysicalProgress"], errors="coerce").fillna(25.0)
+
+        # Compute real schedule delay from official milestone dates (DELAYED_TIME raw column is all zeros)
+        def compute_schedule_delay(row):
+            orig_dt = pd.to_datetime(row.get("OriginalEndDate"), errors="coerce", dayfirst=True)
+            rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
+            if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
+                return max(0.0, (rev_dt - orig_dt).days / 30.4375)
+            return float(row.get("OnboardingDelay", 0.0) or 0.0)
+
+        self.df["REAL_DELAY_MONTHS"] = self.df.apply(compute_schedule_delay, axis=1)
 
         # Cost Overrun
         self.df["CostOverrun"] = np.maximum(0.0, self.df["RevisedCost"] - self.df["OriginalCost"])
@@ -67,9 +76,9 @@ class AgencyIndexEngine:
 
             total_projects = len(grp)
             total_capex = float(grp["RevisedCost"].sum())
-            delayed_projects = int((grp["DELAYED_TIME"] > 0).sum())
+            delayed_projects = int((grp["REAL_DELAY_MONTHS"] > 0).sum())
             delay_rate = (delayed_projects / total_projects) * 100.0
-            avg_delay = float(grp["DELAYED_TIME"].mean())
+            avg_delay = float(grp["REAL_DELAY_MONTHS"].mean())
             avg_overrun = float(grp["OverrunPerc"].mean())
             avg_progress = float(grp["PhysicalProgress"].mean())
             total_shapley = float(grp["ShapleyScore"].sum())
