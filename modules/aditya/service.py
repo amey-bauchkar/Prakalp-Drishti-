@@ -1,0 +1,49 @@
+"""
+PRAKALP-DRISHTI: EO-AUDITOR
+Module Lead: Aditya
+Satellite Earth Observation & Computer Vision Ground-Truth Corroboration Engine.
+Serves verified dual-epoch optical satellite dossiers (2018 Baseline vs 2023 Current) across Indian mega-projects.
+"""
+
+import os
+import json
+import pandas as pd
+from typing import Dict, Any, List
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
+GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
+
+class EOAuditorEngine:
+    def __init__(self):
+        self.catalog = []
+        self._load_data()
+
+    def _load_data(self):
+        if os.path.exists(CATALOG_PATH):
+            with open(CATALOG_PATH, "r", encoding="utf-8") as f:
+                self.catalog = json.load(f)
+
+    def get_satellite_war_room_summary(self, limit: int = 50) -> Dict[str, Any]:
+        total_coverage = len(self.catalog)
+        critical_discrepancies = [p for p in self.catalog if p.get("audit_status") == "CRITICAL_DIVERGENCE"]
+        verified_on_track = [p for p in self.catalog if p.get("audit_status") == "VERIFIED_ON_TRACK"]
+
+        return {
+            "module": "EO-AUDITOR",
+            "module_lead": "Aditya",
+            "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter Resolution ~0.8m)",
+            "dual_epoch_vintages": "2018-02 (Baseline) vs 2023-01 (Current)",
+            "total_georeferenced_coverage": total_coverage,
+            "verified_on_track_count": len(verified_on_track),
+            "critical_discrepancies_flagged": len(critical_discrepancies),
+            "showcase_projects": self.catalog[:limit]
+        }
+
+_eo_auditor_instance = None
+
+def get_eo_auditor_engine() -> EOAuditorEngine:
+    global _eo_auditor_instance
+    if _eo_auditor_instance is None:
+        _eo_auditor_instance = EOAuditorEngine()
+    return _eo_auditor_instance

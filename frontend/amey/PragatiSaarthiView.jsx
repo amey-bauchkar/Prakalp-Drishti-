@@ -12,7 +12,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   const fetchBriefing = async (id) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/amey/briefing/${id}`);
+      const res = await fetch(`/api/amey/briefing/${id}`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
@@ -44,18 +44,18 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 4 · Governance & Decision Briefings
+                Module 4 · Executive Governance
               </span>
               <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                3-Layer Fact/Assertion · Merkle Provenance
+                Official Cabinet Note with Verified Audit Trail
               </span>
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <FileText className="w-6 h-6 text-gov-accent" />
-              <span>PRAGATI-SAARTHI: Deterministic Bilingual Cabinet Review</span>
+              <span>PRAGATI-SAARTHI: Bilingual Cabinet Review Note</span>
             </h1>
             <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
-              Generates mathematically auditable, exception-based briefs for PMO and Cabinet Secretariat reviews. Click any metric to inspect its cryptographic Merkle audit trail.
+              Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews. Click any highlighted number to see its exact source and proof that it has not been tampered with.
             </p>
           </div>
 
@@ -89,7 +89,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
       {loading && (
         <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
           <FileText className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
-          Generating JCS-Canonicalized Merkle Lineage & Bilingual Briefing...
+          Preparing Fact-Verified Executive Briefing Note...
         </div>
       )}
 
@@ -102,7 +102,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="border-b border-gov-border pb-4 space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black text-gov-muted uppercase tracking-wider">
-                    Official Document Hash (ETag): {data.doc_hash.slice(0, 16)}...
+                    Document ID: #{data.project_id} (Official Record)
                   </span>
                   <span className="text-[11px] font-mono text-gov-muted">{data.generated_at}</span>
                 </div>
@@ -114,7 +114,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               {/* Executive Summary */}
               <div className="p-4 bg-gov-surface rounded-xl border border-gov-border space-y-2">
                 <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider block">
-                  {lang === 'en' ? 'Executive Summary & Findings' : 'कार्यपालक सारांश एवं मुख्य निष्कर्ष'}
+                  {lang === 'en' ? 'Executive Summary & Key Takeaways' : 'कार्यपालक सारांश एवं मुख्य निष्कर्ष'}
                 </span>
                 <p className="text-xs text-gov-text-body leading-relaxed">
                   {lang === 'en' ? data.summary_en : data.summary_hi}
@@ -140,7 +140,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span className="text-xs font-black text-gov-navy uppercase tracking-wider">
-                    Clickable Data Lineage Tokens (CAG/CVC Verifiable)
+                    Click Any Metric to Inspect its Source & Proof
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="flex items-center gap-2 border-b border-gov-border pb-3">
                 <Sparkles className="w-4 h-4 text-gov-navy" />
                 <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
-                  {lang === 'en' ? 'Top Actionable PMO Decisions' : 'शीर्ष कार्यपालक निर्णय'}
+                  {lang === 'en' ? 'Key Action Items for Decision Makers' : 'शीर्ष कार्यपालक निर्णय'}
                 </h3>
               </div>
 
@@ -186,7 +186,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                       {lang === 'en' ? dec.recommendation_en : dec.recommendation_hi}
                     </p>
                     <div className="text-[10px] font-mono text-emerald-800 font-bold">
-                      Capex De-risked: ₹{dec.impact_cr.toLocaleString()} Cr
+                      Money Protected from Delay: ₹{dec.impact_cr.toLocaleString()} Cr
                     </div>
                   </div>
                 ))}
@@ -198,14 +198,14 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-gov-accent" />
                 <h3 className="text-xs font-black uppercase tracking-wider text-gov-accent">
-                  Cryptographic Trust Proof
+                  Tamper-Proof Guarantee
                 </h3>
               </div>
               <p className="text-[11px] text-gov-muted-light leading-relaxed">
-                All metrics in this Cabinet note are JCS-canonicalized (RFC 8785) and anchored to a SHA-256 Merkle root. No point estimates or hallucinations can enter this brief.
+                Every number in this Cabinet note is locked to official database records. No fabricated data or hallucinated estimates can enter this document.
               </p>
               <div className="bg-black/30 p-2.5 rounded-lg border border-white/10 font-mono text-[10px] text-white/90 break-all">
-                Root: {data.merkle_root}
+                Security Hash: {data.merkle_root}
               </div>
             </div>
           </div>
@@ -220,8 +220,8 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="flex items-center gap-2">
                 <Database className="w-5 h-5 text-gov-navy" />
                 <div>
-                  <h3 className="text-sm font-black text-gov-navy">Cryptographic Data Lineage</h3>
-                  <span className="text-[10px] font-mono text-gov-muted">ID: {activeFact.fact_id}</span>
+                  <h3 className="text-sm font-black text-gov-navy">Data Source & Audit Proof</h3>
+                  <span className="text-[10px] font-mono text-gov-muted">Metric ID: {activeFact.fact_id}</span>
                 </div>
               </div>
               <button
@@ -237,26 +237,26 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <span className="text-[10px] font-bold text-gov-muted uppercase">{activeFact.label}</span>
               <p className="text-2xl font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
               <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> CAG / CVC Compliant Verified
+                <CheckCircle2 className="w-3 h-3" /> Verified Against Official Database
               </span>
             </div>
 
             {/* Cryptographic Hashes & Positional Proof */}
             <div className="space-y-3">
-              <h4 className="text-xs font-black text-gov-navy uppercase tracking-wider">Provenance Hashes & Merkle Path</h4>
+              <h4 className="text-xs font-black text-gov-navy uppercase tracking-wider">Source Verification Details</h4>
               
               <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Query SHA-256 (SQL Lineage)</span>
+                <span className="text-[10px] font-bold text-gov-muted uppercase">Query Verification Hash</span>
                 <p className="font-mono text-[10px] text-gov-navy break-all">{activeFact.lineage?.query_sha256 || 'N/A'}</p>
               </div>
 
               <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Dataset Snapshot SHA-256</span>
+                <span className="text-[10px] font-bold text-gov-muted uppercase">Dataset Snapshot Fingerprint</span>
                 <p className="font-mono text-[10px] text-gov-navy break-all">{activeFact.lineage?.dataset_sha256 || 'N/A'}</p>
               </div>
 
               <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Positional Sibling Inclusion Proof</span>
+                <span className="text-[10px] font-bold text-gov-muted uppercase">Step-by-Step Proof Path</span>
                 <div className="space-y-1 max-h-24 overflow-y-auto">
                   {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
                     activeFact.lineage.merkle_proof.map((p, idx) => (
@@ -266,13 +266,13 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                       </div>
                     ))
                   ) : (
-                    <p className="font-mono text-[10px] text-gov-muted">Direct SHA-256 Leaf Node</p>
+                    <p className="font-mono text-[10px] text-gov-muted">Verified Leaf Record</p>
                   )}
                 </div>
               </div>
 
               <div className="p-3 bg-gov-navy text-white rounded-lg border border-gov-navy-light space-y-1">
-                <span className="text-[10px] font-bold text-gov-accent uppercase">Document Merkle Root</span>
+                <span className="text-[10px] font-bold text-gov-accent uppercase">Audit Security Key</span>
                 <p className="font-mono text-[10px] text-white/90 break-all">{activeFact.lineage?.merkle_root || data?.merkle_root || 'N/A'}</p>
               </div>
             </div>
@@ -282,18 +282,18 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-gov-accent uppercase flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Live Tamper Defense Test
+                  Test Fake Data Rejection
                 </span>
                 <span className="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">
-                  CAG / CVC Mode
+                  Live Test
                 </span>
               </div>
               <p className="text-[11px] text-gray-300 leading-snug">
-                Try modifying the fact value below to test if the Merkle tree catches fraudulent metric alterations in real time:
+                Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
               </p>
               
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase">Simulated Metric Value</label>
+                <label className="text-[10px] font-bold text-gray-400 uppercase">Enter Value to Test</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -305,11 +305,11 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                     onClick={async () => {
                       const inputVal = document.getElementById('tamperInput').value;
                       const resEl = document.getElementById('tamperResult');
-                      resEl.innerHTML = '<span class="text-sky-400 font-bold animate-pulse">⏳ Verifying against SHA-256 Merkle Root via backend...</span>';
+                      resEl.innerHTML = '<span class="text-sky-400 font-bold animate-pulse">⏳ Checking proof against official database record...</span>';
                       try {
                         const docHash = data?.doc_hash || 'unknown';
                         const factId = activeFact.fact_id;
-                        const verifyUrl = `http://127.0.0.1:8000/api/amey/verify/${docHash}/${factId}?project_id=${projectId}`;
+                        const verifyUrl = `/api/amey/verify/${docHash}/${factId}?project_id=${projectId}`;
                         const resp = await fetch(verifyUrl);
                         if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
                         const result = await resp.json();
@@ -319,19 +319,19 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                         const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
                         
                         if (proofValid && valuesMatch) {
-                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ CRYPTOGRAPHIC MATCH: Merkle inclusion proof verified (${result.proof_steps_count} sibling hashes). Root: ${result.merkle_root?.slice(0, 16)}...</span>`;
+                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>`;
                         } else if (proofValid && !valuesMatch) {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 TAMPER DETECTED: Input "${inputVal}" ≠ audited value "${serverValue}". Merkle root intact but fact was modified client-side. Fact modification rejected.</span>`;
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 FAKE DATA DETECTED: Entered "${inputVal}" does not match audited value "${serverValue}". Edit rejected immediately!</span>`;
                         } else {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 CRYPTOGRAPHIC MISMATCH: Merkle inclusion proof FAILED server-side verification. ${result.cag_cvc_compliance || 'VERIFICATION_FAILED'}</span>`;
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 VERIFICATION FAILED: Source proof did not validate on the server.</span>`;
                         }
                       } catch (err) {
-                        resEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Verification endpoint error: ${err.message}. Ensure backend is running.</span>`;
+                        resEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Verification check error: ${err.message}. Ensure backend is running.</span>`;
                       }
                     }}
                     className="bg-gov-accent text-gov-navy hover:bg-yellow-400 px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors shrink-0"
                   >
-                    Verify Proof
+                    Check Proof
                   </button>
                 </div>
                 <div id="tamperResult" className="text-[10px] font-mono min-h-6 pt-1"></div>
@@ -342,7 +342,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               onClick={() => setDrawerOpen(false)}
               className="w-full py-2.5 bg-gov-navy text-gov-accent font-black text-xs rounded-xl hover:bg-gov-navy-hover transition-colors shadow-soft"
             >
-              Close Audit Drawer
+              Close Drawer
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, GitBranch, DollarSign, FileText, Sparkles, Building2 } from 'lucide-react';
 import KaalChakraView from './KaalChakraView';
 import SetuGraphView from './SetuGraphView';
@@ -9,19 +9,28 @@ import AgencyIndexView from './AgencyIndexView';
 
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
-  // 618402 (NH-913 Frontier Highway, Arunachal Pradesh) is a genuinely connected node in
-  // SETU-GRAPH's dependency graph (4 real edges within 2 hops), unlike most projects in this
-  // portfolio which are isolated -- picked specifically so the causal cockpit's cascade view
-  // has something real to show on first load instead of an empty single-node subgraph.
-  const [selectedProjectId, setSelectedProjectId] = useState('618402');
+  const [selectedProjectId, setSelectedProjectId] = useState(() => {
+    return localStorage.getItem('prakalp:selectedProjectId') || '618402';
+  });
+
+  useEffect(() => {
+    const handleProjectSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+        localStorage.setItem('prakalp:selectedProjectId', String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleProjectSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleProjectSelect);
+  }, []);
 
   const tabs = [
-    { id: 'unified_cockpit', label: 'UNIFIED COCKPIT', desc: 'Causal Loop & Live Simulation', icon: Sparkles },
-    { id: 'kaal_chakra', label: 'KAAL-CHAKRA', desc: 'Schedule Survival & Fan Charts', icon: Clock },
-    { id: 'setu_graph', label: 'SETU-GRAPH', desc: 'Dependency DAG & Rupee Contagion', icon: GitBranch },
-    { id: 'vitta_vyuha', label: 'VITTA-VYUHA', desc: 'Stochastic Capital Allocator', icon: DollarSign },
-    { id: 'pragati_saarthi', label: 'PRAGATI-SAARTHI', desc: 'Bilingual Cabinet Review', icon: FileText },
-    { id: 'agency_index', label: 'AGENCY INDEX', desc: 'Accountability & Velocity Rank', icon: Building2 },
+    { id: 'unified_cockpit', label: 'UNIFIED COCKPIT', desc: 'Live Project Risk & Impact Simulator', icon: Sparkles },
+    { id: 'kaal_chakra', label: 'KAAL-CHAKRA', desc: 'Realistic Timeline & Delay Forecast', icon: Clock },
+    { id: 'setu_graph', label: 'SETU-GRAPH', desc: 'Connected Projects & Delay Ripple Effect', icon: GitBranch },
+    { id: 'vitta_vyuha', label: 'VITTA-VYUHA', desc: 'Smart Budget Allocation & Rebalancing', icon: DollarSign },
+    { id: 'pragati_saarthi', label: 'PRAGATI-SAARTHI', desc: 'Executive Briefing & Audit Trail', icon: FileText },
+    { id: 'agency_index', label: 'AGENCY INDEX', desc: 'Agency Track Record & Speed Ranking', icon: Building2 },
   ];
 
   return (

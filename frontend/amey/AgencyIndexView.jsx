@@ -8,7 +8,7 @@ export default function AgencyIndexView() {
   const [filterTier, setFilterTier] = useState('ALL');
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/amey/agency-index')
+    fetch('/api/amey/agency-index')
       .then((res) => res.json())
       .then((d) => {
         setData(d);
@@ -43,26 +43,26 @@ export default function AgencyIndexView() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Building2 className="w-5 h-5 text-gov-accent" />
-            <span className="text-xs font-black tracking-widest uppercase text-gov-accent">Sovereign Performance Accountability</span>
+            <span className="text-xs font-black tracking-widest uppercase text-gov-accent">Agency Performance Scorecard</span>
           </div>
-          <h2 className="text-xl font-black tracking-tight">AGENCY EXECUTION ACCOUNTABILITY INDEX (AEAI)</h2>
+          <h2 className="text-xl font-black tracking-tight">AGENCY TRACK RECORD & SPEED RANKING</h2>
           <p className="text-xs text-gov-muted-light mt-1">
-            Aggregates systemic network contagion, delay friction, and capital delivery velocity across {data?.total_agencies_monitored} central executing agencies.
+            Compares on-time delivery rates, cost control, and project execution speed across {data?.total_agencies_monitored} central government agencies.
           </p>
         </div>
 
         {/* Tier Stat Badges */}
         <div className="flex items-center gap-2">
           <div className="bg-emerald-500/20 border border-emerald-400/30 px-3 py-2 rounded-xl text-center">
-            <span className="text-[10px] uppercase font-bold text-emerald-300 block">Tier 1 Exemplary</span>
+            <span className="text-[10px] uppercase font-bold text-emerald-300 block">Top Performers</span>
             <span className="text-lg font-black text-emerald-400">{data?.tier_1_agencies || 0}</span>
           </div>
           <div className="bg-amber-500/20 border border-amber-400/30 px-3 py-2 rounded-xl text-center">
-            <span className="text-[10px] uppercase font-bold text-amber-300 block">Tier 2 Watchlist</span>
+            <span className="text-[10px] uppercase font-bold text-amber-300 block">Needs Monitoring</span>
             <span className="text-lg font-black text-amber-400">{data?.tier_2_agencies || 0}</span>
           </div>
           <div className="bg-rose-500/20 border border-rose-400/30 px-3 py-2 rounded-xl text-center">
-            <span className="text-[10px] uppercase font-bold text-rose-300 block">Tier 3 Critical</span>
+            <span className="text-[10px] uppercase font-bold text-rose-300 block">Severely Delayed</span>
             <span className="text-lg font-black text-rose-400">{data?.tier_3_agencies || 0}</span>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function AgencyIndexView() {
           <Search className="w-4 h-4 text-gov-muted" />
           <input
             type="text"
-            placeholder="Search executing agency (NHAI, Indian Railways, NTPC...)"
+            placeholder="Search agency (e.g. NHAI, Indian Railways, NTPC...)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full text-xs bg-gov-surface border border-gov-border rounded-lg px-3 py-2 focus:outline-none focus:border-gov-navy font-medium"
@@ -83,7 +83,7 @@ export default function AgencyIndexView() {
 
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-gov-muted" />
-          <span className="text-xs font-bold text-gov-navy">Tier Filter:</span>
+          <span className="text-xs font-bold text-gov-navy">Filter by Category:</span>
           {['ALL', 'TIER_1_EXEMPLARY', 'TIER_2_WATCHLIST', 'TIER_3_CRITICAL'].map((tier) => (
             <button
               key={tier}
@@ -94,7 +94,7 @@ export default function AgencyIndexView() {
                   : 'bg-gov-surface text-gov-navy hover:bg-gov-muted-surface border border-gov-border'
               }`}
             >
-              {tier === 'ALL' ? 'All Agencies' : tier.replace('TIER_', 'Tier ').replace('_', ' ')}
+              {tier === 'ALL' ? 'All Agencies' : tier === 'TIER_1_EXEMPLARY' ? 'Top Performers' : tier === 'TIER_2_WATCHLIST' ? 'Needs Monitoring' : 'Severely Delayed'}
             </button>
           ))}
         </div>
@@ -107,13 +107,13 @@ export default function AgencyIndexView() {
             <thead>
               <tr className="bg-gov-surface border-b border-gov-border text-[11px] font-black uppercase text-gov-muted tracking-wider">
                 <th className="py-3.5 px-4">Rank & Agency</th>
-                <th className="py-3.5 px-4 text-right">Projects</th>
-                <th className="py-3.5 px-4 text-right">Total Capex (₹ Cr)</th>
-                <th className="py-3.5 px-4 text-right">Delay Rate (%)</th>
-                <th className="py-3.5 px-4 text-right">Avg Delay</th>
+                <th className="py-3.5 px-4 text-right">Total Projects</th>
+                <th className="py-3.5 px-4 text-right">Total Budget (₹ Cr)</th>
+                <th className="py-3.5 px-4 text-right">% Projects Delayed</th>
+                <th className="py-3.5 px-4 text-right">Average Delay</th>
                 <th className="py-3.5 px-4 text-right">Cost Overrun</th>
-                <th className="py-3.5 px-4 text-center">Velocity Score</th>
-                <th className="py-3.5 px-4 text-center">Status Tier</th>
+                <th className="py-3.5 px-4 text-center">Delivery Speed Score</th>
+                <th className="py-3.5 px-4 text-center">Performance Rating</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gov-border text-xs font-medium">

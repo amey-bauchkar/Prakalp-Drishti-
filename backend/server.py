@@ -1,6 +1,6 @@
 """
 PRAKALP-DRISHTI: Central FastAPI Backend Server
-Hosts REST API routers for all team members, serves local in-memory datasets in <5ms,
+Hosts auto-discovered REST API routers for all team members, serves local in-memory datasets in <5ms,
 and provides static asset serving for the executive frontend dashboard.
 """
 
@@ -19,10 +19,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-# Import Member Routers
-from modules.amey.router import router as amey_router
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
 IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
@@ -93,15 +89,23 @@ def load_in_memory_cache():
         projects_cache = records
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
 
-# Mount Member Routers
-app.include_router(amey_router)
+# Dynamic Auto-Discovery of Member Routers (Zero-Conflict Protocol)
+MEMBERS = ["amey", "tanmay", "parth", "janhavi", "soham", "aditya"]
+for member in MEMBERS:
+    try:
+        mod = __import__(f"modules.{member}.router", fromlist=["router"])
+        if hasattr(mod, "router"):
+            app.include_router(mod.router)
+            print(f"Mounted auto-discovered router: modules.{member}.router")
+    except Exception as e:
+        print(f"Member router for '{member}' pending implementation ({e})")
 
 @app.get("/api/health")
 def health_check():
     return {
         "status": "healthy",
         "total_projects_cached": len(projects_cache),
-        "total_portfolio_capex_cr": sum(p["revised_cost_cr"] for p in projects_cache),
+        "total_portfolio_capex_cr": sum(p["revised_cost_cr"] for p in projects_cache) if projects_cache else 0.0,
         "offline_air_gapped_mode": True
     }
 
@@ -148,9 +152,21 @@ def get_satellite_imagery(project_id: str):
 if os.path.exists(IMAGERY_DIR):
     app.mount("/satellite-imagery", StaticFiles(directory=IMAGERY_DIR), name="satellite-imagery")
 
-# Serve frontend build if present
-if os.path.exists(STATIC_DIR):
-    app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+# Serve assets (js/css) if present
+assets_dir = os.path.join(STATIC_DIR, "assets")
+if os.path.exists(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+# SPA Fallback: Serve index.html for all frontend routes (Single Unified URL)
+@app.get("/{full_path:path}")
+async def serve_spa_catchall(full_path: str):
+    file_path = os.path.join(STATIC_DIR, full_path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    index_file = os.path.join(STATIC_DIR, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    raise HTTPException(status_code=404, detail="Frontend build not found. Run 'npm run build' in frontend/.")
 
 if __name__ == "__main__":
     import uvicorn

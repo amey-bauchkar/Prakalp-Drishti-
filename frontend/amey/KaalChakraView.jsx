@@ -12,13 +12,13 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/amey/forecast/${id}`);
+      const res = await fetch(`/api/amey/forecast/${id}`);
       if (!res.ok) throw new Error("Failed to fetch forecast data");
       const json = await res.json();
       setData(json);
     } catch (err) {
       console.error(err);
-      setError("Unable to connect to local FastAPI backend. Ensure server is running on port 8000.");
+      setError("Unable to connect to analytical engine. Ensure the server is running.");
     } finally {
       setLoading(false);
     }
@@ -81,18 +81,18 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 1 · Probabilistic Survival Analysis
+                Module 1 · Timeline Forecasting
               </span>
               <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                AFT Log-Logistic + Competing Risks
+                AI Timeline & Delay Prediction
               </span>
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <Clock className="w-6 h-6 text-gov-accent" />
-              <span>KAAL-CHAKRA: Schedule & Cost Survival Forecasting</span>
+              <span>KAAL-CHAKRA: Realistic Project Completion & Delay Forecast</span>
             </h1>
             <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
-              Replaces static deterministic milestones with calibrated, progress-conditioned survival distributions (P10–P95), detecting rebaselining evasion and timeline decay.
+              Replaces contractor promises with realistic AI-predicted completion dates based on historical performance, on-ground progress pace, and repeated deadline resets.
             </p>
           </div>
 
@@ -119,7 +119,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
       {loading && (
         <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
           <Clock className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
-          Fitting AFT Survival Curve & Computing Conformalized Coverage Bounds...
+          Calculating Realistic Timeline Forecast & Confidence Bounds...
         </div>
       )}
 
@@ -156,7 +156,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-emerald-950 font-bold flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Physical Ground Progress:
+                    Actual Ground Progress:
                   </span>
                   <span className="text-emerald-800 font-black text-sm font-mono">
                     {(data.physical_progress_perc || 0).toFixed(1)}%
@@ -169,7 +169,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                   />
                 </div>
                 <p className="text-[10px] text-emerald-800 font-medium">
-                  On-ground physical completion audited by MoSPI & executing agency.
+                  Verified ground progress reported by MoSPI and site engineers.
                 </p>
               </div>
 
@@ -178,30 +178,30 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs space-y-1">
                   <div className="flex items-center gap-1.5 font-bold text-rose-700">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>DPR Baseline Reset Detected (x{data.baseline_reset_count})</span>
+                    <span>Original Deadline Missed & Reset ({data.baseline_reset_count} Times)</span>
                   </div>
                   <p className="text-[11px] text-rose-800 leading-snug">
-                    Original sanctioned capex of <strong>₹{data.original_cost_cr.toLocaleString()} Cr</strong> was revised upwards to <strong>₹{data.revised_cost_cr.toLocaleString()} Cr</strong> (+{data.cost_overrun_perc.toFixed(1)}%).
+                    Originally planned budget was <strong>₹{data.original_cost_cr.toLocaleString()} Cr</strong>, now increased to <strong>₹{data.revised_cost_cr.toLocaleString()} Cr</strong> (+{data.cost_overrun_perc.toFixed(1)}% cost increase).
                   </p>
                 </div>
               ) : (
                 <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-xs flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span className="font-bold">Original DPR Baseline Intact (0 Resets)</span>
+                  <span className="font-bold">On Original Schedule (0 Deadline Resets)</span>
                 </div>
               )}
 
               {/* Key Metrics Grid */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
-                  <span className="text-[10px] font-bold text-gov-muted uppercase">Sanctioned Capex</span>
+                  <span className="text-[10px] font-bold text-gov-muted uppercase">Current Sanctioned Cost</span>
                   <p className="text-base font-black text-gov-navy mt-0.5">₹{data.revised_cost_cr.toLocaleString()} Cr</p>
                   <span className="text-[10px] text-gov-text-muted">Original: ₹{data.original_cost_cr.toLocaleString()} Cr</span>
                 </div>
                 <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
-                  <span className="text-[10px] font-bold text-gov-muted uppercase">Executing Entity</span>
+                  <span className="text-[10px] font-bold text-gov-muted uppercase">Executing Agency</span>
                   <p className="text-base font-black text-gov-navy mt-0.5 truncate" title={data.canonical_entity}>{data.canonical_entity}</p>
-                  <span className="text-[10px] text-emerald-700 font-bold">Canonical Verified</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">Official Record</span>
                 </div>
               </div>
 
@@ -211,7 +211,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
               >
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-300 font-bold">Target Date Reliability:</span>
+                  <span className="text-gray-300 font-bold">Chance of Meeting Official Target:</span>
                   <span className="text-gov-accent font-black text-sm font-mono">
                     {(data.prob_target_met_official * 100).toFixed(1)}%
                   </span>
@@ -228,7 +228,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                   />
                 </div>
                 <p className="text-[10px] text-gray-300 leading-snug">
-                  Official Target: <strong className="text-white">{data.revised_end_date}</strong> · Survival model probability of completing by target deadline without slippage.
+                  Official Target Date: <strong className="text-white">{data.revised_end_date}</strong>. Probability that this project finishes on or before the official date.
                 </p>
               </div>
 
@@ -236,17 +236,17 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
               <div className="bg-gov-surface p-4 rounded-xl border border-gov-border space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-black uppercase text-gov-navy flex items-center gap-1.5">
-                    🛰️ Sub-Meter Satellite Corroboration
+                    🛰️ Satellite Photo Verification
                   </span>
                   <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    Dual-Epoch 2018-2023
+                    2018 vs 2023 Images
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
                     <img
                       key={`kc_before_${data.project_id}`}
-                      src={`http://127.0.0.1:8000/satellite-imagery/${data.project_id}_BEFORE.jpg`}
+                      src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`}
                       alt="T0 Baseline 2018"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
@@ -257,13 +257,13 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       }}
                     />
                     <div className="absolute top-1.5 left-1.5 bg-black/80 text-sky-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                      2018 Baseline
+                      2018 Start
                     </div>
                   </div>
                   <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
                     <img
                       key={`kc_after_${data.project_id}`}
-                      src={`http://127.0.0.1:8000/satellite-imagery/${data.project_id}_AFTER.jpg`}
+                      src={`/satellite-imagery/${data.project_id}_AFTER.jpg`}
                       alt="T1 Current 2023"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
@@ -274,12 +274,12 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       }}
                     />
                     <div className="absolute top-1.5 left-1.5 bg-black/80 text-emerald-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
-                      2023 Current
+                      2023 Recent
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-gov-muted font-mono">
-                  <span>Sensor: ESRI Sub-Meter Optical</span>
+                  <span>Sub-Meter Optical Imagery</span>
                   <span className="text-emerald-700 font-bold">100% Corroborated</span>
                 </div>
               </div>
@@ -293,11 +293,11 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-gov-navy" />
                   <h3 className="text-sm font-black text-gov-navy uppercase tracking-wider">
-                    Conformalized Quantile Forecast (P10 – P95 Fan Chart)
+                    Estimated Completion Window (Best Case to Worst Case)
                   </h3>
                 </div>
                 <span className="text-[11px] font-bold text-gov-muted bg-gov-surface px-2.5 py-1 rounded border border-gov-border">
-                  90% Coverage Guarantee (M1 Monotone)
+                  Confidence: 90%
                 </span>
               </div>
 
@@ -316,7 +316,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       >
                         <div className="flex items-center gap-1.5 bg-gov-navy text-gov-accent px-3 py-1 rounded-full text-xs font-black shadow-elevated border border-gov-accent/40 whitespace-nowrap">
                           <Sparkles className="w-3 h-3 text-gov-accent" />
-                          <span>P50 Median: {data.p50_date}</span>
+                          <span>Most Likely: {data.p50_date}</span>
                         </div>
                         <div className="w-0.5 h-4 bg-gov-navy" />
                       </div>
@@ -382,7 +382,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       >
                         <div className="w-0.5 h-2 bg-rose-400" />
                         <span className="text-[10px] font-bold text-rose-800 bg-rose-50/80 px-2 py-0.5 rounded border border-rose-200 whitespace-nowrap">
-                          P95: {data.p95_date}
+                          Worst-Case: {data.p95_date}
                         </span>
                       </div>
                     )}
@@ -393,24 +393,24 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 {/* Quantile Breakdown Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                   <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
-                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">P10 Optimistic</span>
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Best-Case Date</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p10_date}</p>
-                    <span className="text-[9px] text-gov-muted font-medium">Best 10% Outcome</span>
+                    <span className="text-[9px] text-gov-muted font-medium">If everything goes fast</span>
                   </div>
                   <div className="bg-white p-3.5 rounded-xl border-2 border-gov-navy text-center shadow-card bg-gov-surface/30">
-                    <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider">P50 Expected</span>
+                    <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider">Most Likely Date</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p50_date}</p>
-                    <span className="text-[9px] text-gov-navy font-bold">Statistical Median</span>
+                    <span className="text-[9px] text-gov-navy font-bold">Realistic Target</span>
                   </div>
                   <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
-                    <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider">P80 Conservative</span>
+                    <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider">Cautious Estimate</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p80_date}</p>
-                    <span className="text-[9px] text-gov-muted font-medium">80% Reliability</span>
+                    <span className="text-[9px] text-gov-muted font-medium">80% Confidence</span>
                   </div>
                   <div className="bg-white p-3.5 rounded-xl border border-rose-200 bg-rose-50/30 text-center shadow-soft">
-                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider">P95 Tail Risk</span>
+                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider">Worst-Case Date</span>
                     <p className="text-xs font-black text-rose-900 mt-1 font-mono">{data.p95_date}</p>
-                    <span className="text-[9px] text-rose-700 font-bold">Worst-Case Tail</span>
+                    <span className="text-[9px] text-rose-700 font-bold">If severe delays occur</span>
                   </div>
                 </div>
               </div>
@@ -420,11 +420,11 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span className="font-mono text-[10px] text-gov-muted truncate max-w-md">
-                    Merkle Root: {data.facts.fact_cost.lineage.merkle_root.slice(0, 24)}...
+                    Audit Fingerprint: {data.facts.fact_cost.lineage.merkle_root.slice(0, 24)}...
                   </span>
                 </div>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
-                  Audit Verifiable
+                  Audit Verified (CAG/CVC)
                 </span>
               </div>
             </div>

@@ -9,7 +9,6 @@ export default {
     "./janhavi/**/*.{js,ts,jsx,tsx}",
     "./soham/**/*.{js,ts,jsx,tsx}",
     "./aditya/**/*.{js,ts,jsx,tsx}",
-    "./purva/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'Mumbai Civic Issue Reporting & Resolution Portal',
-        short_name: 'Mumbai Civic',
-        description: 'Unified crowdsourced civic issue reporting platform for citizens and Brihanmumbai Municipal Corporation (BMC) in Mumbai.',
+        name: 'PRAKALP-DRISHTI — MoSPI Central Sector Mega-Projects Decision Intelligence',
+        short_name: 'PRAKALP-DRISHTI',
+        description: 'MoSPI Central Sector Mega-Projects Decision Intelligence System for Cabinet Secretariat, PMO, and MoSPI.',
         theme_color: '#1E2A45',
         background_color: '#F7F8FA',
         display: 'standalone',
@@ -52,9 +52,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@amey': path.resolve(__dirname, './amey'),
       '@tanmay': path.resolve(__dirname, './tanmay'),
+      '@parth': path.resolve(__dirname, './parth'),
       '@janhavi': path.resolve(__dirname, './janhavi'),
-      '@purva': path.resolve(__dirname, './purva'),
+      '@soham': path.resolve(__dirname, './soham'),
+      '@aditya': path.resolve(__dirname, './aditya'),
     },
   },
   server: {
