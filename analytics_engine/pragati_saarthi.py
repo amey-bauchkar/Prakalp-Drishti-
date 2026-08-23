@@ -22,10 +22,10 @@ class PragatiSaarthiEngine:
         self.graph_engine = get_setu_graph_engine()
         self.vitta_engine = get_vitta_vyuha_engine()
 
-    def _build_merkle_tree(self, leaves: List[str]) -> tuple[str, Dict[str, List[str]]]:
+    def _build_merkle_tree(self, leaves: List[str]) -> tuple[str, Dict[str, List[Dict[str, str]]]]:
         """
-        Builds a binary SHA-256 Merkle Tree from canonical fact strings.
-        Returns: (merkle_root_hash, {leaf_hash: proof_path})
+        Builds a full binary SHA-256 Merkle Tree from canonical fact strings.
+        Returns: (merkle_root_hash, {leaf_hash: [ {sibling: hash, position: 'left'|'right'} ]})
         """
         if not leaves:
             empty_root = hashlib.sha256(b"empty_tree").hexdigest()
@@ -33,9 +33,8 @@ class PragatiSaarthiEngine:
 
         current_level = [hashlib.sha256(leaf.encode("utf-8")).hexdigest() for leaf in leaves]
         leaf_hashes = list(current_level)
-        proofs = {h: [] for h in leaf_hashes}
-
         tree_levels = [current_level]
+
         while len(current_level) > 1:
             next_level = []
             for i in range(0, len(current_level), 2):
@@ -47,6 +46,23 @@ class PragatiSaarthiEngine:
             tree_levels.append(current_level)
 
         merkle_root = current_level[0]
+
+        # Generate inclusion proofs for each leaf
+        proofs = {}
+        for leaf_idx, leaf_h in enumerate(leaf_hashes):
+            proof = []
+            curr_idx = leaf_idx
+            for level in tree_levels[:-1]:
+                if curr_idx % 2 == 0:
+                    sibling_idx = curr_idx + 1 if curr_idx + 1 < len(level) else curr_idx
+                    pos = "right"
+                else:
+                    sibling_idx = curr_idx - 1
+                    pos = "left"
+                proof.append({"sibling": level[sibling_idx], "position": pos})
+                curr_idx = curr_idx // 2
+            proofs[leaf_h] = proof
+
         return merkle_root, proofs
 
     def generate_cabinet_briefing(self, focus_project_id: str = "400188") -> CabinetBriefing:
@@ -92,10 +108,13 @@ class PragatiSaarthiEngine:
         merkle_root, proofs = self._build_merkle_tree(fact_leaves)
         doc_hash = hashlib.sha256(f"{merkle_root}:{focus_project_id}:{datetime.now().strftime('%Y-%m-%d')}".encode("utf-8")).hexdigest()
 
-        # Update Fact Merkle Roots
-        for fid in audit_facts:
-            if audit_facts[fid].lineage:
-                audit_facts[fid].lineage.merkle_root = merkle_root
+        # Update Fact Merkle Roots and Proof Paths
+        for idx, (fid, fact) in enumerate(audit_facts.items()):
+            if fact.lineage and idx < len(fact_leaves):
+                leaf_str = fact_leaves[idx]
+                leaf_h = hashlib.sha256(leaf_str.encode("utf-8")).hexdigest()
+                fact.lineage.merkle_root = merkle_root
+                fact.lineage.merkle_path = [p["sibling"] for p in proofs.get(leaf_h, [])]
 
         # 4. Assertion & Render Layer (Bilingual Civil-Service PMO Template)
         

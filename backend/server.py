@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import pandas as pd
+from typing import Optional
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
@@ -16,6 +17,7 @@ if BASE_DIR not in sys.path:
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # Import Member Routers
 from modules.amey.router import router as amey_router
@@ -23,6 +25,7 @@ from modules.amey.router import router as amey_router
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
+IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
 STATIC_DIR = os.path.join(BASE_DIR, "frontend", "dist")
 
 app = FastAPI(
@@ -83,7 +86,9 @@ def load_in_memory_cache():
                 "target_date": str(row["RevisedDate"]),
                 "latitude": geo.get("lat") or geo.get("latitude") or 22.5,
                 "longitude": geo.get("lng") or geo.get("longitude") or 78.5,
-                "satellite_status": "CORROBORATED" if float(row["PhysicalProgress"]) > 40 else "DISCREPANCY_FLAGGED"
+                "satellite_status": "CORROBORATED" if float(row["PhysicalProgress"]) > 40 else "DISCREPANCY_FLAGGED",
+                "satellite_before_img": f"/satellite-imagery/{pid}_BEFORE.jpg",
+                "satellite_after_img": f"/satellite-imagery/{pid}_AFTER.jpg"
             })
         projects_cache = records
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
@@ -122,6 +127,26 @@ def get_project_by_id(project_id: str):
         if p["project_id"] == str(project_id):
             return p
     raise HTTPException(status_code=404, detail="Project not found")
+
+# ── Satellite Imagery API ──────────────────────────────────────────────────
+@app.get("/api/satellite/{project_id}")
+def get_satellite_imagery(project_id: str):
+    """Returns satellite before/after imagery paths for a project."""
+    before_path = os.path.join(IMAGERY_DIR, f"{project_id}_BEFORE.jpg")
+    after_path = os.path.join(IMAGERY_DIR, f"{project_id}_AFTER.jpg")
+    return {
+        "project_id": project_id,
+        "before_available": os.path.exists(before_path),
+        "after_available": os.path.exists(after_path),
+        "before_url": f"/satellite-imagery/{project_id}_BEFORE.jpg" if os.path.exists(before_path) else None,
+        "after_url": f"/satellite-imagery/{project_id}_AFTER.jpg" if os.path.exists(after_path) else None,
+        "source": "ESRI ArcGIS World Imagery + Wayback Living Atlas",
+        "resolution": "Sub-meter (~0.5-1.2m/pixel)"
+    }
+
+# Mount satellite imagery as static files
+if os.path.exists(IMAGERY_DIR):
+    app.mount("/satellite-imagery", StaticFiles(directory=IMAGERY_DIR), name="satellite-imagery")
 
 # Serve frontend build if present
 if os.path.exists(STATIC_DIR):

@@ -43,3 +43,8 @@ Thumbs.db
 *.log
 .system_generated/
 scratch/
+
+# Satellite Tile Cache
+paimana_extracted/satellite_data/raw_tiles/
+paimana_extracted/satellite_data/imagery_test/
+

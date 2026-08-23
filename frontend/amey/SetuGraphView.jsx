@@ -29,7 +29,10 @@ export default function SetuGraphView({ selectedProjectId = "400188" }) {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-gov-navy via-gov-navy-light to-gov-navy p-6 rounded-2xl text-white shadow-elevated border border-gov-border">
+      <div 
+        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
+        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -42,9 +45,9 @@ export default function SetuGraphView({ selectedProjectId = "400188" }) {
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <GitBranch className="w-6 h-6 text-gov-accent" />
-              SETU-GRAPH: Supply-Chain Dependency & Rupee Contagion
+              <span>SETU-GRAPH: Supply-Chain Dependency & Rupee Contagion</span>
             </h1>
-            <p className="text-gov-muted-light text-xs mt-1 max-w-2xl">
+            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
               Maps multi-modal infrastructure dependencies with explicit float and slack absorption. Delays only cascade when they exceed available free float.
             </p>
           </div>

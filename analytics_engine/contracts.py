@@ -45,6 +45,7 @@ class ProjectForecast(BaseModel):
     cost_overrun_perc: float
     baseline_reset_count: int
     rebaselined: bool
+    physical_progress_perc: float = Field(default=0.0, description="On-ground physical progress percentage from MoSPI")
     sanction_date: str
     original_end_date: str
     revised_end_date: str

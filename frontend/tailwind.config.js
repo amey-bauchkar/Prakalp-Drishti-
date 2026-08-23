@@ -3,8 +3,12 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./amey/**/*.{js,ts,jsx,tsx}",
     "./tanmay/**/*.{js,ts,jsx,tsx}",
+    "./parth/**/*.{js,ts,jsx,tsx}",
     "./janhavi/**/*.{js,ts,jsx,tsx}",
+    "./soham/**/*.{js,ts,jsx,tsx}",
+    "./aditya/**/*.{js,ts,jsx,tsx}",
     "./purva/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {

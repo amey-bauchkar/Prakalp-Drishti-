@@ -4,16 +4,20 @@ import KaalChakraView from './KaalChakraView';
 import SetuGraphView from './SetuGraphView';
 import VittaVyuhaView from './VittaVyuhaView';
 import PragatiSaarthiView from './PragatiSaarthiView';
+import UnifiedCockpitView from './UnifiedCockpitView';
+import AgencyIndexView from './AgencyIndexView';
 
 export default function AmeyMasterView() {
-  const [activeTab, setActiveTab] = useState('kaal_chakra');
-  const [selectedProjectId, setSelectedProjectId] = useState('400188');
+  const [activeTab, setActiveTab] = useState('unified_cockpit');
+  const [selectedProjectId, setSelectedProjectId] = useState('706724');
 
   const tabs = [
+    { id: 'unified_cockpit', label: 'UNIFIED COCKPIT', desc: 'Causal Loop & Live Simulation', icon: Sparkles },
     { id: 'kaal_chakra', label: 'KAAL-CHAKRA', desc: 'Schedule Survival & Fan Charts', icon: Clock },
     { id: 'setu_graph', label: 'SETU-GRAPH', desc: 'Dependency DAG & Rupee Contagion', icon: GitBranch },
     { id: 'vitta_vyuha', label: 'VITTA-VYUHA', desc: 'Stochastic Capital Allocator', icon: DollarSign },
     { id: 'pragati_saarthi', label: 'PRAGATI-SAARTHI', desc: 'Bilingual Cabinet Review', icon: FileText },
+    { id: 'agency_index', label: 'AGENCY INDEX', desc: 'Accountability & Velocity Rank', icon: Building2 },
   ];
 
   return (
@@ -27,7 +31,7 @@ export default function AmeyMasterView() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 min-w-[200px] p-3 rounded-xl text-left transition-all flex items-center gap-3 ${
+              className={`flex-1 min-w-[180px] p-3 rounded-xl text-left transition-all flex items-center gap-3 ${
                 isActive
                   ? 'bg-gov-navy text-white shadow-elevated'
                   : 'bg-gov-surface hover:bg-gov-muted-surface text-gov-navy border border-gov-border'
@@ -52,6 +56,12 @@ export default function AmeyMasterView() {
 
       {/* Render Active View */}
       <div className="transition-all">
+        {activeTab === 'unified_cockpit' && (
+          <UnifiedCockpitView
+            selectedProjectId={selectedProjectId}
+            onSelectProject={(id) => setSelectedProjectId(id)}
+          />
+        )}
         {activeTab === 'kaal_chakra' && (
           <KaalChakraView
             selectedProjectId={selectedProjectId}
@@ -66,6 +76,9 @@ export default function AmeyMasterView() {
         )}
         {activeTab === 'pragati_saarthi' && (
           <PragatiSaarthiView selectedProjectId={selectedProjectId} />
+        )}
+        {activeTab === 'agency_index' && (
+          <AgencyIndexView />
         )}
       </div>
     </div>

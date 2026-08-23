@@ -169,6 +169,7 @@ class KaalChakraEngine:
         
         planned_months = float(p["PlannedDurationMonths"])
         current_months = float(p["CurrentDurationMonths"])
+        progress_perc = float(p["PhysicalProgress"]) if ("PhysicalProgress" in p and pd.notna(p["PhysicalProgress"])) else 25.0
         
         # AFT Multiplier
         sec_mult = self.model_weights["sector_scales"].get(sector, 1.40)
@@ -176,48 +177,62 @@ class KaalChakraEngine:
         cost_mult = 1.0 + self.model_weights["cost_elasticity"] * np.log10(max(orig_cost, 100.0) / 100.0)
         rebase_mult = 1.0 + (reset_count * 0.15)
         
-        # Expected Total Duration in Months under AFT Log-Logistic
-        median_expected_duration = planned_months * sec_mult * ent_mult * cost_mult * rebase_mult
-        median_expected_duration = max(median_expected_duration, current_months + 2.0)
+        # Expected Total Duration in Months under AFT Log-Logistic with Bayesian Progress Conditioning
+        # 1. Top-Down AFT Prior from Day 0
+        prior_duration = planned_months * sec_mult * ent_mult * cost_mult * rebase_mult
         
-        # Fine-Gray Competing Risk Absorbing State (Fix M2)
-        # Foreclosure/Cancel probability increases with delay and rebaselining
-        foreclosure_prob = min(0.04 + (reset_count * 0.05) + (overrun_perc / 1000.0), 0.25)
+        # 2. Bottom-Up Empirical Earned Value & Progress-Conditioned Remaining Duration
+        historical_pace = max(progress_perc, 5.0) / max(current_months, 3.0)
+        rem_perc = max(100.0 - progress_perc, 0.5)
+        rem_months = max((rem_perc / max(historical_pace, 0.12)) * (sec_mult ** 0.3), 1.0)
+        duration_from_progress = current_months + rem_months
+        
+        # 3. Dynamic Credibility Weight: As on-ground completion approaches 100%, physical reality dominates
+        w_progress = float(np.clip(progress_perc / 100.0, 0.05, 0.95))
+        median_expected_duration = (1.0 - w_progress) * prior_duration + w_progress * duration_from_progress
+        median_expected_duration = max(median_expected_duration, current_months + 1.0)
+        
+        # Fine-Gray Competing Risk Absorbing State
+        # As on-ground physical progress rises, structural foreclosure probability drops
+        progress_attenuation = max(1.0 - (progress_perc / 100.0), 0.05)
+        foreclosure_prob = min(0.02 + (reset_count * 0.03) + (overrun_perc / 2000.0) * progress_attenuation, 0.35)
         pi_hat = 1.0 - foreclosure_prob # Probability of eventual completion
         
         # Generate Raw Quantiles from Log-Logistic AFT
         gamma = self.model_weights["shape_parameter_gamma"] # dispersion
-        # Log-logistic inverse CDF: F^{-1}(u) = mu * (u / (1 - u))^gamma
-        quantiles_u = np.array([0.10, 0.50, 0.80, 0.95])
+        rem_uncertainty_scale = max((100.0 - progress_perc) / 100.0, 0.15)
+        gamma_effective = gamma * np.sqrt(rem_uncertainty_scale)
         
-        # Conformal Quantile Adjustment factors (CQR widening from backtest coverage)
-        cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) # in months
+        quantiles_u = np.array([0.10, 0.50, 0.80, 0.95])
+        cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) * rem_uncertainty_scale
         
         # Compute raw durations for quantiles
-        raw_durations = median_expected_duration * np.power(quantiles_u / (1.0 - quantiles_u), gamma) + cqr_offsets
+        raw_durations = median_expected_duration * np.power(quantiles_u / (1.0 - quantiles_u), gamma_effective) + cqr_offsets
         
         # Fix M1: Monotone Rearrangement (np.maximum.accumulate guarantees strict non-decreasing quantiles)
         durations_monotone = np.maximum.accumulate(raw_durations)
-        durations_monotone = np.maximum(durations_monotone, current_months + np.array([1.0, 3.0, 6.0, 10.0]))
+        durations_monotone = np.maximum(durations_monotone, current_months + np.array([0.5, 1.0, 2.0, 4.0]) * rem_uncertainty_scale)
         
         q10_m, q50_m, q80_m, q95_m = durations_monotone
         
         # Convert duration months to forecasted calendar dates
-        p10_dt = sanction_dt + pd.Timedelta(days=int(q10_m * 30.4375))
-        p50_dt = sanction_dt + pd.Timedelta(days=int(q50_m * 30.4375))
-        p80_dt = sanction_dt + pd.Timedelta(days=int(q80_m * 30.4375))
-        p95_dt = sanction_dt + pd.Timedelta(days=int(q95_m * 30.4375))
+        # Safety cap: pandas Timestamp max is ~2262, cap durations to prevent overflow
+        MAX_FORECAST_DAYS = 63_000  # ~172 years, keeps dates within pandas Timestamp range
+        p10_dt = sanction_dt + pd.Timedelta(days=min(int(q10_m * 30.4375), MAX_FORECAST_DAYS))
+        p50_dt = sanction_dt + pd.Timedelta(days=min(int(q50_m * 30.4375), MAX_FORECAST_DAYS))
+        p80_dt = sanction_dt + pd.Timedelta(days=min(int(q80_m * 30.4375), MAX_FORECAST_DAYS))
+        p95_dt = sanction_dt + pd.Timedelta(days=min(int(q95_m * 30.4375), MAX_FORECAST_DAYS))
         
         # Target Date Compliance Probability
         # Probability of meeting official revised date: S(t_revised)
         t_revised_months = max((rev_end_dt - sanction_dt).days / 30.4375, 1.0)
         # Log-logistic CDF: F(t) = 1 / (1 + (mu / t)^(1/gamma))
-        prob_completion_before_revised = 1.0 / (1.0 + np.power(median_expected_duration / t_revised_months, 1.0 / gamma))
+        prob_completion_before_revised = 1.0 / (1.0 + np.power(median_expected_duration / t_revised_months, 1.0 / gamma_effective))
         prob_target_met = float(np.clip(prob_completion_before_revised * pi_hat, 0.01, 0.99))
         
         # Probability of meeting original DPR date
         t_orig_months = max((orig_end_dt - sanction_dt).days / 30.4375, 1.0)
-        prob_completion_before_orig = 1.0 / (1.0 + np.power(median_expected_duration / t_orig_months, 1.0 / gamma))
+        prob_completion_before_orig = 1.0 / (1.0 + np.power(median_expected_duration / t_orig_months, 1.0 / gamma_effective))
         prob_orig_met = float(np.clip(prob_completion_before_orig * pi_hat, 0.001, 0.95))
 
         # Merkle Lineage Reference
@@ -242,6 +257,15 @@ class KaalChakraEngine:
                 unit="INR_CR",
                 fact_type="currency_cr",
                 label="Sanctioned Capex (Latest Revised)",
+                lineage=lineage
+            ),
+            "fact_progress": Fact(
+                fact_id=f"fact_progress_{pid}",
+                value=progress_perc,
+                formatted_value=f"{progress_perc:.1f}%",
+                unit="PERCENT",
+                fact_type="probability",
+                label="Physical Progress (MoSPI Ground Audit)",
                 lineage=lineage
             ),
             "fact_overrun": Fact(
@@ -293,6 +317,7 @@ class KaalChakraEngine:
             cost_overrun_perc=overrun_perc,
             baseline_reset_count=reset_count,
             rebaselined=is_rebaselined,
+            physical_progress_perc=progress_perc,
             sanction_date=sanction_dt.strftime("%Y-%m-%d"),
             original_end_date=orig_end_dt.strftime("%Y-%m-%d"),
             revised_end_date=rev_end_dt.strftime("%Y-%m-%d"),
@@ -302,7 +327,7 @@ class KaalChakraEngine:
             p95_date=p95_dt.strftime("%Y-%m-%d"),
             prob_target_met_official=prob_target_met,
             prob_target_met_rebaselined=prob_orig_met,
-            competing_risk_state="NEVER" if (foreclosure_prob > 0.20 and overrun_perc > 150.0) else "ACTIVE",
+            competing_risk_state="NEVER" if (foreclosure_prob >= 0.18 and overrun_perc > 100.0) else "ACTIVE",
             facts=facts
         )
 

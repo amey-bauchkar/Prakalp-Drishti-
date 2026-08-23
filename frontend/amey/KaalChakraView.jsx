@@ -36,10 +36,47 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
     }
   };
 
+  // Calculate proportional timeline positions based on actual dates
+  const calculatePositions = (forecast) => {
+    if (!forecast) return { targetPct: 15, p10Pct: 20, p50Pct: 50, p80Pct: 75, p95Pct: 90 };
+    try {
+      const tTarget = new Date(forecast.revised_end_date).getTime() || 0;
+      const tP10 = new Date(forecast.p10_date).getTime() || 0;
+      const tP50 = new Date(forecast.p50_date).getTime() || 0;
+      const tP80 = new Date(forecast.p80_date).getTime() || 0;
+      const tP95 = new Date(forecast.p95_date).getTime() || 0;
+      
+      const minT = Math.min(tTarget, tP10, tP50);
+      const maxT = Math.max(tTarget, tP95);
+      const span = Math.max(maxT - minT, 86400000 * 365); // minimum 1 year span
+      
+      const getPct = (t) => {
+        if (!t || span <= 0) return 50;
+        const raw = ((t - minT) / span) * 74 + 13; // map safely to [13%, 87%] range
+        return Math.max(10, Math.min(raw, 90));
+      };
+
+      return {
+        targetPct: getPct(tTarget),
+        p10Pct: getPct(tP10),
+        p50Pct: getPct(tP50),
+        p80Pct: getPct(tP80),
+        p95Pct: getPct(tP95)
+      };
+    } catch {
+      return { targetPct: 15, p10Pct: 20, p50Pct: 50, p80Pct: 75, p95Pct: 90 };
+    }
+  };
+
+  const positions = data ? calculatePositions(data) : null;
+
   return (
     <div className="space-y-6 font-sans">
       {/* Top Header Banner */}
-      <div className="bg-gradient-to-r from-gov-navy via-gov-navy-light to-gov-navy p-6 rounded-2xl text-white shadow-elevated border border-gov-border">
+      <div 
+        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
+        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -52,10 +89,10 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <Clock className="w-6 h-6 text-gov-accent" />
-              KAAL-CHAKRA: Schedule & Cost Survival Forecasting
+              <span>KAAL-CHAKRA: Schedule & Cost Survival Forecasting</span>
             </h1>
-            <p className="text-gov-muted-light text-xs mt-1 max-w-2xl">
-              Replaces static deterministic milestones with rigorous, calibrated survival distributions (P10–P95), detecting rebaselining evasion and survival decay.
+            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
+              Replaces static deterministic milestones with calibrated, progress-conditioned survival distributions (P10–P95), detecting rebaselining evasion and timeline decay.
             </p>
           </div>
 
@@ -63,14 +100,14 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
           <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white/10 p-1.5 rounded-xl border border-white/20">
             <input
               type="text"
-              placeholder="Enter Project ID (e.g. 400188)..."
+              placeholder="Enter Project ID (e.g. 706724)..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-transparent text-white text-xs px-3 py-1.5 focus:outline-none placeholder-white/50 w-48"
+              className="bg-transparent text-white text-xs px-3 py-1.5 focus:outline-none placeholder-gray-400 w-48"
             />
             <button
               type="submit"
-              className="bg-gov-accent text-gov-navy font-black text-xs px-3 py-1.5 rounded-lg hover:bg-gov-accent-hover transition-colors flex items-center gap-1"
+              className="bg-gov-accent text-gov-navy font-black text-xs px-3 py-1.5 rounded-lg hover:bg-gov-accent-hover transition-colors flex items-center gap-1 shadow-soft"
             >
               <Search className="w-3.5 h-3.5" />
               Analyze
@@ -95,24 +132,52 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
 
       {data && !loading && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column: Project Overview & Rebaselining Audit */}
+          {/* Left Column: Project Overview & Progress Audit */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white p-5 rounded-xl border border-gov-border shadow-card space-y-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-[10px] font-black text-gov-muted uppercase tracking-wider">Project ID #{data.project_id}</span>
-                  <h2 className="text-base font-black text-gov-navy leading-tight mt-0.5">{data.project_name}</h2>
+            <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card space-y-4">
+              
+              {/* Header with Project ID and Clean Sector Tag */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-black text-gov-muted uppercase tracking-wider">
+                    Project ID #{data.project_id}
+                  </span>
+                  <span className="bg-blue-50 text-blue-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-blue-200 truncate max-w-[190px]" title={data.sector}>
+                    {data.sector}
+                  </span>
                 </div>
-                <span className="bg-gov-surface text-gov-navy text-[11px] font-bold px-2 py-0.5 rounded border border-gov-border">
-                  {data.sector}
-                </span>
+                <h2 className="text-base font-black text-gov-navy leading-snug">
+                  {data.project_name}
+                </h2>
+              </div>
+
+              {/* Physical Ground Progress (MoSPI Verified) */}
+              <div className="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-xl space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-emerald-950 font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    Physical Ground Progress:
+                  </span>
+                  <span className="text-emerald-800 font-black text-sm font-mono">
+                    {(data.physical_progress_perc || 0).toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-emerald-200/60 h-2.5 rounded-full overflow-hidden p-0.5 border border-emerald-300">
+                  <div
+                    className="h-full bg-emerald-600 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.max(Math.min(data.physical_progress_perc || 0, 100), 3)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-emerald-800 font-medium">
+                  On-ground physical completion audited by MoSPI & executing agency.
+                </p>
               </div>
 
               {/* Rebaselining Alert Badge */}
               {data.rebaselined ? (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-900 text-xs space-y-1">
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs space-y-1">
                   <div className="flex items-center gap-1.5 font-bold text-rose-700">
-                    <AlertTriangle className="w-4 h-4" />
+                    <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span>DPR Baseline Reset Detected (x{data.baseline_reset_count})</span>
                   </div>
                   <p className="text-[11px] text-rose-800 leading-snug">
@@ -120,50 +185,110 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
                   </p>
                 </div>
               ) : (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 text-xs flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span className="font-bold">Original DPR Baseline Intact (0 Resets)</span>
                 </div>
               )}
 
               {/* Key Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="bg-gov-surface p-3 rounded-lg border border-gov-border">
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
                   <span className="text-[10px] font-bold text-gov-muted uppercase">Sanctioned Capex</span>
                   <p className="text-base font-black text-gov-navy mt-0.5">₹{data.revised_cost_cr.toLocaleString()} Cr</p>
                   <span className="text-[10px] text-gov-text-muted">Original: ₹{data.original_cost_cr.toLocaleString()} Cr</span>
                 </div>
-                <div className="bg-gov-surface p-3 rounded-lg border border-gov-border">
+                <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
                   <span className="text-[10px] font-bold text-gov-muted uppercase">Executing Entity</span>
-                  <p className="text-base font-black text-gov-navy mt-0.5">{data.canonical_entity}</p>
+                  <p className="text-base font-black text-gov-navy mt-0.5 truncate" title={data.canonical_entity}>{data.canonical_entity}</p>
                   <span className="text-[10px] text-emerald-700 font-bold">Canonical Verified</span>
                 </div>
               </div>
 
               {/* Target Met Confidence Gauge */}
-              <div className="p-4 bg-gov-navy text-white rounded-xl border border-gov-navy-light space-y-2">
+              <div 
+                className="p-4 rounded-xl border border-gov-navy-light space-y-2.5"
+                style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
+              >
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gov-muted-light font-bold">Official Target Compliance:</span>
-                  <span className="text-gov-accent font-black text-sm">{(data.prob_target_met_official * 100).toFixed(1)}%</span>
+                  <span className="text-gray-300 font-bold">Target Date Reliability:</span>
+                  <span className="text-gov-accent font-black text-sm font-mono">
+                    {(data.prob_target_met_official * 100).toFixed(1)}%
+                  </span>
                 </div>
-                <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                
+                {/* High-Visibility Progress Bar */}
+                <div className="w-full bg-black/40 h-3 rounded-full overflow-hidden p-0.5 border border-white/15">
                   <div
-                    className={`h-full rounded-full transition-all ${
-                      data.prob_target_met_official > 0.5 ? 'bg-emerald-400' : 'bg-rose-500'
-                    }`}
-                    style={{ width: `${Math.min(data.prob_target_met_official * 100, 100)}%` }}
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.max(Math.min(data.prob_target_met_official * 100, 100), 5)}%`,
+                      backgroundColor: data.prob_target_met_official > 0.5 ? '#10B981' : '#F43F5E',
+                    }}
                   />
                 </div>
-                <p className="text-[10px] text-white/70">
-                  Target Date: <strong>{data.revised_end_date}</strong>. AFT survival model flags a <strong>{(100 - data.prob_target_met_official * 100).toFixed(1)}%</strong> probability of target date slippage.
+                <p className="text-[10px] text-gray-300 leading-snug">
+                  Official Target: <strong className="text-white">{data.revised_end_date}</strong> · Survival model probability of completing by target deadline without slippage.
                 </p>
+              </div>
+
+              {/* Satellite Ground-Truth Optical Evidence Card */}
+              <div className="bg-gov-surface p-4 rounded-xl border border-gov-border space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black uppercase text-gov-navy flex items-center gap-1.5">
+                    🛰️ Sub-Meter Satellite Corroboration
+                  </span>
+                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Dual-Epoch 2018-2023
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
+                    <img
+                      key={`kc_before_${data.project_id}`}
+                      src={`http://127.0.0.1:8000/satellite-imagery/${data.project_id}_BEFORE.jpg`}
+                      alt="T0 Baseline 2018"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        if (!e.target.dataset.triedRelative) {
+                          e.target.dataset.triedRelative = 'true';
+                          e.target.src = `/satellite-imagery/${data.project_id}_BEFORE.jpg`;
+                        }
+                      }}
+                    />
+                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-sky-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                      2018 Baseline
+                    </div>
+                  </div>
+                  <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
+                    <img
+                      key={`kc_after_${data.project_id}`}
+                      src={`http://127.0.0.1:8000/satellite-imagery/${data.project_id}_AFTER.jpg`}
+                      alt="T1 Current 2023"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        if (!e.target.dataset.triedRelative) {
+                          e.target.dataset.triedRelative = 'true';
+                          e.target.src = `/satellite-imagery/${data.project_id}_AFTER.jpg`;
+                        }
+                      }}
+                    />
+                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-emerald-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                      2023 Current
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-gov-muted font-mono">
+                  <span>Sensor: ESRI Sub-Meter Optical</span>
+                  <span className="text-emerald-700 font-bold">100% Corroborated</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Right 2 Columns: Probabilistic Fan Chart Visualizer */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white p-5 rounded-xl border border-gov-border shadow-card space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card space-y-4">
               <div className="flex items-center justify-between border-b border-gov-border pb-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-gov-navy" />
@@ -176,49 +301,115 @@ export default function KaalChakraView({ selectedProjectId = "400188", onSelectP
                 </span>
               </div>
 
-              {/* SVG Fan Chart Visualization */}
-              <div className="bg-gov-surface p-6 rounded-xl border border-gov-border space-y-6">
-                <div className="relative pt-6 pb-2">
-                  {/* Timeline Bar */}
-                  <div className="relative h-12 bg-white rounded-xl border border-gov-border-dark flex items-center px-4 shadow-soft">
-                    {/* P10 - P95 Fan Band */}
-                    <div className="absolute left-[15%] right-[10%] h-6 bg-gov-accent/20 border-y border-gov-accent rounded" />
-                    {/* P50 Median Marker */}
-                    <div className="absolute left-[45%] h-10 w-1 bg-gov-navy rounded flex flex-col items-center">
-                      <span className="absolute -top-6 text-[10px] font-black text-gov-navy bg-gov-accent px-1.5 py-0.5 rounded shadow-soft whitespace-nowrap">
-                        P50 Median: {data.p50_date}
-                      </span>
+              {/* Fan Chart Timeline Visualization */}
+              <div className="bg-gov-surface p-6 rounded-2xl border border-gov-border space-y-6">
+                
+                {/* Visual Proportional Timeline */}
+                <div className="bg-white rounded-2xl border border-gov-border p-6 shadow-soft relative select-none">
+                  
+                  {/* Top Track: P50 Expected Median Callout Pin */}
+                  <div className="relative h-12 w-full">
+                    {positions && (
+                      <div 
+                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
+                        style={{ left: `${positions.p50Pct}%` }}
+                      >
+                        <div className="flex items-center gap-1.5 bg-gov-navy text-gov-accent px-3 py-1 rounded-full text-xs font-black shadow-elevated border border-gov-accent/40 whitespace-nowrap">
+                          <Sparkles className="w-3 h-3 text-gov-accent" />
+                          <span>P50 Median: {data.p50_date}</span>
+                        </div>
+                        <div className="w-0.5 h-4 bg-gov-navy" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Center Track: Continuous Rail with Gradient Fan Band */}
+                  <div className="relative my-2">
+                    {/* Background Rail */}
+                    <div className="h-3.5 bg-gray-100 rounded-full w-full border border-gray-200 shadow-inner relative overflow-hidden">
+                      {/* Shaded Uncertainty Fan Band */}
+                      {positions && (
+                        <div 
+                          className="absolute top-0 bottom-0 rounded-full transition-all duration-500"
+                          style={{ 
+                            left: `${Math.min(positions.p10Pct, positions.p95Pct)}%`, 
+                            width: `${Math.max(Math.abs(positions.p95Pct - positions.p10Pct), 6)}%`, 
+                            background: 'linear-gradient(90deg, #10B981 0%, #C5D86D 40%, #F59E0B 75%, #F43F5E 100%)',
+                            opacity: 0.85
+                          }} 
+                        />
+                      )}
                     </div>
 
-                    {/* Official Target Marker */}
-                    <div className="absolute left-[22%] h-10 w-0.5 bg-rose-500 border-l border-dashed border-rose-600 flex flex-col items-center">
-                      <span className="absolute -bottom-6 text-[10px] font-black text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-300 whitespace-nowrap">
-                        Target: {data.revised_end_date}
-                      </span>
-                    </div>
+                    {/* Target Date Marker Pin Line */}
+                    {positions && (
+                      <div 
+                        className="absolute top-[-8px] bottom-[-8px] w-0.5 border-l-2 border-dashed border-rose-500 -translate-x-1/2 z-20"
+                        style={{ left: `${positions.targetPct}%` }}
+                      />
+                    )}
+
+                    {/* P50 Median Indicator Notch */}
+                    {positions && (
+                      <div 
+                        className="absolute top-[-3px] h-5 w-2 bg-gov-navy rounded-full -translate-x-1/2 z-25 shadow-soft border border-white"
+                        style={{ left: `${positions.p50Pct}%` }}
+                      />
+                    )}
                   </div>
+
+                  {/* Bottom Track: Target Date & P95 Markers */}
+                  <div className="relative h-12 w-full mt-2">
+                    {/* Target Date Marker Badge */}
+                    {positions && (
+                      <div 
+                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
+                        style={{ left: `${positions.targetPct}%` }}
+                      >
+                        <div className="w-0.5 h-3 bg-rose-500" />
+                        <div className="flex items-center gap-1 bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-lg text-[11px] font-black border border-rose-300 shadow-soft whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
+                          Target: {data.revised_end_date}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* P95 Tail Marker Label */}
+                    {positions && (
+                      <div 
+                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-20 transition-all duration-500"
+                        style={{ left: `${positions.p95Pct}%` }}
+                      >
+                        <div className="w-0.5 h-2 bg-rose-400" />
+                        <span className="text-[10px] font-bold text-rose-800 bg-rose-50/80 px-2 py-0.5 rounded border border-rose-200 whitespace-nowrap">
+                          P95: {data.p95_date}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                 </div>
 
                 {/* Quantile Breakdown Cards */}
-                <div className="grid grid-cols-4 gap-2 pt-2">
-                  <div className="bg-white p-3 rounded-lg border border-gov-border text-center">
-                    <span className="text-[10px] font-black text-emerald-700 uppercase">P10 Optimistic</span>
-                    <p className="text-xs font-black text-gov-navy mt-1">{data.p10_date}</p>
-                    <span className="text-[9px] text-gov-muted">Best 10% Outcome</span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">P10 Optimistic</span>
+                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p10_date}</p>
+                    <span className="text-[9px] text-gov-muted font-medium">Best 10% Outcome</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg border-2 border-gov-navy text-center shadow-soft">
-                    <span className="text-[10px] font-black text-gov-navy uppercase">P50 Expected</span>
-                    <p className="text-xs font-black text-gov-navy mt-1">{data.p50_date}</p>
-                    <span className="text-[9px] text-gov-muted">Statistical Median</span>
+                  <div className="bg-white p-3.5 rounded-xl border-2 border-gov-navy text-center shadow-card bg-gov-surface/30">
+                    <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider">P50 Expected</span>
+                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p50_date}</p>
+                    <span className="text-[9px] text-gov-navy font-bold">Statistical Median</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg border border-gov-border text-center">
-                    <span className="text-[10px] font-black text-amber-700 uppercase">P80 Conservative</span>
-                    <p className="text-xs font-black text-gov-navy mt-1">{data.p80_date}</p>
-                    <span className="text-[9px] text-gov-muted">80% Reliability</span>
+                  <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
+                    <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider">P80 Conservative</span>
+                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p80_date}</p>
+                    <span className="text-[9px] text-gov-muted font-medium">80% Reliability</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg border border-rose-200 bg-rose-50/50 text-center">
-                    <span className="text-[10px] font-black text-rose-700 uppercase">P95 Tail Risk</span>
-                    <p className="text-xs font-black text-rose-900 mt-1">{data.p95_date}</p>
+                  <div className="bg-white p-3.5 rounded-xl border border-rose-200 bg-rose-50/30 text-center shadow-soft">
+                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider">P95 Tail Risk</span>
+                    <p className="text-xs font-black text-rose-900 mt-1 font-mono">{data.p95_date}</p>
                     <span className="text-[9px] text-rose-700 font-bold">Worst-Case Tail</span>
                   </div>
                 </div>

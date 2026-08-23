@@ -36,7 +36,10 @@ export default function PragatiSaarthiView({ selectedProjectId = "400188" }) {
   return (
     <div className="space-y-6 font-sans relative">
       {/* Top Header Banner */}
-      <div className="bg-gradient-to-r from-gov-navy via-gov-navy-light to-gov-navy p-6 rounded-2xl text-white shadow-elevated border border-gov-border">
+      <div 
+        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
+        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -49,9 +52,9 @@ export default function PragatiSaarthiView({ selectedProjectId = "400188" }) {
             </div>
             <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
               <FileText className="w-6 h-6 text-gov-accent" />
-              PRAGATI-SAARTHI: Deterministic Bilingual Cabinet Review
+              <span>PRAGATI-SAARTHI: Deterministic Bilingual Cabinet Review</span>
             </h1>
-            <p className="text-gov-muted-light text-xs mt-1 max-w-2xl">
+            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
               Generates mathematically auditable, exception-based briefs for PMO and Cabinet Secretariat reviews. Click any metric to inspect its cryptographic Merkle audit trail.
             </p>
           </div>
