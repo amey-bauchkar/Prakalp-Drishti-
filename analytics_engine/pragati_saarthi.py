@@ -59,11 +59,32 @@ class PragatiSaarthiEngine:
                 else:
                     sibling_idx = curr_idx - 1
                     pos = "left"
-                proof.append({"sibling": level[sibling_idx], "position": pos})
+                proof.append({"hash": level[sibling_idx], "position": pos})
                 curr_idx = curr_idx // 2
             proofs[leaf_h] = proof
 
         return merkle_root, proofs
+
+    @staticmethod
+    def verify_merkle_proof(leaf_str_or_hash: str, proof: List[Dict[str, str]], expected_root: str) -> bool:
+        """
+        Cryptographically verifies whether a given leaf belongs to the expected Merkle root.
+        Recomputes the root step-by-step from the leaf + positional siblings.
+        """
+        if len(leaf_str_or_hash) == 64 and all(c in '0123456789abcdefABCDEF' for c in leaf_str_or_hash):
+            curr_hash = leaf_str_or_hash.lower()
+        else:
+            curr_hash = hashlib.sha256(leaf_str_or_hash.encode("utf-8")).hexdigest()
+
+        for step in proof:
+            sibling = str(step.get("hash", step.get("sibling", ""))).lower()
+            position = step.get("position", "right")
+            if position == "left":
+                curr_hash = hashlib.sha256(f"{sibling}:{curr_hash}".encode("utf-8")).hexdigest()
+            else:
+                curr_hash = hashlib.sha256(f"{curr_hash}:{sibling}".encode("utf-8")).hexdigest()
+
+        return curr_hash.lower() == str(expected_root).lower()
 
     def generate_cabinet_briefing(self, focus_project_id: str = "400188") -> CabinetBriefing:
         # 1. Gather Engine Artifacts
@@ -98,23 +119,27 @@ class PragatiSaarthiEngine:
                 dataset_sha256=self.kaal_engine.dataset_hash,
                 model_sha256=self.kaal_engine.model_hash,
                 merkle_root="",
-                merkle_path=[]
+                merkle_path=[],
+                merkle_proof=[]
             )
         )
         audit_facts[alloc_fact.fact_id] = alloc_fact
-        fact_leaves.append(json.dumps({"id": alloc_fact.fact_id, "val": alloc_fact.value}, sort_keys=True))
+        fact_leaves.append(json.dumps({"id": alloc_fact.fact_id, "val": alloc_fact.value, "unit": alloc_fact.unit}, sort_keys=True))
 
         # 3. Compute Merkle Root
         merkle_root, proofs = self._build_merkle_tree(fact_leaves)
         doc_hash = hashlib.sha256(f"{merkle_root}:{focus_project_id}:{datetime.now().strftime('%Y-%m-%d')}".encode("utf-8")).hexdigest()
 
-        # Update Fact Merkle Roots and Proof Paths
+        # Update Fact Merkle Roots and Proof Paths (Unshared unique assignment)
         for idx, (fid, fact) in enumerate(audit_facts.items()):
             if fact.lineage and idx < len(fact_leaves):
                 leaf_str = fact_leaves[idx]
                 leaf_h = hashlib.sha256(leaf_str.encode("utf-8")).hexdigest()
+                leaf_proof = proofs.get(leaf_h, [])
                 fact.lineage.merkle_root = merkle_root
-                fact.lineage.merkle_path = [p["sibling"] for p in proofs.get(leaf_h, [])]
+                fact.lineage.merkle_proof = leaf_proof
+                fact.lineage.merkle_path = [p["hash"] for p in leaf_proof]
+
 
         # 4. Assertion & Render Layer (Bilingual Civil-Service PMO Template)
         

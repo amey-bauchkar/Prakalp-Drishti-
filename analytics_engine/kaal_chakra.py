@@ -143,7 +143,7 @@ class KaalChakraEngine:
         weights_str = json.dumps(self.model_weights, sort_keys=True)
         self.model_hash = hashlib.sha256(weights_str.encode("utf-8")).hexdigest()
 
-    def forecast_project(self, project_id: str) -> ProjectForecast:
+    def forecast_project(self, project_id: str, delay_shock_months: float = 0.0) -> ProjectForecast:
         row = self.df[self.df["ProjectId"].astype(str) == str(project_id)]
         if row.empty:
             # Fallback to first project if not found
@@ -168,7 +168,7 @@ class KaalChakraEngine:
         rev_end_dt = p["RevisedDate"] if pd.notna(p["RevisedDate"]) else orig_end_dt + pd.Timedelta(days=365*2)
         
         planned_months = float(p["PlannedDurationMonths"])
-        current_months = float(p["CurrentDurationMonths"])
+        current_months = float(p["CurrentDurationMonths"]) + float(delay_shock_months)
         progress_perc = float(p["PhysicalProgress"]) if ("PhysicalProgress" in p and pd.notna(p["PhysicalProgress"])) else 25.0
         
         # AFT Multiplier
@@ -190,12 +190,17 @@ class KaalChakraEngine:
         # 3. Dynamic Credibility Weight: As on-ground completion approaches 100%, physical reality dominates
         w_progress = float(np.clip(progress_perc / 100.0, 0.05, 0.95))
         median_expected_duration = (1.0 - w_progress) * prior_duration + w_progress * duration_from_progress
+        
+        # Apply dynamic delay shock to expected duration if simulated
+        if delay_shock_months > 0.0:
+            median_expected_duration += float(delay_shock_months) * 1.15
+
         median_expected_duration = max(median_expected_duration, current_months + 1.0)
         
-        # Fine-Gray Competing Risk Absorbing State
-        # As on-ground physical progress rises, structural foreclosure probability drops
+        # Fine-Gray Competing Risk Absorbing State (Strict non-negative clamp [0.0, 0.35])
         progress_attenuation = max(1.0 - (progress_perc / 100.0), 0.05)
-        foreclosure_prob = min(0.02 + (reset_count * 0.03) + (overrun_perc / 2000.0) * progress_attenuation, 0.35)
+        foreclosure_raw = 0.02 + (reset_count * 0.03) + (overrun_perc / 2000.0) * progress_attenuation
+        foreclosure_prob = float(np.clip(foreclosure_raw, 0.0, 0.35))
         pi_hat = 1.0 - foreclosure_prob # Probability of eventual completion
         
         # Generate Raw Quantiles from Log-Logistic AFT
@@ -235,20 +240,23 @@ class KaalChakraEngine:
         prob_completion_before_orig = 1.0 / (1.0 + np.power(median_expected_duration / t_orig_months, 1.0 / gamma_effective))
         prob_orig_met = float(np.clip(prob_completion_before_orig * pi_hat, 0.001, 0.95))
 
-        # Merkle Lineage Reference
+        # Query & Distinct Lineage Factory (Prevents Aliasing)
         query_str = f"SELECT * FROM paimana WHERE ProjectId = '{pid}' AND Snapshot = 'June2026'"
-        q_hash = hashlib.sha256(query_str.encode("utf-8")).hexdigest()
-        merkle_root = hashlib.sha256(f"{q_hash}:{self.dataset_hash}:{self.model_hash}".encode("utf-8")).hexdigest()
         
-        lineage = LineageRef(
-            query_sha256=q_hash,
-            dataset_sha256=self.dataset_hash,
-            model_sha256=self.model_hash,
-            merkle_root=merkle_root,
-            merkle_path=[q_hash[:16], self.dataset_hash[:16], self.model_hash[:16]]
-        )
+        def _make_distinct_lineage(fact_name: str) -> LineageRef:
+            f_query = f"{query_str} -- fact={fact_name}"
+            q_h = hashlib.sha256(f_query.encode("utf-8")).hexdigest()
+            m_root = hashlib.sha256(f"{q_h}:{self.dataset_hash}:{self.model_hash}".encode("utf-8")).hexdigest()
+            return LineageRef(
+                query_sha256=q_h,
+                dataset_sha256=self.dataset_hash,
+                model_sha256=self.model_hash,
+                merkle_root=m_root,
+                merkle_path=[q_h[:16], self.dataset_hash[:16], self.model_hash[:16]],
+                merkle_proof=[]
+            )
         
-        # Structured Audit Facts
+        # Structured Audit Facts (Each fact receives a distinct, unshared LineageRef instance)
         facts = {
             "fact_cost": Fact(
                 fact_id=f"fact_cost_{pid}",
@@ -257,7 +265,7 @@ class KaalChakraEngine:
                 unit="INR_CR",
                 fact_type="currency_cr",
                 label="Sanctioned Capex (Latest Revised)",
-                lineage=lineage
+                lineage=_make_distinct_lineage("cost")
             ),
             "fact_progress": Fact(
                 fact_id=f"fact_progress_{pid}",
@@ -266,7 +274,7 @@ class KaalChakraEngine:
                 unit="PERCENT",
                 fact_type="probability",
                 label="Physical Progress (MoSPI Ground Audit)",
-                lineage=lineage
+                lineage=_make_distinct_lineage("progress")
             ),
             "fact_overrun": Fact(
                 fact_id=f"fact_overrun_{pid}",
@@ -275,7 +283,7 @@ class KaalChakraEngine:
                 unit="PERCENT",
                 fact_type="probability",
                 label="True Capex Overrun vs DPR",
-                lineage=lineage
+                lineage=_make_distinct_lineage("overrun")
             ),
             "fact_p50_completion": Fact(
                 fact_id=f"fact_p50_{pid}",
@@ -292,7 +300,7 @@ class KaalChakraEngine:
                     alpha_coverage=0.90,
                     is_monotone_guaranteed=True
                 ),
-                lineage=lineage
+                lineage=_make_distinct_lineage("p50_completion")
             ),
             "fact_target_prob": Fact(
                 fact_id=f"fact_target_prob_{pid}",
@@ -301,7 +309,7 @@ class KaalChakraEngine:
                 unit="PERCENT",
                 fact_type="probability",
                 label="Confidence of Meeting Contractor Target Date",
-                lineage=lineage
+                lineage=_make_distinct_lineage("target_prob")
             )
         }
 

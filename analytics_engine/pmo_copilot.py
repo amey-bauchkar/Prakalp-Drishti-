@@ -47,6 +47,16 @@ class PMOCopilotEngine:
                 "merkle_root": f.lineage.merkle_root if f.lineage else ""
             })
 
+        # Add Supply-Chain Network Contagion Fact
+        graph_fact_id = f"fact_graph_locked_{pid}"
+        facts_list.append({
+            "fact_id": graph_fact_id,
+            "label": "Downstream Systemic Capital Locked (P50)",
+            "value": f"₹{subgraph.total_cascade_locked_p50_cr:,.2f} Cr",
+            "unit": "INR_CR",
+            "merkle_root": hashlib.sha256(f"GRAPH:{pid}:{subgraph.total_cascade_locked_p50_cr}".encode("utf-8")).hexdigest()
+        })
+
         # Add Satellite Corroboration Fact
         sat_fact_id = f"fact_sat_audit_{pid}"
         facts_list.append({
@@ -83,7 +93,7 @@ class PMOCopilotEngine:
                 "priority": "CRITICAL",
                 "finding": f"Upstream delivery friction locks ₹{subgraph.total_cascade_locked_p50_cr:,.2f} Cr across {len(subgraph.nodes)} connected downstream nodes in the national grid.",
                 "recommendation": "Convene joint coordination meeting with Chief Secretary to expedite critical path clearance.",
-                "citing_fact_id": f"fact_graph_locked_{pid}"
+                "citing_fact_id": graph_fact_id
             })
 
         # Rule 3: Earth Observation Satellite Corroboration
@@ -120,7 +130,7 @@ class PMOCopilotEngine:
             "action_items": pmo_action_items,
             "grounded_facts": facts_list,
             "satellite_audit": sat_audit,
-            "qr_verification_url": f"/api/amey/verify/{doc_hash}/fact_cost_{pid}"
+            "qr_verification_url": f"/api/amey/verify/{doc_hash}/fact_cost_{pid}?project_id={pid}"
         }
 
 _copilot_instance = None

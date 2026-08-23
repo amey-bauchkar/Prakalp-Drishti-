@@ -52,14 +52,23 @@ class SetuGraphEngine:
                         pid = str(g.get("ProjectId") or g.get("id"))
                         self.geo_data[pid] = g
 
-        # 2. Add Nodes
+        # 2. Add Nodes with Real Schedule Delay Computation
         for _, row in self.df.iterrows():
             pid = str(row["ProjectId"])
             pname = str(row["ProjectName"])
             sector = str(row["SectorName"])
             state = str(row["StateName"])
             cost = float(row["RevisedCost"])
-            delay = float(row["DELAYED_TIME"])
+            
+            # Compute empirical milestone delay from official dates
+            orig_dt = pd.to_datetime(row.get("OriginalEndDate"), errors="coerce", dayfirst=True)
+            rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
+            if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
+                sched_delay = max(0.0, (rev_dt - orig_dt).days / 30.4375)
+            else:
+                sched_delay = float(row.get("OnboardingDelay", 0.0) or 0.0)
+            delay = float(max(sched_delay, float(row.get("DELAYED_TIME", 0.0) or 0.0)))
+            
             entity = self.entity_mapping.get(str(row["COMPANYNAME"]), {}).get("canonical_id", "OTHER")
 
             self.raw_graph.add_node(
@@ -124,7 +133,8 @@ class SetuGraphEngine:
 
         # 4. Tarjan's Strongly Connected Components (SCC) Condensation -> Strict DAG G*
         scc_list = list(nx.strongly_connected_components(self.raw_graph))
-        condensed = nx.condensation(self.raw_graph, scc_list)
+        self.tarjan_scc_count = len(scc_list)
+        self.condensed_dag = nx.condensation(self.raw_graph, scc_list)
         
         # Build DAG representation
         self.dag = self.raw_graph.copy()
@@ -276,7 +286,7 @@ class SetuGraphEngine:
         shapley_df = pd.DataFrame(shapley_records)
         shapley_df.to_parquet(os.path.join(ARTIFACTS_DIR, "shapley.parquet"), index=False)
 
-    def get_k_hop_subgraph(self, project_id: str, k: int = 2) -> DependencySubGraph:
+    def get_k_hop_subgraph(self, project_id: str, k: int = 2, delay_shock_months: float = 0.0) -> DependencySubGraph:
         pid = str(project_id)
         if pid not in self.dag:
             pid = list(self.dag.nodes())[0]
@@ -301,8 +311,21 @@ class SetuGraphEngine:
         tot_p95 = 0.0
 
         for n, d in sub_g.nodes(data=True):
-            tot_p50 += d.get("locked_p50_cr", 0.0)
-            tot_p95 += d.get("locked_p95_cr", 0.0)
+            node_delay = d.get("delay_months", 0.0)
+            if str(n) == pid and delay_shock_months > 0.0:
+                node_delay += float(delay_shock_months)
+            
+            ff = d.get("free_float", 0.0)
+            tf = d.get("total_float", 0.0)
+            absorbed = min(node_delay, ff)
+            propagated = max(0.0, node_delay - ff)
+            cost_cr = d.get("cost_cr", 1000.0)
+            locked_p50 = (cost_cr * (node_delay / 48.0)) if node_delay > 0 else 0.0
+            locked_p95 = locked_p50 * 1.65
+
+            tot_p50 += locked_p50
+            tot_p95 += locked_p95
+
             nodes.append(DependencyNode(
                 project_id=str(n),
                 project_name=d.get("project_name", "Infrastructure Project"),
@@ -310,12 +333,12 @@ class SetuGraphEngine:
                 sector=d.get("sector", "Roads & Highways"),
                 state=d.get("state", "National"),
                 cost_cr=d.get("cost_cr", 1000.0),
-                free_float_months=d.get("free_float", 0.0),
-                total_float_months=d.get("total_float", 0.0),
-                absorbed_delay_months=d.get("absorbed_delay", 0.0),
-                propagated_delay_months=d.get("propagated_delay", 0.0),
-                locked_capital_p50_cr=d.get("locked_p50_cr", 0.0),
-                locked_capital_p95_cr=d.get("locked_p95_cr", 0.0),
+                free_float_months=ff,
+                total_float_months=tf,
+                absorbed_delay_months=absorbed,
+                propagated_delay_months=propagated,
+                locked_capital_p50_cr=round(locked_p50, 2),
+                locked_capital_p95_cr=round(locked_p95, 2),
                 shapley_criticality_phi=d.get("shapley_phi", 0.0)
             ))
 

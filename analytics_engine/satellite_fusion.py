@@ -11,6 +11,7 @@ import hashlib
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, Optional
+from analytics_engine.satellite_vision_cv import SatelliteVisionCV
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -48,21 +49,26 @@ class SatelliteFusionEngine:
         has_after = os.path.exists(after_file)
         
         claimed = float(cat_entry.get("claimed_progress_pct", 50.0))
-        observed = float(cat_entry.get("eo_observed_ocai_pct", claimed - 4.5))
-        divergence = round(claimed - observed, 1)
         
-        if divergence > 20.0:
-            status = "CRITICAL_DIVERGENCE"
-            action = "FREEZE_PAYOUT_FIELD_AUDIT"
-            severity = "HIGH"
-        elif divergence > 10.0:
-            status = "MODERATE_VARIANCE"
-            action = "REQUEST_CONTRACTOR_CLARIFICATION"
-            severity = "MEDIUM"
+        if "eo_observed_ocai_pct" in cat_entry:
+            observed = float(cat_entry["eo_observed_ocai_pct"])
+            divergence = float(cat_entry.get("divergence_rod_points", round(claimed - observed, 1)))
+            status = cat_entry.get("audit_status", "VERIFIED_ON_TRACK")
+            action = cat_entry.get("statutory_recommendation", "CLEAR_DISBURSAL")
+            severity = cat_entry.get("audit_severity", "LOW")
+            edge_growth = cat_entry.get("edge_density_growth", 0.0)
+            dissimilarity = cat_entry.get("structural_dissimilarity", 0.0)
+            pavement_shift = cat_entry.get("pavement_shift_score", 0.0)
         else:
-            status = "VERIFIED_ON_TRACK"
-            action = "CLEAR_DISBURSAL"
-            severity = "LOW"
+            cv_res = SatelliteVisionCV.analyze_pixel_change(before_file, after_file, claimed_pct=claimed)
+            observed = cv_res["eo_observed_pct"]
+            divergence = cv_res["divergence_pts"]
+            status = cv_res["audit_status"]
+            action = cv_res["recommendation"]
+            severity = cv_res["severity"]
+            edge_growth = cv_res.get("edge_density_growth", 0.0)
+            dissimilarity = cv_res.get("structural_dissimilarity", 0.0)
+            pavement_shift = cv_res.get("pavement_shift_score", 0.0)
 
         return {
             "project_id": pid,
@@ -76,6 +82,9 @@ class SatelliteFusionEngine:
             "audit_status": status,
             "statutory_recommendation": action,
             "audit_severity": severity,
+            "edge_density_growth": edge_growth,
+            "structural_dissimilarity": dissimilarity,
+            "pavement_shift_score": pavement_shift,
             "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter)",
             "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg" if has_before else None,
             "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg" if has_after else None,
@@ -97,5 +106,4 @@ def get_satellite_fusion_engine() -> SatelliteFusionEngine:
 if __name__ == "__main__":
     eng = get_satellite_fusion_engine()
     sample = eng.get_satellite_audit("706724")
-    print("Sample Satellite Fusion Audit (Project 706724):")
-    print(json.dumps(sample, indent=2))
+    print("Sample Satellite Fusion Audit (Project 706724):", sample)

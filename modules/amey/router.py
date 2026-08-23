@@ -3,6 +3,7 @@ PRAKALP-DRISHTI: Amey's Decision Intelligence API Router
 Exposes KAAL-CHAKRA, SETU-GRAPH, VITTA-VYUHA, and PRAGATI-SAARTHI endpoints.
 """
 
+import json
 from fastapi import APIRouter, Query, HTTPException
 from typing import Optional
 
@@ -13,7 +14,7 @@ from analytics_engine.contracts import (
 from analytics_engine.kaal_chakra import get_kaal_chakra_engine
 from analytics_engine.setu_graph import get_setu_graph_engine
 from analytics_engine.vitta_vyuha import get_vitta_vyuha_engine
-from analytics_engine.pragati_saarthi import get_pragati_saarthi_engine
+from analytics_engine.pragati_saarthi import get_pragati_saarthi_engine, PragatiSaarthiEngine
 
 router = APIRouter(prefix="/api/amey", tags=["Amey - Decision Intelligence & Optimization"])
 
@@ -60,10 +61,18 @@ def get_cabinet_briefing(project_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/verify/{doc_hash}/{fact_id}")
-def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] = "400188"):
+def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] = None):
     try:
         engine = get_pragati_saarthi_engine()
-        briefing = engine.generate_cabinet_briefing(project_id)
+        target_pid = project_id
+        if not target_pid:
+            parts = fact_id.split("_")
+            if len(parts) >= 3 and parts[-1].isdigit():
+                target_pid = parts[-1]
+            else:
+                target_pid = "400188"
+
+        briefing = engine.generate_cabinet_briefing(target_pid)
         
         target_fact = None
         for fid, f in briefing.audit_facts.items():
@@ -72,16 +81,25 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
                 break
 
         if not target_fact:
-            raise HTTPException(status_code=404, detail=f"Fact ID {fact_id} not found in document {doc_hash}")
+            raise HTTPException(status_code=404, detail=f"Fact ID {fact_id} not found for project {target_pid}")
 
-        # Cryptographic verification
-        root_matches = (target_fact.lineage.merkle_root == briefing.merkle_root) if target_fact.lineage else False
-        has_path = bool(target_fact.lineage and len(target_fact.lineage.merkle_path) > 0)
-        is_valid = root_matches and has_path
+        # True Cryptographic Recomputation of the Merkle Root from leaf + positional proof steps
+        canonical_leaf_str = json.dumps({
+            "id": target_fact.fact_id,
+            "val": target_fact.value,
+            "unit": target_fact.unit
+        }, sort_keys=True)
+        
+        proof_steps = target_fact.lineage.merkle_proof if (target_fact.lineage and target_fact.lineage.merkle_proof) else []
+        is_cryptographically_valid = PragatiSaarthiEngine.verify_merkle_proof(
+            canonical_leaf_str,
+            proof_steps,
+            briefing.merkle_root
+        )
 
         return {
-            "verified": is_valid,
-            "proof_valid": is_valid,
+            "verified": is_cryptographically_valid,
+            "proof_valid": is_cryptographically_valid,
             "fact_id": target_fact.fact_id,
             "fact_label": target_fact.label,
             "value": target_fact.value,
@@ -89,11 +107,14 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
             "unit": target_fact.unit,
             "document_hash": doc_hash,
             "merkle_root": briefing.merkle_root,
-            "merkle_path_length": len(target_fact.lineage.merkle_path) if target_fact.lineage else 0,
+            "merkle_proof": proof_steps,
+            "proof_steps_count": len(proof_steps),
             "lineage": target_fact.lineage,
             "audit_timestamp": briefing.generated_at,
-            "cag_cvc_compliance": "PASS — cryptographic Merkle proof verified against immutable root" if is_valid else "VERIFICATION_PENDING"
+            "cag_cvc_compliance": "PASS — SHA-256 Merkle inclusion proof verified against immutable root" if is_cryptographically_valid else "VERIFICATION_FAILED"
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -145,20 +166,20 @@ def run_unified_causal_simulation(sim: SimulationRequest):
         vitta = get_vitta_vyuha_engine()
         copilot = get_pmo_copilot_engine()
 
-        # 1. Forecast with Shock
-        forecast = kaal.forecast_project(sim.project_id)
+        # 1. Forecast with Delay Shock Threaded
+        forecast = kaal.forecast_project(sim.project_id, delay_shock_months=sim.delay_shock_months)
         
-        # 2. Dependency Cascade
-        subgraph = graph.get_k_hop_subgraph(sim.project_id, k=2)
+        # 2. Dependency Cascade with Delay Shock Threaded
+        subgraph = graph.get_k_hop_subgraph(sim.project_id, k=2, delay_shock_months=sim.delay_shock_months)
         
-        # 3. MILP Capital Rebalance
+        # 3. MILP Capital Rebalance with User Budget Pool
         alloc_res = vitta.optimize_allocation(AllocationRequest(
             budget_pool_cr=sim.budget_pool_cr,
             risk_dial_kappa=sim.risk_dial_kappa,
             enforce_ner_floor=sim.enforce_ner_floor
         ))
 
-        # 4. Copilot Brief
+        # 4. Copilot Brief with updated parameters
         copilot_res = copilot.query_copilot(sim.project_id)
 
         return {

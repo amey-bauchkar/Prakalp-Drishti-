@@ -8,12 +8,18 @@ from typing import List, Dict, Optional, Literal, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+class MerkleProofStep(BaseModel):
+    hash: str = Field(..., description="SHA-256 hash of the sibling node")
+    position: Literal["left", "right"] = Field(..., description="Position of the sibling relative to the path node")
+
 class LineageRef(BaseModel):
     query_sha256: str = Field(..., description="SHA-256 hash of the canonical SQL/query used to compute this fact")
     dataset_sha256: str = Field(..., description="SHA-256 hash of the data snapshot version")
     model_sha256: str = Field(..., description="SHA-256 hash of the model weights and hyperparameter config")
     merkle_root: str = Field(..., description="Root hash of the audit Merkle tree")
     merkle_path: Optional[List[str]] = Field(default_factory=list, description="Merkle inclusion path hashes for verification")
+    merkle_proof: Optional[List[Dict[str, str]]] = Field(default_factory=list, description="Positional inclusion proof steps with left/right indicators")
+
 
 class Uncertainty(BaseModel):
     p10: float = Field(..., description="10th percentile optimistic bound")
