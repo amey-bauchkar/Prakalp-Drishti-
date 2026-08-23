@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, AlertTriangle, ShieldCheck, TrendingDown, Layers, CheckCircle2, Search, ArrowRight, Sparkles } from 'lucide-react';
 
-export default function KaalChakraView({ selectedProjectId = "400188", onSelectProject }) {
+export default function KaalChakraView({ selectedProjectId = "618402", onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GitBranch, Layers, AlertCircle, ArrowRight, ShieldCheck, CheckCircle2, DollarSign, Activity } from 'lucide-react';
 
-export default function SetuGraphView({ selectedProjectId = "400188" }) {
+export default function SetuGraphView({ selectedProjectId = "618402" }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);

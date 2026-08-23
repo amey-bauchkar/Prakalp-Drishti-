@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles } from 'lucide-react';
 
-export default function PragatiSaarthiView({ selectedProjectId = "400188" }) {
+export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [lang, setLang] = useState('en'); // 'en' | 'hi'
   const [data, setData] = useState(null);

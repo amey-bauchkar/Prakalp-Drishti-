@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Sliders, ShieldCheck, AlertCircle, ArrowRight, Zap, RefreshCw, Layers, CheckCircle2, Eye, FileText, Satellite } from 'lucide-react';
 
-export default function UnifiedCockpitView({ selectedProjectId = '400188', onSelectProject }) {
+export default function UnifiedCockpitView({ selectedProjectId = '618402', onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [delayShock, setDelayShock] = useState(0);
   const [budgetPool, setBudgetPool] = useState(15000);
@@ -302,6 +302,17 @@ export default function UnifiedCockpitView({ selectedProjectId = '400188', onSel
                 <span className="text-[10px] text-emerald-600 font-bold block mt-0.5">Yield: {alloc?.expected_completion_yield}%</span>
               </div>
             </div>
+
+            {alloc && alloc.focus_project_is_candidate === false && (
+              <div className="mb-4 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800 font-medium">
+                Project #{alloc.focus_project_id} is not among this quarter's top-60 capital-priority candidates (ranked by revised cost across NER/national pools), so the delay shock cannot change its own allocation — it will still show ₹0 Cr regardless of the shock slider. Try a larger, higher-cost project to see the MILP reallocate capital away from it.
+              </div>
+            )}
+            {alloc && alloc.focus_project_is_candidate === true && alloc.allocations?.find((a) => a.project_id === alloc.focus_project_id)?.is_ner && (
+              <div className="mb-4 p-2.5 rounded-lg bg-sky-50 border border-sky-200 text-[11px] text-sky-800 font-medium">
+                Project #{alloc.focus_project_id} is in the North-Eastern Region — its capital share is statutorily protected by the 10% NER floor, so it stays funded at its planned level regardless of yield shocks. That's the constraint working as intended, not the shock being ignored.
+              </div>
+            )}
 
             <div className="bg-gov-surface p-3 rounded-xl border border-gov-border space-y-2">
               <div className="flex justify-between text-xs font-bold text-gov-navy">

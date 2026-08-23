@@ -177,7 +177,8 @@ def run_unified_causal_simulation(sim: SimulationRequest):
             budget_pool_cr=sim.budget_pool_cr,
             risk_dial_kappa=sim.risk_dial_kappa,
             enforce_ner_floor=sim.enforce_ner_floor,
-            delay_shock_months=sim.delay_shock_months
+            delay_shock_months=sim.delay_shock_months,
+            shocked_project_id=sim.project_id
         ))
 
         # 4. Copilot Brief with updated parameters

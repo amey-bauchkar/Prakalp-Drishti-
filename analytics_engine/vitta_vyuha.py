@@ -86,10 +86,18 @@ class VittaVyuhaEngine:
         is_ner = self.candidate_df["IsNER"].values.astype(float)
         progress = self.candidate_df["PhysicalProgress"].values
         delays = self.candidate_df["REAL_DELAY_MONTHS"].values.copy()
-        
-        # Apply delay shock: stress all project delays by the simulated shock
+
+        # Apply delay shock: targeted to a single project if shocked_project_id is given
+        # and present in the candidate pool, otherwise applied uniformly (macro stress test).
         if req.delay_shock_months > 0.0:
-            delays = delays + req.delay_shock_months
+            pids_arr = self.candidate_df["ProjectId"].astype(str).values
+            if req.shocked_project_id and req.shocked_project_id in pids_arr:
+                shock_mask = pids_arr == req.shocked_project_id
+                delays = delays.copy()
+                delays[shock_mask] = delays[shock_mask] + req.delay_shock_months
+            elif not req.shocked_project_id:
+                delays = delays + req.delay_shock_months
+            # else: shocked project isn't a VITTA-VYUHA candidate -> no effect on this engine (honest no-op)
         
         # Remaining Capex Demand
         remaining_demand = np.maximum(costs * (1.0 - progress / 100.0), costs * 0.15)
@@ -257,6 +265,10 @@ class VittaVyuhaEngine:
 
         solve_duration = round((time.time() - start_time) * 1000.0, 1)
 
+        focus_is_candidate = True
+        if req.shocked_project_id:
+            focus_is_candidate = req.shocked_project_id in self.candidate_df["ProjectId"].astype(str).values
+
         return AllocationResult(
             total_budget_pool_cr=B,
             total_allocated_cr=round(total_allocated, 2),
@@ -270,7 +282,9 @@ class VittaVyuhaEngine:
             agency_shadow_prices=agency_shadow_prices,
             allocations=project_allocs,
             closure_error_perc=closure_error,
-            solve_time_ms=solve_duration
+            solve_time_ms=solve_duration,
+            focus_project_id=req.shocked_project_id,
+            focus_project_is_candidate=focus_is_candidate
         )
 
 # Module-level singleton

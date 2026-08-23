@@ -9,7 +9,11 @@ import AgencyIndexView from './AgencyIndexView';
 
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
-  const [selectedProjectId, setSelectedProjectId] = useState('706724');
+  // 618402 (NH-913 Frontier Highway, Arunachal Pradesh) is a genuinely connected node in
+  // SETU-GRAPH's dependency graph (4 real edges within 2 hops), unlike most projects in this
+  // portfolio which are isolated -- picked specifically so the causal cockpit's cascade view
+  // has something real to show on first load instead of an empty single-node subgraph.
+  const [selectedProjectId, setSelectedProjectId] = useState('618402');
 
   const tabs = [
     { id: 'unified_cockpit', label: 'UNIFIED COCKPIT', desc: 'Causal Loop & Live Simulation', icon: Sparkles },

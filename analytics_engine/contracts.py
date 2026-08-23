@@ -100,6 +100,7 @@ class AllocationRequest(BaseModel):
     enforce_ner_floor: bool = Field(default=True, description="Enforce statutory 10% capex floor for North-Eastern Region")
     agency_absorption_multiplier: float = Field(default=1.25, description="Agency historical burn rate multiplier ceiling")
     delay_shock_months: float = Field(default=0.0, ge=0.0, description="Simulated delay shock in months to stress-test the allocation")
+    shocked_project_id: Optional[str] = Field(default=None, description="If set and present in the candidate pool, the delay shock is applied only to this project (targeted shock). If unset, the shock is applied uniformly across all candidates (macro stress test).")
 
 class ProjectAllocation(BaseModel):
     project_id: str
@@ -126,6 +127,8 @@ class AllocationResult(BaseModel):
     allocations: List[ProjectAllocation]
     closure_error_perc: float
     solve_time_ms: float
+    focus_project_id: Optional[str] = Field(default=None, description="The project_id a delay shock was targeted at, if any")
+    focus_project_is_candidate: bool = Field(default=True, description="Whether focus_project_id is inside this quarter's top-60 capital-priority candidate pool. False means the shock cannot affect this engine's output for that project.")
 
 class CabinetBriefing(BaseModel):
     doc_hash: str

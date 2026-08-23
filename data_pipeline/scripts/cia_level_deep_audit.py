@@ -106,7 +106,20 @@ def run_cia_audit():
         print(f"  • Satellite CV Divergence Spread: Min={div_min:.1f} pts, Max={div_max:.1f} pts, StdDev={div_std:.2f} pts (100% Genuine Optical Metrics)")
         assert div_std > 10.0, f"Divergence standard deviation suspiciously low: {div_std}"
         assert div_max > 25.0 and div_min < -10.0, "Divergence distribution lacks expected physical variance"
-        print(f"  • Image Format & Pixel Geometry: 100% VERIFIED (800x800 px sub-meter tiles, 0 RNG stand-ins)")
+
+        # Guard against a placeholder-metadata regression (e.g. wrong source column names
+        # silently blanking sector/state to "None" across the whole catalog).
+        none_sector = sum(1 for e in entries if str(e.get("sector")) in ("None", "nan", ""))
+        assert none_sector < len(entries) * 0.5, f"{none_sector}/{len(entries)} catalog entries have placeholder sector metadata"
+
+        # Guard against over-triggering: an uncalibrated heuristic that flags most of the
+        # portfolio as fraudulent is exactly as untrustworthy as one that never triggers.
+        status_counts = {}
+        for e in entries:
+            status_counts[e["audit_status"]] = status_counts.get(e["audit_status"], 0) + 1
+        critical_frac = status_counts.get("CRITICAL_DIVERGENCE", 0) / len(entries)
+        assert critical_frac < 0.20, f"CRITICAL_DIVERGENCE flagged on {critical_frac*100:.1f}% of the portfolio -- thresholds look uncalibrated"
+        print(f"  • Image Format & Pixel Geometry: 100% VERIFIED (800x800 px sub-meter tiles, 0 RNG stand-ins, {critical_frac*100:.1f}% flagged CRITICAL)")
 
     # ──────────────────────────────────────────────────────────────────────────
     # SECTION 3: KAAL-CHAKRA SURVIVAL FORECASTING AUDIT (ALL 2,207 PROJECTS)
@@ -155,7 +168,22 @@ def run_cia_audit():
     sub_base = graph.get_k_hop_subgraph("400188", delay_shock_months=0.0)
     sub_shock = graph.get_k_hop_subgraph("400188", delay_shock_months=12.0)
     assert sub_shock.total_cascade_locked_p50_cr > sub_base.total_cascade_locked_p50_cr, "Delay shock did not increase locked capital in SETU-GRAPH"
-    print(f"  • SETU-GRAPH Sub-DAGs: 50/50 Random Sample Sub-DAGs strictly acyclic & dynamic locked capital verified (Base ₹{sub_base.total_cascade_locked_p50_cr:,.2f} Cr -> Shock ₹{sub_shock.total_cascade_locked_p50_cr:,.2f} Cr)")
+
+    # Verify the shock genuinely CASCADES to at least one non-center node somewhere in the
+    # portfolio (not just inflating the center node's own number) -- search a sample since
+    # not every project has downstream successors within k=2 hops.
+    cascade_found = False
+    for spid in sample_subgraph_pids:
+        b = graph.get_k_hop_subgraph(spid, delay_shock_months=0.0)
+        s = graph.get_k_hop_subgraph(spid, delay_shock_months=24.0)
+        b_map = {n.project_id: n.locked_capital_p50_cr for n in b.nodes}
+        s_map = {n.project_id: n.locked_capital_p50_cr for n in s.nodes}
+        non_center_changed = [pid for pid in b_map if pid != spid and abs(b_map[pid] - s_map.get(pid, 0.0)) > 0.01]
+        if non_center_changed:
+            cascade_found = True
+            break
+    assert cascade_found, "Delay shock never propagated to a single non-center node across the sample -- cascade may be center-node-only"
+    print(f"  • SETU-GRAPH Sub-DAGs: 50/50 Random Sample Sub-DAGs strictly acyclic & dynamic locked capital verified (Base ₹{sub_base.total_cascade_locked_p50_cr:,.2f} Cr -> Shock ₹{sub_shock.total_cascade_locked_p50_cr:,.2f} Cr); true downstream cascade confirmed on at least one sampled subgraph")
 
     # ──────────────────────────────────────────────────────────────────────────
     # SECTION 5: VITTA-VYUHA MILP ALLOCATOR & DUAL MULTIPLIERS AUDIT
@@ -173,10 +201,35 @@ def run_cia_audit():
             res = vitta.optimize_allocation(req)
             assert res.total_allocated_cr <= b + 1.0, f"Budget overrun: {res.total_allocated_cr} > {b}"
             assert res.ner_floor_met is True, f"NER floor violation at B={b}, k={k}"
-            assert res.shadow_price_budget_pi > 0.0, f"Invalid budget dual price at B={b}"
+            # A budget dual of exactly 0.0 is mathematically correct (not a bug) whenever the
+            # budget constraint isn't binding -- only reject a negative or NaN value.
+            assert res.shadow_price_budget_pi >= 0.0, f"Invalid budget dual price at B={b}: {res.shadow_price_budget_pi}"
             assert res.closure_error_perc < 5.0, f"Closure error above bound: {res.closure_error_perc}%"
             assert len(res.agency_shadow_prices) > 0, "Missing agency shadow prices"
     print(f"  • VITTA-VYUHA Verdict: 20/20 MILP Stress Scenarios Optimal (100% NER Floor, HiGHS Duals & Closure Error < 5%)")
+
+    # Verify a targeted delay shock genuinely re-optimizes the MILP for a real candidate project
+    # (a project inside the top-60 pool that receives non-zero baseline funding at a scarce budget).
+    scarce_req = AllocationRequest(budget_pool_cr=3000.0, risk_dial_kappa=0.75, enforce_ner_floor=True)
+    baseline_res = vitta.optimize_allocation(scarce_req)
+    # Target the largest-funded non-NER project: it has the most capital at stake, and (unlike
+    # a statutorily NER-floor-locked project, whose funding is pinned by the 10% floor
+    # regardless of its own yield) its allocation is actually free to respond to yield changes.
+    funded_non_ner = sorted(
+        [a for a in baseline_res.allocations if a.allocated_capex_cr > 50.0 and not a.is_ner],
+        key=lambda a: -a.allocated_capex_cr
+    )
+    assert funded_non_ner, "No meaningfully-funded non-NER candidate found to shock-test"
+    shock_target = funded_non_ner[0].project_id
+    shocked_res = vitta.optimize_allocation(AllocationRequest(
+        budget_pool_cr=3000.0, risk_dial_kappa=0.75, enforce_ner_floor=True,
+        delay_shock_months=96.0, shocked_project_id=shock_target
+    ))
+    base_alloc = next(a.allocated_capex_cr for a in baseline_res.allocations if a.project_id == shock_target)
+    shocked_alloc = next(a.allocated_capex_cr for a in shocked_res.allocations if a.project_id == shock_target)
+    assert shocked_alloc < base_alloc, f"96-month targeted shock did not reduce allocation to {shock_target} ({base_alloc} -> {shocked_alloc})"
+    assert abs(baseline_res.total_allocated_cr - shocked_res.total_allocated_cr) < 1.0, "Total allocated should stay ~constant -- capital should reroute, not vanish"
+    print(f"  • VITTA-VYUHA Causal Shock: project {shock_target} allocation ₹{base_alloc:,.1f} Cr -> ₹{shocked_alloc:,.1f} Cr under 96mo shock (capital rerouted, not lost)")
 
     # ──────────────────────────────────────────────────────────────────────────
     # SECTION 6: PRAGATI-SAARTHI BILINGUAL BRIEFS & MERKLE PROOF AUDIT
@@ -233,6 +286,29 @@ def run_cia_audit():
     assert len(copilot_res["action_items"]) > 0, "No copilot action items generated"
     assert len(copilot_res["grounded_facts"]) > 0, "No grounded facts in copilot response"
     print(f"  • PMO Copilot: Generated {len(copilot_res['action_items'])} statutory action items grounded in {len(copilot_res['grounded_facts'])} facts")
+
+    # Exercise the ACTUAL /api/amey/unified-simulation HTTP endpoint end-to-end (not just the
+    # engines directly) to verify the whole causal chain -- including VITTA-VYUHA -- is really
+    # wired together, the way a live frontend request would be.
+    from fastapi.testclient import TestClient
+    import backend.server as server_module
+    with TestClient(server_module.app) as client:
+        payload_base = {"project_id": "400188", "delay_shock_months": 0.0, "budget_pool_cr": 15000.0, "risk_dial_kappa": 0.75, "enforce_ner_floor": True}
+        payload_shock = {**payload_base, "delay_shock_months": 36.0}
+        r0 = client.post("/api/amey/unified-simulation", json=payload_base)
+        r1 = client.post("/api/amey/unified-simulation", json=payload_shock)
+        assert r0.status_code == 200 and r1.status_code == 200, f"unified-simulation endpoint returned non-200 ({r0.status_code}, {r1.status_code})"
+        d0, d1 = r0.json(), r1.json()
+        assert d0["forecast"]["p50_date"] != d1["forecast"]["p50_date"], "KAAL-CHAKRA P50 date did not shift under a 36mo shock via the live endpoint"
+        assert d0["subgraph"]["total_cascade_locked_p50_cr"] != d1["subgraph"]["total_cascade_locked_p50_cr"] or d0["subgraph"]["total_cascade_locked_p50_cr"] == 0.0, \
+            "SETU-GRAPH locked capital unexpectedly identical under shock via the live endpoint"
+        # Also verify a real verify() round-trip through the live endpoint (not just the engine)
+        briefing_r = client.get("/api/amey/briefing/706724")
+        assert briefing_r.status_code == 200, "Cabinet briefing endpoint failed"
+        sample_fact_id = next(iter(briefing_r.json()["audit_facts"].values()))["fact_id"]
+        verify_r = client.get(f"/api/amey/verify/anyhash/{sample_fact_id}")
+        assert verify_r.status_code == 200 and verify_r.json()["verified"] is True, "Live verify endpoint failed for a fact with no project_id query param"
+    print(f"  • Unified Simulation Endpoint: HTTP 200 end-to-end, causal shock verified live (not just at the engine layer), verify() round-trip confirmed")
 
     elapsed = time.time() - t_start
     print("\n" + "=" * 90)

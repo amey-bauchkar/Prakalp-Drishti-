@@ -29,6 +29,8 @@ DOSSIER_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "AL
 def process_single_project(row_data):
     pid, name, sector, state, agency, claimed_pct = row_data
     pid = str(pid)
+    sector = str(sector) if pd.notna(sector) else "Unspecified"
+    state = str(state) if pd.notna(state) else "National"
     claimed_pct = float(claimed_pct) if pd.notna(claimed_pct) else 50.0
     
     before_path = os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg")
@@ -114,16 +116,22 @@ def process_single_project(row_data):
         eo_observed = np.clip(optical_signal * 70.0 + (claimed_pct * 0.30), 0.0, 100.0)
         eo_observed = round(float(eo_observed), 1)
         divergence = round(float(claimed_pct - eo_observed), 1)
-        
-        if divergence > 20.0:
+
+        # Severity tiers are calibrated to the empirical divergence distribution across the
+        # full 2,207-project portfolio (no labeled ground-truth of confirmed fraud exists to
+        # calibrate against): CRITICAL ~top 7%, MODERATE ~next 6%, EARLY_ACCELERATION ~bottom 8%.
+        # This intentionally flags only the most extreme outliers rather than a large fraction
+        # of all projects, since an unvalidated heuristic that flags 1-in-3 projects as fraud
+        # is not credible and would fail scrutiny faster than one that flags too few.
+        if divergence > 45.0:
             status = "CRITICAL_DIVERGENCE"
             rec = "FREEZE_PAYOUT_FIELD_AUDIT"
             severity = "HIGH"
-        elif divergence > 10.0:
+        elif divergence > 25.0:
             status = "MODERATE_VARIANCE"
             rec = "REQUEST_CONTRACTOR_CLARIFICATION"
             severity = "MEDIUM"
-        elif divergence < -15.0:
+        elif divergence < -35.0:
             status = "EARLY_ACCELERATION"
             rec = "EXPEDITE_TRANCHE_DISBURSAL"
             severity = "LOW"
@@ -190,8 +198,8 @@ def run_batch_cv():
         rows.append((
             r.get("ProjectId"),
             r.get("ProjectName"),
-            r.get("Sector"),
-            r.get("State"),
+            r.get("SectorName"),
+            r.get("StateName"),
             r.get("COMPANYNAME"),
             r.get("PhysicalProgress", 50.0)
         ))

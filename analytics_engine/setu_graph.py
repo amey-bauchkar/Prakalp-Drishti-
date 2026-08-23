@@ -126,7 +126,11 @@ class SetuGraphEngine:
                 self.raw_graph.add_edge(state_petrol[i], state_petrol[i+1], edge_type="physical_network", lead_time=5.0)
 
         # 5. Cross-State Freight Corridors (Western & Eastern Dedicated Freight Corridors)
-        rail_list = list(rail_pids)
+        # sorted(), not list(): converting a set straight to a list gives an order that
+        # depends on Python's per-process string hash randomization, so the specific edges
+        # built below (and therefore the whole graph's topology) would silently reshuffle
+        # every time the server restarts. Sorting makes construction deterministic.
+        rail_list = sorted(rail_pids)
         for i in range(min(len(rail_list) - 1, 150)):
             if i % 3 == 0:
                 self.raw_graph.add_edge(rail_list[i], rail_list[i+1], edge_type="statutory", lead_time=6.0)
