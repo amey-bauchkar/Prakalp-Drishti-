@@ -62,14 +62,24 @@ MAX_BOXES = 12          # keep the largest few; 190 boxes is noise, not evidence
 MIN_BOX_AREA_FRAC = 0.0015
 
 # Which geocode qualities justify showing an EO verdict at all.
-SITE_LEVEL_PRECISIONS = {"GAZETTEER_CITY_MATCH", "OSM_LANDMARK_MATCH", "OSM_CORRIDOR_MIDPOINT"}
+# REGIONAL_COALFIELD_CENTROID is deliberately absent: it gives the map a plausible
+# marker for an operating coalfield, but it is a regional estimate, not the works, so
+# it must never unlock a fraud finding.
+SITE_LEVEL_PRECISIONS = {
+    "GAZETTEER_CITY_MATCH", "OSM_LANDMARK_MATCH", "OSM_CORRIDOR_MIDPOINT",
+    "GEONAMES_EXACT_MATCH", "GEONAMES_EXACT_UNCONSTRAINED", "GEONAMES_TOKEN_MATCH",
+}
 
 GEOCODE_CONFIDENCE = {
-    "OSM_LANDMARK_MATCH":      ("HIGH",   "Site geocoded to a named landmark in the project title"),
-    "OSM_CORRIDOR_MIDPOINT":   ("MEDIUM", "Midpoint of the two corridor endpoints named in the title"),
-    "GAZETTEER_CITY_MATCH":    ("MEDIUM", "Matched to a gazetteer city; may be km from the works"),
-    "STATE_CENTROID_MATCH":    ("NONE",   "Placeholder: geometric centre of the state, not the site"),
-    "NATIONAL_CENTROID_MATCH": ("NONE",   "Placeholder: near India's centroid, not the site"),
+    "OSM_LANDMARK_MATCH":          ("HIGH",   "Site geocoded to a named landmark in the project title"),
+    "GEONAMES_EXACT_MATCH":        ("HIGH",   "Gazetteer match on the full place name, confirmed within the expected state"),
+    "OSM_CORRIDOR_MIDPOINT":       ("MEDIUM", "Midpoint of the two corridor endpoints named in the title"),
+    "GAZETTEER_CITY_MATCH":        ("MEDIUM", "Matched to a gazetteer city; may be km from the works"),
+    "GEONAMES_EXACT_UNCONSTRAINED": ("MEDIUM", "Gazetteer name unique within India, but no state available to confirm it"),
+    "GEONAMES_TOKEN_MATCH":        ("MEDIUM", "Gazetteer match on a place name inside the asset code, state-constrained"),
+    "REGIONAL_COALFIELD_CENTROID": ("LOW",    "Operating coalfield region only; not the project site"),
+    "STATE_CENTROID_MATCH":        ("NONE",   "Placeholder: geometric centre of the state, not the site"),
+    "NATIONAL_CENTROID_MATCH":     ("NONE",   "Placeholder: near India's centroid, not the site"),
 }
 
 

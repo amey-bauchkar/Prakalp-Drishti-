@@ -29,6 +29,13 @@ const CONFIDENCE_STYLES = {
     cls: 'bg-amber-50 text-amber-800 border-amber-300',
     dot: 'bg-amber-500',
   },
+  // Regional estimate (e.g. a coalfield centre). Distinct from NONE so the map can
+  // show a plausible marker, but it is NOT site-level, so the EO verdict stays withheld.
+  LOW: {
+    label: 'Regional Estimate Only',
+    cls: 'bg-orange-50 text-orange-800 border-orange-300',
+    dot: 'bg-orange-500',
+  },
   NONE: {
     label: 'No Site Geocode',
     cls: 'bg-rose-50 text-rose-800 border-rose-300',

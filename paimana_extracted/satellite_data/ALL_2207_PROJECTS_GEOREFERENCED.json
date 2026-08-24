@@ -836,11 +836,12 @@
   "PhysicalProgress": 53,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2758,
-  "longitude": 78.7882,
+  "latitude": 19.108091,
+  "longitude": 72.856525,
   "bbox": "[78.7382, 21.2258, 78.8382, 21.3258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Airports"
  },
  {
   "ProjectId": 612791,
@@ -1162,11 +1163,13 @@
   "PhysicalProgress": 3,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2958,
-  "longitude": 78.5982,
+  "latitude": 21.49574,
+  "longitude": 78.51029,
   "bbox": "[78.5482, 20.2458, 78.6482, 20.3458]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "GONDEGAON [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 611864,
@@ -1226,11 +1229,13 @@
   "PhysicalProgress": 67,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0358,
-  "longitude": 78.7982,
+  "latitude": 21.44482,
+  "longitude": 79.97567,
   "bbox": "[78.7482, 21.9858, 78.8482, 22.0858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "JAMUNIA [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 616050,
@@ -1291,11 +1296,12 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.4958,
-  "longitude": 78.6382,
+  "latitude": 20.246279,
+  "longitude": 78.93958,
   "bbox": "[78.5882, 20.4458, 78.6882, 20.5458]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "YEKONA I & YEKONA"
  },
  {
   "ProjectId": 613798,
@@ -1389,11 +1395,13 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7058,
-  "longitude": 79.6282,
+  "latitude": 20.75875,
+  "longitude": 79.04371,
   "bbox": "[79.5782, 20.6558, 79.6782, 20.7558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "GAURI [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 616233,
@@ -1487,11 +1495,13 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1858,
-  "longitude": 80.0382,
+  "latitude": 19.84696,
+  "longitude": 79.34578,
   "bbox": "[79.9882, 21.1358, 80.0882, 21.2358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "BALLARPUR [PPLX]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 400149,
@@ -1519,11 +1529,13 @@
   "PhysicalProgress": 56,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.9858,
-  "longitude": 78.9782,
+  "latitude": 22.35,
+  "longitude": 82.7,
   "bbox": "[78.9282, 21.9358, 79.0282, 22.0358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhattisgarh coalfield",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 615193,
@@ -1716,11 +1728,13 @@
   "PhysicalProgress": 92,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0358,
-  "longitude": 79.3782,
+  "latitude": 22.45008,
+  "longitude": 78.09935,
   "bbox": "[79.3282, 20.9858, 79.4282, 21.0858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "KAKRI [PPLQ]",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 400162,
@@ -1748,11 +1762,13 @@
   "PhysicalProgress": 51,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8258,
-  "longitude": 78.1782,
+  "latitude": 24.1,
+  "longitude": 82.65,
   "bbox": "[78.1282, 21.7758, 78.2282, 21.8758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Madhya Pradesh coalfield",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 616253,
@@ -1878,11 +1894,13 @@
   "PhysicalProgress": 85,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4158,
-  "longitude": 79.9082,
+  "latitude": 22.12832,
+  "longitude": 83.11623,
   "bbox": "[79.8582, 21.3658, 79.9582, 21.4658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "CHHAL [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 400172,
@@ -1943,11 +1961,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.7158,
-  "longitude": 78.8282,
+  "latitude": 23.7,
+  "longitude": 86.95,
   "bbox": "[78.7782, 21.6658, 78.8782, 21.7658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "West Bengal coalfield",
+  "geocode_state_constraint": "West Bengal"
  },
  {
   "ProjectId": 400353,
@@ -1975,11 +1995,13 @@
   "PhysicalProgress": 19,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3658,
-  "longitude": 79.6482,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[79.5982, 20.3158, 79.6982, 20.4158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 400178,
@@ -2300,11 +2322,13 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0458,
-  "longitude": 79.7482,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[79.6982, 21.9958, 79.7982, 22.0958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 400424,
@@ -2365,11 +2389,12 @@
   "PhysicalProgress": 13,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5758,
-  "longitude": 78.9482,
+  "latitude": 19.968327,
+  "longitude": 78.819308,
   "bbox": "[78.8982, 21.5258, 78.9982, 21.6258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "GHONSA EXPANSION DEEP"
  },
  {
   "ProjectId": 615860,
@@ -2397,11 +2422,13 @@
   "PhysicalProgress": 71,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4558,
-  "longitude": 79.4582,
+  "latitude": 17.65,
+  "longitude": 79.5,
   "bbox": "[79.4082, 21.4058, 79.5082, 21.5058]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Telangana coalfield",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 615192,
@@ -2495,11 +2522,13 @@
   "PhysicalProgress": 17,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.8058,
-  "longitude": 79.9282,
+  "latitude": 21.45,
+  "longitude": 83.95,
   "bbox": "[79.8782, 20.7558, 79.9782, 20.8558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Odisha coalfield",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 616232,
@@ -2527,11 +2556,13 @@
   "PhysicalProgress": 23,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4458,
-  "longitude": 78.3582,
+  "latitude": 21.45,
+  "longitude": 83.95,
   "bbox": "[78.3082, 21.3958, 78.4082, 21.4958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Odisha coalfield",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 400018,
@@ -2625,11 +2656,13 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3058,
-  "longitude": 78.5782,
+  "latitude": 21.45,
+  "longitude": 83.95,
   "bbox": "[78.5282, 21.2558, 78.6282, 21.3558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Odisha coalfield",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 400187,
@@ -2789,11 +2822,13 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.1158,
-  "longitude": 78.9382,
+  "latitude": 17.65,
+  "longitude": 79.5,
   "bbox": "[78.8882, 22.0658, 78.9882, 22.1658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Telangana coalfield",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 619032,
@@ -2919,11 +2954,13 @@
   "PhysicalProgress": 41,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5858,
-  "longitude": 79.6482,
+  "latitude": 20.7484,
+  "longitude": 81.67543,
   "bbox": "[79.5982, 21.5358, 79.6982, 21.6358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "JHIRIA [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 615859,
@@ -3017,11 +3054,13 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.9758,
-  "longitude": 79.9782,
+  "latitude": 17.65,
+  "longitude": 79.5,
   "bbox": "[79.9282, 20.9258, 80.0282, 21.0258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Telangana coalfield",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 613802,
@@ -3049,11 +3088,13 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.5258,
-  "longitude": 78.0882,
+  "latitude": 22.35,
+  "longitude": 82.7,
   "bbox": "[78.0382, 20.4758, 78.1382, 20.5758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhattisgarh coalfield",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 400074,
@@ -3114,11 +3155,13 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4058,
-  "longitude": 79.7482,
+  "latitude": 23.35707,
+  "longitude": 82.67486,
   "bbox": "[79.6982, 21.3558, 79.7982, 21.4558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "KATKONA [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 615183,
@@ -3146,11 +3189,13 @@
   "PhysicalProgress": 57,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.6158,
-  "longitude": 79.4182,
+  "latitude": 24.1,
+  "longitude": 82.65,
   "bbox": "[79.3682, 21.5658, 79.4682, 21.6658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Madhya Pradesh coalfield",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 617278,
@@ -3178,11 +3223,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0158,
-  "longitude": 78.6082,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[78.5582, 20.9658, 78.6582, 21.0658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 615199,
@@ -3210,11 +3257,12 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.6958,
-  "longitude": 79.8282,
+  "latitude": 22.516516,
+  "longitude": 77.275933,
   "bbox": "[79.7782, 21.6458, 79.8782, 21.7458]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "KOLGAON EXPANSION DEEP"
  },
  {
   "ProjectId": 400073,
@@ -3373,11 +3421,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2258,
-  "longitude": 78.5682,
+  "latitude": 22.35,
+  "longitude": 82.7,
   "bbox": "[78.5182, 20.1758, 78.6182, 20.2758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhattisgarh coalfield",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 613801,
@@ -3438,11 +3488,13 @@
   "PhysicalProgress": 12,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.6758,
-  "longitude": 79.2882,
+  "latitude": 20.87298,
+  "longitude": 79.21589,
   "bbox": "[79.2382, 20.6258, 79.3382, 20.7258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "MAKARDHOKRA [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 617288,
@@ -3503,11 +3555,13 @@
   "PhysicalProgress": 43,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7758,
-  "longitude": 78.1782,
+  "latitude": 23.74079,
+  "longitude": 86.41456,
   "bbox": "[78.1282, 20.7258, 78.2282, 20.8258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jharia [PPL]",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 400173,
@@ -3568,11 +3622,13 @@
   "PhysicalProgress": 82,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7058,
-  "longitude": 78.3182,
+  "latitude": 23.75,
+  "longitude": 85.5,
   "bbox": "[78.2682, 20.6558, 78.3682, 20.7558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jharkhand coalfield",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 613808,
@@ -3633,11 +3689,13 @@
   "PhysicalProgress": 28,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8658,
-  "longitude": 79.8282,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[79.7782, 21.8158, 79.8782, 21.9158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 615857,
@@ -3665,11 +3723,13 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0358,
-  "longitude": 79.5882,
+  "latitude": 17.65,
+  "longitude": 79.5,
   "bbox": "[79.5382, 21.9858, 79.6382, 22.0858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Telangana coalfield",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 400181,
@@ -3763,11 +3823,13 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.9958,
-  "longitude": 78.8882,
+  "latitude": 24.1,
+  "longitude": 82.65,
   "bbox": "[78.8382, 20.9458, 78.9382, 21.0458]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Madhya Pradesh coalfield",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 615982,
@@ -3893,11 +3955,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2658,
-  "longitude": 79.5082,
+  "latitude": 23.7,
+  "longitude": 86.95,
   "bbox": "[79.4582, 21.2158, 79.5582, 21.3158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "West Bengal coalfield",
+  "geocode_state_constraint": "West Bengal"
  },
  {
   "ProjectId": 613794,
@@ -3958,11 +4022,13 @@
   "PhysicalProgress": 40,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7358,
-  "longitude": 79.6382,
+  "latitude": 22.35,
+  "longitude": 82.7,
   "bbox": "[79.5882, 20.6858, 79.6882, 20.7858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhattisgarh coalfield",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 400144,
@@ -3990,11 +4056,13 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5058,
-  "longitude": 78.4682,
+  "latitude": 22.35,
+  "longitude": 82.7,
   "bbox": "[78.4182, 21.4558, 78.5182, 21.5558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhattisgarh coalfield",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 400160,
@@ -4121,11 +4189,13 @@
   "PhysicalProgress": 12,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5058,
-  "longitude": 79.8682,
+  "latitude": 23.74079,
+  "longitude": 86.41456,
   "bbox": "[79.8182, 21.4558, 79.9182, 21.5558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jharia [PPL]",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 619171,
@@ -4185,11 +4255,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.4358,
-  "longitude": 78.4282,
+  "latitude": 22.41667,
+  "longitude": 83.2,
   "bbox": "[78.3782, 20.3858, 78.4782, 20.4858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "RAMPUR [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 400150,
@@ -4249,11 +4321,13 @@
   "PhysicalProgress": 16,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0458,
-  "longitude": 79.2082,
+  "latitude": 21.26914,
+  "longitude": 79.13885,
   "bbox": "[79.1582, 21.9958, 79.2582, 22.0958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "BHANEGAON [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 615187,
@@ -4281,11 +4355,13 @@
   "PhysicalProgress": 11,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.9158,
-  "longitude": 79.7482,
+  "latitude": 19.11242,
+  "longitude": 77.28897,
   "bbox": "[79.6982, 21.8658, 79.7982, 21.9658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "VISHNUPURI [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 613804,
@@ -4313,11 +4389,13 @@
   "PhysicalProgress": 18,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5658,
-  "longitude": 79.1182,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[79.0682, 21.5158, 79.1682, 21.6158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 400136,
@@ -4543,11 +4621,13 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.8358,
-  "longitude": 78.6982,
+  "latitude": 21.45,
+  "longitude": 83.95,
   "bbox": "[78.6482, 20.7858, 78.7482, 20.8858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Odisha coalfield",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 400182,
@@ -4608,11 +4688,13 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4058,
-  "longitude": 78.6282,
+  "latitude": 20.7458,
+  "longitude": 79.07029,
   "bbox": "[78.5782, 21.3558, 78.6782, 21.4558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "SINGHORI [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 615822,
@@ -4869,11 +4951,13 @@
   "PhysicalProgress": 12,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3858,
-  "longitude": 80.0582,
+  "latitude": 23.7,
+  "longitude": 86.95,
   "bbox": "[80.0082, 21.3358, 80.1082, 21.4358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "West Bengal coalfield",
+  "geocode_state_constraint": "West Bengal"
  },
  {
   "ProjectId": 615821,
@@ -4967,11 +5051,13 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2358,
-  "longitude": 79.8682,
+  "latitude": 20.2,
+  "longitude": 79.1,
   "bbox": "[79.8182, 20.1858, 79.9182, 20.2858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Maharashtra coalfield",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 615863,
@@ -4999,11 +5085,13 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2858,
-  "longitude": 78.1082,
+  "latitude": 17.65,
+  "longitude": 79.5,
   "bbox": "[78.0582, 20.2358, 78.1582, 20.3358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Telangana coalfield",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 617233,
@@ -6289,11 +6377,12 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8458,
-  "longitude": 79.8482,
+  "latitude": 26.622993,
+  "longitude": 92.797608,
   "bbox": "[79.7982, 21.7958, 79.8982, 21.8958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Tezpur University"
  },
  {
   "ProjectId": 400081,
@@ -7063,11 +7152,12 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3458,
-  "longitude": 79.2882,
+  "latitude": 28.159938,
+  "longitude": 77.912509,
   "bbox": "[79.2382, 20.2958, 79.3382, 20.3958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Khurja super Thermal Power"
  },
  {
   "ProjectId": 602532,
@@ -7354,11 +7444,12 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.6258,
-  "longitude": 78.4882,
+  "latitude": 23.666857,
+  "longitude": 85.305651,
   "bbox": "[78.4382, 21.5758, 78.5382, 21.6758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Patratu Thermal Power"
  },
  {
   "ProjectId": 400062,
@@ -7485,11 +7576,12 @@
   "PhysicalProgress": 24,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3658,
-  "longitude": 78.2482,
+  "latitude": 34.223898,
+  "longitude": 78.308865,
   "bbox": "[78.1982, 20.3158, 78.2982, 20.4158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Ratle"
  },
  {
   "ProjectId": 612142,
@@ -9256,11 +9348,12 @@
   "PhysicalProgress": 62,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2658,
-  "longitude": 78.8882,
+  "latitude": 21.637808,
+  "longitude": 69.666026,
   "bbox": "[78.8382, 21.2158, 78.9382, 21.3158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "GMC Porbandar"
  },
  {
   "ProjectId": 707058,
@@ -11124,11 +11217,12 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.5058,
-  "longitude": 78.8782,
+  "latitude": 30.13879,
+  "longitude": 75.794568,
   "bbox": "[78.8282, 20.4558, 78.9282, 20.5558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Bathinda Sangrur"
  },
  {
   "ProjectId": 709850,
@@ -13637,11 +13731,12 @@
   "PhysicalProgress": 14,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.5858,
-  "longitude": 79.6182,
+  "latitude": 26.985222,
+  "longitude": 94.929963,
   "bbox": "[79.5682, 21.5358, 79.6682, 21.6358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Replacement"
  },
  {
   "ProjectId": 709797,
@@ -13767,11 +13862,12 @@
   "PhysicalProgress": 69,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2558,
-  "longitude": 78.8282,
+  "latitude": 16.508584,
+  "longitude": 80.721004,
   "bbox": "[78.7782, 20.2058, 78.8782, 20.3058]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Power"
  },
  {
   "ProjectId": 400161,
@@ -15034,11 +15130,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3358,
-  "longitude": 79.1482,
+  "latitude": 26.175338,
+  "longitude": 91.671925,
   "bbox": "[79.0982, 20.2858, 79.1982, 20.3858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "SARAIGHAT"
  },
  {
   "ProjectId": 705356,
@@ -16958,11 +17055,12 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.9758,
-  "longitude": 79.6882,
+  "latitude": 28.534158,
+  "longitude": 77.048937,
   "bbox": "[79.6382, 21.9258, 79.7382, 22.0258]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bijwasan Railway"
  },
  {
   "ProjectId": 611849,
@@ -17670,11 +17768,12 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.7358,
-  "longitude": 79.6882,
+  "latitude": 20.945818,
+  "longitude": 85.211174,
   "bbox": "[79.6382, 21.6858, 79.7382, 21.7858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Talcher"
  },
  {
   "ProjectId": 400047,
@@ -17702,11 +17801,12 @@
   "PhysicalProgress": 40,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.4358,
-  "longitude": 78.5882,
+  "latitude": 28.588248,
+  "longitude": 77.356906,
   "bbox": "[78.5382, 20.3858, 78.6382, 20.4858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "NTPC exchange"
  },
  {
   "ProjectId": 617239,
@@ -23403,11 +23503,12 @@
   "PhysicalProgress": 78,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3658,
-  "longitude": 78.4182,
+  "latitude": 28.722782,
+  "longitude": 78.282622,
   "bbox": "[78.3682, 20.3158, 78.4682, 20.4158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sakri"
  },
  {
   "ProjectId": 705526,
@@ -23533,11 +23634,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8158,
-  "longitude": 79.7582,
+  "latitude": 22.45405,
+  "longitude": 83.55944,
   "bbox": "[79.7082, 21.7658, 79.8082, 21.8658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_UNCONSTRAINED",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sardega [PPL]",
+  "geocode_state_constraint": ""
  },
  {
   "ProjectId": 705659,
@@ -24054,11 +24157,13 @@
   "PhysicalProgress": 88,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.8158,
-  "longitude": 79.9182,
+  "latitude": 27.39386,
+  "longitude": 82.71472,
   "bbox": "[79.8682, 20.7658, 79.9682, 20.8658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_UNCONSTRAINED",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sonnagar [PPL]",
+  "geocode_state_constraint": ""
  },
  {
   "ProjectId": 400275,
@@ -24151,11 +24256,12 @@
   "PhysicalProgress": 41,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8458,
-  "longitude": 79.1782,
+  "latitude": 13.114942,
+  "longitude": 80.152524,
   "bbox": "[79.1282, 21.7958, 79.2282, 21.8958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Track Machine"
  },
  {
   "ProjectId": 705635,
@@ -24736,11 +24842,12 @@
   "PhysicalProgress": 59,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.6858,
-  "longitude": 79.5482,
+  "latitude": 12.987343,
+  "longitude": 77.753803,
   "bbox": "[79.4982, 20.6358, 79.5982, 20.7358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Yeshvanthpur"
  },
  {
   "ProjectId": 603210,
@@ -25539,11 +25646,12 @@
   "PhysicalProgress": 88,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3558,
-  "longitude": 79.7582,
+  "latitude": 23.559662,
+  "longitude": 75.195938,
   "bbox": "[79.7082, 21.3058, 79.8082, 21.4058]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Rewas"
  },
  {
   "ProjectId": 701586,
@@ -27084,11 +27192,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0558,
-  "longitude": 79.1282,
+  "latitude": 24.269387,
+  "longitude": 72.536751,
   "bbox": "[79.0782, 21.0058, 79.1782, 21.1058]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Banaskantha"
  },
  {
   "ProjectId": 617802,
@@ -27149,11 +27258,12 @@
   "PhysicalProgress": 1,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7458,
-  "longitude": 78.7682,
+  "latitude": 23.247245,
+  "longitude": 69.668339,
   "bbox": "[78.7182, 20.6958, 78.8182, 20.7958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Bhuj-II"
  },
  {
   "ProjectId": 615342,
@@ -27245,11 +27355,12 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3358,
-  "longitude": 79.3482,
+  "latitude": 18.02073,
+  "longitude": 77.24872,
   "bbox": "[79.2982, 20.2858, 79.3982, 20.3858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Bidar"
  },
  {
   "ProjectId": 602223,
@@ -27277,11 +27388,12 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.8458,
-  "longitude": 78.4782,
+  "latitude": 26.848904,
+  "longitude": 80.947776,
   "bbox": "[78.4282, 21.7958, 78.5282, 21.8958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Comprehensive"
  },
  {
   "ProjectId": 617271,
@@ -27309,11 +27421,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3858,
-  "longitude": 79.9182,
+  "latitude": 18.970203,
+  "longitude": 84.366957,
   "bbox": "[79.8682, 21.3358, 79.9682, 21.4358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Eastern"
  },
  {
   "ProjectId": 617270,
@@ -27341,11 +27454,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.4058,
-  "longitude": 79.1882,
+  "latitude": 18.970203,
+  "longitude": 84.366957,
   "bbox": "[79.1382, 21.3558, 79.2382, 21.4558]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Eastern"
  },
  {
   "ProjectId": 611660,
@@ -27727,11 +27841,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0658,
-  "longitude": 79.8882,
+  "latitude": 18.996913,
+  "longitude": 72.855769,
   "bbox": "[79.8382, 22.0158, 79.9382, 22.1158]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "North Eastern"
  },
  {
   "ProjectId": 607709,
@@ -27824,11 +27939,12 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2258,
-  "longitude": 79.7382,
+  "latitude": 23.247245,
+  "longitude": 69.668339,
   "bbox": "[79.6882, 21.1758, 79.7882, 21.2758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Bhuj-II"
  },
  {
   "ProjectId": 619025,
@@ -27954,11 +28070,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.8858,
-  "longitude": 79.4782,
+  "latitude": 23.188432,
+  "longitude": 72.633246,
   "bbox": "[79.4282, 20.8358, 79.5282, 20.9358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Network Expansion in Gujarat"
  },
  {
   "ProjectId": 611656,
@@ -27986,11 +28103,12 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0858,
-  "longitude": 78.2482,
+  "latitude": 23.824499,
+  "longitude": 69.729838,
   "bbox": "[78.1982, 21.0358, 78.2982, 21.1358]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Khavda"
  },
  {
   "ProjectId": 611657,
@@ -28018,11 +28136,12 @@
   "PhysicalProgress": 84,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.7358,
-  "longitude": 78.8082,
+  "latitude": 23.824499,
+  "longitude": 69.729838,
   "bbox": "[78.7582, 21.6858, 78.8582, 21.7858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Khavda"
  },
  {
   "ProjectId": 617179,
@@ -29305,11 +29424,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7358,
-  "longitude": 78.6882,
+  "latitude": 15.830925,
+  "longitude": 78.042537,
   "bbox": "[78.6382, 20.6858, 78.7382, 20.7858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Kurnool"
  },
  {
   "ProjectId": 619228,
@@ -29532,11 +29652,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0158,
-  "longitude": 78.7182,
+  "latitude": 16.541885,
+  "longitude": 80.634046,
   "bbox": "[78.6682, 20.9658, 78.7682, 21.0658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Western"
  },
  {
   "ProjectId": 619027,
@@ -30914,11 +31035,12 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7358,
-  "longitude": 79.3182,
+  "latitude": 13.072737,
+  "longitude": 80.271741,
   "bbox": "[79.2682, 20.6858, 79.3682, 20.7858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Sewerage"
  },
  {
   "ProjectId": 702741,
@@ -33654,11 +33776,13 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0029,
-  "longitude": 79.7,
+  "latitude": 15.88109,
+  "longitude": 78.58704,
   "bbox": "[79.65, 15.9529, 79.75, 16.0529]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Atmakur [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618759,
@@ -33686,11 +33810,12 @@
   "PhysicalProgress": 90,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7609,
-  "longitude": 79.696,
+  "latitude": 14.801367,
+  "longitude": 78.916282,
   "bbox": "[79.646, 15.7109, 79.746, 15.8109]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mydukur <-> Badvel"
  },
  {
   "ProjectId": 619077,
@@ -33783,11 +33908,12 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8109,
-  "longitude": 79.574,
+  "latitude": 15.997758,
+  "longitude": 80.888273,
   "bbox": "[79.524, 15.7609, 79.624, 15.8609]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chandrasekharapuram <-> Polavaram"
  },
  {
   "ProjectId": 618718,
@@ -33815,11 +33941,13 @@
   "PhysicalProgress": 48,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0129,
-  "longitude": 79.672,
+  "latitude": 16.09734,
+  "longitude": 79.40509,
   "bbox": "[79.622, 15.9629, 79.722, 16.0629]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kavulakuntla [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618719,
@@ -33847,11 +33975,12 @@
   "PhysicalProgress": 52,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7289,
-  "longitude": 79.934,
+  "latitude": 16.115776,
+  "longitude": 80.885628,
   "bbox": "[79.884, 15.6789, 79.984, 15.7789]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mallapalle"
  },
  {
   "ProjectId": 619126,
@@ -33879,11 +34008,12 @@
   "PhysicalProgress": 73,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8089,
-  "longitude": 79.86,
+  "latitude": 16.110577,
+  "longitude": 80.403975,
   "bbox": "[79.81, 15.7589, 79.91, 15.8589]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Marripudi <-> Somavarappadu"
  },
  {
   "ProjectId": 619123,
@@ -33943,11 +34073,12 @@
   "PhysicalProgress": 45,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9369,
-  "longitude": 79.924,
+  "latitude": 16.077111,
+  "longitude": 80.507067,
   "bbox": "[79.874, 15.8869, 79.974, 15.9869]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Somavarappadu <-> Muppavaram"
  },
  {
   "ProjectId": 618712,
@@ -33975,11 +34106,12 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9889,
-  "longitude": 79.758,
+  "latitude": 13.951124,
+  "longitude": 78.59767,
   "bbox": "[79.708, 15.9389, 79.808, 16.0389]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kodur <-> Vanavolu"
  },
  {
   "ProjectId": 618714,
@@ -34007,11 +34139,12 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0529,
-  "longitude": 79.576,
+  "latitude": 15.600017,
+  "longitude": 79.920729,
   "bbox": "[79.526, 16.0029, 79.626, 16.1029]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Nallacheruvu palli"
  },
  {
   "ProjectId": 618715,
@@ -34072,11 +34205,12 @@
   "PhysicalProgress": 70,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8009,
-  "longitude": 79.674,
+  "latitude": 16.544428,
+  "longitude": 80.663199,
   "bbox": "[79.624, 15.7509, 79.724, 15.8509]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Polavaram <-> Marripudi"
  },
  {
   "ProjectId": 618717,
@@ -34104,11 +34238,12 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8789,
-  "longitude": 79.716,
+  "latitude": 14.10145,
+  "longitude": 77.913843,
   "bbox": "[79.666, 15.8289, 79.766, 15.9289]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Vanavolu <-> Vankarakunta"
  },
  {
   "ProjectId": 618716,
@@ -34136,11 +34271,12 @@
   "PhysicalProgress": 76,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0129,
-  "longitude": 79.758,
+  "latitude": 14.242929,
+  "longitude": 78.102409,
   "bbox": "[79.708, 15.9629, 79.808, 16.0629]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Vankarakunta <-> Odulapalle"
  },
  {
   "ProjectId": 618713,
@@ -34168,11 +34304,12 @@
   "PhysicalProgress": 45,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9229,
-  "longitude": 79.564,
+  "latitude": 15.20797,
+  "longitude": 79.351281,
   "bbox": "[79.514, 15.8729, 79.614, 15.9729]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Yerragudipadu <-> Audireddipalle"
  },
  {
   "ProjectId": 619212,
@@ -34200,11 +34337,12 @@
   "PhysicalProgress": 69,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7849,
-  "longitude": 79.596,
+  "latitude": 15.78903,
+  "longitude": 77.901267,
   "bbox": "[79.546, 15.7349, 79.646, 15.8349]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Julekal <-> Dinnedevarapadu"
  },
  {
   "ProjectId": 618681,
@@ -34265,11 +34403,12 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9889,
-  "longitude": 79.746,
+  "latitude": 17.721423,
+  "longitude": 83.203201,
   "bbox": "[79.696, 15.9389, 79.796, 16.0389]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sabbavaram Sheelanagar"
  },
  {
   "ProjectId": 619111,
@@ -34297,11 +34436,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9369,
-  "longitude": 79.73,
+  "latitude": 18.36785,
+  "longitude": 83.27265,
   "bbox": "[79.68, 15.8869, 79.78, 15.9869]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jakkuva [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 619112,
@@ -34329,11 +34470,13 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9029,
-  "longitude": 79.592,
+  "latitude": 17.95147,
+  "longitude": 83.2196,
   "bbox": "[79.542, 15.8529, 79.642, 15.9529]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kantakapalle [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618682,
@@ -34394,11 +34537,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7249,
-  "longitude": 79.664,
+  "latitude": 17.701986,
+  "longitude": 83.20598,
   "bbox": "[79.614, 15.6749, 79.714, 15.7749]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Anandapuram Pendurthi Anakapalli"
  },
  {
   "ProjectId": 618526,
@@ -34426,11 +34570,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9509,
-  "longitude": 79.836,
+  "latitude": 16.725838,
+  "longitude": 81.121238,
   "bbox": "[79.786, 15.9009, 79.886, 16.0009]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gundugolanu <-> Kalaparru"
  },
  {
   "ProjectId": 618772,
@@ -34458,11 +34603,12 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7529,
-  "longitude": 79.916,
+  "latitude": 13.19636,
+  "longitude": 79.493277,
   "bbox": "[79.866, 15.7029, 79.966, 15.8029]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kumarajapet"
  },
  {
   "ProjectId": 619140,
@@ -34490,11 +34636,12 @@
   "PhysicalProgress": 49,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9189,
-  "longitude": 79.702,
+  "latitude": 15.535405,
+  "longitude": 79.418827,
   "bbox": "[79.652, 15.8689, 79.752, 15.9689]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Naidupeta"
  },
  {
   "ProjectId": 618771,
@@ -34814,11 +34961,13 @@
   "PhysicalProgress": 31,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7609,
-  "longitude": 79.606,
+  "latitude": 18.19785,
+  "longitude": 83.70396,
   "bbox": "[79.556, 15.7109, 79.656, 15.8109]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ranasthalam [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 617990,
@@ -34911,11 +35060,13 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8329,
-  "longitude": 79.832,
+  "latitude": 13.84025,
+  "longitude": 79.83094,
   "bbox": "[79.782, 15.7829, 79.882, 15.8829]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chillakuru [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618412,
@@ -35008,11 +35159,12 @@
   "PhysicalProgress": 79,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7349,
-  "longitude": 79.572,
+  "latitude": 20.315763,
+  "longitude": 80.180395,
   "bbox": "[79.522, 15.6849, 79.622, 15.7849]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dedicated <-> Krishnapatnam"
  },
  {
   "ProjectId": 618803,
@@ -35106,11 +35258,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8649,
-  "longitude": 79.912,
+  "latitude": 14.856423,
+  "longitude": 79.418447,
   "bbox": "[79.862, 15.8149, 79.962, 15.9149]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Duttalur"
  },
  {
   "ProjectId": 618052,
@@ -35203,11 +35356,12 @@
   "PhysicalProgress": 79,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0089,
-  "longitude": 79.822,
+  "latitude": 17.752302,
+  "longitude": 83.17805,
   "bbox": "[79.772, 15.9589, 79.872, 16.0589]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sheelanagar"
  },
  {
   "ProjectId": 618747,
@@ -35367,11 +35521,13 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0649,
-  "longitude": 79.81,
+  "latitude": 14.84677,
+  "longitude": 78.38314,
   "bbox": "[79.76, 16.0149, 79.86, 16.1149]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jammalamadugu [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618053,
@@ -35432,11 +35588,12 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8309,
-  "longitude": 79.876,
+  "latitude": 16.71837,
+  "longitude": 80.33034,
   "bbox": "[79.826, 15.7809, 79.926, 15.8809]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Nandigama <-> Kanchikacherla"
  },
  {
   "ProjectId": 617987,
@@ -35727,11 +35884,13 @@
   "PhysicalProgress": 88,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7409,
-  "longitude": 79.634,
+  "latitude": 15.00901,
+  "longitude": 78.98918,
   "bbox": "[79.584, 15.6909, 79.684, 15.7909]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "porumamilla [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618194,
@@ -35824,11 +35983,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.1029,
-  "longitude": 79.644,
+  "latitude": 16.476428,
+  "longitude": 79.43664,
   "bbox": "[79.594, 16.0529, 79.694, 16.1529]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Macherla"
  },
  {
   "ProjectId": 618256,
@@ -35888,11 +36048,13 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.9309,
-  "longitude": 79.546,
+  "latitude": 17.6606,
+  "longitude": 82.20981,
   "bbox": "[79.496, 15.8809, 79.596, 15.9809]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Koyyuru [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618700,
@@ -36052,11 +36214,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0109,
-  "longitude": 79.632,
+  "latitude": 14.67784,
+  "longitude": 77.60813,
   "bbox": "[79.582, 15.9609, 79.682, 16.0609]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Anantapuramu [PPL]",
+  "geocode_state_constraint": "Andhra Pradesh"
  },
  {
   "ProjectId": 618258,
@@ -36084,11 +36248,12 @@
   "PhysicalProgress": 91,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8489,
-  "longitude": 79.588,
+  "latitude": 18.514461,
+  "longitude": 82.491945,
   "bbox": "[79.538, 15.7989, 79.638, 15.8989]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gondiguda"
  },
  {
   "ProjectId": 618255,
@@ -36116,11 +36281,12 @@
   "PhysicalProgress": 43,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8449,
-  "longitude": 79.744,
+  "latitude": 17.818181,
+  "longitude": 82.492717,
   "bbox": "[79.694, 15.7949, 79.794, 15.8949]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Lambasingi"
  },
  {
   "ProjectId": 618259,
@@ -36148,11 +36314,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0969,
-  "longitude": 79.568,
+  "latitude": 18.079153,
+  "longitude": 82.663223,
   "bbox": "[79.518, 16.0469, 79.618, 16.1469]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Paderu"
  },
  {
   "ProjectId": 618769,
@@ -36180,11 +36347,12 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.7229,
-  "longitude": 79.814,
+  "latitude": 12.59377,
+  "longitude": 78.511632,
   "bbox": "[79.764, 15.6729, 79.864, 15.7729]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Walajahpet/Ranipet"
  },
  {
   "ProjectId": 618161,
@@ -36276,11 +36444,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.0329,
-  "longitude": 79.854,
+  "latitude": 17.439828,
+  "longitude": 81.775235,
   "bbox": "[79.804, 15.9829, 79.904, 16.0829]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rampachodavaram"
  },
  {
   "ProjectId": 617985,
@@ -36373,11 +36542,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.416,
-  "longitude": 94.7438,
+  "latitude": 27.368752,
+  "longitude": 93.875337,
   "bbox": "[94.6938, 28.366, 94.7938, 28.466]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Potin"
  },
  {
   "ProjectId": 618445,
@@ -36405,11 +36575,13 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.072,
-  "longitude": 94.8298,
+  "latitude": 27.89916,
+  "longitude": 96.29506,
   "bbox": "[94.7798, 28.022, 94.8798, 28.122]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Demwe [PPL]",
+  "geocode_state_constraint": "Arunachal Pradesh"
  },
  {
   "ProjectId": 618424,
@@ -36437,11 +36609,13 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.07,
-  "longitude": 94.9118,
+  "latitude": 27.88677,
+  "longitude": 96.8017,
   "bbox": "[94.8618, 28.02, 94.9618, 28.12]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hawai [PPLA2]",
+  "geocode_state_constraint": "Arunachal Pradesh"
  },
  {
   "ProjectId": 618433,
@@ -36501,11 +36675,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.032,
-  "longitude": 94.8698,
+  "latitude": 27.510048,
+  "longitude": 93.773889,
   "bbox": "[94.8198, 27.982, 94.9198, 28.082]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Joram"
  },
  {
   "ProjectId": 618405,
@@ -37017,11 +37192,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2366,
-  "longitude": 93.1276,
+  "latitude": 27.185736,
+  "longitude": 94.910427,
   "bbox": "[93.0776, 26.1866, 93.1776, 26.2866]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "between Demow"
  },
  {
   "ProjectId": 618315,
@@ -37081,11 +37257,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2386,
-  "longitude": 92.8616,
+  "latitude": 26.47703,
+  "longitude": 90.55815,
   "bbox": "[92.8116, 26.1886, 92.9116, 26.2886]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bongaigaon [PPL]",
+  "geocode_state_constraint": "Assam"
  },
  {
   "ProjectId": 618576,
@@ -37211,11 +37389,13 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2426,
-  "longitude": 92.9276,
+  "latitude": 26.32293,
+  "longitude": 91.00632,
   "bbox": "[92.8776, 26.1926, 92.9776, 26.2926]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Barpeta [PPL]",
+  "geocode_state_constraint": "Assam"
  },
  {
   "ProjectId": 618160,
@@ -37469,11 +37649,12 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2926,
-  "longitude": 92.9256,
+  "latitude": 26.849468,
+  "longitude": 94.496278,
   "bbox": "[92.8756, 26.2426, 92.9756, 26.3426]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jhanji"
  },
  {
   "ProjectId": 618440,
@@ -37501,11 +37682,12 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2286,
-  "longitude": 92.7816,
+  "latitude": 26.849468,
+  "longitude": 94.496278,
   "bbox": "[92.7316, 26.1786, 92.8316, 26.2786]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jhanji"
  },
  {
   "ProjectId": 619013,
@@ -37533,11 +37715,12 @@
   "PhysicalProgress": 74,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.3886,
-  "longitude": 93.0736,
+  "latitude": 26.849468,
+  "longitude": 94.496278,
   "bbox": "[93.0236, 26.3386, 93.1236, 26.4386]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jhanji"
  },
  {
   "ProjectId": 619060,
@@ -37565,11 +37748,12 @@
   "PhysicalProgress": 72,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.0646,
-  "longitude": 93.0536,
+  "latitude": 26.849468,
+  "longitude": 94.496278,
   "bbox": "[93.0036, 26.0146, 93.1036, 26.1146]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jhanji"
  },
  {
   "ProjectId": 618439,
@@ -37597,11 +37781,12 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.0746,
-  "longitude": 92.8376,
+  "latitude": 26.757793,
+  "longitude": 94.207965,
   "bbox": "[92.7876, 26.0246, 92.8876, 26.1246]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jorhat"
  },
  {
   "ProjectId": 618444,
@@ -37629,11 +37814,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.0266,
-  "longitude": 92.8736,
+  "latitude": 26.757793,
+  "longitude": 94.207965,
   "bbox": "[92.8236, 25.9766, 92.9236, 26.0766]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jorhat"
  },
  {
   "ProjectId": 618443,
@@ -37661,11 +37847,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2126,
-  "longitude": 92.8796,
+  "latitude": 26.757793,
+  "longitude": 94.207965,
   "bbox": "[92.8296, 26.1626, 92.9296, 26.2626]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jorhat"
  },
  {
   "ProjectId": 618442,
@@ -37693,11 +37880,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.3086,
-  "longitude": 93.1116,
+  "latitude": 26.757793,
+  "longitude": 94.207965,
   "bbox": "[93.0616, 26.2586, 93.1616, 26.3586]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jorhat"
  },
  {
   "ProjectId": 617895,
@@ -38211,11 +38399,13 @@
   "PhysicalProgress": 78,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2446,
-  "longitude": 93.0456,
+  "latitude": 26.44411,
+  "longitude": 89.91568,
   "bbox": "[92.9956, 26.1946, 93.0956, 26.2946]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bhairiguri [PPL]",
+  "geocode_state_constraint": "Assam"
  },
  {
   "ProjectId": 618287,
@@ -38595,11 +38785,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.0821,
-  "longitude": 85.2831,
+  "latitude": 26.162153,
+  "longitude": 85.478589,
   "bbox": "[85.2331, 25.0321, 85.3331, 25.1321]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Majhauli"
  },
  {
   "ProjectId": 618741,
@@ -38790,11 +38981,12 @@
   "PhysicalProgress": 43,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.1261,
-  "longitude": 85.1731,
+  "latitude": 27.290939,
+  "longitude": 84.293615,
   "bbox": "[85.1231, 25.0761, 85.2231, 25.1761]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Alignment of Shivrampur"
  },
  {
   "ProjectId": 618917,
@@ -38919,11 +39111,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.1101,
-  "longitude": 85.1691,
+  "latitude": 26.26172,
+  "longitude": 87.82443,
   "bbox": "[85.1191, 25.0601, 85.2191, 25.1601]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bahadurganj [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618915,
@@ -39048,11 +39242,13 @@
   "PhysicalProgress": 25,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.8961,
-  "longitude": 85.2511,
+  "latitude": 24.96304,
+  "longitude": 84.22606,
   "bbox": "[85.2011, 24.8461, 85.3011, 24.9461]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Balbhadarpur [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 619317,
@@ -39113,11 +39309,13 @@
   "PhysicalProgress": 91,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.2281,
-  "longitude": 85.3051,
+  "latitude": 25.37459,
+  "longitude": 86.47455,
   "bbox": "[85.2551, 25.1781, 85.3551, 25.2781]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Munger [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 619306,
@@ -39145,11 +39343,13 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.0541,
-  "longitude": 85.1691,
+  "latitude": 25.37459,
+  "longitude": 86.47455,
   "bbox": "[85.1191, 25.0041, 85.2191, 25.1041]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Munger [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 619289,
@@ -39177,11 +39377,12 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9221,
-  "longitude": 85.2471,
+  "latitude": 26.15578,
+  "longitude": 87.675137,
   "bbox": "[85.1971, 24.8721, 85.2971, 24.9721]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Munger Mirzachauki from Munger"
  },
  {
   "ProjectId": 619305,
@@ -39209,11 +39410,12 @@
   "PhysicalProgress": 72,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9461,
-  "longitude": 85.2771,
+  "latitude": 25.994792,
+  "longitude": 85.892104,
   "bbox": "[85.2271, 24.8961, 85.3271, 24.9961]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rasulpur"
  },
  {
   "ProjectId": 618952,
@@ -39307,11 +39509,12 @@
   "PhysicalProgress": 27,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.0801,
-  "longitude": 85.3251,
+  "latitude": 26.297936,
+  "longitude": 84.928007,
   "bbox": "[85.2751, 25.0301, 85.3751, 25.1301]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sahebganj"
  },
  {
   "ProjectId": 618738,
@@ -39893,11 +40096,13 @@
   "PhysicalProgress": 52,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9541,
-  "longitude": 85.1371,
+  "latitude": 25.50958,
+  "longitude": 85.30504,
   "bbox": "[85.0871, 24.9041, 85.1871, 25.0041]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Fatwa [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618250,
@@ -39925,11 +40130,13 @@
   "PhysicalProgress": 17,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9541,
-  "longitude": 85.4571,
+  "latitude": 25.74434,
+  "longitude": 85.01003,
   "bbox": "[85.4071, 24.9041, 85.5071, 25.0041]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Digha [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618742,
@@ -39957,11 +40164,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.0241,
-  "longitude": 85.4291,
+  "latitude": 26.47515,
+  "longitude": 84.831145,
   "bbox": "[85.3791, 24.9741, 85.4791, 25.0741]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ramnagar <-> Kacchi Dargah"
  },
  {
   "ProjectId": 618228,
@@ -40054,11 +40262,13 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.2461,
-  "longitude": 85.3011,
+  "latitude": 26.16278,
+  "longitude": 84.2841,
   "bbox": "[85.2511, 25.1961, 85.3511, 25.2961]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bharauli [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 619301,
@@ -40086,11 +40296,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.1321,
-  "longitude": 85.1131,
+  "latitude": 25.37459,
+  "longitude": 86.47455,
   "bbox": "[85.0631, 25.0821, 85.1631, 25.1821]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Munger [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618004,
@@ -40118,11 +40330,13 @@
   "PhysicalProgress": 2,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.1881,
-  "longitude": 85.1731,
+  "latitude": 25.04049,
+  "longitude": 83.60749,
   "bbox": "[85.1231, 25.1381, 85.2231, 25.2381]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bhabhua [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 619154,
@@ -40216,11 +40430,12 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.8961,
-  "longitude": 85.4731,
+  "latitude": 25.451379,
+  "longitude": 83.862127,
   "bbox": "[85.4231, 24.8461, 85.5231, 24.9461]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "chausa"
  },
  {
   "ProjectId": 618956,
@@ -40443,11 +40658,13 @@
   "PhysicalProgress": 8,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.2201,
-  "longitude": 85.1831,
+  "latitude": 25.20084,
+  "longitude": 85.52389,
   "bbox": "[85.1331, 25.1701, 85.2331, 25.2701]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bihar [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618073,
@@ -40540,11 +40757,13 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9721,
-  "longitude": 85.4971,
+  "latitude": 25.20084,
+  "longitude": 85.52389,
   "bbox": "[85.4471, 24.9221, 85.5471, 25.0221]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bihar [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618007,
@@ -40770,11 +40989,13 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9261,
-  "longitude": 85.4271,
+  "latitude": 25.5313,
+  "longitude": 87.6872,
   "bbox": "[85.3771, 24.8761, 85.4771, 24.9761]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Lakhpura [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 617959,
@@ -40802,11 +41023,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.1441,
-  "longitude": 85.2191,
+  "latitude": 25.220286,
+  "longitude": 86.516148,
   "bbox": "[85.1691, 25.0941, 85.2691, 25.1941]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Munger"
  },
  {
   "ProjectId": 619136,
@@ -40866,11 +41088,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.0821,
-  "longitude": 85.1151,
+  "latitude": 25.526797,
+  "longitude": 86.09499,
   "bbox": "[85.0651, 25.0321, 85.1651, 25.1321]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Upgrading"
  },
  {
   "ProjectId": 618005,
@@ -40997,11 +41220,12 @@
   "PhysicalProgress": 78,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.9521,
-  "longitude": 85.1831,
+  "latitude": 24.535201,
+  "longitude": 81.249635,
   "bbox": "[85.1331, 24.9021, 85.2331, 25.0021]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jharkhand Border Chordaha"
  },
  {
   "ProjectId": 618530,
@@ -41192,11 +41416,13 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.2941,
-  "longitude": 85.1311,
+  "latitude": 25.78031,
+  "longitude": 84.74709,
   "bbox": "[85.0811, 25.2441, 85.1811, 25.3441]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chhapra [PPL]",
+  "geocode_state_constraint": "Bihar"
  },
  {
   "ProjectId": 618957,
@@ -41516,11 +41742,12 @@
   "PhysicalProgress": 42,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2907,
-  "longitude": 82.0341,
+  "latitude": 21.678387,
+  "longitude": 81.441258,
   "bbox": "[81.9841, 21.2407, 82.0841, 21.3407]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bemetara"
  },
  {
   "ProjectId": 617919,
@@ -41580,11 +41807,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3147,
-  "longitude": 81.8461,
+  "latitude": 31.607808,
+  "longitude": 76.913359,
   "bbox": "[81.7961, 21.2647, 81.8961, 21.3647]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Partially Excavated Escape"
  },
  {
   "ProjectId": 618675,
@@ -41612,11 +41840,13 @@
   "PhysicalProgress": 67,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2127,
-  "longitude": 81.7761,
+  "latitude": 20.20956,
+  "longitude": 81.76595,
   "bbox": "[81.7261, 21.1627, 81.8261, 21.2627]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Basanwahi [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 618673,
@@ -41870,11 +42100,12 @@
   "PhysicalProgress": 48,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2787,
-  "longitude": 81.9241,
+  "latitude": 19.584203,
+  "longitude": 81.113699,
   "bbox": "[81.8741, 21.2287, 81.9741, 21.3287]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Narayanpur"
  },
  {
   "ProjectId": 618016,
@@ -41902,11 +42133,12 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.2007,
-  "longitude": 81.7101,
+  "latitude": 21.262712,
+  "longitude": 81.661472,
   "bbox": "[81.6601, 21.1507, 81.7601, 21.2507]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ambikapur Ramanujganj"
  },
  {
   "ProjectId": 618014,
@@ -42065,11 +42297,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.3467,
-  "longitude": 82.0141,
+  "latitude": 19.71794,
+  "longitude": 81.24437,
   "bbox": "[81.9641, 21.2967, 82.0641, 21.3967]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Narayanpur [PPL]",
+  "geocode_state_constraint": "Chhattisgarh"
  },
  {
   "ProjectId": 619064,
@@ -42358,11 +42592,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1893,
-  "longitude": 74.176,
+  "latitude": 15.27501,
+  "longitude": 73.95786,
   "bbox": "[74.126, 15.1393, 74.226, 15.2393]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Margao [PPL]",
+  "geocode_state_constraint": "Goa"
  },
  {
   "ProjectId": 617943,
@@ -42487,11 +42723,12 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.3513,
-  "longitude": 74.266,
+  "latitude": 15.560597,
+  "longitude": 73.812638,
   "bbox": "[74.216, 15.3013, 74.316, 15.4013]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Elevated"
  },
  {
   "ProjectId": 618834,
@@ -42552,11 +42789,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.4267,
-  "longitude": 71.2564,
+  "latitude": 21.09007,
+  "longitude": 71.76904,
   "bbox": "[71.2064, 22.3767, 71.3064, 22.4767]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mahuva [PPL]",
+  "geocode_state_constraint": "Gujarat"
  },
  {
   "ProjectId": 618835,
@@ -42584,11 +42823,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.3627,
-  "longitude": 71.0404,
+  "latitude": 21.3527,
+  "longitude": 72.03524,
   "bbox": "[70.9904, 22.3127, 71.0904, 22.4127]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Talaja [PPL]",
+  "geocode_state_constraint": "Gujarat"
  },
  {
   "ProjectId": 619148,
@@ -42649,11 +42890,12 @@
   "PhysicalProgress": 32,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.2707,
-  "longitude": 71.1404,
+  "latitude": 22.095403,
+  "longitude": 70.775173,
   "bbox": "[71.0904, 22.2207, 71.1904, 22.3207]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dhrol bypass of Approx. length & widening upto 4 laning of missing link of Amran of Approx. length"
  },
  {
   "ProjectId": 619137,
@@ -42843,11 +43085,12 @@
   "PhysicalProgress": 51,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.1667,
-  "longitude": 71.3564,
+  "latitude": 23.531466,
+  "longitude": 70.844571,
   "bbox": "[71.3064, 22.1167, 71.4064, 22.2167]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Samakhiyali <-> Santalpur"
  },
  {
   "ProjectId": 618501,
@@ -43068,11 +43311,12 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.4267,
-  "longitude": 71.2684,
+  "latitude": 23.836226,
+  "longitude": 73.011462,
   "bbox": "[71.2184, 22.3767, 71.3184, 22.4767]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Idar"
  },
  {
   "ProjectId": 618508,
@@ -43358,11 +43602,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.3607,
-  "longitude": 71.1804,
+  "latitude": 20.79717,
+  "longitude": 70.695721,
   "bbox": "[71.1304, 22.3107, 71.2304, 22.4107]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kodinar"
  },
  {
   "ProjectId": 619146,
@@ -43455,11 +43700,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.3827,
-  "longitude": 70.9964,
+  "latitude": 22.34574,
+  "longitude": 69.93605,
   "bbox": "[70.9464, 22.3327, 71.0464, 22.4327]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Pipli [RSTN]",
+  "geocode_state_constraint": "Gujarat"
  },
  {
   "ProjectId": 618614,
@@ -43553,11 +43800,13 @@
   "PhysicalProgress": 63,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.1847,
-  "longitude": 71.0664,
+  "latitude": 23.68811,
+  "longitude": 73.3875,
   "bbox": "[71.0164, 22.1347, 71.1164, 22.2347]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Samlaji [PPL]",
+  "geocode_state_constraint": "Gujarat"
  },
  {
   "ProjectId": 617906,
@@ -43942,11 +44191,12 @@
   "PhysicalProgress": 56,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.2247,
-  "longitude": 71.0444,
+  "latitude": 22.029849,
+  "longitude": 70.710888,
   "bbox": "[70.9944, 22.1747, 71.0944, 22.2747]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jetpur <-> Rajkot"
  },
  {
   "ProjectId": 617916,
@@ -43974,11 +44224,12 @@
   "PhysicalProgress": 30,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.3067,
-  "longitude": 71.3224,
+  "latitude": 22.983483,
+  "longitude": 72.50072,
   "bbox": "[71.2724, 22.2567, 71.3724, 22.3567]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sarkhej"
  },
  {
   "ProjectId": 617976,
@@ -44006,11 +44257,12 @@
   "PhysicalProgress": 90,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.4567,
-  "longitude": 70.9984,
+  "latitude": 23.25288,
+  "longitude": 69.699047,
   "bbox": "[70.9484, 22.4067, 71.0484, 22.5067]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "development"
  },
  {
   "ProjectId": 618788,
@@ -44038,11 +44290,13 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.8908,
-  "longitude": 76.2016,
+  "latitude": 30.16776,
+  "longitude": 76.87046,
   "bbox": "[76.1516, 28.8408, 76.2516, 28.9408]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahbad [PPL]",
+  "geocode_state_constraint": "Haryana"
  },
  {
   "ProjectId": 618691,
@@ -44202,11 +44456,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.0608,
-  "longitude": 76.0576,
+  "latitude": 30.189061,
+  "longitude": 74.499455,
   "bbox": "[76.0076, 29.0108, 76.1076, 29.1108]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "a Malout"
  },
  {
   "ProjectId": 619093,
@@ -44300,11 +44555,13 @@
   "PhysicalProgress": 74,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.0248,
-  "longitude": 76.2596,
+  "latitude": 30.36099,
+  "longitude": 76.79782,
   "bbox": "[76.2096, 28.9748, 76.3096, 29.0748]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ambala [PPL]",
+  "geocode_state_constraint": "Haryana"
  },
  {
   "ProjectId": 619216,
@@ -44332,11 +44589,13 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.8868,
-  "longitude": 75.9096,
+  "latitude": 30.08084,
+  "longitude": 76.48774,
   "bbox": "[75.8596, 28.8368, 75.9596, 28.9368]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Adhoya [PPL]",
+  "geocode_state_constraint": "Haryana"
  },
  {
   "ProjectId": 618723,
@@ -44364,11 +44623,13 @@
   "PhysicalProgress": 79,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.1788,
-  "longitude": 76.1756,
+  "latitude": 30.41706,
+  "longitude": 77.33119,
   "bbox": "[76.1256, 29.1288, 76.2256, 29.2288]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ranipur [PPL]",
+  "geocode_state_constraint": "Haryana"
  },
  {
   "ProjectId": 619134,
@@ -44750,11 +45011,13 @@
   "PhysicalProgress": 92,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.0968,
-  "longitude": 75.8856,
+  "latitude": 29.69197,
+  "longitude": 76.98448,
   "bbox": "[75.8356, 29.0468, 75.9356, 29.1468]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Karnal [PPL]",
+  "geocode_state_constraint": "Haryana"
  },
  {
   "ProjectId": 618890,
@@ -44880,11 +45143,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.2788,
-  "longitude": 77.1394,
+  "latitude": 10.97948,
+  "longitude": 78.03112,
   "bbox": "[77.0894, 31.2288, 77.1894, 31.3288]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sundar Nagar"
  },
  {
   "ProjectId": 618889,
@@ -45104,11 +45368,13 @@
   "PhysicalProgress": 30,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 30.9148,
-  "longitude": 77.1454,
+  "latitude": 30.94459,
+  "longitude": 77.38456,
   "bbox": "[77.0954, 30.8648, 77.1954, 30.9648]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kalar [PPL]",
+  "geocode_state_constraint": "Himachal Pradesh"
  },
  {
   "ProjectId": 618253,
@@ -45364,11 +45630,13 @@
   "PhysicalProgress": 55,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 30.9188,
-  "longitude": 77.1214,
+  "latitude": 32.07333,
+  "longitude": 76.4562,
   "bbox": "[77.0714, 30.8688, 77.1714, 30.9688]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Paror [PPL]",
+  "geocode_state_constraint": "Himachal Pradesh"
  },
  {
   "ProjectId": 618231,
@@ -45396,11 +45664,13 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.0908,
-  "longitude": 77.2734,
+  "latitude": 31.68411,
+  "longitude": 76.52506,
   "bbox": "[77.2234, 31.0408, 77.3234, 31.1408]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hamirpur [PPL]",
+  "geocode_state_constraint": "Himachal Pradesh"
  },
  {
   "ProjectId": 618230,
@@ -45556,11 +45826,13 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.2368,
-  "longitude": 77.0074,
+  "latitude": 32.22962,
+  "longitude": 76.03485,
   "bbox": "[76.9574, 31.1868, 77.0574, 31.2868]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rajol [PPL]",
+  "geocode_state_constraint": "Himachal Pradesh"
  },
  {
   "ProjectId": 618051,
@@ -45751,11 +46023,12 @@
   "PhysicalProgress": 43,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.9558,
-  "longitude": 78.3582,
+  "latitude": 33.450759,
+  "longitude": 75.189138,
   "bbox": "[78.3082, 20.9058, 78.4082, 21.0058]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "North Bound"
  },
  {
   "ProjectId": 618543,
@@ -45847,11 +46120,12 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.1458,
-  "longitude": 78.6182,
+  "latitude": 13.119964,
+  "longitude": 80.114247,
   "bbox": "[78.5682, 20.0958, 78.6682, 20.1958]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "tube"
  },
  {
   "ProjectId": 618396,
@@ -46169,11 +46443,12 @@
   "PhysicalProgress": 36,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0158,
-  "longitude": 78.8482,
+  "latitude": 33.066805,
+  "longitude": 75.169124,
   "bbox": "[78.7982, 20.9658, 78.8982, 21.0658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Udhampur <-> Ramban"
  },
  {
   "ProjectId": 618549,
@@ -46778,11 +47053,12 @@
   "PhysicalProgress": 64,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3358,
-  "longitude": 79.0382,
+  "latitude": 33.041186,
+  "longitude": 75.282463,
   "bbox": "[78.9882, 20.2858, 79.0882, 20.3858]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chenani"
  },
  {
   "ProjectId": 618206,
@@ -46971,11 +47247,13 @@
   "PhysicalProgress": 6,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.5122,
-  "longitude": 85.2359,
+  "latitude": 23.04268,
+  "longitude": 84.54429,
   "bbox": "[85.1859, 23.4622, 85.2859, 23.5622]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gumla [PPL]",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 618736,
@@ -47035,11 +47313,13 @@
   "PhysicalProgress": 77,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.7242,
-  "longitude": 85.1259,
+  "latitude": 23.96843,
+  "longitude": 84.21098,
   "bbox": "[85.0759, 23.6742, 85.1759, 23.7742]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_EXACT_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bhogu [PPL]",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 618829,
@@ -47265,11 +47545,12 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.6802,
-  "longitude": 85.4419,
+  "latitude": 24.611544,
+  "longitude": 87.085474,
   "bbox": "[85.3919, 23.6302, 85.4919, 23.7302]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mehgama"
  },
  {
   "ProjectId": 618947,
@@ -47330,11 +47611,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.7082,
-  "longitude": 85.4559,
+  "latitude": 24.284762,
+  "longitude": 86.385756,
   "bbox": "[85.4059, 23.6582, 85.5059, 23.7582]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mirza Chauki <-> Jharkhand package"
  },
  {
   "ProjectId": 618644,
@@ -47655,11 +47937,13 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.6902,
-  "longitude": 85.2799,
+  "latitude": 24.38874,
+  "longitude": 84.6544,
   "bbox": "[85.2299, 23.6402, 85.3299, 23.7402]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dharampur [PPL]",
+  "geocode_state_constraint": "Jharkhand"
  },
  {
   "ProjectId": 618083,
@@ -47882,11 +48166,12 @@
   "PhysicalProgress": 52,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.4782,
-  "longitude": 85.4639,
+  "latitude": 22.767958,
+  "longitude": 85.899765,
   "bbox": "[85.4139, 23.4282, 85.5139, 23.5282]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "service"
  },
  {
   "ProjectId": 618060,
@@ -47978,11 +48263,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.8062,
-  "longitude": 85.1259,
+  "latitude": 23.269557,
+  "longitude": 84.449699,
   "bbox": "[85.0759, 23.7562, 85.1759, 23.8562]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ghaghra"
  },
  {
   "ProjectId": 618649,
@@ -48304,11 +48590,13 @@
   "PhysicalProgress": 89,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.2053,
-  "longitude": 75.7799,
+  "latitude": 12.64583,
+  "longitude": 75.58617,
   "bbox": "[75.7299, 15.1553, 75.8299, 15.2553]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kalladka [PPL]",
+  "geocode_state_constraint": "Karnataka"
  },
  {
   "ProjectId": 618887,
@@ -48598,11 +48886,13 @@
   "PhysicalProgress": 14,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1793,
-  "longitude": 75.6259,
+  "latitude": 12.50745,
+  "longitude": 76.96485,
   "bbox": "[75.5759, 15.1293, 75.6759, 15.2293]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hemmige [PPL]",
+  "geocode_state_constraint": "Karnataka"
  },
  {
   "ProjectId": 618870,
@@ -48794,11 +49084,12 @@
   "PhysicalProgress": 73,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1853,
-  "longitude": 75.5319,
+  "latitude": 16.008967,
+  "longitude": 77.63685,
   "bbox": "[75.4819, 15.1353, 75.5819, 15.2353]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Nandinne <-> Julekal"
  },
  {
   "ProjectId": 618515,
@@ -48826,11 +49117,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.3513,
-  "longitude": 75.5559,
+  "latitude": 14.402875,
+  "longitude": 76.03836,
   "bbox": "[75.5059, 15.3013, 75.6059, 15.4013]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Belgaum <-> Sankeshwar"
  },
  {
   "ProjectId": 618516,
@@ -48858,11 +49150,12 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1333,
-  "longitude": 75.6319,
+  "latitude": 12.948484,
+  "longitude": 77.569787,
   "bbox": "[75.5819, 15.0833, 75.6819, 15.1833]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sankeshwar"
  },
  {
   "ProjectId": 618631,
@@ -49053,11 +49346,12 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.3353,
-  "longitude": 75.7099,
+  "latitude": 26.896566,
+  "longitude": 75.739191,
   "bbox": "[75.6599, 15.2853, 75.7599, 15.3853]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Two/Four"
  },
  {
   "ProjectId": 617954,
@@ -49408,11 +49702,12 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1413,
-  "longitude": 75.8439,
+  "latitude": 31.636805,
+  "longitude": 74.580184,
   "bbox": "[75.7939, 15.0913, 75.8939, 15.1913]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mode"
  },
  {
   "ProjectId": 617935,
@@ -49538,11 +49833,12 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.4853,
-  "longitude": 75.7059,
+  "latitude": 13.340085,
+  "longitude": 78.211749,
   "bbox": "[75.6559, 15.4353, 75.7559, 15.5353]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Srinivasapura"
  },
  {
   "ProjectId": 618518,
@@ -49767,11 +50063,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.2773,
-  "longitude": 75.7479,
+  "latitude": 12.503582,
+  "longitude": 75.04546,
   "bbox": "[75.6979, 15.2273, 75.7979, 15.3273]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "KT/KL Border Thalapaddy"
  },
  {
   "ProjectId": 619071,
@@ -49930,11 +50227,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.1953,
-  "longitude": 75.8279,
+  "latitude": 15.948433,
+  "longitude": 75.81597,
   "bbox": "[75.7779, 15.1453, 75.8779, 15.2453]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Pattadakal"
  },
  {
   "ProjectId": 618147,
@@ -50091,11 +50389,13 @@
   "PhysicalProgress": 90,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.4913,
-  "longitude": 75.5599,
+  "latitude": 15.38651,
+  "longitude": 76.03893,
   "bbox": "[75.5099, 15.4413, 75.6099, 15.5413]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bhanapur [RSTN]",
+  "geocode_state_constraint": "Karnataka"
  },
  {
   "ProjectId": 618109,
@@ -50382,11 +50682,12 @@
   "PhysicalProgress": 71,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.5113,
-  "longitude": 75.8899,
+  "latitude": 31.636805,
+  "longitude": 74.580184,
   "bbox": "[75.8399, 15.4613, 75.9399, 15.5613]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mode"
  },
  {
   "ProjectId": 618149,
@@ -50544,11 +50845,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 10.6765,
-  "longitude": 76.3931,
+  "latitude": 10.440768,
+  "longitude": 76.094959,
   "bbox": "[76.3431, 10.6265, 76.4431, 10.7265]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kappirikkad"
  },
  {
   "ProjectId": 618597,
@@ -50675,11 +50977,12 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 10.8505,
-  "longitude": 76.2611,
+  "latitude": 12.099476,
+  "longitude": 75.470574,
   "bbox": "[76.2111, 10.8005, 76.3111, 10.9005]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Perole Nileshwar town"
  },
  {
   "ProjectId": 618599,
@@ -50937,11 +51240,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 10.8485,
-  "longitude": 76.2211,
+  "latitude": 11.178088,
+  "longitude": 75.86562,
   "bbox": "[76.1711, 10.7985, 76.2711, 10.8985]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ramanattukara"
  },
  {
   "ProjectId": 618606,
@@ -51165,11 +51469,12 @@
   "PhysicalProgress": 90,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 33.9666,
-  "longitude": 77.4531,
+  "latitude": 33.480313,
+  "longitude": 76.847128,
   "bbox": "[77.4031, 33.9166, 77.5031, 34.0166]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kargil Zanskar"
  },
  {
   "ProjectId": 618410,
@@ -51197,11 +51502,12 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 34.3326,
-  "longitude": 77.5691,
+  "latitude": 33.802819,
+  "longitude": 76.47301,
   "bbox": "[77.5191, 34.2826, 77.6191, 34.3826]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "gradation"
  },
  {
   "ProjectId": 618409,
@@ -51229,11 +51535,12 @@
   "PhysicalProgress": 82,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 34.0666,
-  "longitude": 77.7671,
+  "latitude": 33.802819,
+  "longitude": 76.47301,
   "bbox": "[77.7171, 34.0166, 77.8171, 34.1166]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "gradation"
  },
  {
   "ProjectId": 618751,
@@ -51261,11 +51568,12 @@
   "PhysicalProgress": 55,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8634,
-  "longitude": 78.8269,
+  "latitude": 24.198868,
+  "longitude": 77.932525,
   "bbox": "[78.7769, 22.8134, 78.8769, 22.9134]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hinotiya <-> Talbehat"
  },
  {
   "ProjectId": 618655,
@@ -51293,11 +51601,12 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.9954,
-  "longitude": 78.7189,
+  "latitude": 21.889052,
+  "longitude": 76.930696,
   "bbox": "[78.6689, 22.9454, 78.7689, 23.0454]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Roshni"
  },
  {
   "ProjectId": 618964,
@@ -51358,11 +51667,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.1134,
-  "longitude": 78.6129,
+  "latitude": 24.568315,
+  "longitude": 80.69314,
   "bbox": "[78.5629, 23.0634, 78.6629, 23.1634]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mohari"
  },
  {
   "ProjectId": 618672,
@@ -51390,11 +51700,12 @@
   "PhysicalProgress": 33,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0394,
-  "longitude": 78.5909,
+  "latitude": 23.792688,
+  "longitude": 78.398697,
   "bbox": "[78.5409, 22.9894, 78.6409, 23.0894]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "lanning of Gyaraspur"
  },
  {
   "ProjectId": 618671,
@@ -51422,11 +51733,12 @@
   "PhysicalProgress": 9,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0574,
-  "longitude": 78.7129,
+  "latitude": 24.623656,
+  "longitude": 77.182469,
   "bbox": "[78.6629, 23.0074, 78.7629, 23.1074]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "lanning of Rahatgarh"
  },
  {
   "ProjectId": 618623,
@@ -51683,11 +51995,13 @@
   "PhysicalProgress": 21,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0294,
-  "longitude": 78.6129,
+  "latitude": 24.72203,
+  "longitude": 79.63098,
   "bbox": "[78.5629, 22.9794, 78.6629, 23.0794]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Satai [PPL]",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 618665,
@@ -52266,11 +52580,13 @@
   "PhysicalProgress": 42,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.9014,
-  "longitude": 78.7929,
+  "latitude": 23.40673,
+  "longitude": 76.7098,
   "bbox": "[78.7429, 22.8514, 78.8429, 22.9514]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shujalpur [PPL]",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 618963,
@@ -52946,11 +53262,12 @@
   "PhysicalProgress": 88,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.9634,
-  "longitude": 78.5669,
+  "latitude": 22.907087,
+  "longitude": 80.884692,
   "bbox": "[78.5169, 22.9134, 78.6169, 23.0134]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dindori"
  },
  {
   "ProjectId": 618036,
@@ -53011,11 +53328,12 @@
   "PhysicalProgress": 33,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0014,
-  "longitude": 78.7909,
+  "latitude": 22.306893,
+  "longitude": 78.596292,
   "bbox": "[78.7409, 22.9514, 78.8409, 23.0514]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahpura <-> Dindori"
  },
  {
   "ProjectId": 617915,
@@ -53109,11 +53427,13 @@
   "PhysicalProgress": 89,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8234,
-  "longitude": 78.7449,
+  "latitude": 22.78659,
+  "longitude": 77.68109,
   "bbox": "[78.6949, 22.7734, 78.7949, 22.8734]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Budhni [PPL]",
+  "geocode_state_constraint": "Madhya Pradesh"
  },
  {
   "ProjectId": 619007,
@@ -53206,11 +53526,12 @@
   "PhysicalProgress": 57,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8294,
-  "longitude": 78.6069,
+  "latitude": 23.810952,
+  "longitude": 77.204857,
   "bbox": "[78.5569, 22.7794, 78.6569, 22.8794]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jirapur <-> Pachore"
  },
  {
   "ProjectId": 619095,
@@ -53271,11 +53592,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.6475,
-  "longitude": 75.8099,
+  "latitude": 21.14926,
+  "longitude": 79.667908,
   "bbox": "[75.7599, 19.5975, 75.8599, 19.6975]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Wainganga"
  },
  {
   "ProjectId": 618941,
@@ -53892,11 +54214,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5915,
-  "longitude": 75.7119,
+  "latitude": 18.50596,
+  "longitude": 76.87329,
   "bbox": "[75.6619, 19.5415, 75.7619, 19.6415]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chakur [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 617917,
@@ -54053,11 +54377,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.7555,
-  "longitude": 75.9039,
+  "latitude": 16.57702,
+  "longitude": 74.31544,
   "bbox": "[75.8539, 19.7055, 75.9539, 19.8055]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kagal [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 619300,
@@ -54345,11 +54671,12 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.8215,
-  "longitude": 75.7399,
+  "latitude": 18.414058,
+  "longitude": 73.996145,
   "bbox": "[75.6899, 19.7715, 75.7899, 19.8715]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dive Ghat"
  },
  {
   "ProjectId": 618097,
@@ -54410,11 +54737,12 @@
   "PhysicalProgress": 76,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.6895,
-  "longitude": 75.8399,
+  "latitude": 19.171142,
+  "longitude": 74.116184,
   "bbox": "[75.7899, 19.6395, 75.8899, 19.7395]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "stretch"
  },
  {
   "ProjectId": 617948,
@@ -54900,11 +55228,13 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.8035,
-  "longitude": 75.7199,
+  "latitude": 19.15657,
+  "longitude": 77.50304,
   "bbox": "[75.6699, 19.7535, 75.7699, 19.8535]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mudkhed [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 618046,
@@ -54932,11 +55262,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.8335,
-  "longitude": 75.6659,
+  "latitude": 18.668751,
+  "longitude": 75.352388,
   "bbox": "[75.6159, 19.7835, 75.7159, 19.8835]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "gradation of Sabalkhed"
  },
  {
   "ProjectId": 618154,
@@ -54964,11 +55295,12 @@
   "PhysicalProgress": 69,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5675,
-  "longitude": 75.6059,
+  "latitude": 18.668751,
+  "longitude": 75.352388,
   "bbox": "[75.5559, 19.5175, 75.6559, 19.6175]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jamkhed"
  },
  {
   "ProjectId": 618181,
@@ -55321,11 +55653,13 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.6215,
-  "longitude": 75.6759,
+  "latitude": 20.35025,
+  "longitude": 77.89706,
   "bbox": "[75.6259, 19.5715, 75.7259, 19.6715]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "phata [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 617938,
@@ -55418,11 +55752,12 @@
   "PhysicalProgress": 72,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5575,
-  "longitude": 75.7759,
+  "latitude": 17.957934,
+  "longitude": 74.414235,
   "bbox": "[75.7259, 19.5075, 75.8259, 19.6075]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Phaltan"
  },
  {
   "ProjectId": 617978,
@@ -55483,11 +55818,13 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5875,
-  "longitude": 75.7459,
+  "latitude": 17.98498,
+  "longitude": 73.25124,
   "bbox": "[75.6959, 19.5375, 75.7959, 19.6375]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mandangad [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 618042,
@@ -55547,11 +55884,12 @@
   "PhysicalProgress": 34,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5535,
-  "longitude": 75.5399,
+  "latitude": 20.906256,
+  "longitude": 79.834574,
   "bbox": "[75.4899, 19.5035, 75.5899, 19.6035]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rajoli"
  },
  {
   "ProjectId": 618090,
@@ -55873,11 +56211,13 @@
   "PhysicalProgress": 12,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.9315,
-  "longitude": 75.6259,
+  "latitude": 18.69067,
+  "longitude": 77.73722,
   "bbox": "[75.5759, 19.8815, 75.6759, 19.9815]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sagroli [PPL]",
+  "geocode_state_constraint": "Maharashtra"
  },
  {
   "ProjectId": 618049,
@@ -56389,11 +56729,12 @@
   "PhysicalProgress": 72,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.5655,
-  "longitude": 75.5139,
+  "latitude": 18.9131,
+  "longitude": 76.755707,
   "bbox": "[75.4639, 19.5155, 75.5639, 19.6155]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gangakhed"
  },
  {
   "ProjectId": 618047,
@@ -57036,11 +57377,12 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.6197,
-  "longitude": 93.8263,
+  "latitude": 24.8024,
+  "longitude": 93.116514,
   "bbox": "[93.7763, 24.5697, 93.8763, 24.6697]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jiribam"
  },
  {
   "ProjectId": 618345,
@@ -57068,11 +57410,13 @@
   "PhysicalProgress": 64,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.6957,
-  "longitude": 93.9583,
+  "latitude": 24.33353,
+  "longitude": 93.66999,
   "bbox": "[93.9083, 24.6457, 94.0083, 24.7457]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Churachandpur [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618344,
@@ -57100,11 +57444,13 @@
   "PhysicalProgress": 50,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.7697,
-  "longitude": 93.8183,
+  "latitude": 24.33353,
+  "longitude": 93.66999,
   "bbox": "[93.7683, 24.7197, 93.8683, 24.8197]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Churachandpur [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618347,
@@ -57132,11 +57478,13 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.5577,
-  "longitude": 93.9683,
+  "latitude": 24.33353,
+  "longitude": 93.66999,
   "bbox": "[93.9183, 24.5077, 94.0183, 24.6077]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Churachandpur [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618346,
@@ -57164,11 +57512,13 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.5517,
-  "longitude": 93.7903,
+  "latitude": 24.33353,
+  "longitude": 93.66999,
   "bbox": "[93.7403, 24.5017, 93.8403, 24.6017]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Churachandpur [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618338,
@@ -57388,11 +57738,13 @@
   "PhysicalProgress": 89,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.6997,
-  "longitude": 93.9803,
+  "latitude": 24.90815,
+  "longitude": 94.11902,
   "bbox": "[93.9303, 24.6497, 94.0303, 24.7497]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Yaingangpokpi [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618302,
@@ -57420,11 +57772,13 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.6117,
-  "longitude": 94.0563,
+  "latitude": 24.90815,
+  "longitude": 94.11902,
   "bbox": "[94.0063, 24.5617, 94.1063, 24.6617]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Yaingangpokpi [PPL]",
+  "geocode_state_constraint": "Manipur"
  },
  {
   "ProjectId": 618420,
@@ -58097,11 +58451,13 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.2585,
-  "longitude": 92.8656,
+  "latitude": 22.89247,
+  "longitude": 92.74218,
   "bbox": "[92.8156, 23.2085, 92.9156, 23.3085]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Lunglei [PPL]",
+  "geocode_state_constraint": "Mizoram"
  },
  {
   "ProjectId": 618320,
@@ -58579,11 +58935,13 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.8997,
-  "longitude": 85.0205,
+  "latitude": 20.99734,
+  "longitude": 85.98527,
   "bbox": "[84.9705, 20.8497, 85.0705, 20.9497]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Duburi [PPL]",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 619157,
@@ -58970,11 +59328,13 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.9357,
-  "longitude": 85.2545,
+  "latitude": 20.91064,
+  "longitude": 86.22539,
   "bbox": "[85.2045, 20.8857, 85.3045, 20.9857]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Panikoili [PPL]",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 618593,
@@ -59002,11 +59362,13 @@
   "PhysicalProgress": 8,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0317,
-  "longitude": 85.1825,
+  "latitude": 22.15286,
+  "longitude": 86.54161,
   "bbox": "[85.1325, 20.9817, 85.2325, 21.0817]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bangriposi [PPL]",
+  "geocode_state_constraint": "Odisha"
  },
  {
   "ProjectId": 618523,
@@ -59067,11 +59429,12 @@
   "PhysicalProgress": 18,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.0837,
-  "longitude": 85.1905,
+  "latitude": 17.710704,
+  "longitude": 83.300435,
   "bbox": "[85.1405, 21.0337, 85.2405, 21.1337]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Daspalla"
  },
  {
   "ProjectId": 617905,
@@ -59294,11 +59657,12 @@
   "PhysicalProgress": 15,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.9277,
-  "longitude": 85.2865,
+  "latitude": 19.869437,
+  "longitude": 82.781009,
   "bbox": "[85.2365, 20.8777, 85.3365, 20.9777]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dharmagarh"
  },
  {
   "ProjectId": 618003,
@@ -59390,11 +59754,12 @@
   "PhysicalProgress": 35,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.7877,
-  "longitude": 84.9185,
+  "latitude": 20.138453,
+  "longitude": 85.516602,
   "bbox": "[84.8685, 20.7377, 84.9685, 20.8377]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "construction or"
  },
  {
   "ProjectId": 619119,
@@ -60454,11 +60819,13 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.2531,
-  "longitude": 75.5272,
+  "latitude": 31.96739,
+  "longitude": 74.9087,
   "bbox": "[75.4772, 31.2031, 75.5772, 31.3031]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ramdas [PPL]",
+  "geocode_state_constraint": "Punjab"
  },
  {
   "ProjectId": 618489,
@@ -60937,11 +61304,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.2611,
-  "longitude": 75.3332,
+  "latitude": 30.286716,
+  "longitude": 74.526223,
   "bbox": "[75.2832, 31.2111, 75.3832, 31.3111]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sri Muktsar Sahib"
  },
  {
   "ProjectId": 619063,
@@ -61292,11 +61660,13 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8618,
-  "longitude": 74.2979,
+  "latitude": 24.75361,
+  "longitude": 71.7728,
   "bbox": "[74.2479, 26.8118, 74.3479, 26.9118]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Sanchore [PPL]",
+  "geocode_state_constraint": "Rajasthan"
  },
  {
   "ProjectId": 617891,
@@ -61646,11 +62016,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9958,
-  "longitude": 74.3999,
+  "latitude": 25.253885,
+  "longitude": 73.694497,
   "bbox": "[74.3499, 26.9458, 74.4499, 27.0458]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Charbhuja"
  },
  {
   "ProjectId": 618092,
@@ -61678,11 +62049,13 @@
   "PhysicalProgress": 60,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.1638,
-  "longitude": 74.3299,
+  "latitude": 24.93805,
+  "longitude": 73.82392,
   "bbox": "[74.2799, 27.1138, 74.3799, 27.2138]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Nathdwara [PPL]",
+  "geocode_state_constraint": "Rajasthan"
  },
  {
   "ProjectId": 619270,
@@ -61742,11 +62115,12 @@
   "PhysicalProgress": 90,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.0078,
-  "longitude": 74.0239,
+  "latitude": 25.630134,
+  "longitude": 74.926438,
   "bbox": "[73.9739, 26.9578, 74.0739, 27.0578]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahpura"
  },
  {
   "ProjectId": 618117,
@@ -61839,11 +62213,12 @@
   "PhysicalProgress": 70,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8758,
-  "longitude": 74.2799,
+  "latitude": 29.365953,
+  "longitude": 74.298429,
   "bbox": "[74.2299, 26.8258, 74.3299, 26.9258]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hanumangarh"
  },
  {
   "ProjectId": 617901,
@@ -61937,11 +62312,12 @@
   "PhysicalProgress": 79,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.465,
-  "longitude": 88.4102,
+  "latitude": 10.957867,
+  "longitude": 76.510079,
   "bbox": "[88.3602, 27.415, 88.4602, 27.515]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Construction"
  },
  {
   "ProjectId": 618448,
@@ -62293,11 +62669,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 11.0751,
-  "longitude": 78.8349,
+  "latitude": 9.940093,
+  "longitude": 78.166349,
   "bbox": "[78.7849, 11.0251, 78.8849, 11.1251]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Madurai Ring"
  },
  {
   "ProjectId": 619113,
@@ -62555,11 +62932,12 @@
   "PhysicalProgress": 22,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 10.9991,
-  "longitude": 78.6169,
+  "latitude": 12.047309,
+  "longitude": 79.447569,
   "bbox": "[78.5669, 10.9491, 78.6669, 11.0491]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Vikravandi"
  },
  {
   "ProjectId": 618522,
@@ -63337,11 +63715,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 11.0291,
-  "longitude": 78.8189,
+  "latitude": 10.95771,
+  "longitude": 78.08095,
   "bbox": "[78.7689, 10.9791, 78.8689, 11.0791]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Karur [PPL]",
+  "geocode_state_constraint": "Tamil Nadu"
  },
  {
   "ProjectId": 619094,
@@ -63402,11 +63782,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 11.1691,
-  "longitude": 78.4569,
+  "latitude": 11.22126,
+  "longitude": 78.16524,
   "bbox": "[78.4069, 11.1191, 78.5069, 11.2191]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Namakkal [PPL]",
+  "geocode_state_constraint": "Tamil Nadu"
  },
  {
   "ProjectId": 618743,
@@ -63531,11 +63913,13 @@
   "PhysicalProgress": 44,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.0024,
-  "longitude": 79.0593,
+  "latitude": 17.24767,
+  "longitude": 80.14368,
   "bbox": "[79.0093, 17.9524, 79.1093, 18.0524]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Khammam [PPL]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 618816,
@@ -63659,11 +64043,13 @@
   "PhysicalProgress": 6,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.1764,
-  "longitude": 78.9813,
+  "latitude": 17.11295,
+  "longitude": 78.93278,
   "bbox": "[78.9313, 18.1264, 79.0313, 18.2264]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Puttapaka [PPL]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 618812,
@@ -63756,11 +64142,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.3004,
-  "longitude": 79.0173,
+  "latitude": 16.9985,
+  "longitude": 79.9656,
   "bbox": "[78.9673, 18.2504, 79.0673, 18.3504]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kodad [PPL]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 617913,
@@ -63852,11 +64240,12 @@
   "PhysicalProgress": 50,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.2824,
-  "longitude": 79.1393,
+  "latitude": 17.517506,
+  "longitude": 78.476504,
   "bbox": "[79.0893, 18.2324, 79.1893, 18.3324]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gundlapochampally <-> Bowenpally"
  },
  {
   "ProjectId": 619253,
@@ -63884,11 +64273,13 @@
   "PhysicalProgress": 49,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.0184,
-  "longitude": 78.8793,
+  "latitude": 17.05439,
+  "longitude": 79.26707,
   "bbox": "[78.8293, 17.9684, 78.9293, 18.0684]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Nalgonda [PPL]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 618001,
@@ -64012,11 +64403,13 @@
   "PhysicalProgress": 36,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.2984,
-  "longitude": 79.2053,
+  "latitude": 19.13244,
+  "longitude": 79.43056,
   "bbox": "[79.1553, 18.2484, 79.2553, 18.3484]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Pochanpalli [PPL]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 618560,
@@ -64044,11 +64437,12 @@
   "PhysicalProgress": 17,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.0564,
-  "longitude": 79.0493,
+  "latitude": 17.148608,
+  "longitude": 78.288692,
   "bbox": "[78.9993, 18.0064, 79.0993, 18.1064]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Geometrics of Thondupally"
  },
  {
   "ProjectId": 618746,
@@ -64142,11 +64536,12 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 17.9584,
-  "longitude": 78.8713,
+  "latitude": 18.462941,
+  "longitude": 79.899466,
   "bbox": "[78.8213, 17.9084, 78.9213, 18.0084]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rehabiitation"
  },
  {
   "ProjectId": 617992,
@@ -64305,11 +64700,12 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.0584,
-  "longitude": 79.1233,
+  "latitude": 17.384407,
+  "longitude": 78.780147,
   "bbox": "[79.0733, 18.0084, 79.1733, 18.1084]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Alinagar"
  },
  {
   "ProjectId": 619193,
@@ -64626,11 +65022,12 @@
   "PhysicalProgress": 31,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 17.9204,
-  "longitude": 78.8973,
+  "latitude": 16.696569,
+  "longitude": 77.959115,
   "bbox": "[78.8473, 17.8704, 78.9473, 17.9704]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mahabubnagar"
  },
  {
   "ProjectId": 618130,
@@ -64722,11 +65119,12 @@
   "PhysicalProgress": 85,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.3104,
-  "longitude": 78.9813,
+  "latitude": 18.005585,
+  "longitude": 78.896113,
   "bbox": "[78.9313, 18.2604, 79.0313, 18.3604]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Siddipet"
  },
  {
   "ProjectId": 618197,
@@ -64754,11 +65152,12 @@
   "PhysicalProgress": 73,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.2504,
-  "longitude": 79.0833,
+  "latitude": 17.93751,
+  "longitude": 78.211745,
   "bbox": "[79.0333, 18.2004, 79.1333, 18.3004]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Medak"
  },
  {
   "ProjectId": 617996,
@@ -64915,11 +65314,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.1344,
-  "longitude": 79.1153,
+  "latitude": 16.672132,
+  "longitude": 78.488073,
   "bbox": "[79.0653, 18.0844, 79.1653, 18.1844]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kalwakurthy"
  },
  {
   "ProjectId": 618143,
@@ -64979,11 +65379,13 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 17.9944,
-  "longitude": 79.1233,
+  "latitude": 17.14054,
+  "longitude": 79.62045,
   "bbox": "[79.0733, 17.9444, 79.1733, 18.0444]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Suryapet [PPLA2]",
+  "geocode_state_constraint": "Telangana"
  },
  {
   "ProjectId": 618190,
@@ -65043,11 +65445,12 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.1764,
-  "longitude": 79.0453,
+  "latitude": 19.321602,
+  "longitude": 79.442514,
   "bbox": "[78.9953, 18.1264, 79.0953, 18.2264]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Manneguda"
  },
  {
   "ProjectId": 617936,
@@ -65172,11 +65575,12 @@
   "PhysicalProgress": 48,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.9068,
-  "longitude": 91.7962,
+  "latitude": 12.981095,
+  "longitude": 77.635966,
   "bbox": "[91.7462, 23.8568, 91.8462, 23.9568]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Champak Nagar"
  },
  {
   "ProjectId": 618368,
@@ -65204,11 +65608,12 @@
   "PhysicalProgress": 14,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.8448,
-  "longitude": 91.8262,
+  "latitude": 23.541616,
+  "longitude": 91.491759,
   "bbox": "[91.7762, 23.7948, 91.8762, 23.8948]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rangamati"
  },
  {
   "ProjectId": 618367,
@@ -65399,11 +65804,13 @@
   "PhysicalProgress": 42,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.7508,
-  "longitude": 92.1422,
+  "latitude": 24.33199,
+  "longitude": 92.00391,
   "bbox": "[92.0922, 23.7008, 92.1922, 23.8008]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Kailashahar [PPLA2]",
+  "geocode_state_constraint": "Tripura"
  },
  {
   "ProjectId": 618307,
@@ -65431,11 +65838,13 @@
   "PhysicalProgress": 55,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.0728,
-  "longitude": 92.0062,
+  "latitude": 24.07412,
+  "longitude": 91.60214,
   "bbox": "[91.9562, 24.0228, 92.0562, 24.1228]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Lalchara [PPL]",
+  "geocode_state_constraint": "Tripura"
  },
  {
   "ProjectId": 618842,
@@ -65463,11 +65872,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9207,
-  "longitude": 80.7802,
+  "latitude": 25.796706,
+  "longitude": 82.488899,
   "bbox": "[80.7302, 26.8707, 80.8302, 26.9707]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "lalganj ajhara, mohanganj"
  },
  {
   "ProjectId": 618924,
@@ -65527,11 +65937,12 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9847,
-  "longitude": 81.0942,
+  "latitude": 26.208677,
+  "longitude": 81.21863,
   "bbox": "[81.0442, 26.9347, 81.1442, 27.0347]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Raebareli"
  },
  {
   "ProjectId": 618669,
@@ -65786,11 +66197,12 @@
   "PhysicalProgress": 33,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9747,
-  "longitude": 81.0342,
+  "latitude": 10.712406,
+  "longitude": 76.657175,
   "bbox": "[80.9842, 26.9247, 81.0842, 27.0247]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "ending"
  },
  {
   "ProjectId": 618923,
@@ -65818,11 +66230,13 @@
   "PhysicalProgress": 70,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8807,
-  "longitude": 80.7882,
+  "latitude": 29.373,
+  "longitude": 78.13636,
   "bbox": "[80.7382, 26.8307, 80.8382, 26.9307]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bijnor [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618868,
@@ -65882,11 +66296,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9887,
-  "longitude": 80.7602,
+  "latitude": 27.590201,
+  "longitude": 77.853563,
   "bbox": "[80.7102, 26.9387, 80.8102, 27.0387]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gaju"
  },
  {
   "ProjectId": 618864,
@@ -65914,11 +66329,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7947,
-  "longitude": 81.1002,
+  "latitude": 27.5035,
+  "longitude": 77.67215,
   "bbox": "[81.0502, 26.7447, 81.1502, 26.8447]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mathura [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618566,
@@ -65978,11 +66395,13 @@
   "PhysicalProgress": 64,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8367,
-  "longitude": 81.0542,
+  "latitude": 26.92665,
+  "longitude": 78.9433,
   "bbox": "[81.0042, 26.7867, 81.1042, 26.8867]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rudrapur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618867,
@@ -66303,11 +66722,12 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8087,
-  "longitude": 80.8422,
+  "latitude": 28.793473,
+  "longitude": 79.184581,
   "bbox": "[80.7922, 26.7587, 80.8922, 26.8587]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Rampur"
  },
  {
   "ProjectId": 618761,
@@ -66335,11 +66755,13 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8027,
-  "longitude": 80.9422,
+  "latitude": 28.98002,
+  "longitude": 77.70636,
   "bbox": "[80.8922, 26.7527, 80.9922, 26.8527]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Meerut [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618770,
@@ -66432,11 +66854,13 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9807,
-  "longitude": 81.0542,
+  "latitude": 29.35813,
+  "longitude": 77.39068,
   "bbox": "[81.0042, 26.9307, 81.1042, 27.0307]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Karaunda [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618722,
@@ -66464,11 +66888,13 @@
   "PhysicalProgress": 67,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7107,
-  "longitude": 80.9022,
+  "latitude": 29.47791,
+  "longitude": 77.22548,
   "bbox": "[80.8522, 26.6607, 80.9522, 26.7607]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gogwan [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 619168,
@@ -66978,11 +67404,12 @@
   "PhysicalProgress": 42,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.6947,
-  "longitude": 81.1442,
+  "latitude": 28.520427,
+  "longitude": 77.572049,
   "bbox": "[81.0942, 26.6447, 81.1942, 26.7447]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Amethi bypass Part"
  },
  {
   "ProjectId": 618054,
@@ -67075,11 +67502,12 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7407,
-  "longitude": 81.1282,
+  "latitude": 26.423991,
+  "longitude": 83.763858,
   "bbox": "[81.0782, 26.6907, 81.1782, 26.7907]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Deoria"
  },
  {
   "ProjectId": 619194,
@@ -67657,11 +68085,12 @@
   "PhysicalProgress": 35,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7347,
-  "longitude": 80.8162,
+  "latitude": 27.303208,
+  "longitude": 83.03993,
   "bbox": "[80.7662, 26.6847, 80.8662, 26.7847]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Ahirauli"
  },
  {
   "ProjectId": 618057,
@@ -67946,11 +68375,13 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.0387,
-  "longitude": 81.0362,
+  "latitude": 28.83893,
+  "longitude": 78.77684,
   "bbox": "[80.9862, 26.9887, 81.0862, 27.0887]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Moradabad [PPLA2]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618855,
@@ -67978,11 +68409,13 @@
   "PhysicalProgress": 99,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.0367,
-  "longitude": 81.1142,
+  "latitude": 27.88165,
+  "longitude": 79.90918,
   "bbox": "[81.0642, 26.9867, 81.1642, 27.0867]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahjahanpur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618856,
@@ -68010,11 +68443,13 @@
   "PhysicalProgress": 50,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9707,
-  "longitude": 81.1382,
+  "latitude": 27.39491,
+  "longitude": 80.13165,
   "bbox": "[81.0882, 26.9207, 81.1882, 27.0207]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Hardoi [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618859,
@@ -68074,11 +68509,13 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7307,
-  "longitude": 80.8902,
+  "latitude": 27.6431,
+  "longitude": 79.9402,
   "bbox": "[80.8402, 26.6807, 80.9402, 26.7807]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahabad [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618112,
@@ -68202,11 +68639,13 @@
   "PhysicalProgress": 18,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.6927,
-  "longitude": 80.8422,
+  "latitude": 26.99804,
+  "longitude": 79.17514,
   "bbox": "[80.7922, 26.6427, 80.8922, 26.7427]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jagarnathpur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618056,
@@ -68365,11 +68804,13 @@
   "PhysicalProgress": 40,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8927,
-  "longitude": 80.9142,
+  "latitude": 26.59534,
+  "longitude": 82.13272,
   "bbox": "[80.8642, 26.8427, 80.9642, 26.9427]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bikapur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618067,
@@ -68430,11 +68871,12 @@
   "PhysicalProgress": 93,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9727,
-  "longitude": 80.9802,
+  "latitude": 28.520427,
+  "longitude": 77.572049,
   "bbox": "[80.9302, 26.9227, 81.0302, 27.0227]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "under"
  },
  {
   "ProjectId": 618163,
@@ -68494,11 +68936,13 @@
   "PhysicalProgress": 81,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9707,
-  "longitude": 81.1382,
+  "latitude": 26.4749,
+  "longitude": 79.1849,
   "bbox": "[81.0882, 26.9207, 81.1882, 27.0207]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bihar [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618124,
@@ -68625,11 +69069,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 27.0407,
-  "longitude": 81.1222,
+  "latitude": 27.21869,
+  "longitude": 79.29761,
   "bbox": "[81.0722, 26.9907, 81.1722, 27.0907]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bewar [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 618265,
@@ -68689,11 +69135,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8847,
-  "longitude": 80.8662,
+  "latitude": 26.77615,
+  "longitude": 79.02133,
   "bbox": "[80.8162, 26.8347, 80.9162, 26.9347]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Etawah [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 617963,
@@ -68721,11 +69169,12 @@
   "PhysicalProgress": 33,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7787,
-  "longitude": 80.9882,
+  "latitude": 28.520427,
+  "longitude": 77.572049,
   "bbox": "[80.9382, 26.7287, 81.0382, 26.8287]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "under Uttar Pradesh"
  },
  {
   "ProjectId": 618886,
@@ -68914,11 +69363,12 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.7507,
-  "longitude": 81.0822,
+  "latitude": 25.796706,
+  "longitude": 82.488899,
   "bbox": "[81.0322, 26.7007, 81.1322, 26.8007]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "configuration Bhadohi"
  },
  {
   "ProjectId": 618264,
@@ -69011,11 +69461,13 @@
   "PhysicalProgress": 21,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9607,
-  "longitude": 81.0042,
+  "latitude": 25.75356,
+  "longitude": 82.68689,
   "bbox": "[80.9542, 26.9107, 81.0542, 27.0107]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Jaunpur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 617964,
@@ -69107,11 +69559,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9127,
-  "longitude": 81.0242,
+  "latitude": 27.88165,
+  "longitude": 79.90918,
   "bbox": "[80.9742, 26.8627, 81.0742, 26.9627]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Shahjahanpur [PPL]",
+  "geocode_state_constraint": "Uttar Pradesh"
  },
  {
   "ProjectId": 619292,
@@ -69236,11 +69690,12 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 30.1808,
-  "longitude": 79.0453,
+  "latitude": 30.303033,
+  "longitude": 78.0599,
   "bbox": "[78.9953, 30.1308, 79.0953, 30.2308]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Construction"
  },
  {
   "ProjectId": 618208,
@@ -69623,11 +70078,12 @@
   "PhysicalProgress": 31,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 30.0308,
-  "longitude": 78.8553,
+  "latitude": 24.467813,
+  "longitude": 77.06841,
   "bbox": "[78.8053, 29.9808, 78.9053, 30.0808]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "geocode_source": "Budhi <-> portal"
  },
  {
   "ProjectId": 617888,
@@ -69719,11 +70175,13 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 30.1468,
-  "longitude": 79.1533,
+  "latitude": 30.55543,
+  "longitude": 79.56436,
   "bbox": "[79.1033, 30.0968, 79.2033, 30.1968]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Joshimath [PPL]",
+  "geocode_state_constraint": "Uttarakhand"
  },
  {
   "ProjectId": 618119,
@@ -69751,11 +70209,13 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.9208,
-  "longitude": 79.0293,
+  "latitude": 29.83738,
+  "longitude": 79.77161,
   "bbox": "[78.9793, 29.8708, 79.0793, 29.9708]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Bageshwar [PPL]",
+  "geocode_state_constraint": "Uttarakhand"
  },
  {
   "ProjectId": 617974,
@@ -69783,11 +70243,12 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.9548,
-  "longitude": 78.8193,
+  "latitude": 30.999214,
+  "longitude": 78.462695,
   "bbox": "[78.7693, 29.9048, 78.8693, 30.0048]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Yamunotri"
  },
  {
   "ProjectId": 618210,
@@ -69912,11 +70373,13 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.8828,
-  "longitude": 79.1053,
+  "latitude": 30.61446,
+  "longitude": 78.31501,
   "bbox": "[79.0553, 29.8328, 79.1553, 29.9328]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Dharasu [PPL]",
+  "geocode_state_constraint": "Uttarakhand"
  },
  {
   "ProjectId": 618040,
@@ -69944,11 +70407,12 @@
   "PhysicalProgress": 42,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.9708,
-  "longitude": 79.1133,
+  "latitude": 29.887555,
+  "longitude": 78.673681,
   "bbox": "[79.0633, 29.9208, 79.1633, 30.0208]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Gumkhal"
  },
  {
   "ProjectId": 618041,
@@ -70136,11 +70600,12 @@
   "PhysicalProgress": 77,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 29.9548,
-  "longitude": 79.1133,
+  "latitude": 30.684551,
+  "longitude": 79.889369,
   "bbox": "[79.0633, 29.9048, 79.1633, 30.0048]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Malari km"
  },
  {
   "ProjectId": 618039,
@@ -70265,11 +70730,12 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8728,
-  "longitude": 87.953,
+  "latitude": 23.202097,
+  "longitude": 86.322899,
   "bbox": "[87.903, 22.8228, 88.003, 22.9228]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Purulia"
  },
  {
   "ProjectId": 618808,
@@ -70329,11 +70795,12 @@
   "PhysicalProgress": 58,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.1828,
-  "longitude": 87.893,
+  "latitude": 26.642032,
+  "longitude": 88.368629,
   "bbox": "[87.843, 23.1328, 87.943, 23.2328]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "A Ghoshpukur"
  },
  {
   "ProjectId": 618572,
@@ -70361,11 +70828,12 @@
   "PhysicalProgress": 3,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.1608,
-  "longitude": 87.771,
+  "latitude": 26.450624,
+  "longitude": 88.846227,
   "bbox": "[87.721, 23.1108, 87.821, 23.2108]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Binnaguri <-> Dhupguri"
  },
  {
   "ProjectId": 618825,
@@ -70425,11 +70893,12 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8168,
-  "longitude": 87.905,
+  "latitude": 22.7679,
+  "longitude": 88.538297,
   "bbox": "[87.855, 22.7668, 87.955, 22.8668]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Construction"
  },
  {
   "ProjectId": 618429,
@@ -70457,11 +70926,12 @@
   "PhysicalProgress": 91,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0348,
-  "longitude": 87.779,
+  "latitude": 22.7679,
+  "longitude": 88.538297,
   "bbox": "[87.729, 22.9848, 87.829, 23.0848]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Construction"
  },
  {
   "ProjectId": 617893,
@@ -70587,11 +71057,12 @@
   "PhysicalProgress": 6,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.9468,
-  "longitude": 87.745,
+  "latitude": 31.636805,
+  "longitude": 74.580184,
   "bbox": "[87.695, 22.8968, 87.795, 22.9968]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mode"
  },
  {
   "ProjectId": 617960,
@@ -70683,11 +71154,12 @@
   "PhysicalProgress": 67,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.8168,
-  "longitude": 87.677,
+  "latitude": 31.636805,
+  "longitude": 74.580184,
   "bbox": "[87.627, 22.7668, 87.727, 22.8668]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Mode"
  },
  {
   "ProjectId": 618824,
@@ -71233,11 +71705,12 @@
   "PhysicalProgress": 44,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.0224,
-  "longitude": 94.6804,
+  "latitude": 32.252456,
+  "longitude": 77.235065,
   "bbox": "[94.6304, 25.9724, 94.7304, 26.0724]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Intermediate"
  },
  {
   "ProjectId": 618002,
@@ -71265,11 +71738,13 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.1044,
-  "longitude": 94.7464,
+  "latitude": 26.28527,
+  "longitude": 94.62012,
   "bbox": "[94.6964, 26.0544, 94.7964, 26.1544]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "GEONAMES_TOKEN_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "Chare [PPL]",
+  "geocode_state_constraint": "Nagaland"
  },
  {
   "ProjectId": 618364,
@@ -71393,10 +71868,11 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.1604,
-  "longitude": 94.5484,
+  "latitude": 32.252456,
+  "longitude": 77.235065,
   "bbox": "[94.4984, 26.1104, 94.5984, 26.2104]",
-  "geocode_precision": "STATE_CENTROID_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "geocode_source": "intermediate"
  }
 ]

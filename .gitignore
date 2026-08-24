@@ -48,3 +48,9 @@ scratch/
 paimana_extracted/satellite_data/raw_tiles/
 paimana_extracted/satellite_data/imagery_test/
 
+
+# GeoNames India dump: 68MB build-time input for geonames_resolver.py.
+# Freely re-downloadable (CC-BY 4.0); the resolved coordinates it produces are
+# committed in ALL_2207_PROJECTS_GEOREFERENCED.json, so the demo runs without it.
+#   curl -O https://download.geonames.org/export/dump/IN.zip && unzip -p IN.zip IN.txt > paimana_extracted/geonames_IN.txt
+paimana_extracted/geonames_IN.txt
