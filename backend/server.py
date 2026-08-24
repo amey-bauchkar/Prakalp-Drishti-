@@ -170,5 +170,19 @@ async def serve_spa_catchall(full_path: str):
 
 if __name__ == "__main__":
     import uvicorn
-    print("Starting PRAKALP-DRISHTI FastAPI Server on http://127.0.0.1:8000")
-    uvicorn.run(app, host="127.0.0.1", port=8000, workers=1)
+
+    # Worker count is configurable rather than pinned at 1. Each worker holds its own
+    # copy of the engines (~190 MB RSS) and pays the ~16 s cold start, so this is a
+    # deliberate memory-vs-throughput trade the operator makes, not a constant baked
+    # into the source. Defaults to 1 for laptop demos.
+    workers = int(os.environ.get("PRAKALP_WORKERS", "1"))
+    host = os.environ.get("PRAKALP_HOST", "127.0.0.1")
+    port = int(os.environ.get("PRAKALP_PORT", "8000"))
+
+    print(f"Starting PRAKALP-DRISHTI FastAPI Server on http://{host}:{port} "
+          f"({workers} worker{'s' if workers != 1 else ''})")
+    if workers > 1:
+        # uvicorn requires an import string, not an app object, to fork workers.
+        uvicorn.run("backend.server:app", host=host, port=port, workers=workers)
+    else:
+        uvicorn.run(app, host=host, port=port)

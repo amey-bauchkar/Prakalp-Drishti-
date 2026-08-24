@@ -43,11 +43,13 @@ const CONFIDENCE_STYLES = {
   },
 };
 
+// Statuses describe what the imagery OBSERVED, never a completion percentage.
+// Surface change and reported progress correlate at 0.007 across the corpus, so the
+// old "N% observed vs M% claimed, X pts divergence" framing was not supportable.
 const STATUS_STYLES = {
-  CRITICAL_DIVERGENCE: { cls: 'bg-rose-100 text-rose-800 border-rose-300', label: 'Critical Divergence' },
-  MODERATE_VARIANCE: { cls: 'bg-amber-100 text-amber-800 border-amber-300', label: 'Moderate Variance' },
-  EARLY_ACCELERATION: { cls: 'bg-sky-100 text-sky-800 border-sky-300', label: 'Ahead of Schedule' },
-  VERIFIED_ON_TRACK: { cls: 'bg-emerald-100 text-emerald-800 border-emerald-300', label: 'Verified On Track' },
+  ACTIVITY_ANOMALY: { cls: 'bg-rose-100 text-rose-800 border-rose-300', label: 'Activity Anomaly — Field Visit' },
+  CHANGE_CONFIRMED: { cls: 'bg-emerald-100 text-emerald-800 border-emerald-300', label: 'Ground Change Confirmed' },
+  LOW_CHANGE_OBSERVED: { cls: 'bg-amber-100 text-amber-800 border-amber-300', label: 'Low Ground Change' },
   EO_UNAVAILABLE: { cls: 'bg-slate-100 text-slate-700 border-slate-300', label: 'Not Verifiable' },
 };
 
@@ -256,20 +258,37 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
       {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gov-border border-t border-gov-border">
         {[
-          { k: 'Contractor Claim', v: `${data.claimed_progress_pct}%`, c: 'text-gov-navy' },
           {
-            k: 'Orbital Observed',
-            v: reliable ? `${data.eo_observed_progress_pct}%` : '—',
+            k: 'Reported Progress',
+            v: `${data.claimed_progress_pct}%`,
+            c: 'text-gov-navy',
+            t: 'Self-reported by the executing agency. This is the figure under scrutiny, not a measurement.',
+          },
+          {
+            k: 'Surface Changed',
+            v: reliable ? `${data.surface_change_pct ?? 0}%` : '—',
             c: reliable ? 'text-emerald-700' : 'text-gov-muted',
+            t: 'Independently measured from 2018 vs 2023 imagery. No reported figure feeds this number.',
           },
           {
-            k: 'Divergence',
-            v: reliable ? `${data.divergence_rod_points > 0 ? '+' : ''}${data.divergence_rod_points} pts` : 'Withheld',
-            c: reliable && Math.abs(data.divergence_rod_points) > 25 ? 'text-rose-600' : 'text-gov-navy',
+            k: 'Sector Percentile',
+            v: reliable && data.change_percentile_in_sector != null
+              ? `${data.change_percentile_in_sector}th`
+              : '—',
+            c: reliable && data.change_percentile_in_sector != null && data.change_percentile_in_sector <= 10
+              ? 'text-rose-600' : 'text-gov-navy',
+            t: 'Where this site ranks for structural change against peers in the same sector.',
           },
-          { k: 'Surface Changed', v: `${data.change_fraction_pct ?? 0}%`, c: 'text-gov-navy' },
+          {
+            k: 'Sampled Footprint',
+            v: data.asset_geometry === 'LINEAR' ? 'Corridor slice' : 'Whole site',
+            c: data.asset_geometry === 'LINEAR' ? 'text-amber-700' : 'text-gov-navy',
+            t: data.asset_geometry === 'LINEAR'
+              ? 'Linear asset: one tile samples a single slice of the corridor, not the entire project.'
+              : 'Point asset: the tile covers the works.',
+          },
         ].map((m) => (
-          <div key={m.k} className="bg-white p-3 text-center">
+          <div key={m.k} className="bg-white p-3 text-center" title={m.t}>
             <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block">{m.k}</span>
             <span className={`text-sm font-black font-mono ${m.c}`}>{m.v}</span>
           </div>
