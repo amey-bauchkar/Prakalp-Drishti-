@@ -111,7 +111,7 @@ _NOISE_PATTERNS = [
     re.compile(r"\bkm\.?\s*[\d.,]+", re.I),
     re.compile(r"\bdesign\s+(?:ch\.?|length|km)\.?\s*[\d.,]*", re.I),
     re.compile(r"\bch\.?\s*[\d.,]+", re.I),
-    re.compile(r"\bnh[-\s]?\d+[a-z]?\b", re.I),                  # NH-544D
+    re.compile(r"\bnh[-\s]?\d+[a-z]{0,3}\b", re.I),              # NH-544D, NH-130CD
     re.compile(r"\bsh[-\s]?\d+[a-z]?\b", re.I),
     re.compile(r"\bpackage\s*[-\s]?[ivx\d]+\b", re.I),
     re.compile(r"\bpkg\.?\s*[-\s]?[ivx\d]+\b", re.I),
@@ -236,6 +236,28 @@ _ACRONYM_BLOCKLIST = {
 }
 
 
+def _trim_junk_edges(tok: str) -> str:
+    """Strip junk words from BOTH ends of a candidate, keeping the toponym core.
+
+    NHAI titles leave residue that survives the noise patterns because it sits adjacent
+    to the place name rather than matching a pattern of its own:
+        "PS Mydukur"          -> "Mydukur"      (PS = paved shoulders)
+        "Badvel from of"      -> "Badvel"
+        "Gundugolanu Design"  -> "Gundugolanu"
+    Rejecting these outright loses a real, resolvable place; only the edges are junk.
+    Interior words are left alone, since a genuine multi-word toponym ("Veera Kaveri
+    Raja Puram") must survive intact.
+    """
+    words = [w for w in re.split(r"\s+", tok.strip()) if w]
+    junk = lambda w: (w.lower() in _STOPWORDS or w.lower() in _ACRONYM_BLOCKLIST
+                      or bool(_ROMAN_ONLY.match(w.lower())))
+    while words and junk(words[0]):
+        words.pop(0)
+    while words and junk(words[-1]):
+        words.pop()
+    return " ".join(words).strip(" ,.-&/")
+
+
 def _is_plausible_toponym(tok: str) -> bool:
     tok = tok.split(".")[0].strip(" ,.-&/")   # never run past a sentence boundary
     if len(tok) < 3 or len(tok) > 40:
@@ -284,7 +306,7 @@ def extract_toponyms(project_name: str) -> Tuple[List[str], str]:
     best: Optional[str] = None
     for m in _AT_PLACE.finditer(light):
         place, admin = m.group(1), m.group(2)
-        place = place.split(".")[0].strip(" ,.-&/")     # stop at sentence boundary
+        place = _trim_junk_edges(place.split(".")[0].strip(" ,.-&/"))  # sentence boundary + edge junk
         if admin:
             admin = admin.split(".")[0].strip(" ,.-&/")
         cand = f"{place}, {admin}" if admin else place
@@ -297,15 +319,16 @@ def extract_toponyms(project_name: str) -> Tuple[List[str], str]:
     if not cleaned:
         return [], "none"
 
-    parts = [p.strip(" ,.-&/") for p in _CORRIDOR_SPLIT.split(cleaned)]
+    parts = [_trim_junk_edges(p.strip(" ,.-&/")) for p in _CORRIDOR_SPLIT.split(cleaned)]
     parts = [p for p in parts if _is_plausible_toponym(p)]
     if len(parts) >= 2:
         return [parts[0], parts[-1]], "corridor"
     if len(parts) == 1:
         return [parts[0]], "landmark"
 
-    if _is_plausible_toponym(cleaned):
-        return [cleaned], "landmark"
+    trimmed = _trim_junk_edges(cleaned)
+    if _is_plausible_toponym(trimmed):
+        return [trimmed], "landmark"
     return [], "none"
 
 
