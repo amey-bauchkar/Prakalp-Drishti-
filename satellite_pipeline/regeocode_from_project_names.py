@@ -57,9 +57,15 @@ import urllib.parse
 import urllib.request
 from typing import Dict, List, Optional, Tuple
 
-if sys.stdout and hasattr(sys.stdout, "buffer"):
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+def _force_utf8_stdout() -> None:
+    """Called from main(), not at import time.
+
+    Rebinding sys.stdout on import invalidates any wrapper the importing process already
+    installed, so importing this module for its parser would break that process's output.
+    """
+    if sys.stdout and hasattr(sys.stdout, "buffer"):
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
@@ -83,7 +89,10 @@ _PREFIX_NOISE = re.compile(
     r"^\s*(?:"
     r"construction\s+of|development\s+of|c/?o\b|augmentation\s+of|redevelopment\s+of|"
     r"rehabilitation(?:\s+and\s+up-?gradation)?(?:\s+and\s+completion)?(?:\s+of)?|"
-    r"up-?gradation\s+of|widening\s+of|strengthening\s+of|improvement\s+of|"
+    # "...of" AND "...to": titles say both ("Improvement to two lane", "Widening of NH-x"),
+    # and missing the "to" form let the bare verb survive as a candidate toponym.
+    r"up-?gradation\s+(?:of|to)|widening\s+(?:of|to)|strengthening\s+(?:of|to)|"
+    r"improvement\s+(?:of|to)|conversion\s+(?:of|to)|"
     r"provision\s+of|setting\s+up\s+of|establishment\s+of|expansion\s+of|"
     r"balance\s+work\s+of|completion\s+of|"
     r"\d+\s*[-\s]?l(?:aning)?\s+of|\d+\s*lane(?:ing)?\s+of|four\s+laning\s+of|six\s+laning\s+of|"
@@ -135,6 +144,29 @@ _STOPWORDS = {
     "district", "taluk", "tehsil", "mandal", "state", "states", "region",
     "various", "procurment", "procurement", "capacity", "expn", "expansion",
     "amalgamated", "misc.", "others", "other", "balance", "remaining",
+    # Generic engineering verbs/nouns. OSM will resolve "Improvement, India" to *some*
+    # coordinate in Punjab, which is a confidently-wrong placement -- exactly the failure
+    # class this parser exists to avoid. Observed hitting 41 projects before this fix.
+    "improvement", "improvements", "widening", "upgradation", "up-gradation",
+    "strengthening", "rehabilitation", "reconstruction", "bypass", "design", "ch",
+    "des", "ps", "shoulders", "shoulder", "paved", "formation", "earthwork",
+    "scheme", "evacuation", "transmission", "augmentation", "conversion", "provision",
+    # Spelled-out lane counts ("to four lane", "two lane of") are configuration, not place.
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "ten",
+    "single", "double", "twin", "multi", "dual",
+}
+
+# An Indian state or UT is an administrative region, not a project site. Matching one
+# yields a centroid indistinguishable from the placeholder we are trying to replace,
+# but labelled HIGH confidence -- worse than admitting we do not know.
+_ADMIN_REGIONS = {
+    "andhra pradesh", "arunachal pradesh", "assam", "bihar", "chhattisgarh", "goa",
+    "gujarat", "haryana", "himachal pradesh", "jharkhand", "karnataka", "kerala",
+    "madhya pradesh", "maharashtra", "manipur", "meghalaya", "mizoram", "nagaland",
+    "odisha", "orissa", "punjab", "rajasthan", "sikkim", "tamil nadu", "telangana",
+    "tripura", "uttar pradesh", "uttarakhand", "west bengal", "delhi", "ladakh",
+    "jammu and kashmir", "puducherry", "chandigarh", "andaman and nicobar islands",
+    "dadra and nagar haveli", "daman and diu", "lakshadweep", "india",
 }
 
 # Light cleaning only: strips bracketed/numeric noise but preserves sentence tails, so a
@@ -143,6 +175,10 @@ _STOPWORDS = {
 _LIGHT_NOISE = [
     re.compile(r"\[[^\]]*\]"),
     re.compile(r"\([^)]*\)"),
+    # Chainage markers ("at Design Ch. 250.400") otherwise satisfy the "at <Place>"
+    # pattern and geocode the literal words "Design Ch".
+    re.compile(r"\bdesign\s+ch\.?\s*[\d.,]*", re.I),
+    re.compile(r"\bch(?:ainage)?\.?\s*[\d.,]+", re.I),
     re.compile(r"\bkm\.?\s*\d+[\d.,]*\s*(?:to|-)\s*km\.?\s*\d+[\d.,]*", re.I),
     re.compile(r"\bkm\.?\s*[\d.,]+", re.I),
     re.compile(r"\bnh[-\s]?\d+[a-z]?\b", re.I),
@@ -212,6 +248,8 @@ def _is_plausible_toponym(tok: str) -> bool:
     if not words or len(words) > 4:
         return False
     if words[0] in _JUNK_HEADS:
+        return False
+    if " ".join(words) in _ADMIN_REGIONS:
         return False
     # Reject when EVERY component is junk of some kind. Checking each junk class with its
     # own all() would let a mixture through -- "PRP-VIII" is not all-acronym and not
@@ -392,6 +430,7 @@ def candidate_queries(toponym: str, state: Optional[str]) -> List[str]:
 # ---------------------------------------------------------------------------------
 
 def main() -> None:
+    _force_utf8_stdout()
     ap = argparse.ArgumentParser()
     ap.add_argument("--parse-only", action="store_true", help="offline extraction report; no network")
     ap.add_argument("--limit", type=int, default=0, help="cap projects processed (debug)")
