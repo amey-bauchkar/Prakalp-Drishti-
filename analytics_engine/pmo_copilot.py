@@ -59,11 +59,15 @@ class PMOCopilotEngine:
 
         # Add Satellite Corroboration Fact
         sat_fact_id = f"fact_sat_audit_{pid}"
+        pctl = sat_audit.get("change_percentile_in_sector")
+        pctl_txt = f", {pctl:.0f}th percentile for its sector" if pctl is not None else ""
         facts_list.append({
             "fact_id": sat_fact_id,
-            "label": "Orbital Optical Ground-Truth Verification",
-            "value": f"{sat_audit['eo_observed_progress_pct']}% observed vs {sat_audit['claimed_progress_pct']}% claimed ({sat_audit['divergence_rod_points']} pts divergence)",
-            "unit": "STATUS",
+            "label": "Orbital Optical Surface-Change Measurement",
+            # Reports the measurement, not a completion estimate. Imagery cannot say
+            # what fraction of a DPR is done (r=0.007 against reported progress).
+            "value": f"{sat_audit.get('surface_change_pct', 0.0)}% of sampled ground structurally changed 2018-2023{pctl_txt}",
+            "unit": "PERCENT",
             "merkle_root": sat_audit["audit_hash"]
         })
 
@@ -96,21 +100,40 @@ class PMOCopilotEngine:
                 "citing_fact_id": graph_fact_id
             })
 
-        # Rule 3: Earth Observation Satellite Corroboration
-        if sat_audit["audit_status"] == "CRITICAL_DIVERGENCE":
+        # Rule 3: Earth Observation.
+        # The recommendation is field verification, never a disbursal freeze. Imagery
+        # establishes that expected ground activity is absent at the sampled location;
+        # it does not establish misreporting, and a payment hold needs the latter.
+        sat_status = sat_audit.get("audit_status")
+        geom_caveat = (" Note: this is a linear asset, so the tile samples one slice of"
+                       " the corridor rather than the whole works."
+                       if sat_audit.get("asset_geometry") == "LINEAR" else "")
+
+        if not sat_audit.get("eo_verdict_reliable"):
             pmo_action_items.append({
-                "category": "DISBURSAL_HOLD",
-                "priority": "CRITICAL",
-                "finding": f"Substantial discrepancy detected: Contractor claims {sat_audit['claimed_progress_pct']}% progress, but orbital Sentinel/ESRI imagery shows only {sat_audit['eo_observed_progress_pct']}% surface activity.",
-                "recommendation": "Freeze next capex tranche release pending physical spot audit by CAG/CVC team.",
+                "category": "EO_NOT_AVAILABLE",
+                "priority": "NORMAL",
+                "finding": f"No site-level geocode for this project, so its imagery is not confirmed to show the works. {sat_audit.get('eo_unreliable_reason') or ''}".strip(),
+                "recommendation": "Verify progress by physical inspection; Earth-observation screening is not applicable here.",
+                "citing_fact_id": sat_fact_id
+            })
+        elif sat_status == "ACTIVITY_ANOMALY":
+            pmo_action_items.append({
+                "category": "FIELD_VERIFICATION",
+                "priority": "HIGH",
+                "finding": (f"Project reports {sat_audit['claimed_progress_pct']}% complete, but structural change at the "
+                            f"sampled site is in the bottom decile for its sector "
+                            f"({sat_audit.get('surface_change_pct', 0.0)}% of surface changed 2018-2023).{geom_caveat}"),
+                "recommendation": "Prioritise a field visit to reconcile reported progress with observed ground activity.",
                 "citing_fact_id": sat_fact_id
             })
         else:
             pmo_action_items.append({
-                "category": "STATUTORY_CLEARANCE",
+                "category": "EO_SCREENING_CLEAR",
                 "priority": "NORMAL",
-                "finding": f"Orbital Earth-Observation corroborates reported physical progress ({sat_audit['eo_observed_progress_pct']}% observed activity).",
-                "recommendation": "Proceed with regular milestone disbursal under standard monitoring guidelines.",
+                "finding": (f"Structural change of {sat_audit.get('surface_change_pct', 0.0)}% observed at the sampled site "
+                            f"is consistent with active works for this sector.{geom_caveat}"),
+                "recommendation": "No Earth-observation exception raised; continue standard monitoring.",
                 "citing_fact_id": sat_fact_id
             })
 

@@ -16,6 +16,9 @@ from analytics_engine.kaal_chakra import get_kaal_chakra_engine
 from analytics_engine.setu_graph import get_setu_graph_engine
 from analytics_engine.vitta_vyuha import get_vitta_vyuha_engine, AllocationRequest
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BRIEFING_ARCHIVE_DIR = os.path.join(BASE_DIR, "artifacts", "briefings")
+
 class PragatiSaarthiEngine:
     def __init__(self):
         self.kaal_engine = get_kaal_chakra_engine()
@@ -128,7 +131,16 @@ class PragatiSaarthiEngine:
 
         # 3. Compute Merkle Root
         merkle_root, proofs = self._build_merkle_tree(fact_leaves)
-        doc_hash = hashlib.sha256(f"{merkle_root}:{focus_project_id}:{datetime.now().strftime('%Y-%m-%d')}".encode("utf-8")).hexdigest()
+        # doc_hash binds the document to its CONTENT, not to the wall clock.
+        #
+        # It previously included datetime.now().date(), so the identifier rotated at
+        # midnight while nothing was ever written to disk. A QR code printed on a
+        # Cabinet note therefore failed verification the next morning -- the audit
+        # trail was ephemeral, which is the opposite of what it claimed to be.
+        # Content-addressing makes the hash reproducible for as long as the underlying
+        # facts are unchanged, and archive_briefing() below makes it durable regardless.
+        doc_hash = hashlib.sha256(
+            f"{merkle_root}:{focus_project_id}".encode("utf-8")).hexdigest()
 
         # Update Fact Merkle Roots and Proof Paths (Unshared unique assignment)
         for idx, (fid, fact) in enumerate(audit_facts.items()):
@@ -244,7 +256,7 @@ class PragatiSaarthiEngine:
             }
         ]
 
-        return CabinetBriefing(
+        briefing = CabinetBriefing(
             doc_hash=doc_hash,
             merkle_root=merkle_root,
             generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S IST"),
@@ -257,6 +269,49 @@ class PragatiSaarthiEngine:
             bilingual_sections=bilingual_sections,
             audit_facts=audit_facts
         )
+        self.archive_briefing(briefing)
+        return briefing
+
+    # ------------------------------------------------------------------
+    # Durable archive
+    # ------------------------------------------------------------------
+
+    def archive_briefing(self, briefing: CabinetBriefing) -> str:
+        """Persist a briefing under its doc_hash, write-once.
+
+        Without this the audit trail existed only for the lifetime of a response: a
+        QR code on a printed Cabinet note pointed at a document that was regenerated
+        from scratch on every scan, so any change in upstream data silently changed
+        what the "verified" note said. Archiving on generation means the artefact a
+        CAG/CVC officer verifies is the artefact that was signed, not a fresh one that
+        merely resembles it.
+
+        Write-once: an existing file for a doc_hash is never overwritten, because the
+        hash is content-derived -- identical hash implies identical content, and a
+        differing file would indicate tampering rather than an update.
+        """
+        os.makedirs(BRIEFING_ARCHIVE_DIR, exist_ok=True)
+        path = os.path.join(BRIEFING_ARCHIVE_DIR, f"{briefing.doc_hash}.json")
+        if not os.path.exists(path):
+            tmp = path + ".tmp"
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(briefing.model_dump(), f, ensure_ascii=False, indent=1)
+            os.replace(tmp, path)
+        return path
+
+    @staticmethod
+    def load_archived_briefing(doc_hash: str) -> "CabinetBriefing | None":
+        """Retrieve a previously archived briefing by its doc_hash, or None."""
+        if not doc_hash or not doc_hash.isalnum():
+            return None                      # reject path traversal in the identifier
+        path = os.path.join(BRIEFING_ARCHIVE_DIR, f"{doc_hash}.json")
+        if not os.path.exists(path):
+            return None
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return CabinetBriefing(**json.load(f))
+        except Exception:
+            return None
 
 # Module-level singleton
 _briefing_instance = None

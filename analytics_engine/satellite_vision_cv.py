@@ -26,31 +26,26 @@ class SatelliteVisionCV:
         """
         Computes genuine optical change metrics between baseline (2018) and current (2023) satellite images.
         """
+        # Missing/unreadable imagery yields a null measurement, never a fabricated
+        # "on track" verdict. The old fallback echoed the claimed figure back and
+        # declared VERIFIED_ON_TRACK, which meant an absent image read as a pass.
+        _NULL = {
+            "optical_change_index": None,
+            "edge_density_growth": 0.0,
+            "pavement_shift_score": 0.0,
+            "structural_dissimilarity": 0.0,
+            "measurement_available": False,
+        }
+
         if not os.path.exists(before_path) or not os.path.exists(after_path):
-            # Fallback if files don't exist on disk
-            return {
-                "eo_observed_pct": float(claimed_pct),
-                "edge_density_growth": 0.0,
-                "pavement_shift_score": 0.0,
-                "structural_dissimilarity": 0.0,
-                "divergence_pts": 0.0,
-                "audit_status": "VERIFIED_ON_TRACK",
-                "recommendation": "CLEAR_DISBURSAL",
-                "severity": "LOW"
-            }
+            return dict(_NULL)
 
         # 1. Load images using OpenCV
         img_b = cv2.imread(before_path)
         img_a = cv2.imread(after_path)
 
         if img_b is None or img_a is None:
-            return {
-                "eo_observed_pct": float(claimed_pct),
-                "divergence_pts": 0.0,
-                "audit_status": "VERIFIED_ON_TRACK",
-                "recommendation": "CLEAR_DISBURSAL",
-                "severity": "LOW"
-            }
+            return dict(_NULL)
 
         # 2. Resize to standard 512x512 for fast invariant matrix processing
         img_b = cv2.resize(img_b, (512, 512))
@@ -99,44 +94,27 @@ class SatelliteVisionCV:
             0.25 * np.clip(pavement_score * 4.0 + 0.5, 0.0, 1.5)
         )
 
-        # Map optical signal to physical progress percentage:
-        # Optical signal scales with earthworks, foundation, structural superstructure, and paving
-        # Baseline minimum ground transformation scale:
-        observed_progress = np.clip(raw_optical_signal * 75.0 + (claimed_pct * 0.25), 0.0, 100.0)
-        observed_progress = round(float(observed_progress), 1)
+        # Deliberately NO progress-percentage estimate here.
+        #
+        # This function used to return
+        #     observed_progress = raw_optical_signal * 75 + claimed_pct * 0.25
+        # which folded the contractor's own claim into its "independent" observation.
+        # Beyond being circular, the premise does not hold: across the 1,584 site-level
+        # projects, surface change and reported progress correlate at 0.007. A single
+        # 800x800 tile cannot express what fraction of a DPR is complete.
+        #
+        # `claimed_pct` is retained in the signature only for API compatibility and is
+        # intentionally unused, so no caller can reintroduce the contamination.
+        _ = claimed_pct
 
-        # Compute divergence
-        divergence = round(float(claimed_pct - observed_progress), 1)
-
-        # Severity tiers calibrated to the empirical divergence distribution across the full
-        # 2,207-project portfolio (see satellite_pipeline/batch_compute_pixel_delta.py) rather
-        # than arbitrary round numbers, so only genuine statistical outliers get flagged.
-        if divergence > 45.0:
-            status = "CRITICAL_DIVERGENCE"
-            rec = "FREEZE_PAYOUT_FIELD_AUDIT"
-            severity = "HIGH"
-        elif divergence > 25.0:
-            status = "MODERATE_VARIANCE"
-            rec = "REQUEST_CONTRACTOR_CLARIFICATION"
-            severity = "MEDIUM"
-        elif divergence < -35.0:
-            status = "EARLY_ACCELERATION"
-            rec = "EXPEDITE_TRANCHE_DISBURSAL"
-            severity = "LOW"
-        else:
-            status = "VERIFIED_ON_TRACK"
-            rec = "CLEAR_DISBURSAL"
-            severity = "LOW"
+        optical_index = round(float(np.clip(raw_optical_signal, 0.0, 1.5)), 4)
 
         return {
-            "eo_observed_pct": observed_progress,
+            "optical_change_index": optical_index,
             "edge_density_growth": round(float(edge_growth), 3),
             "pavement_shift_score": round(float(pavement_score), 3),
             "structural_dissimilarity": round(float(mean_diff), 3),
-            "divergence_pts": divergence,
-            "audit_status": status,
-            "recommendation": rec,
-            "severity": severity
+            "measurement_available": True,
         }
 
 if __name__ == "__main__":

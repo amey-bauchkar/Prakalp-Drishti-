@@ -15,10 +15,33 @@ localised change polygons instead of one scalar.
 
 It also joins each project's geocode_precision and, crucially, marks whether the
 Earth-observation verdict is trustworthy at all. A project geocoded to a state or
-national centroid is not imaged at its own site, so any "divergence" measured over
-that imagery is meaningless and must not be presented as evidence of over-reporting.
+national centroid is not imaged at its own site, so any finding measured over that
+imagery is meaningless and must not be presented as evidence of over-reporting.
 Suppressing those verdicts is the difference between a defensible audit tool and a
 random number generator with a confident UI.
+
+What this script deliberately does NOT do
+-----------------------------------------
+It does not estimate "percentage complete" from imagery. An earlier release did, via
+
+    eo_observed = surface_change * 2.2 + claimed_progress * 0.45
+
+which is circular: 70% of the "independent orbital observation" was, on average,
+copied from the contractor figure it purported to audit. It correlated more strongly
+with the claim (0.768) than with the pixels (0.645), so inflating a claim inflated its
+own verification and suppressed the divergence the tool exists to surface.
+
+Removing the anchor alone would not have rescued it. Measured on the 1,584 site-level
+projects, surface change and reported progress correlate at 0.007 -- no relationship
+at all, and it stays ~0 split by asset geometry (POINT -0.019, LINEAR +0.022). One
+800x800 tile simply cannot express what fraction of a DPR is finished, least of all
+for a 50 km corridor sampled at a single point.
+
+So the output is now two honest things instead of one false one:
+  * surface_change_pct -- an independent measurement, no claim input anywhere;
+  * an ACTIVITY_ANOMALY flag for projects claiming near-completion whose sampled
+    ground sits in the bottom decile of structural change FOR THEIR SECTOR.
+The flag says "this warrants a field visit", never "this project is N% complete".
 """
 
 from __future__ import annotations
@@ -83,16 +106,27 @@ GEOCODE_CONFIDENCE = {
 }
 
 
+# Assets whose footprint is a corridor, not a point. A single 800x800 tile samples one
+# slice of a 50 km highway, so its change value describes that slice -- never the whole
+# project. Surfaced explicitly so the UI cannot imply otherwise.
+LINEAR_SECTORS = {
+    "Roads & Highways", "Railways", "Transmission & Distribution",
+    "Oil & Gas", "Inland Waterways", "Urban Public Transport",
+}
+
+
 def _empty_record(pid, name, sector, state, claimed, reason):
     return {
         "project_id": pid, "project_name": name, "sector": sector, "state": state,
-        "claimed_progress_pct": claimed, "eo_observed_ocai_pct": claimed,
-        "divergence_rod_points": 0.0, "audit_status": "EO_UNAVAILABLE",
+        "claimed_progress_pct": claimed,
+        "audit_status": "EO_UNAVAILABLE",
         "statutory_recommendation": "STANDARD_PHYSICAL_INSPECTION", "audit_severity": "LOW",
-        "change_fraction_pct": 0.0, "mean_dissimilarity": 0.0, "change_boxes": [],
+        "surface_change_pct": 0.0, "change_percentile_in_sector": None,
+        "mean_dissimilarity": 0.0, "change_boxes": [],
         "registration_shift_px": 0.0, "registration_method": "none",
         "has_dual_epoch_coverage": False, "eo_verdict_reliable": False,
         "eo_unreliable_reason": reason,
+        "asset_geometry": "LINEAR" if sector in LINEAR_SECTORS else "POINT",
     }
 
 
@@ -155,31 +189,13 @@ def process_single_project(row):
 
         change_pct = round(res.change_fraction * 100.0, 2)
 
-        # Observed progress is anchored to measured structural change, tempered by the
-        # reported figure. Deliberately conservative: the CV establishes that ground
-        # transformation occurred, not what percentage of a DPR it represents.
-        eo_observed = round(float(np.clip(change_pct * 2.2 + claimed * 0.45, 0.0, 100.0)), 1)
-        divergence = round(claimed - eo_observed, 1)
-
-        if not site_level:
-            status, rec_action, severity = "EO_UNAVAILABLE", "STANDARD_PHYSICAL_INSPECTION", "LOW"
-        elif divergence > 45.0:
-            status, rec_action, severity = "CRITICAL_DIVERGENCE", "FREEZE_PAYOUT_FIELD_AUDIT", "HIGH"
-        elif divergence > 25.0:
-            status, rec_action, severity = "MODERATE_VARIANCE", "REQUEST_CONTRACTOR_CLARIFICATION", "MEDIUM"
-        elif divergence < -35.0:
-            status, rec_action, severity = "EARLY_ACCELERATION", "EXPEDITE_TRANCHE_DISBURSAL", "LOW"
-        else:
-            status, rec_action, severity = "VERIFIED_ON_TRACK", "CLEAR_DISBURSAL", "LOW"
-
+        # NOTE: this worker emits MEASUREMENTS ONLY. Classification happens in main(),
+        # after the sector-relative distributions are known. Critically, `claimed` is
+        # NOT an input to any measurement here -- see the module docstring on why the
+        # previous formula was circular.
         return {
             **base,
-            "eo_observed_ocai_pct": eo_observed,
-            "divergence_rod_points": divergence,
-            "audit_status": status,
-            "statutory_recommendation": rec_action,
-            "audit_severity": severity,
-            "change_fraction_pct": change_pct,
+            "surface_change_pct": change_pct,
             "mean_dissimilarity": round(res.mean_dissimilarity, 4),
             "change_boxes": boxes,
             "registration_shift_px": round(res.registration_shift_px, 2),
@@ -187,10 +203,77 @@ def process_single_project(row):
             "has_dual_epoch_coverage": True,
             "eo_verdict_reliable": site_level,
             "eo_unreliable_reason": None if site_level else conf_note,
+            "asset_geometry": "LINEAR" if sector in LINEAR_SECTORS else "POINT",
         }
     except Exception as exc:
         rec = _empty_record(pid, name, sector, state, claimed, f"CV failure: {exc}")
         return {**base, **rec}
+
+
+# A project must claim at least this much progress before absent ground activity is
+# considered anomalous. Below it, low change is expected and says nothing.
+ANOMALY_CLAIM_THRESHOLD = 70.0
+# ...and its change must sit in the bottom decile OF ITS OWN SECTOR. Sector-relative
+# because a coal mine and a district hospital transform the ground very differently.
+ANOMALY_PERCENTILE = 10.0
+
+
+def classify(results: list) -> None:
+    """Second pass: assign audit status from sector-relative change, in place.
+
+    Why this is not a progress estimate
+    -----------------------------------
+    Measured across the 1,584 site-level projects, the correlation between reported
+    progress and pixel-derived surface change is 0.007 -- i.e. none. It stays ~0 when
+    split by asset geometry (POINT -0.019, LINEAR +0.022). The imagery therefore
+    CANNOT support a statement of the form "orbital observation says this project is
+    N% complete", and the previous release's attempt to produce one only looked
+    plausible because 45% of its value was copied from the claim it was auditing.
+
+    What the imagery CAN support is a much narrower, genuinely defensible screen:
+    a project asserting near-completion whose sampled ground shows almost no
+    structural transformation is an outlier worth a field visit. That is an anomaly
+    flag, not a measurement of completion, and it is reported as such.
+    """
+    reliable = [r for r in results if r.get("eo_verdict_reliable")]
+
+    # Sector-relative baselines, built only from projects whose imagery we trust.
+    by_sector = {}
+    for r in reliable:
+        by_sector.setdefault(r["sector"], []).append(r["surface_change_pct"])
+    cutoffs = {
+        s: float(np.percentile(v, ANOMALY_PERCENTILE))
+        for s, v in by_sector.items() if len(v) >= 20   # too few to define a distribution
+    }
+
+    for r in results:
+        if not r.get("eo_verdict_reliable"):
+            r["audit_status"] = "EO_UNAVAILABLE"
+            r["statutory_recommendation"] = "STANDARD_PHYSICAL_INSPECTION"
+            r["audit_severity"] = "LOW"
+            r["change_percentile_in_sector"] = None
+            continue
+
+        peers = by_sector.get(r["sector"], [])
+        chg = r["surface_change_pct"]
+        pct = (float(np.mean([p <= chg for p in peers])) * 100.0) if peers else None
+        r["change_percentile_in_sector"] = round(pct, 1) if pct is not None else None
+
+        cutoff = cutoffs.get(r["sector"])
+        claimed = r["claimed_progress_pct"]
+
+        if cutoff is not None and claimed >= ANOMALY_CLAIM_THRESHOLD and chg <= cutoff:
+            r["audit_status"] = "ACTIVITY_ANOMALY"
+            r["statutory_recommendation"] = "PRIORITISE_FIELD_VERIFICATION"
+            r["audit_severity"] = "HIGH"
+        elif chg >= 1.0:
+            r["audit_status"] = "CHANGE_CONFIRMED"
+            r["statutory_recommendation"] = "CONSISTENT_WITH_ACTIVE_WORKS"
+            r["audit_severity"] = "LOW"
+        else:
+            r["audit_status"] = "LOW_CHANGE_OBSERVED"
+            r["statutory_recommendation"] = "NO_ACTION_INDICATED"
+            r["audit_severity"] = "LOW"
 
 
 def main():
@@ -218,6 +301,8 @@ def main():
     elapsed = time.time() - t0
     print(f"Processed {len(results)} projects in {elapsed:.1f}s ({len(results)/elapsed:.1f}/s)\n")
 
+    classify(results)
+
     reliable = [r for r in results if r.get("eo_verdict_reliable")]
     print(f"EO verdict RELIABLE (site-level geocode): {len(reliable)} / {len(results)} "
           f"({len(reliable)/len(results)*100:.1f}%)")
@@ -235,10 +320,18 @@ def main():
         print(f"  {k:22s} {v:5d}  ({v/max(len(reliable),1)*100:5.1f}%)")
 
     if reliable:
-        cf = np.array([r["change_fraction_pct"] for r in reliable])
+        cf = np.array([r["surface_change_pct"] for r in reliable])
+        cl = np.array([r["claimed_progress_pct"] for r in reliable])
         nb = np.array([len(r["change_boxes"]) for r in reliable])
-        print(f"\nChange footprint (reliable only): median {np.median(cf):.2f}%  p90 {np.percentile(cf,90):.2f}%")
+        print(f"\nSurface change (reliable only): median {np.median(cf):.2f}%  p90 {np.percentile(cf,90):.2f}%")
         print(f"Change boxes per project: median {np.median(nb):.0f}  max {nb.max()}")
+        # Independence check: this MUST stay near zero. A rising value means the
+        # claimed figure has leaked back into the measurement path.
+        print(f"\nINTEGRITY corr(surface_change, claimed) = {np.corrcoef(cf, cl)[0,1]:+.3f} "
+              f"(must be ~0: the measurement is independent of the claim)")
+        lin = sum(1 for r in reliable if r["asset_geometry"] == "LINEAR")
+        print(f"Asset geometry: {lin} LINEAR (tile samples one slice of a corridor), "
+              f"{len(reliable)-lin} POINT")
 
     with open(CATALOG_PATH, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)

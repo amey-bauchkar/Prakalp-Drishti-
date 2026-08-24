@@ -25,9 +25,13 @@ class EOAuditorEngine:
                 self.catalog = json.load(f)
 
     def get_satellite_war_room_summary(self, limit: int = 50) -> Dict[str, Any]:
+        # Status vocabulary changed when the EO layer stopped estimating a completion
+        # percentage (the old "observed %" was 45%-weighted on the contractor's own
+        # claim). CRITICAL_DIVERGENCE/VERIFIED_ON_TRACK no longer exist; matching on
+        # them would silently report zero for every project.
         total_coverage = len(self.catalog)
-        critical_discrepancies = [p for p in self.catalog if p.get("audit_status") == "CRITICAL_DIVERGENCE"]
-        verified_on_track = [p for p in self.catalog if p.get("audit_status") == "VERIFIED_ON_TRACK"]
+        critical_discrepancies = [p for p in self.catalog if p.get("audit_status") == "ACTIVITY_ANOMALY"]
+        verified_on_track = [p for p in self.catalog if p.get("audit_status") == "CHANGE_CONFIRMED"]
 
         return {
             "module": "EO-AUDITOR",

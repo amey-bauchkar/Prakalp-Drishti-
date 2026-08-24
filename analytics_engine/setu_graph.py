@@ -29,6 +29,7 @@ class SetuGraphEngine:
         self.dag = nx.DiGraph()
         self.shapley_scores = {}
         self.layout_coords = {}
+        self.layout_from_cache = False
         self.fitted = False
         os.makedirs(ARTIFACTS_DIR, exist_ok=True)
         self._build_network()
@@ -266,21 +267,55 @@ class SetuGraphEngine:
             self.shapley_scores[n] = round((shapley_accum[n] / raw_sum) * total_locked, 2)
             self.dag.nodes[n]["shapley_phi"] = self.shapley_scores[n]
 
-    def _precompute_artifacts(self):
-        # 1. Precompute Spring/Force Layout coordinates for 2,207 nodes
-        pos = nx.spring_layout(self.dag, k=0.15, iterations=30, seed=42)
-        layout_records = []
-        for n, (x, y) in pos.items():
-            layout_records.append({
-                "project_id": str(n),
-                "x": round(float(x), 4),
-                "y": round(float(y), 4)
-            })
-            self.layout_coords[str(n)] = (round(float(x), 4), round(float(y), 4))
+    def _topology_fingerprint(self) -> str:
+        """Stable id for the current graph topology, so a cached layout is only reused
+        when it actually corresponds to this graph."""
+        h = hashlib.sha256()
+        h.update(str(self.dag.number_of_nodes()).encode())
+        h.update(str(self.dag.number_of_edges()).encode())
+        for n in sorted(self.dag.nodes()):
+            h.update(str(n).encode())
+        return h.hexdigest()[:16]
 
-        # Save layout.parquet
-        layout_df = pd.DataFrame(layout_records)
-        layout_df.to_parquet(os.path.join(ARTIFACTS_DIR, "layout.parquet"), index=False)
+    def _precompute_artifacts(self):
+        # 1. Force-directed layout for 2,207 nodes.
+        #
+        # This is the single most expensive step in engine startup -- ~18s of a ~23s
+        # build -- and it was being recomputed on every process start even though the
+        # result is deterministic (seed=42) and was already being written to disk each
+        # time. With multiple uvicorn workers the cost multiplied by worker count.
+        # Now it is computed once per topology and reloaded thereafter.
+        layout_path = os.path.join(ARTIFACTS_DIR, "layout.parquet")
+        stamp_path = os.path.join(ARTIFACTS_DIR, "layout.fingerprint")
+        fingerprint = self._topology_fingerprint()
+
+        cached = None
+        if os.path.exists(layout_path) and os.path.exists(stamp_path):
+            try:
+                with open(stamp_path, "r", encoding="utf-8") as f:
+                    if f.read().strip() == fingerprint:
+                        cached = pd.read_parquet(layout_path)
+            except Exception:
+                cached = None      # corrupt or unreadable cache -> fall through and rebuild
+
+        if cached is not None:
+            for pid, x, y in zip(cached["project_id"], cached["x"], cached["y"]):
+                self.layout_coords[str(pid)] = (float(x), float(y))
+            self.layout_from_cache = True
+        else:
+            pos = nx.spring_layout(self.dag, k=0.15, iterations=30, seed=42)
+            layout_records = []
+            for n, (x, y) in pos.items():
+                layout_records.append({
+                    "project_id": str(n),
+                    "x": round(float(x), 4),
+                    "y": round(float(y), 4)
+                })
+                self.layout_coords[str(n)] = (round(float(x), 4), round(float(y), 4))
+            pd.DataFrame(layout_records).to_parquet(layout_path, index=False)
+            with open(stamp_path, "w", encoding="utf-8") as f:
+                f.write(fingerprint)
+            self.layout_from_cache = False
 
         # 2. Precompute Shapley Parquet
         shapley_records = [

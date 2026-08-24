@@ -64,15 +64,20 @@ def get_cabinet_briefing(project_id: str):
 def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] = None):
     try:
         engine = get_pragati_saarthi_engine()
-        target_pid = project_id
-        if not target_pid:
-            parts = fact_id.split("_")
-            if len(parts) >= 3 and parts[-1].isdigit():
-                target_pid = parts[-1]
-            else:
-                target_pid = "400188"
 
-        briefing = engine.generate_cabinet_briefing(target_pid)
+        # Prefer the ARCHIVED document for this doc_hash. Verification must run against
+        # the artefact that was actually issued and signed -- regenerating one from
+        # current data would silently "verify" a different document than the one on the
+        # printed Cabinet note whenever upstream figures have moved since.
+        briefing = PragatiSaarthiEngine.load_archived_briefing(doc_hash)
+        served_from_archive = briefing is not None
+
+        if briefing is None:
+            target_pid = project_id
+            if not target_pid:
+                parts = fact_id.split("_")
+                target_pid = parts[-1] if (len(parts) >= 3 and parts[-1].isdigit()) else "400188"
+            briefing = engine.generate_cabinet_briefing(target_pid)
         
         target_fact = None
         for fid, f in briefing.audit_facts.items():
@@ -106,6 +111,15 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
             "formatted_value": target_fact.formatted_value,
             "unit": target_fact.unit,
             "document_hash": doc_hash,
+            # Tells the auditor whether they are looking at the issued artefact or a
+            # regeneration. Only the former is a true audit-trail verification.
+            "served_from_archive": served_from_archive,
+            "archive_note": (
+                "Verified against the archived document issued under this hash."
+                if served_from_archive else
+                "No archived document for this hash; regenerated from current data. "
+                "Treat as an integrity check of present figures, not of a previously issued note."
+            ),
             "merkle_root": briefing.merkle_root,
             "merkle_proof": proof_steps,
             "proof_steps_count": len(proof_steps),

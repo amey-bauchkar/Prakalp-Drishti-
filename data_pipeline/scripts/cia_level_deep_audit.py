@@ -99,27 +99,45 @@ def run_cia_audit():
         with open(CATALOG_PATH, "r", encoding="utf-8") as f:
             cat = json.load(f)
         entries = cat if isinstance(cat, list) else list(cat.values())
-        div_points = [entry["divergence_rod_points"] for entry in entries]
-        div_std = float(np.std(div_points))
-        div_min = float(np.min(div_points))
-        div_max = float(np.max(div_points))
-        print(f"  • Satellite CV Divergence Spread: Min={div_min:.1f} pts, Max={div_max:.1f} pts, StdDev={div_std:.2f} pts (100% Genuine Optical Metrics)")
-        assert div_std > 10.0, f"Divergence standard deviation suspiciously low: {div_std}"
-        assert div_max > 25.0 and div_min < -10.0, "Divergence distribution lacks expected physical variance"
+        chg = [float(e.get("surface_change_pct", 0.0)) for e in entries]
+        chg_std, chg_min, chg_max = float(np.std(chg)), float(np.min(chg)), float(np.max(chg))
+        print(f"  • Surface-Change Spread: Min={chg_min:.1f}%, Max={chg_max:.1f}%, StdDev={chg_std:.2f}% (real optical metrics)")
+        assert chg_std > 2.0, f"Surface-change standard deviation suspiciously low: {chg_std}"
+        assert chg_max > 10.0, "Surface-change distribution lacks expected physical variance"
+
+        # ── INTEGRITY GATE ────────────────────────────────────────────────────
+        # The measurement must be INDEPENDENT of the figure it audits. A previous
+        # release computed observed = change*2.2 + claimed*0.45, making 70% of the
+        # "independent orbital observation" a copy of the contractor's own claim --
+        # so inflating a claim inflated its own verification. This assertion exists
+        # to make that class of regression impossible to ship again.
+        rel = [e for e in entries if e.get("eo_verdict_reliable")]
+        if len(rel) >= 30:
+            a = np.array([e["surface_change_pct"] for e in rel])
+            b = np.array([e["claimed_progress_pct"] for e in rel])
+            leak = abs(float(np.corrcoef(a, b)[0, 1]))
+            assert leak < 0.30, (
+                f"INTEGRITY FAILURE: surface_change correlates {leak:.3f} with the claimed "
+                f"figure. The measurement has been contaminated by the value it audits.")
+            print(f"  • Measurement Independence: corr(surface_change, claimed) = {leak:.3f} (< 0.30 gate) ✓")
+
+        # No field in the catalog may present imagery as a completion percentage.
+        assert not any("eo_observed_ocai_pct" in e for e in entries), \
+            "Catalog still carries eo_observed_ocai_pct -- the circular progress estimate must stay deleted"
 
         # Guard against a placeholder-metadata regression (e.g. wrong source column names
         # silently blanking sector/state to "None" across the whole catalog).
         none_sector = sum(1 for e in entries if str(e.get("sector")) in ("None", "nan", ""))
         assert none_sector < len(entries) * 0.5, f"{none_sector}/{len(entries)} catalog entries have placeholder sector metadata"
 
-        # Guard against over-triggering: an uncalibrated heuristic that flags most of the
-        # portfolio as fraudulent is exactly as untrustworthy as one that never triggers.
+        # Guard against over-triggering: a screen that flags most of the portfolio is
+        # exactly as untrustworthy as one that never triggers.
         status_counts = {}
         for e in entries:
             status_counts[e["audit_status"]] = status_counts.get(e["audit_status"], 0) + 1
-        critical_frac = status_counts.get("CRITICAL_DIVERGENCE", 0) / len(entries)
-        assert critical_frac < 0.20, f"CRITICAL_DIVERGENCE flagged on {critical_frac*100:.1f}% of the portfolio -- thresholds look uncalibrated"
-        print(f"  • Image Format & Pixel Geometry: 100% VERIFIED (800x800 px sub-meter tiles, 0 RNG stand-ins, {critical_frac*100:.1f}% flagged CRITICAL)")
+        anom_frac = status_counts.get("ACTIVITY_ANOMALY", 0) / len(entries)
+        assert anom_frac < 0.15, f"ACTIVITY_ANOMALY on {anom_frac*100:.1f}% of the portfolio -- thresholds look uncalibrated"
+        print(f"  • Image Format & Pixel Geometry: 100% VERIFIED (800x800 px, 0 RNG stand-ins, {anom_frac*100:.1f}% flagged for field visit)")
 
     # ──────────────────────────────────────────────────────────────────────────
     # SECTION 3: KAAL-CHAKRA SURVIVAL FORECASTING AUDIT (ALL 2,207 PROJECTS)
@@ -267,9 +285,16 @@ def run_cia_audit():
     print("\n[PHASE 7/8] SATELLITE FUSION & AGENCY INDEX ENGINES...")
     sat = get_satellite_fusion_engine()
     sat_sample = sat.get_satellite_audit("706724")
-    assert sat_sample["audit_status"] in ("VERIFIED_ON_TRACK", "MODERATE_VARIANCE", "CRITICAL_DIVERGENCE", "EARLY_ACCELERATION"), "Invalid sat status"
+    assert sat_sample["audit_status"] in (
+        "CHANGE_CONFIRMED", "LOW_CHANGE_OBSERVED", "ACTIVITY_ANOMALY", "EO_UNAVAILABLE"
+    ), f"Invalid sat status: {sat_sample['audit_status']}"
+    # The API must not expose a completion estimate derived from imagery.
+    assert "eo_observed_progress_pct" not in sat_sample, \
+        "Fusion API still returns eo_observed_progress_pct -- the circular estimate must stay deleted"
     assert sat_sample["has_dual_epoch_coverage"] is True, "Missing dual-epoch satellite coverage for landmark project"
-    print(f"  • Satellite Fusion: Verified project 706724: Claimed {sat_sample['claimed_progress_pct']}% vs Observed {sat_sample['eo_observed_progress_pct']}% (Status: {sat_sample['audit_status']})")
+    print(f"  • Satellite Fusion: project 706724 reports {sat_sample['claimed_progress_pct']}% complete; "
+          f"independently measured surface change {sat_sample['surface_change_pct']}% "
+          f"({sat_sample['asset_geometry']} asset, status {sat_sample['audit_status']})")
 
     agency_eng = get_agency_index_engine()
     agency_summary = agency_eng.get_agency_summary()

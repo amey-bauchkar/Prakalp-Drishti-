@@ -34,6 +34,7 @@ SIH PS/
 │   └── aditya/                               # Aditya's Views (Satellite War Room View)
 │
 ├── 📊 paimana_extracted/                     # Read-Only Shared Data Lake (2,207 projects, IMD monsoon, stocks, geo)
+│   └── geonames_IN.txt                       # Vendored 68MB Offline GeoNames India Gazetteer
 ├── 🛰️ satellite_pipeline/                    # Satellite Earth Observation & Computer Vision Pipeline
 ├── ⚙️ data_pipeline/                         # Scraping & Data Engineering Pipelines
 ├── 📑 docs_and_presentations/                # Master Blueprints, Pitch Decks & Audit Reports
@@ -51,4 +52,4 @@ SIH PS/
 | **Parth** | `ARTHA-NETRA` | `modules/parth/` | `frontend/parth/` | PSU Contractor Financial Health, Debt Ratios & Stock Market Risk |
 | **Janhavi** | `VARSHA-SPEED` | `modules/janhavi/` | `frontend/janhavi/` | IMD Monsoon Rainfall Pattern Impact & Seasonal Work-Window Adjustment |
 | **Soham** | `DPR-SCORER` | `modules/soham/` | `frontend/soham/` | NLP Proposal Quality & Pre-Election Rushed Approval Anomaly Detector |
-| **Aditya** | `EO-AUDITOR` | `modules/aditya/` | `frontend/aditya/` | Satellite Ground Truth Corroboration & Landmark Verification |
+| **Aditya** | `EO-AUDITOR` | `modules/aditya/` | `frontend/aditya/` | Satellite Ground Truth Corroboration, 5-Tier Offline Geocoding (71.8% Coverage), SSIM Change Detection & "Verdict Withheld" Integrity |

@@ -10,9 +10,9 @@ import AgencyIndexView from './AgencyIndexView';
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
   const [selectedProjectId, setSelectedProjectId] = useState(() => {
-    // 400301 (Irugur-Devangonthi Multi Product Pipeline) is re-geocoded to a HIGH-confidence
-    // site-level match with real dual-epoch imagery and 12 detected change zones, so the
-    // satellite comparator has genuine content on first load.
+    // 400301 (Irugur-Devangonthi pipeline): HIGH-confidence site-level geocode, 22.8%
+    // measured surface change at the 94th sector percentile, 12 change zones. Chosen so
+    // the comparator opens on a project where the imagery genuinely shows the works.
     return localStorage.getItem('prakalp:selectedProjectId') || '400301';
   });
 
