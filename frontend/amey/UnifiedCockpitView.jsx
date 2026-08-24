@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SatelliteSwipeView from './SatelliteSwipeView';
 import { Sparkles, Sliders, ShieldCheck, AlertCircle, ArrowRight, Zap, RefreshCw, Layers, CheckCircle2, Eye, FileText, Satellite } from 'lucide-react';
 
 export default function UnifiedCockpitView({ selectedProjectId = '618402', onSelectProject }) {
@@ -207,69 +208,9 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
             </div>
           </div>
 
-          {/* Card 2: High-Resolution Satellite Ground-Truth Visualizer */}
-          <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-soft">
-            <div className="flex items-center justify-between border-b border-gov-border pb-3 mb-3">
-              <div className="flex items-center gap-2">
-                <Satellite className="w-4 h-4 text-gov-navy" />
-                <span className="text-xs font-black uppercase text-gov-navy">SATELLITE PHOTO VERIFICATION (BEFORE VS AFTER)</span>
-              </div>
-              <span
-                className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                  satAudit?.audit_status === 'CRITICAL_DIVERGENCE'
-                    ? 'bg-rose-100 text-rose-700 border border-rose-200'
-                    : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                }`}
-              >
-                {satAudit?.audit_status === 'CRITICAL_DIVERGENCE' ? 'Discrepancy Detected' : 'Verified On-Ground'}
-              </span>
-            </div>
+          {/* Card 2: dual-epoch swipe comparator (replaces the side-by-side pair) */}
+          <SatelliteSwipeView projectId={projectId} />
 
-            {/* Split Screen Before / After Satellite Viewer */}
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <div className="relative rounded-xl overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
-                <img
-                  key={`before_${projectId}`}
-                  src={satAudit?.before_imagery_url ? satAudit.before_imagery_url : `/satellite-imagery/${projectId}_BEFORE.jpg`}
-                  alt={`T0 Baseline 2018 - Project ${projectId}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  onError={(e) => {
-                    if (!e.target.dataset.triedRelative) {
-                      e.target.dataset.triedRelative = 'true';
-                      e.target.src = `/satellite-imagery/${projectId}_BEFORE.jpg`;
-                    }
-                  }}
-                />
-                <div className="absolute top-2 left-2 bg-black/80 text-sky-300 text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm border border-sky-400/30">
-                  🛰️ Baseline Photo (2018)
-                </div>
-              </div>
-
-              <div className="relative rounded-xl overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
-                <img
-                  key={`after_${projectId}`}
-                  src={satAudit?.after_imagery_url ? satAudit.after_imagery_url : `/satellite-imagery/${projectId}_AFTER.jpg`}
-                  alt={`T1 Current 2023 - Project ${projectId}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  onError={(e) => {
-                    if (!e.target.dataset.triedRelative) {
-                      e.target.dataset.triedRelative = 'true';
-                      e.target.src = `/satellite-imagery/${projectId}_AFTER.jpg`;
-                    }
-                  }}
-                />
-                <div className="absolute top-2 left-2 bg-black/80 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm border border-emerald-400/30">
-                  🛰️ Recent Photo (2023)
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs font-medium bg-gov-surface p-2.5 rounded-xl border border-gov-border">
-              <span>Claimed by Agency: <strong className="text-gov-navy">{satAudit?.claimed_progress_pct || forecast?.physical_progress_perc || 0}%</strong></span>
-              <span>Observed from Satellite: <strong className="text-emerald-700">{satAudit?.eo_observed_progress_pct || forecast?.physical_progress_perc || 0}%</strong></span>
-              <span>Difference: <strong className={satAudit?.divergence_rod_points > 10 ? 'text-rose-600' : 'text-gov-navy'}>{satAudit?.divergence_rod_points || 0}%</strong></span>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: VITTA-VYUHA & PMO COPILOT */}

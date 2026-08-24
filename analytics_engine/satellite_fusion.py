@@ -70,6 +70,16 @@ class SatelliteFusionEngine:
             dissimilarity = cv_res.get("structural_dissimilarity", 0.0)
             pavement_shift = cv_res.get("pavement_shift_score", 0.0)
 
+        # Precision-CV provenance fields (written by
+        # satellite_pipeline/batch_precision_change_detection.py). These carry the
+        # localised change polygons and, critically, whether this project is actually
+        # imaged at its own site -- a centroid-geocoded project is looking at the wrong
+        # patch of ground, so its EO verdict must not be presented as evidence.
+        change_boxes = cat_entry.get("change_boxes", [])
+        geocode_precision = cat_entry.get("geocode_precision", "NATIONAL_CENTROID_MATCH")
+        geocode_confidence = cat_entry.get("geocode_confidence", "NONE")
+        eo_reliable = bool(cat_entry.get("eo_verdict_reliable", False))
+
         return {
             "project_id": pid,
             "project_name": cat_entry.get("project_name", "Infrastructure Asset"),
@@ -85,6 +95,19 @@ class SatelliteFusionEngine:
             "edge_density_growth": edge_growth,
             "structural_dissimilarity": dissimilarity,
             "pavement_shift_score": pavement_shift,
+            # --- precision change detection ---
+            "change_boxes": change_boxes,
+            "change_box_count": len(change_boxes),
+            "change_fraction_pct": cat_entry.get("change_fraction_pct", 0.0),
+            "mean_dissimilarity": cat_entry.get("mean_dissimilarity", 0.0),
+            "registration_shift_px": cat_entry.get("registration_shift_px", 0.0),
+            "registration_method": cat_entry.get("registration_method", "none"),
+            # --- geolocation trust ---
+            "geocode_precision": geocode_precision,
+            "geocode_confidence": geocode_confidence,
+            "geocode_confidence_note": cat_entry.get("geocode_confidence_note", ""),
+            "eo_verdict_reliable": eo_reliable,
+            "eo_unreliable_reason": cat_entry.get("eo_unreliable_reason"),
             "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter)",
             "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg" if has_before else None,
             "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg" if has_after else None,
