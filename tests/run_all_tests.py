@@ -12,6 +12,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 TESTS = [
+    "test_satya_kavach.py",
     "test_round3_fixes.py",
     "test_vitta_complete.py",
     "test_risk_model.py",
