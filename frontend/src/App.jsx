@@ -50,7 +50,6 @@ function InstitutionalHeader() {
     { to: '/parth', label: 'ARTHA-NETRA' },
     { to: '/janhavi', label: 'VARSHA-SPEED' },
     { to: '/soham', label: 'DPR-SCORER' },
-    { to: '/aditya', label: 'EO-AUDITOR' },
     { to: '/karya-dakshata', label: 'KARYA-DAKSHATA' },
   ];
 
@@ -168,7 +167,6 @@ function Breadcrumbs() {
     '/parth': 'ARTHA-NETRA',
     '/janhavi': 'VARSHA-SPEED',
     '/soham': 'DPR-SCORER',
-    '/aditya': 'EO-AUDITOR',
     '/karya-dakshata': 'KARYA-DAKSHATA',
   };
 
@@ -213,7 +211,6 @@ function InstitutionalFooter() {
               <li><Link to="/parth" className="text-gray-400 hover:text-gov-saffron transition-colors">ARTHA-NETRA — PSU Solvency</Link></li>
               <li><Link to="/janhavi" className="text-gray-400 hover:text-gov-saffron transition-colors">VARSHA-SPEED — Monsoon Impact</Link></li>
               <li><Link to="/soham" className="text-gray-400 hover:text-gov-saffron transition-colors">DPR-SCORER — Proposal Quality</Link></li>
-              <li><Link to="/aditya" className="text-gray-400 hover:text-gov-saffron transition-colors">EO-AUDITOR — Satellite Verification</Link></li>
               <li><Link to="/karya-dakshata" className="text-gray-400 hover:text-gov-saffron transition-colors">KARYA-DAKSHATA — De-Biasing Simulator</Link></li>
             </ul>
           </div>
