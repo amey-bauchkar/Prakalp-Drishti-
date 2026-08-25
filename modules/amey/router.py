@@ -209,3 +209,32 @@ def run_unified_causal_simulation(sim: SimulationRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/geocode-precision")
+def get_geocode_precision():
+    """Measured geocoding precision per tier, from the hand-labelled validation sample.
+
+    Returns available=False until artifacts/geocode_precision.json exists. The dashboard
+    renders that state as "not yet measured" rather than hiding the panel, because a
+    silently-absent metric reads as a passing one -- the whole point of publishing this
+    is that an unmeasured claim and a measured one must look different to a reviewer.
+    """
+    import os as _os
+    path = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))),
+        "artifacts", "geocode_precision.json")
+    if not _os.path.exists(path):
+        return {
+            "available": False,
+            "reason": "No validation labels yet. Run build_geocode_validation_sample.py, "
+                      "hand-label artifacts/geocode_validation_worksheet.csv, then run "
+                      "score_geocode_validation.py.",
+        }
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        data["available"] = True
+        return data
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Unreadable precision artifact: {exc}")
