@@ -6,6 +6,7 @@ import VittaVyuhaView from './VittaVyuhaView';
 import PragatiSaarthiView from './PragatiSaarthiView';
 import UnifiedCockpitView from './UnifiedCockpitView';
 import AgencyIndexView from './AgencyIndexView';
+import GeocodePrecisionPanel from './GeocodePrecisionPanel';
 
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
@@ -94,7 +95,10 @@ export default function AmeyMasterView() {
           <PragatiSaarthiView selectedProjectId={selectedProjectId} />
         )}
         {activeTab === 'agency_index' && (
-          <AgencyIndexView />
+          <div className="space-y-6">
+            <GeocodePrecisionPanel />
+            <AgencyIndexView />
+          </div>
         )}
       </div>
     </div>
