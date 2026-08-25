@@ -390,6 +390,34 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
                 </div>
 
+                {/* Calibration provenance. States the coverage that was MEASURED on a
+                    held-out split, not a nominal target -- and says so plainly when the
+                    interval is running uncalibrated. */}
+                {(() => {
+                  const u = data?.facts?.fact_p50_completion?.uncertainty;
+                  const emp = u?.empirical_coverage;
+                  return emp != null ? (
+                    <div className="flex items-start gap-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900">
+                      <ShieldCheck className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
+                      <span>
+                        Interval width is <strong>conformally calibrated</strong>, not hand-set.
+                        Measured coverage on a held-out test split:{' '}
+                        <strong>{(emp * 100).toFixed(1)}%</strong> against a {(u.alpha_coverage * 100).toFixed(0)}% target.
+                        <span className="block text-emerald-800/80 mt-0.5">{u.calibration_method}</span>
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600" />
+                      <span>
+                        <strong>Uncalibrated interval.</strong> Width is from fallback constants and its
+                        coverage has not been measured. Run{' '}
+                        <code>analytics_engine/conformal_calibration.py</code> to calibrate.
+                      </span>
+                    </div>
+                  );
+                })()}
+
                 {/* Quantile Breakdown Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                   <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">

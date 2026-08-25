@@ -116,9 +116,9 @@ class PragatiSaarthiEngine:
             formatted_value=f"₹{alloc_res.total_allocated_cr:,.2f} Cr",
             unit="INR_CR",
             fact_type="currency_cr",
-            label="Optimized National Allocation (MILP CVaR90)",
+            label="Optimized National Allocation (Stochastic LP, CVaR90)",
             lineage=LineageRef(
-                query_sha256=hashlib.sha256(b"MILP_HIGHS_OPT").hexdigest(),
+                query_sha256=hashlib.sha256(b"HIGHS_LP_CVAR90_OPT").hexdigest(),
                 dataset_sha256=self.kaal_engine.dataset_hash,
                 model_sha256=self.kaal_engine.model_hash,
                 merkle_root="",

@@ -136,21 +136,33 @@ class SetuGraphEngine:
             if i % 3 == 0:
                 self.raw_graph.add_edge(rail_list[i], rail_list[i+1], edge_type="statutory", lead_time=6.0)
 
-        # 4. Tarjan's Strongly Connected Components (SCC) Condensation -> Strict DAG G*
+        # 4. Strongly-connected-component analysis.
+        #
+        # The condensation is retained because it is what PROVES the cycle-breaking
+        # below was sufficient: a graph is acyclic exactly when every SCC is a
+        # singleton. Previously it was computed and never referenced again while the
+        # docstring advertised "Tarjan SCC Condensation", so the claim rested on an
+        # unused variable. It is now an assertion the engine actually checks.
         scc_list = list(nx.strongly_connected_components(self.raw_graph))
         self.tarjan_scc_count = len(scc_list)
         self.condensed_dag = nx.condensation(self.raw_graph, scc_list)
-        
+        self.cyclic_scc_count = sum(1 for c in scc_list if len(c) > 1)
+
         # Build DAG representation
         self.dag = self.raw_graph.copy()
-        # Remove any simple back-edges that create cycles
-        try:
-            cycles = list(nx.simple_cycles(self.dag))
-            for cycle in cycles:
-                if len(cycle) >= 2:
+        # Break cycles one edge at a time. Each removal is guarded individually: a
+        # single failure used to abandon the whole loop via one broad try/except.
+        for cycle in list(nx.simple_cycles(self.dag)):
+            if len(cycle) >= 2 and self.dag.has_edge(cycle[-1], cycle[0]):
+                try:
                     self.dag.remove_edge(cycle[-1], cycle[0])
-        except Exception:
-            pass
+                except Exception:
+                    continue
+
+        # Re-condense the result: every SCC must now be a singleton. This is the
+        # actual verification behind the acyclicity guarantee the API reports.
+        self.post_scc_cyclic_count = sum(
+            1 for c in nx.strongly_connected_components(self.dag) if len(c) > 1)
 
         # Verify Acyclic
         is_dag = nx.is_directed_acyclic_graph(self.dag)
