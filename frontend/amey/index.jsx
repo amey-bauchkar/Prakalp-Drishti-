@@ -68,12 +68,6 @@ export default function AmeyMasterView() {
       finding: '23% of portfolio', findingLabel: 'Pre-election rush sanctions',
       icon: FileText, accent: 'bg-violet-50 border-violet-200 text-violet-900',
     },
-    {
-      to: '/aditya', name: 'EO-AUDITOR', subtitle: 'Satellite Ground-Truth Verification',
-      desc: 'Cross-references reported physical progress against sub-meter dual-epoch satellite imagery via computer vision change detection algorithms.',
-      finding: '2,207 georeferenced', findingLabel: '100% catalog coverage',
-      icon: Satellite, accent: 'bg-teal-50 border-teal-200 text-teal-900',
-    },
   ];
 
   return (
@@ -137,7 +131,6 @@ export default function AmeyMasterView() {
                 <div className="flex items-center justify-between text-[12px]">
                   <span className="text-text-muted">Data coverage: 2005–2026</span>
                   <span className="text-gov-success font-medium">Air-gapped deployment</span>
->>>>>>> 7fe17d815d3467ab27a80b84ae2686f01941fd97
                 </div>
               </div>
             </div>
