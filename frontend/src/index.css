@@ -4,76 +4,262 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==========================================================================
-   JHARKHAND CIVIC PORTAL — CORPORATE GOVERNMENT DESIGN SYSTEM TOKENS
-   
-   Style Guide Reference:
-   - Primary Background: #FFFFFF / #F7F8FA
-   - Primary Navy:       #1E2A45 (Headings, Headers, Footers, Solid CTAs)
-   - Accent Highlight:   #C5D86D (Active tags, highlights, accent buttons)
-   - Muted Slate Blue:   #5B6B8C (Info cards, borders, secondary badges)
-   - Body Text:          #4B5563 (Clean, readable sans-serif)
-   - Flat Design Rules:  NO gradients, NO emojis (flat line SVG icons only),
-                         generous whitespace, 8-12px rounded corners.
-   ========================================================================== */
+/* ═══════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — Institutional Editorial Design System
+   National Infrastructure Analytics · MoSPI · Government of India
+   ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --color-bg: #FFFFFF;
-  --color-surface: #F7F8FA;
-  --color-navy: #1E2A45;
-  --color-navy-dark: #141D30;
-  --color-navy-light: #28385C;
-  --color-accent: #C5D86D;
-  --color-accent-hover: #B5C85D;
-  --color-muted-blue: #5B6B8C;
-  --color-border: #E2E8F0;
-  --color-text-main: #1E2A45;
-  --color-text-body: #4B5563;
-  --radius-default: 10px;
+  --saffron: #E87722;
+  --saffron-light: #FFF4EA;
+  --navy: #163A59;
+  --navy-dark: #0D2B43;
+  --navy-light: #1E5175;
+  --page-bg: #F5F6F8;
+  --surface: #FFFFFF;
+  --text-primary: #1F2933;
+  --text-secondary: #52606D;
+  --text-muted: #7B8794;
+  --border: #D9E0E6;
+  --border-strong: #BCC5CE;
+  --success: #18804B;
+  --warning: #B76A00;
+  --danger: #B42318;
 }
+
+/* ── Base ────────────────────────────────────────────── */
 
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   body {
     @apply antialiased font-sans;
-    background-color: #F7F8FA;
-    color: #4B5563;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.6;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: inherit;
+  /* Typographic scale */
+  h1 { font-size: 2.5rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; color: var(--navy); }
+  h2 { font-size: 1.75rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; color: var(--navy); }
+  h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.35; color: var(--navy); }
+  h4 { font-size: 1rem; font-weight: 600; line-height: 1.4; color: var(--navy); }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.375rem; }
+    h3 { font-size: 1.125rem; }
+  }
+
+  a { color: var(--navy-light); text-decoration: none; }
+  a:hover { color: var(--saffron); }
+
+  :focus-visible {
+    outline: 2px solid var(--saffron);
+    outline-offset: 2px;
   }
 }
 
-/* Flat UI Utilities */
-@layer utilities {
-  .gov-nav-link {
-    @apply text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-gov-navy transition-colors;
+/* ── Editorial Layout Utilities ─────────────────────── */
+
+@layer components {
+
+  /* Centered content container */
+  .gov-content {
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 24px;
   }
-  
-  .gov-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider;
+  @media (max-width: 640px) {
+    .gov-content { padding-inline: 16px; }
   }
 
-  /* Flat custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  /* Section spacing */
+  .gov-section {
+    padding-block: 64px;
   }
-  ::-webkit-scrollbar-track {
-    background: #F1F5F9;
+  .gov-section-sm {
+    padding-block: 40px;
   }
-  ::-webkit-scrollbar-thumb {
-    background: #CBD5E1;
+
+  /* Horizontal stat strip */
+  .stat-strip {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat-strip-item {
+    flex: 1;
+    padding: 24px 28px;
+    border-right: 1px solid var(--border);
+    text-align: left;
+  }
+  .stat-strip-item:last-child { border-right: none; }
+  @media (max-width: 768px) {
+    .stat-strip { flex-direction: column; }
+    .stat-strip-item { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 20px; }
+    .stat-strip-item:last-child { border-bottom: none; }
+  }
+
+  /* Tinted editorial section */
+  .gov-tinted {
+    background: var(--saffron-light);
+  }
+  .gov-tinted-navy {
+    background: var(--navy);
+    color: #E0E6EC;
+  }
+
+  /* Editorial feature block (2-col text+visual) */
+  .feature-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .feature-block { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  /* Clean data table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border-strong);
+    background: transparent;
+  }
+  .data-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    vertical-align: top;
+  }
+  .data-table tbody tr:hover td {
+    background: #F8F9FB;
+  }
+  .data-table .num {
+    font-variant-numeric: tabular-nums;
+    font-family: 'Inter', monospace;
+    text-align: right;
+  }
+
+  /* Module tab navigation */
+  .module-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+  }
+  .module-tab {
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 150ms, border-color 150ms;
+    white-space: nowrap;
+  }
+  .module-tab:hover { color: var(--text-primary); }
+  .module-tab.active {
+    color: var(--navy);
+    font-weight: 600;
+    border-bottom-color: var(--saffron);
+  }
+
+  /* Primary action button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: var(--saffron);
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background 150ms;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: #C76210; color: #FFF; }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: transparent;
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    transition: all 150ms;
+    cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--navy); background: #F8F9FB; color: var(--navy); }
+
+  /* Quiet breadcrumbs */
+  .breadcrumbs {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+  .breadcrumbs a { color: var(--text-muted); }
+  .breadcrumbs a:hover { color: var(--navy); }
+  .breadcrumbs .sep { margin-inline: 6px; opacity: 0.5; }
+
+  /* Status indicators */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
     border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8;
+  .status-danger  { background: #FEF2F2; color: var(--danger); }
+  .status-warning { background: #FFF8EB; color: var(--warning); }
+  .status-success { background: #ECFDF5; color: var(--success); }
+  .status-info    { background: #EDF4FA; color: #1D5D91; }
+
+  /* Loading spinner */
+  .loading-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 80px 24px;
+    color: var(--text-muted);
+    font-size: 14px;
   }
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
+@layer utilities {
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #EFF1F3; }
+  ::-webkit-scrollbar-thumb { background: #CBD2D9; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9AA5B1; }
 }

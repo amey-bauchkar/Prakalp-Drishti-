@@ -1,0 +1,86 @@
+[
+  {
+    "clause_number": "Clause 2",
+    "clause_title": "Compensation for Delay (Liquidated Damages)",
+    "category": "DELAY_PENALTY_LIMITS",
+    "legal_scope": "Authority levies compensation if contractor fails to maintain progress milestone schedule.",
+    "standard_rate": "1.5% per month of delay computed on tendered value, capped at 10% maximum.",
+    "risk_severity": "HIGH",
+    "base_risk_score": 0.75,
+    "dispute_trigger_condition": "Unilateral deduction by Engineer-in-Charge before DAC adjudication or without natural justice show-cause notice.",
+    "arbitrability_status": "Subject to Clause 25 Escalation & Arbitration",
+    "prevention_recommendation": "Institute Joint Progress Review prior to penalty notice and allow provisional EOT where client-caused delays exist."
+  },
+  {
+    "clause_number": "Clause 3",
+    "clause_title": "Determining Contract & Excepted Matters (Termination)",
+    "category": "CONTRACT_TERMINATION_EXCEPTED",
+    "legal_scope": "Empowers authority to determine/terminate contract and forfeit security deposit.",
+    "standard_rate": "100% forfeiture of performance security and blacklisting referral.",
+    "risk_severity": "CRITICAL",
+    "base_risk_score": 0.95,
+    "dispute_trigger_condition": "Invoking termination while contractor has pending legitimate Extension of Time (EOT) or unencumbered land claims.",
+    "arbitrability_status": "Historically treated as Excepted Matter; frequently litigated in High Courts under Section 9/11 of Arbitration Act.",
+    "prevention_recommendation": "Mandate Independent Engineer conciliation before issuing 48-hour termination notice."
+  },
+  {
+    "clause_number": "Clause 5",
+    "clause_title": "Time and Extension for Delay (EOT & Hindrance Register)",
+    "category": "FORCE_MAJEURE_AND_EOT",
+    "legal_scope": "Governs formal recording of hindrances (land, drawings, statutory clearances) and granting time extensions.",
+    "standard_rate": "Proportional day-for-day time extension without financial compensation unless specific overheads admitted.",
+    "risk_severity": "HIGH",
+    "base_risk_score": 0.8,
+    "dispute_trigger_condition": "Failure to sign or close Hindrance Register entries within 30 days of occurrence.",
+    "arbitrability_status": "Arbitrable under Clause 25",
+    "prevention_recommendation": "Digitize Hindrance Register on PM-GatiShakti portal with automated sign-off escalation after 14 days."
+  },
+  {
+    "clause_number": "Clause 10CA",
+    "clause_title": "Payment due to Variation in Prices of Specified Materials (Steel, Cement, Bitumen)",
+    "category": "SPECIFIED_MATERIAL_PRICE_VARIATION",
+    "legal_scope": "Direct formula-linked adjustment for cost fluctuation in key commodities based on wholesale indices.",
+    "standard_rate": "Index formula adjustment using Ministry of Commerce & Industry monthly WPI indices.",
+    "risk_severity": "MEDIUM",
+    "base_risk_score": 0.6,
+    "dispute_trigger_condition": "Delay in publishing official indices causing billing bottlenecks and unpaid escalations exceeding 90 days.",
+    "arbitrability_status": "Arbitrable under Clause 25",
+    "prevention_recommendation": "Release 85% provisional 10CA payments based on trailing month index pending final notification."
+  },
+  {
+    "clause_number": "Clause 10CC",
+    "clause_title": "Comprehensive Price Escalation (Labor, POL, Materials) for Multi-Year Contracts",
+    "category": "NON_INDEXED_ESCALATION",
+    "legal_scope": "Comprehensive formula escalation for contracts exceeding 12/18 months duration using CPI and WPI weightings.",
+    "standard_rate": "Formula based on component percentages (Labor 25%, POL 10%, Material 65%).",
+    "risk_severity": "CRITICAL",
+    "base_risk_score": 0.9,
+    "dispute_trigger_condition": "Fixing artificial cap or deleting Clause 10CC in multi-year contracts leading to contractor insolvencies during hyperinflation.",
+    "arbitrability_status": "Arbitrable under Clause 25",
+    "prevention_recommendation": "Mandate mandatory indexation without artificial ceilings for contracts with timeline >= 18 months."
+  },
+  {
+    "clause_number": "Clause 12",
+    "clause_title": "Deviations, Variations, Extent and Pricing",
+    "category": "SCOPE_VARIATION_UNILATERAL",
+    "legal_scope": "Allows Engineer-in-Charge to order alterations, additions, or omissions in specifications and quantities.",
+    "standard_rate": "Deviation limit typically capped at 30% for building works and 50% for foundation / linear works.",
+    "risk_severity": "HIGH",
+    "base_risk_score": 0.85,
+    "dispute_trigger_condition": "Ordering cumulative variations > 20% without fixing revised market rates (Market Rate Analysis) and without granting proportional EOT.",
+    "arbitrability_status": "Arbitrable under Clause 25",
+    "prevention_recommendation": "Formalize Rate Sanction Memorandum within 21 days of issuing variation order."
+  },
+  {
+    "clause_number": "Clause 25",
+    "clause_title": "Dispute Resolution Mechanism & Arbitration / DAC",
+    "category": "DISPUTE_RESOLUTION_DAC_ARBITRATION",
+    "legal_scope": "Multi-tier dispute redressal: Conciliation -> Dispute Avoidance Committee (DAC) -> Formal Arbitration.",
+    "standard_rate": "DAC adjudication within 30 days; Arbitral Tribunal constitution within 60 days.",
+    "risk_severity": "HIGH",
+    "base_risk_score": 0.7,
+    "dispute_trigger_condition": "Authority refusing or stalling DAC proceedings, forcing contractor to file Section 11 application before High Court.",
+    "arbitrability_status": "Statutory Arbitration under Arbitration and Conciliation Act 1996.",
+    "prevention_recommendation": "Trigger mandatory pre-litigation DAC meeting within 14 days when disputed claims exceed ₹10 Cr."
+  }
+]
