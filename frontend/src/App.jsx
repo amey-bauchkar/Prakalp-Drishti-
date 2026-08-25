@@ -14,6 +14,7 @@ import VarshaSpeedView from '../janhavi/index.jsx';
 import DPRScorerView from '../soham/index.jsx';
 import EOAuditorView from '../aditya/index.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
+import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 
 // Shell Navigation Header
 const MasterNavbar = () => {
@@ -26,6 +27,7 @@ const MasterNavbar = () => {
     { path: '/janhavi', label: 'Varsha-Speed', icon: CloudRain, badge: 'Monsoon Impact' },
     { path: '/soham', label: 'DPR-Scorer', icon: FileText, badge: 'Proposal QC' },
     { path: '/aditya', label: 'EO-Auditor', icon: MapPin, badge: 'Satellite War Room' },
+    { path: '/karya-dakshata', label: 'Karya-Dakshata', icon: Layers, badge: 'De-Biasing' },
   ];
 
   return (
@@ -123,6 +125,7 @@ export const App = () => {
             <Route path="/janhavi" element={<VarshaSpeedView />} />
             <Route path="/soham" element={<DPRScorerView />} />
             <Route path="/aditya" element={<EOAuditorView />} />
+            <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
           </Routes>
         </main>
 
