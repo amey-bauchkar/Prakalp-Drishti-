@@ -161,6 +161,21 @@ class RiskIndexEngine:
         # Sector-median predicted overrun, used as the cost prior. A per-project model
         # call for all 2,207 would be the better signal; the sector prior is the honest
         # stand-in and is labelled as such in the output.
+        # Per-project MODEL predictions replace the sector median. Previously this
+        # component was labelled "cost_overrun_risk" while computing a descriptive
+        # sector median -- the label misrepresented the computation.
+        predicted_overrun = {}
+        try:
+            from analytics_engine.overrun_models import predict_cost_overrun, _frame_cached, _load_predictor, _design, CURRENT_YEAR
+            if _load_predictor() is not None:
+                art = _load_predictor()
+                fr = _frame_cached()
+                Xall = _design(fr, art["numeric_features"], art["sectors"], art["entities"])
+                preds = art["model"].predict(Xall)
+                predicted_overrun = dict(zip(fr["project_id"].astype(str), preds))
+        except Exception:
+            predicted_overrun = {}
+
         sector_overrun = {}
         if models:
             blk = models.get("targets", {}).get("cost_overrun_pct", {})
@@ -192,7 +207,9 @@ class RiskIndexEngine:
 
             comps = {
                 "schedule_risk": self._schedule_component(prob),
-                "cost_overrun_risk": self._cost_component(med_overrun_by_sector.get(sector)),
+                # Model prediction first; sector median only as an explicit fallback.
+                "cost_overrun_risk": self._cost_component(
+                    predicted_overrun.get(pid, med_overrun_by_sector.get(sector))),
                 "ground_truth_risk": self._ground_truth_component(cat),
                 "contagion_risk": self._contagion_component(locked, p90),
                 "governance_risk": self._governance_component(resets, agency_delay.get(entity)),
@@ -239,6 +256,9 @@ class RiskIndexEngine:
             "weights": COMPONENT_WEIGHTS,
             "weights_note": "Declared policy weights, not fitted -- no ground-truth risk "
                             "label exists to fit against. Exposed so MoSPI can change them.",
+            "cost_component_source": ("model prediction" if predicted_overrun
+                                      else "sector median (model artifact absent)"),
+            "projects_with_model_prediction": len(predicted_overrun),
         }
 
     # ------------------------------ public API ------------------------------

@@ -74,9 +74,39 @@ CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
                             "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
 SHAPLEY_PATH = os.path.join(BASE_DIR, "artifacts", "shapley.parquet")
 ARTIFACT_PATH = os.path.join(BASE_DIR, "artifacts", "overrun_models.json")
+MODEL_PATH = os.path.join(BASE_DIR, "artifacts", "cost_overrun_model.joblib")
 
 RANDOM_SEED = 42
 TEST_FRACTION = 0.25
+
+# ── VALIDATION PROTOCOL ──────────────────────────────────────────────────────
+# CHRONOLOGICAL, not random. The deployment question is "a project is sanctioned
+# today, will it overrun?", which is out-of-time inference by construction. A random
+# split lets the model train on projects sanctioned in the same year as its test
+# cases and exploit cohort effects that will not exist for a future project.
+#
+# Measured cost of getting this wrong on this corpus: cost_overrun R2 fell from +0.246
+# (random) to -0.364 (chronological); slip_months from +0.813 to -2.294. The random
+# figures were not skill.
+TEMPORAL_SPLIT = True
+
+# ── MATURITY GATE ────────────────────────────────────────────────────────────
+# The target is CENSORED BY PROJECT AGE. A project sanctioned in 2025 has not had time
+# to be revised, so its recorded overrun is ~0 regardless of how troubled it is.
+# Measured: train-cohort mean overrun +11.0% vs test-cohort -2.2% -- a distribution
+# shift caused by youth, not by model error. Evaluating on unripe projects measures
+# how well a model predicts "not enough time has passed", which is worthless.
+# Only projects with at least this many years elapsed enter the evaluation.
+MIN_MATURITY_YEARS = 5
+CURRENT_YEAR = 2026
+
+# Targets that survive out-of-time validation and may be served as point predictions.
+# slip_months is deliberately absent: measured chronologically it is 53-191% WORSE
+# than a train-mean baseline at every maturity gate. Schedule risk is served instead
+# by KAAL-CHAKRA's conformal intervals, which are separately validated at a measured
+# 93.3% coverage. Shipping a point predictor that loses to the mean would be
+# indefensible under questioning.
+DEPLOYABLE_TARGETS = {"cost_overrun_pct"}
 
 # Columns that encode the answer. Never features.
 LEAKY_COLUMNS = {
@@ -300,18 +330,31 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
     if n < 200:
         raise RuntimeError(f"{target}: only {n} usable rows")
 
-    rng = np.random.default_rng(RANDOM_SEED)
-    idx = rng.permutation(n)
+    # Maturity gate, then chronological ordering: train on older sanctions, test on
+    # newer. This is the only split that mirrors deployment.
+    d = d[(CURRENT_YEAR - d["sanction_year"]) >= MIN_MATURITY_YEARS].copy()
+    d = d.sort_values("sanction_year").reset_index(drop=True)
+    n = len(d)
+    if n < 200:
+        raise RuntimeError(f"{target}: only {n} rows survive the maturity gate")
+    y = d[target].to_numpy(float)
     cut = int(n * (1 - TEST_FRACTION))
-    tr, te = idx[:cut], idx[cut:]
+    tr, te = np.arange(cut), np.arange(cut, n)
 
     sectors = sorted(d.iloc[tr]["sector"].value_counts().head(12).index.tolist())
     entities = sorted(d.iloc[tr]["entity"].value_counts().head(12).index.tolist())
-    y = d[target].to_numpy(float)
 
     def run(numeric: List[str], tag: str) -> dict:
         X = _design(d, numeric, sectors, entities)
         res = {}
+
+        # --- deployable naive baseline: predict the TRAIN mean -------------------
+        # This is what an officer could actually do with no model. Under the temporal
+        # distribution shift (train cohort +11.0% mean overrun, test cohort -2.2%),
+        # R2 is measured against the TEST mean -- a quantity nobody has at prediction
+        # time. MAE lift over this train-mean baseline is therefore the honest headline:
+        # it answers "is the model better than the best you could do without it?"
+        res["naive_train_mean"] = _metrics(y[te], np.full(len(te), float(np.mean(y[tr]))))
 
         # --- conventional baseline 1: sector mean (the rule a desk officer uses) ---
         sec_mean = d.iloc[tr].groupby("sector")[target].mean()
@@ -373,14 +416,50 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
     def clean(block: dict) -> dict:
         return {k: v for k, v in block.items() if not k.startswith("_")}
 
+    # Persist the fitted estimator for deployable targets, together with everything
+    # needed to rebuild an identical design matrix at inference time. Without this the
+    # module is a benchmark report, not a model: there would be no way to answer
+    # "predict the overrun for project X".
+    if target in DEPLOYABLE_TARGETS:
+        import joblib
+        joblib.dump({
+            "model": full["_model"],
+            "numeric_features": CUF_NUMERIC + EXTERNAL_NUMERIC,
+            "sectors": sectors,
+            "entities": entities,
+            "feature_names": full["_feature_names"],
+            "target": target,
+            "validation": "chronological",
+            "maturity_gate_years": MIN_MATURITY_YEARS,
+            "test_mae": clean(full)["gradient_boosting"]["mae"],
+            "trained_on_years": [int(d.iloc[tr]["sanction_year"].min()),
+                                 int(d.iloc[tr]["sanction_year"].max())],
+        }, MODEL_PATH)
+
     cuf_c, full_c, calfree_c = clean(cuf), clean(full), clean(cal_free)
     gbm_mae_cuf = cuf_c["gradient_boosting"]["mae"]
     gbm_mae_full = full_c["gradient_boosting"]["mae"]
     ols_mae = full_c["ols_linear_regression"]["mae"]
     best_conv = min(ols_mae, full_c["sector_mean_baseline"]["mae"])
 
+    naive_mae = full_c["naive_train_mean"]["mae"]
+    lift = (naive_mae - gbm_mae_full) / naive_mae * 100 if naive_mae else None
+
     return {
         "target": target,
+        "validation": "chronological (train on earlier sanction years, test on later)",
+        "maturity_gate_years": MIN_MATURITY_YEARS,
+        "train_year_range": [int(d.iloc[tr]["sanction_year"].min()), int(d.iloc[tr]["sanction_year"].max())],
+        "test_year_range": [int(d.iloc[te]["sanction_year"].min()), int(d.iloc[te]["sanction_year"].max())],
+        "train_target_mean": round(float(np.mean(y[tr])), 2),
+        "test_target_mean": round(float(np.mean(y[te])), 2),
+        "deployable": target in DEPLOYABLE_TARGETS,
+        "headline_mae_lift_vs_naive_pct": None if lift is None else round(lift, 1),
+        "headline_note": (
+            "MAE lift over a train-mean baseline is the honest headline under temporal "
+            "distribution shift. R2 compares against the TEST mean, which nobody has at "
+            "prediction time, so a negative R2 alongside a positive MAE lift means the "
+            "model beats what an officer could actually do unaided."),
         "n_usable": int(n), "n_train": int(len(tr)), "n_test": int(len(te)),
         "target_range_filter": [lo, hi],
         "cuf_only": cuf_c,
@@ -496,3 +575,159 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------------------------
+# Inference service (MoSPI Outcome (a) -- a model you can actually call)
+# ---------------------------------------------------------------------------------
+
+_PREDICTOR = None
+
+
+def _load_predictor():
+    """Load the persisted estimator once. None if it has not been fitted yet."""
+    global _PREDICTOR
+    if _PREDICTOR is None and os.path.exists(MODEL_PATH):
+        try:
+            import joblib
+            _PREDICTOR = joblib.load(MODEL_PATH)
+        except Exception:
+            _PREDICTOR = None
+    return _PREDICTOR
+
+
+_FRAME_CACHE = None
+
+
+def _frame_cached():
+    global _FRAME_CACHE
+    if _FRAME_CACHE is None:
+        _FRAME_CACHE = build_frame()
+    return _FRAME_CACHE
+
+
+def predict_cost_overrun(project_id: str):
+    """Predict cost overrun % for one project from the persisted model.
+
+    Returns None if the model has not been fitted or the project is unknown.
+    The response carries the model's own out-of-time error so a caller can never
+    read the point estimate without the uncertainty attached to it.
+    """
+    art = _load_predictor()
+    if art is None:
+        return None
+    frame = _frame_cached()
+    row = frame[frame["project_id"].astype(str) == str(project_id)]
+    if row.empty:
+        return None
+
+    X = _design(row, art["numeric_features"], art["sectors"], art["entities"])
+    pred = float(art["model"].predict(X)[0])
+    mae = float(art.get("test_mae") or 0.0)
+    observed = row.iloc[0].get("cost_overrun_pct")
+    age = CURRENT_YEAR - float(row.iloc[0].get("sanction_year") or CURRENT_YEAR)
+
+    return {
+        "project_id": str(project_id),
+        "predicted_cost_overrun_pct": round(pred, 2),
+        # +/- one out-of-time MAE. Deliberately not a confidence interval: this model
+        # is not calibrated, and presenting an MAE band as a probabilistic interval
+        # would be the kind of overclaim this codebase exists to avoid.
+        "expected_error_band_pct": [round(pred - mae, 2), round(pred + mae, 2)],
+        "error_band_basis": f"+/- 1 out-of-time MAE ({mae:.2f} pp), not a calibrated interval",
+        "observed_cost_overrun_pct": (None if observed is None or not np.isfinite(observed)
+                                      else round(float(observed), 2)),
+        "project_age_years": round(age, 1),
+        "maturity_sufficient": bool(age >= MIN_MATURITY_YEARS),
+        "maturity_caveat": (
+            None if age >= MIN_MATURITY_YEARS else
+            f"Project is {age:.0f} years old; the model was validated on projects with at "
+            f"least {MIN_MATURITY_YEARS} years elapsed. Treat this as indicative only -- "
+            f"young projects have not had time to accrue a recorded revision."),
+        "model": {
+            "algorithm": "GradientBoostingRegressor",
+            "validation": art.get("validation"),
+            "trained_on_sanction_years": art.get("trained_on_years"),
+            "out_of_time_mae_pp": round(mae, 2),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------------
+# Early-warning lead-time validation (MoSPI Outcome (d))
+# ---------------------------------------------------------------------------------
+
+def evaluate_lead_time(threshold_pct: float = 15.0) -> dict:
+    """How early, and how reliably, would a sanction-time flag have fired?
+
+    "Early warning" was previously an unvalidated label. This measures it.
+
+    Protocol: using ONLY information available at sanction (cost, planned duration,
+    sector, agency, and the external macro series as of that year -- never physical
+    progress, which is a monitoring-time observation), predict overrun and flag any
+    project above `threshold_pct`. Then check, on mature projects only, whether that
+    project actually recorded an upward revision, and how many months elapsed between
+    sanction and the revised completion date being set.
+
+    Reported as precision/recall rather than accuracy: the flag rate is well below 50%,
+    so accuracy would be dominated by true negatives and would look impressive while
+    saying nothing about whether the alerts are worth acting on.
+    """
+    art = _load_predictor()
+    if art is None:
+        return {"available": False, "reason": "Model artifact not fitted"}
+
+    frame = _frame_cached()
+    df = pd.read_csv(DATA_PATH)
+    sanc = pd.to_datetime(df["SanctionDate"], errors="coerce", dayfirst=True)
+    rev = pd.to_datetime(df["RevisedDate"], errors="coerce", dayfirst=True)
+    lead = pd.DataFrame({
+        "project_id": df["ProjectId"].astype(str),
+        "sanction": sanc,
+        "revised": rev,
+    })
+
+    d = frame.merge(lead, on="project_id", how="left")
+    d = d[(CURRENT_YEAR - d["sanction_year"]) >= MIN_MATURITY_YEARS]
+    d = d[d["cost_overrun_pct"].notna()]
+    if len(d) < 100:
+        return {"available": False, "reason": f"only {len(d)} mature labelled projects"}
+
+    X = _design(d, art["numeric_features"], art["sectors"], art["entities"])
+    pred = art["model"].predict(X)
+
+    flagged = pred >= threshold_pct
+    actual = d["cost_overrun_pct"].to_numpy(float) >= threshold_pct
+
+    tp = int(np.sum(flagged & actual)); fp = int(np.sum(flagged & ~actual))
+    fn = int(np.sum(~flagged & actual)); tn = int(np.sum(~flagged & ~actual))
+    precision = tp / (tp + fp) if (tp + fp) else None
+    recall = tp / (tp + fn) if (tp + fn) else None
+    f1 = (2 * precision * recall / (precision + recall)
+          if precision and recall and (precision + recall) else None)
+
+    months = ((d["revised"] - d["sanction"]).dt.days / 30.4375)
+    hit_months = months[(flagged & actual)].dropna()
+    hit_months = hit_months[hit_months > 0]
+
+    return {
+        "available": True,
+        "threshold_pct": threshold_pct,
+        "n_evaluated": int(len(d)),
+        "maturity_gate_years": MIN_MATURITY_YEARS,
+        "confusion": {"tp": tp, "fp": fp, "fn": fn, "tn": tn},
+        "precision": None if precision is None else round(precision, 3),
+        "recall": None if recall is None else round(recall, 3),
+        "f1": None if f1 is None else round(f1, 3),
+        "base_rate": round(float(np.mean(actual)), 3),
+        "flag_rate": round(float(np.mean(flagged)), 3),
+        "median_lead_months": (None if hit_months.empty
+                               else round(float(hit_months.median()), 1)),
+        "lead_time_definition": (
+            "Months from SanctionDate to the date a revised completion date was recorded, "
+            "for projects the sanction-time flag correctly identified. This is the window "
+            "in which an intervention could have been made."),
+        "honest_caveat": (
+            "Precision near the base rate means the flag adds little over flagging at "
+            "random; compare the two before treating the alert list as actionable."),
+    }

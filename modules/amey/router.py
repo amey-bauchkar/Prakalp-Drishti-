@@ -4,13 +4,18 @@ Exposes KAAL-CHAKRA, SETU-GRAPH, VITTA-VYUHA, and PRAGATI-SAARTHI endpoints.
 """
 
 import json
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from typing import Optional
 
 from analytics_engine.contracts import (
     ProjectForecast, DependencySubGraph, AllocationRequest,
     AllocationResult, CabinetBriefing
 )
+from backend.auth import require
+
+# RBAC is enforced SERVER-SIDE on the endpoints that expose project-identifying or
+# decision-making capability. Hiding a control in React is presentation, not access
+# control -- the endpoint is still callable with curl.
 from analytics_engine.kaal_chakra import get_kaal_chakra_engine
 from analytics_engine.setu_graph import get_setu_graph_engine
 from analytics_engine.vitta_vyuha import get_vitta_vyuha_engine
@@ -44,7 +49,7 @@ def get_project_dependencies(project_id: str, k: int = Query(default=2, ge=1, le
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/allocate", response_model=AllocationResult)
-def run_capital_allocation(req: AllocationRequest):
+def run_capital_allocation(req: AllocationRequest, user: dict = Depends(require("allocate_capital"))):
     try:
         engine = get_vitta_vyuha_engine()
         # Non-blocking threadpool execution in FastAPI synchronous def
@@ -53,7 +58,7 @@ def run_capital_allocation(req: AllocationRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/briefing/{project_id}", response_model=CabinetBriefing)
-def get_cabinet_briefing(project_id: str):
+def get_cabinet_briefing(project_id: str, user: dict = Depends(require("read_briefing"))):
     try:
         engine = get_pragati_saarthi_engine()
         return engine.generate_cabinet_briefing(project_id)
@@ -267,7 +272,7 @@ def get_model_benchmark():
 
 
 @router.get("/risk/{project_id}")
-def get_project_risk(project_id: str):
+def get_project_risk(project_id: str, user: dict = Depends(require("read_risk"))):
     """Outcome (c): composite risk score with per-component contributions."""
     try:
         r = get_risk_index_engine().get_project_risk(project_id)
@@ -285,6 +290,7 @@ def get_early_warning(
     limit: int = Query(default=25, ge=1, le=200),
     band: Optional[str] = None,
     sector: Optional[str] = None,
+    user: dict = Depends(require("read_alerts")),
 ):
     """Outcome (d): ranked queue of projects warranting review this cycle.
 
@@ -315,5 +321,41 @@ def ask_copilot(q: CopilotQuestion):
     try:
         from analytics_engine.copilot_qa import answer_question
         return answer_question(q.question, q.project_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/predict/{project_id}")
+def predict_overrun(project_id: str, user: dict = Depends(require("read_risk"))):
+    """Outcome (a): serve a cost-overrun prediction for ONE project.
+
+    Previously the module could only report benchmark metrics -- there was no way to
+    ask it about a specific project, which meant there was a benchmark but not a
+    deployed model.
+    """
+    try:
+        from analytics_engine.overrun_models import predict_cost_overrun
+        r = predict_cost_overrun(project_id)
+        if r is None:
+            raise HTTPException(status_code=404,
+                                detail="Model artifact absent or project unknown. "
+                                       "Run: python analytics_engine/overrun_models.py")
+        return r
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/lead-time")
+def get_lead_time_validation(threshold_pct: float = Query(default=15.0, ge=1.0, le=100.0)):
+    """Outcome (d): validates that the warning is actually EARLY.
+
+    Public because it describes model quality, not project data -- an auditor should be
+    able to check our claims without credentials.
+    """
+    try:
+        from analytics_engine.overrun_models import evaluate_lead_time
+        return evaluate_lead_time(threshold_pct)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

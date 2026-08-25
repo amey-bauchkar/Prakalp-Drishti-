@@ -318,6 +318,13 @@ def run_cia_audit():
     from fastapi.testclient import TestClient
     import backend.server as server_module
     with TestClient(server_module.app) as client:
+        # RBAC now protects briefing/risk/allocate. The audit must authenticate, and
+        # that it must is itself part of what is being verified.
+        _tok = client.post("/api/auth/login",
+                           json={"username": "admin", "password": "prakalp-admin-2026"})
+        assert _tok.status_code == 200, "Admin login failed -- auth layer broken"
+        _H = {"Authorization": "Bearer " + _tok.json()["token"]}
+        assert client.get("/api/amey/briefing/706724").status_code == 401,             "Cabinet briefing is reachable without a token -- RBAC not enforced"
         payload_base = {"project_id": "400188", "delay_shock_months": 0.0, "budget_pool_cr": 15000.0, "risk_dial_kappa": 0.75, "enforce_ner_floor": True}
         payload_shock = {**payload_base, "delay_shock_months": 36.0}
         r0 = client.post("/api/amey/unified-simulation", json=payload_base)
@@ -328,7 +335,7 @@ def run_cia_audit():
         assert d0["subgraph"]["total_cascade_locked_p50_cr"] != d1["subgraph"]["total_cascade_locked_p50_cr"] or d0["subgraph"]["total_cascade_locked_p50_cr"] == 0.0, \
             "SETU-GRAPH locked capital unexpectedly identical under shock via the live endpoint"
         # Also verify a real verify() round-trip through the live endpoint (not just the engine)
-        briefing_r = client.get("/api/amey/briefing/706724")
+        briefing_r = client.get("/api/amey/briefing/706724", headers=_H)
         assert briefing_r.status_code == 200, "Cabinet briefing endpoint failed"
         sample_fact_id = next(iter(briefing_r.json()["audit_facts"].values()))["fact_id"]
         verify_r = client.get(f"/api/amey/verify/anyhash/{sample_fact_id}")
