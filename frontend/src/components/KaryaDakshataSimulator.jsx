@@ -15,7 +15,7 @@ const KaryaDakshataSimulator = () => {
 
     // Fetch agencies on mount
     useEffect(() => {
-        fetch('http://localhost:8000/api/karya-dakshata/agencies')
+        fetch('/api/karya-dakshata/agencies')
             .then(res => res.json())
             .then(data => {
                 if (data.agencies) {
@@ -33,7 +33,7 @@ const KaryaDakshataSimulator = () => {
         try {
             // Artificial delay to show off the cool loading state
             await new Promise(resolve => setTimeout(resolve, 1500));
-            const response = await fetch('http://localhost:8000/api/karya-dakshata/simulate', {
+            const response = await fetch('/api/karya-dakshata/simulate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
