@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function VarshaSpeedView() {
-  const [anomaly, setAnomaly] = useState(15.0);
+  const [anomaly, setAnomaly] = useState(0.0);
   const [impactData, setImpactData] = useState(null);
   const [profilesData, setProfilesData] = useState(null);
   const [timelineData, setTimelineData] = useState(null);
@@ -285,22 +285,24 @@ export default function VarshaSpeedView() {
               </button>
             </div>
 
-            <input
-              type="range"
-              min="-40"
-              max="60"
-              step="5"
-              value={anomaly}
-              onChange={handleSliderChange}
-              className="w-full accent-cyan-400 cursor-pointer h-2.5 bg-slate-800 rounded-lg"
-            />
+            <div className="relative pt-2">
+              <input
+                type="range"
+                min="-50"
+                max="50"
+                step="5"
+                value={anomaly}
+                onChange={handleSliderChange}
+                className="w-full accent-cyan-400 cursor-pointer h-2.5 bg-slate-800 rounded-lg"
+              />
 
-            <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-              <span>-40% Extreme Drought</span>
-              <span>-20% Deficient</span>
-              <span>0% Normal LPA</span>
-              <span>+20% Excess</span>
-              <span>+60% Extreme Inundation</span>
+              <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5">
+                <span className="text-left">-50% Extreme Drought</span>
+                <span className="text-center">-25% Deficient</span>
+                <span className={`text-center font-black transition-colors ${anomaly === 0 ? 'text-cyan-300' : 'text-slate-400'}`}>0% Normal LPA</span>
+                <span className="text-center">+25% Heavy Flood</span>
+                <span className="text-right">+50% Extreme Inundation</span>
+              </div>
             </div>
 
             {impactData?.scenario_interpretation && (

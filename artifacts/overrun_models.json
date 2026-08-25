@@ -1,0 +1,388 @@
+{
+  "seed": 42,
+  "test_fraction": 0.25,
+  "leakage_excluded_columns": [
+    "COR_PERC",
+    "COST_OVERRUN",
+    "COST_OVERRUN_PERC",
+    "DELAYED_TIME",
+    "Expenditure",
+    "RevisedCost",
+    "RevisedCostReason",
+    "RevisedDate",
+    "RevisedDateReason",
+    "TOR_PERC",
+    "TrueCostOverrunCr",
+    "TrueCostOverrunPerc"
+  ],
+  "cuf_features": [
+    "log_original_cost",
+    "planned_months",
+    "physical_progress",
+    "sanction_year",
+    "sector (one-hot)",
+    "entity (one-hot)"
+  ],
+  "external_features": [
+    "monsoon_departure_pct",
+    "monsoon_volatility",
+    "wpi_construction_yoy",
+    "wpi_cumulative_drift",
+    "election_year_proximity",
+    "psu_debt_to_equity",
+    "psu_profit_margin",
+    "eo_surface_change_pct",
+    "graph_out_degree",
+    "graph_shapley_criticality"
+  ],
+  "targets": {
+    "cost_overrun_pct": {
+      "target": "cost_overrun_pct",
+      "n_usable": 2175,
+      "n_train": 1631,
+      "n_test": 544,
+      "target_range_filter": [
+        -50.0,
+        400.0
+      ],
+      "cuf_only": {
+        "sector_mean_baseline": {
+          "r2": 0.0926,
+          "mae": 16.048,
+          "rmse": 33.743
+        },
+        "ols_linear_regression": {
+          "r2": 0.1568,
+          "mae": 15.823,
+          "rmse": 32.529
+        },
+        "gradient_boosting": {
+          "r2": 0.24,
+          "mae": 15.064,
+          "rmse": 30.881
+        }
+      },
+      "cuf_plus_external": {
+        "sector_mean_baseline": {
+          "r2": 0.0926,
+          "mae": 16.048,
+          "rmse": 33.743
+        },
+        "ols_linear_regression": {
+          "r2": 0.1622,
+          "mae": 16.075,
+          "rmse": 32.424
+        },
+        "gradient_boosting": {
+          "r2": 0.3253,
+          "mae": 14.193,
+          "rmse": 29.097
+        }
+      },
+      "calendar_free": {
+        "sector_mean_baseline": {
+          "r2": 0.0926,
+          "mae": 16.048,
+          "rmse": 33.743
+        },
+        "ols_linear_regression": {
+          "r2": 0.1416,
+          "mae": 16.222,
+          "rmse": 32.82
+        },
+        "gradient_boosting": {
+          "r2": 0.3151,
+          "mae": 14.34,
+          "rmse": 29.315
+        }
+      },
+      "calendar_identity": {
+        "applies": false,
+        "explanation": "Not applicable: cost_overrun_pct is not recoverable from any feature, since RevisedCost is neither a feature nor derivable from OriginalCost.",
+        "r2_with_calendar": 0.3253,
+        "r2_calendar_free": 0.3151,
+        "r2_attributable_to_calendar": 0.0102
+      },
+      "ml_vs_conventional": {
+        "best_conventional_mae": 16.048,
+        "ml_mae": 14.193,
+        "mae_improvement": 1.855,
+        "mae_improvement_pct": 11.56,
+        "ml_is_better": true
+      },
+      "cuf_vs_external_ablation": {
+        "cuf_only_mae": 15.064,
+        "with_external_mae": 14.193,
+        "mae_improvement": 0.871,
+        "mae_improvement_pct": 5.78,
+        "external_helps": true
+      },
+      "drivers": [
+        {
+          "feature": "graph_shapley_criticality",
+          "mae_increase_when_shuffled": 8.1053,
+          "std": 0.3967,
+          "is_external": true
+        },
+        {
+          "feature": "log_original_cost",
+          "mae_increase_when_shuffled": 5.0337,
+          "std": 0.3294,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Roads & Highways",
+          "mae_increase_when_shuffled": 3.2725,
+          "std": 0.3283,
+          "is_external": false
+        },
+        {
+          "feature": "sanction_year",
+          "mae_increase_when_shuffled": 0.9961,
+          "std": 0.2143,
+          "is_external": false
+        },
+        {
+          "feature": "planned_months",
+          "mae_increase_when_shuffled": 0.6718,
+          "std": 0.1052,
+          "is_external": false
+        },
+        {
+          "feature": "entity=JAL_SHAKTI",
+          "mae_increase_when_shuffled": 0.5294,
+          "std": 0.1008,
+          "is_external": false
+        },
+        {
+          "feature": "psu_debt_to_equity",
+          "mae_increase_when_shuffled": 0.4122,
+          "std": 0.1042,
+          "is_external": true
+        },
+        {
+          "feature": "physical_progress",
+          "mae_increase_when_shuffled": 0.3397,
+          "std": 0.1266,
+          "is_external": false
+        },
+        {
+          "feature": "entity=INDIAN_RAILWAYS",
+          "mae_increase_when_shuffled": 0.2704,
+          "std": 0.0723,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Water Resources",
+          "mae_increase_when_shuffled": 0.2493,
+          "std": 0.0773,
+          "is_external": false
+        },
+        {
+          "feature": "wpi_cumulative_drift",
+          "mae_increase_when_shuffled": 0.1659,
+          "std": 0.0583,
+          "is_external": true
+        },
+        {
+          "feature": "monsoon_departure_pct",
+          "mae_increase_when_shuffled": 0.1264,
+          "std": 0.1069,
+          "is_external": true
+        },
+        {
+          "feature": "sector=Healthcare",
+          "mae_increase_when_shuffled": 0.0846,
+          "std": 0.0628,
+          "is_external": false
+        },
+        {
+          "feature": "entity=NHAI",
+          "mae_increase_when_shuffled": 0.0668,
+          "std": 0.0405,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Electricity Generation",
+          "mae_increase_when_shuffled": 0.0659,
+          "std": 0.0825,
+          "is_external": false
+        }
+      ]
+    },
+    "slip_months": {
+      "target": "slip_months",
+      "n_usable": 1822,
+      "n_train": 1366,
+      "n_test": 456,
+      "target_range_filter": [
+        -12.0,
+        300.0
+      ],
+      "cuf_only": {
+        "sector_mean_baseline": {
+          "r2": 0.0805,
+          "mae": 18.078,
+          "rmse": 26.979
+        },
+        "ols_linear_regression": {
+          "r2": 0.7785,
+          "mae": 8.747,
+          "rmse": 13.241
+        },
+        "gradient_boosting": {
+          "r2": 0.8232,
+          "mae": 7.87,
+          "rmse": 11.831
+        }
+      },
+      "cuf_plus_external": {
+        "sector_mean_baseline": {
+          "r2": 0.0805,
+          "mae": 18.078,
+          "rmse": 26.979
+        },
+        "ols_linear_regression": {
+          "r2": 0.783,
+          "mae": 8.678,
+          "rmse": 13.105
+        },
+        "gradient_boosting": {
+          "r2": 0.8264,
+          "mae": 7.666,
+          "rmse": 11.721
+        }
+      },
+      "calendar_free": {
+        "sector_mean_baseline": {
+          "r2": 0.0805,
+          "mae": 18.078,
+          "rmse": 26.979
+        },
+        "ols_linear_regression": {
+          "r2": 0.2777,
+          "mae": 15.442,
+          "rmse": 23.911
+        },
+        "gradient_boosting": {
+          "r2": 0.5972,
+          "mae": 10.896,
+          "rmse": 17.856
+        }
+      },
+      "calendar_identity": {
+        "applies": true,
+        "explanation": "slip_months = RevisedDate - OriginalEndDate, and OriginalEndDate is recoverable from sanction_year + planned_months. RevisedDate is tightly clustered (std ~1.3y) while OriginalEndDate is not (std ~9.3y), so much of the apparent accuracy is an arithmetic identity rather than learned skill. The calendar_free block is the defensible skill estimate.",
+        "r2_with_calendar": 0.8264,
+        "r2_calendar_free": 0.5972,
+        "r2_attributable_to_calendar": 0.2292
+      },
+      "ml_vs_conventional": {
+        "best_conventional_mae": 8.678,
+        "ml_mae": 7.666,
+        "mae_improvement": 1.012,
+        "mae_improvement_pct": 11.66,
+        "ml_is_better": true
+      },
+      "cuf_vs_external_ablation": {
+        "cuf_only_mae": 7.87,
+        "with_external_mae": 7.666,
+        "mae_improvement": 0.204,
+        "mae_improvement_pct": 2.59,
+        "external_helps": true
+      },
+      "drivers": [
+        {
+          "feature": "sanction_year",
+          "mae_increase_when_shuffled": 23.685,
+          "std": 0.6349,
+          "is_external": false
+        },
+        {
+          "feature": "planned_months",
+          "mae_increase_when_shuffled": 11.0017,
+          "std": 0.6948,
+          "is_external": false
+        },
+        {
+          "feature": "wpi_cumulative_drift",
+          "mae_increase_when_shuffled": 1.4997,
+          "std": 0.1942,
+          "is_external": true
+        },
+        {
+          "feature": "log_original_cost",
+          "mae_increase_when_shuffled": 0.3029,
+          "std": 0.0559,
+          "is_external": false
+        },
+        {
+          "feature": "entity=INDIAN_RAILWAYS",
+          "mae_increase_when_shuffled": 0.2203,
+          "std": 0.0284,
+          "is_external": false
+        },
+        {
+          "feature": "physical_progress",
+          "mae_increase_when_shuffled": 0.1615,
+          "std": 0.0548,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Water Resources",
+          "mae_increase_when_shuffled": 0.1287,
+          "std": 0.0262,
+          "is_external": false
+        },
+        {
+          "feature": "eo_surface_change_pct",
+          "mae_increase_when_shuffled": 0.0967,
+          "std": 0.0387,
+          "is_external": true
+        },
+        {
+          "feature": "sector=Railways",
+          "mae_increase_when_shuffled": 0.082,
+          "std": 0.0375,
+          "is_external": false
+        },
+        {
+          "feature": "entity=COAL_INDIA",
+          "mae_increase_when_shuffled": 0.0721,
+          "std": 0.024,
+          "is_external": false
+        },
+        {
+          "feature": "monsoon_volatility",
+          "mae_increase_when_shuffled": 0.0295,
+          "std": 0.009,
+          "is_external": true
+        },
+        {
+          "feature": "wpi_construction_yoy",
+          "mae_increase_when_shuffled": 0.0265,
+          "std": 0.0289,
+          "is_external": true
+        },
+        {
+          "feature": "sector=Roads & Highways",
+          "mae_increase_when_shuffled": 0.021,
+          "std": 0.0142,
+          "is_external": false
+        },
+        {
+          "feature": "graph_shapley_criticality",
+          "mae_increase_when_shuffled": 0.0201,
+          "std": 0.0274,
+          "is_external": true
+        },
+        {
+          "feature": "entity=NHAI",
+          "mae_increase_when_shuffled": 0.0101,
+          "std": 0.0354,
+          "is_external": false
+        }
+      ]
+    }
+  }
+}

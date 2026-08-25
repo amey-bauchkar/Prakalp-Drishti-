@@ -1,0 +1,43 @@
+# PRAKALP-DRISHTI — Python runtime dependencies (pinned)
+#
+# Every package here is open-source and installable from a local PyPI mirror or a
+# pre-populated wheelhouse, so the stack can be provisioned inside an air-gapped
+# government network with no outbound connectivity:
+#
+#     pip download -r requirements.txt -d wheelhouse/      (on a connected machine)
+#     pip install --no-index --find-links=wheelhouse/ -r requirements.txt
+#
+# Versions are pinned exactly to the audited build. Loose pins would let a jury
+# reproduce a different numerical result than the one reported.
+
+# --- API layer ---
+fastapi==0.141.1
+uvicorn==0.52.1
+pydantic==2.13.4
+python-multipart==0.0.32
+
+# --- data + numerics ---
+pandas==2.3.3
+numpy==2.4.4
+scipy==1.17.1
+pyarrow==25.0.1
+
+# --- modelling (Outcomes a/b/e/f; Dimensions b/c) ---
+# scikit-learn only: gradient boosting, linear regression, permutation importance and
+# split-conformal calibration are all it needs. No GPU, no deep-learning runtime, and
+# nothing that would complicate a sovereign deployment.
+scikit-learn==1.9.0
+
+# --- graph engine (SETU-GRAPH dependency DAG, floats, Shapley) ---
+networkx==3.6.1
+
+# --- satellite computer vision (PRATIBIMB change detection) ---
+opencv-python==4.13.0.92
+Pillow==12.2.0
+
+# --- data-preparation only; NOT used on the request path ---
+# Imagery fetch and geocoding run once offline. The deployed system never calls out.
+requests==2.33.1
+
+# --- test / audit harness ---
+httpx==0.28.1
