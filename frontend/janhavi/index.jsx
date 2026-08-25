@@ -117,113 +117,73 @@ export default function VarshaSpeedView() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in text-slate-100">
+    <div className="space-y-0">
       
-      {/* 1. Header Banner */}
-      <div className="bg-gradient-to-r from-[#09152b] via-[#0f244a] to-[#1a386b] p-6 sm:p-8 rounded-2xl shadow-2xl border border-blue-900/40 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-black uppercase tracking-wider">
-              <CloudRain className="w-3.5 h-3.5" /> VARSHA-SPEED · IMD Weather-Working Window Engine
+      {/* ═══════ MODULE HERO ═══════ */}
+      <section className="pb-12 pt-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="text-[12px] font-semibold uppercase tracking-widest text-gov-saffron">
+              VARSHA-SPEED · Monsoon Weather Impact
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
-              Monsoon Working-Window Contraction & Schedule Multiplier
+            <h1 className="text-[36px] leading-[1.12] font-semibold text-gov-navy tracking-tight">
+              Monsoon Working-Window<br />
+              Contraction &amp; Schedule Multiplier
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-              Powered by 20-year empirical IMD state-level rainfall departures (2005–2025 · 630 state-years). Calculates precise lost construction days, working-window compression, and schedule stretch multipliers across 2,207 mega-projects.
+            <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
+              Powered by 20-year empirical IMD state-level rainfall departures (2005–2025 · 630 state-years). 
+              Calculates precise lost construction days, working-window compression, and schedule stretch 
+              multipliers across 2,207 mega-projects.
             </p>
           </div>
 
-          <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between w-full lg:w-auto gap-3 bg-slate-900/60 p-4 rounded-xl border border-blue-500/20 backdrop-blur-md">
-            <div className="text-left lg:text-right">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 block">Module Lead</span>
-              <span className="text-lg font-black text-cyan-400">Janhavi</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-bold">
-                <CheckCircle2 className="w-3 h-3" /> 630 State-Years
-              </span>
-              <span className="text-[10px] px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/40 font-bold">
-                30 States
-              </span>
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="bg-white border border-border-default rounded-lg p-8 shadow-card text-center max-w-xs">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-4">Coverage</div>
+              <div className="text-[28px] font-semibold text-gov-navy leading-snug">630 State-Years</div>
+              <div className="text-[14px] text-text-secondary mt-2">30 states · 20-year IMD dataset</div>
+              <div className="text-[12px] text-text-muted mt-1">2005–2025 empirical rainfall data</div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Top KPI Metrics */}
-        {impactData?.national_summary && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 mt-6 border-t border-blue-800/40">
-            <div className="bg-slate-900/40 p-3 rounded-xl border border-blue-900/30">
-              <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-cyan-400" /> National Working Window
-              </div>
-              <div className="text-xl font-black text-cyan-300 mt-1 font-mono">
-                {impactData.national_summary.average_working_window_months} <span className="text-xs font-normal text-slate-400">Mo/yr</span>
-              </div>
-            </div>
-
-            <div className="bg-slate-900/40 p-3 rounded-xl border border-blue-900/30">
-              <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
-                <Droplets className="w-3.5 h-3.5 text-rose-400" /> Avg Lost Weather Days
-              </div>
-              <div className="text-xl font-black text-rose-300 mt-1 font-mono">
-                {impactData.national_summary.average_lost_days_per_year} <span className="text-xs font-normal text-slate-400">Days</span>
-              </div>
-            </div>
-
-            <div className="bg-slate-900/40 p-3 rounded-xl border border-blue-900/30">
-              <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
-                <TrendingDown className="w-3.5 h-3.5 text-amber-400" /> Schedule Stretch Multiplier
-              </div>
-              <div className="text-xl font-black text-amber-300 mt-1 font-mono">
-                {impactData.national_summary.national_schedule_stretch_multiplier}x
-              </div>
-            </div>
-
-            <div className="bg-slate-900/40 p-3 rounded-xl border border-blue-900/30">
-              <div className="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-red-400" /> Highest Vulnerability
-              </div>
-              <div className="text-lg font-black text-red-300 mt-1 truncate">
-                {impactData.national_summary.most_vulnerable_state}
-              </div>
-            </div>
+      {/* ═══════ STAT STRIP ═══════ */}
+      {impactData?.national_summary && (
+        <div className="stat-strip -mx-6 sm:mx-0 sm:rounded-lg overflow-hidden mb-12">
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Working Window</div>
+            <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">{impactData.national_summary.average_working_window_months} mo/yr</div>
+            <div className="text-[12px] text-text-muted mt-0.5">National average</div>
           </div>
-        )}
-      </div>
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Lost Weather Days</div>
+            <div className="text-[28px] font-semibold text-gov-danger mt-1 tracking-tight">{impactData.national_summary.average_lost_days_per_year} days</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Average per year</div>
+          </div>
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Schedule Stretch</div>
+            <div className="text-[28px] font-semibold text-gov-warning mt-1 tracking-tight">{impactData.national_summary.national_schedule_stretch_multiplier}×</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Multiplier</div>
+          </div>
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Most Vulnerable</div>
+            <div className="text-[18px] font-semibold text-gov-danger mt-1 truncate">{impactData.national_summary.most_vulnerable_state}</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Highest weather impact</div>
+          </div>
+        </div>
+      )}
 
-      {/* 2. Interactive Navigation Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-2">
-        <button
-          onClick={() => setActiveTab('simulation')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'simulation'
-              ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Sliders className="w-4 h-4" /> 30-State Working-Window Simulator
+      {/* Module Tabs */}
+      <div className="module-tabs overflow-x-auto mb-8">
+        <button onClick={() => setActiveTab('simulation')} className={`module-tab ${activeTab === 'simulation' ? 'active' : ''}`}>
+          Working-Window Simulator
         </button>
-        <button
-          onClick={() => setActiveTab('historical')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'historical'
-              ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" /> 20-Year IMD Historical Departure Explorer
+        <button onClick={() => setActiveTab('historical')} className={`module-tab ${activeTab === 'historical' ? 'active' : ''}`}>
+          Historical Departure Explorer
         </button>
-        <button
-          onClick={() => setActiveTab('projects')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'projects'
-              ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-          }`}
-        >
-          <Building2 className="w-4 h-4" /> Project Climate Exposure Auditor
+        <button onClick={() => setActiveTab('projects')} className={`module-tab ${activeTab === 'projects' ? 'active' : ''}`}>
+          Project Climate Exposure
         </button>
       </div>
 
@@ -589,10 +549,16 @@ export default function VarshaSpeedView() {
         </div>
       )}
 
-      {/* Footer Info */}
-      <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-800/80">
-        PRAKALP-DRISHTI · VARSHA-SPEED Module · Lead: Janhavi · MoSPI Central Sector Mega-Projects Decision System
-      </div>
+      {/* Methodology */}
+      <section className="bg-white border border-border-default rounded-lg p-8 mt-12">
+        <h3 className="text-[16px] font-semibold text-gov-navy mb-3">Methodology</h3>
+        <p className="text-[13px] text-text-secondary leading-relaxed max-w-3xl">
+          20-year empirical IMD state-level rainfall departure dataset (2005–2025, 630 state-years). 
+          State-specific terrain coefficients calibrate construction sensitivity to precipitation. 
+          Working-window compression and schedule stretch multipliers are computed using Weibull 
+          survival regression models pegged to historical monsoon patterns.
+        </p>
+      </section>
     </div>
   );
 }
