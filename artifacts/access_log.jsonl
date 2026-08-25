@@ -1,0 +1,9 @@
+{"ts": "2026-08-26T00:13:56", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "read_alerts"}
+{"ts": "2026-08-26T00:13:56", "user": "monitor", "role": "monitoring_officer", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T00:14:11", "user": "monitor", "role": "monitoring_officer", "action": "DENIED", "detail": "allocate_capital"}
+{"ts": "2026-08-26T00:14:11", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T00:14:12", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "read_briefing"}
+{"ts": "2026-08-26T00:14:12", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T00:15:32", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_risk"}
+{"ts": "2026-08-26T00:15:34", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_risk"}
+{"ts": "2026-08-26T00:17:42", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}

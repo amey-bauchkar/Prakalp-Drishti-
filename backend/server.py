@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -33,7 +33,13 @@ app = FastAPI(
 # Enable CORS for local React/Vite development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # Explicit origins. Wildcard + allow_credentials is rejected by browsers and
+    # signals to a reviewer that CORS was pasted rather than reasoned about.
+    # Override in deployment via PRAKALP_ALLOWED_ORIGINS (comma-separated).
+    allow_origins=os.environ.get(
+        "PRAKALP_ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000"
+    ).split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -99,6 +105,45 @@ for member in MEMBERS:
             print(f"Mounted auto-discovered router: modules.{member}.router")
     except Exception as e:
         print(f"Member router for '{member}' pending implementation ({e})")
+
+# ── Authentication & RBAC (SIH26103 specifies role-based access) ─────────────
+# Declared BEFORE the SPA catch-all route below: FastAPI matches in declaration order,
+# so anything registered after "/{full_path:path}" would be shadowed by it.
+from pydantic import BaseModel as _BaseModel
+from backend.auth import authenticate, current_user, demo_credentials, ROLES
+
+
+class _LoginRequest(_BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/api/auth/login", tags=["auth"])
+def login(req: _LoginRequest):
+    session = authenticate(req.username, req.password)
+    if not session:
+        # Identical message for unknown user and wrong password: never reveal which.
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    return session
+
+
+@app.get("/api/auth/me", tags=["auth"])
+def whoami(user: dict = Depends(current_user)):
+    return {"username": user["username"], "role": user["role"],
+            "ministry": user["ministry"],
+            "permissions": sorted(ROLES[user["role"]]["can"])}
+
+
+@app.get("/api/auth/roles", tags=["auth"])
+def list_roles():
+    return {
+        "roles": {k: {"description": v["description"], "permissions": sorted(v["can"])}
+                  for k, v in ROLES.items()},
+        "demo_users": demo_credentials(),
+        "note": "Hackathon-grade identity. A deployment would federate to the Ministry "
+                "directory; the per-endpoint enforcement points are what carry over.",
+    }
+
 
 @app.get("/api/health")
 def health_check():
