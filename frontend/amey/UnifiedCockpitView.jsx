@@ -40,6 +40,16 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
     runSimulation();
   }, [projectId]);
 
+  // Formatters that refuse to render arithmetic on absent data.
+  //
+  // `{(forecast?.prob_target_met_official * 100)?.toFixed(1)}%` printed "NaN%" on
+  // every load: optional chaining does not help here, because `undefined * 100` is
+  // NaN and NaN is not nullish, so `?.toFixed` runs happily and returns the string
+  // "NaN". A judge watching the console saw NaN% flash on each project switch.
+  const pct = (v, d = 1) => (Number.isFinite(v) ? (v * 100).toFixed(d) + '%' : '—');
+  const cr = (v) => (Number.isFinite(v) ? '₹' + v.toLocaleString('en-IN') + ' Cr' : '—');
+  const num = (v, suffix = '') => (Number.isFinite(v) ? v + suffix : '—');
+
   const forecast = simData?.forecast;
   const subgraph = simData?.subgraph;
   const alloc = simData?.allocation;
@@ -173,31 +183,31 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               </div>
               <div className="text-right">
                 <span className="text-[10px] uppercase font-bold text-gov-muted block">Most Likely Finish Date</span>
-                <span className="text-base font-black text-gov-navy font-mono">{forecast?.p50_date}</span>
+                <span className="text-base font-black text-gov-navy font-mono">{forecast?.p50_date || '—'}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="bg-gov-surface p-3 rounded-xl border border-gov-border text-center">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block">Sanctioned Capex</span>
-                <span className="text-sm font-black text-gov-navy font-mono">₹{forecast?.revised_cost_cr?.toLocaleString()} Cr</span>
+                <span className="text-sm font-black text-gov-navy font-mono">{cr(forecast?.revised_cost_cr)}</span>
               </div>
               <div className="bg-gov-surface p-3 rounded-xl border border-gov-border text-center">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block">Physical Progress</span>
-                <span className="text-sm font-black text-emerald-600 font-mono">{forecast?.physical_progress_perc}%</span>
+                <span className="text-sm font-black text-emerald-600 font-mono">{num(forecast?.physical_progress_perc, '%')}</span>
               </div>
               <div className="bg-gov-surface p-3 rounded-xl border border-gov-border text-center">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block">Target Confidence</span>
-                <span className="text-sm font-black text-rose-600 font-mono">{(forecast?.prob_target_met_official * 100)?.toFixed(1)}%</span>
+                <span className="text-sm font-black text-rose-600 font-mono">{pct(forecast?.prob_target_met_official)}</span>
               </div>
             </div>
 
             {/* CQR Quantile Progress Bar */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-bold text-gov-navy">
-                <span>Best-Case: {forecast?.p10_date}</span>
-                <span>Likely Date: {forecast?.p50_date}</span>
-                <span>Worst-Case: {forecast?.p95_date}</span>
+                <span>Best-Case: {forecast?.p10_date || '—'}</span>
+                <span>Likely Date: {forecast?.p50_date || '—'}</span>
+                <span>Worst-Case: {forecast?.p95_date || '—'}</span>
               </div>
               <div className="w-full bg-gov-surface h-3 rounded-full overflow-hidden border border-gov-border flex">
                 <div className="bg-emerald-500 h-full w-[25%]" title="Best Case Window" />
@@ -230,7 +240,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block">Money at Risk (Connected Projects)</span>
                 <span className="text-base font-black text-rose-600 font-mono">
-                  ₹{subgraph?.total_cascade_locked_p50_cr?.toLocaleString()} Cr
+                  {cr(subgraph?.total_cascade_locked_p50_cr)}
                 </span>
                 <span className="text-[10px] text-gov-muted block mt-0.5">Across {subgraph?.nodes?.length} linked projects</span>
               </div>
@@ -238,7 +248,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block">Recommended Quarterly Capex</span>
                 <span className="text-base font-black text-gov-navy font-mono">
-                  ₹{alloc?.total_allocated_cr?.toLocaleString()} Cr
+                  {cr(alloc?.total_allocated_cr)}
                 </span>
                 <span className="text-[10px] text-emerald-600 font-bold block mt-0.5">Expected Progress Boost: {alloc?.expected_completion_yield}%</span>
               </div>

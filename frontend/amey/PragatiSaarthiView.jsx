@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles } from 'lucide-react';
 
 export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
@@ -8,15 +9,14 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   const [loading, setLoading] = useState(false);
   const [activeFact, setActiveFact] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [denied, setDenied] = useState(null);
 
   const fetchBriefing = async (id) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/amey/briefing/${id}`);
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
-      }
+      const res = await apiFetch(`/api/amey/briefing/${id}`);
+      if (res.ok) { setData(res.data); setDenied(null); }
+      else { setData(null); setDenied(res.error); }
     } catch (e) {
       console.error(e);
     } finally {
@@ -90,6 +90,13 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
         <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
           <FileText className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
           Preparing Fact-Verified Executive Briefing Note...
+        </div>
+      )}
+
+      {denied && !loading && (
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900">
+          {denied}
+          <span className="block font-normal mt-0.5">Cabinet briefings require the ministry officer or administrator role.</span>
         </div>
       )}
 

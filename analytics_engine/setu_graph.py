@@ -10,6 +10,13 @@ import json
 import hashlib
 import numpy as np
 import pandas as pd
+# Importable as a package module AND runnable as a script: the direct-script form
+# has the file's own directory on sys.path but not the repository root, so the
+# absolute package import fails. Fall back to the sibling module in that case.
+try:
+    from analytics_engine.state_resolution import resolve_state, clean_text
+except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
+    from state_resolution import resolve_state, clean_text
 import networkx as nx
 
 from analytics_engine.contracts import DependencyNode, DependencyEdge, DependencySubGraph
@@ -58,7 +65,7 @@ class SetuGraphEngine:
             pid = str(row["ProjectId"])
             pname = str(row["ProjectName"])
             sector = str(row["SectorName"])
-            state = str(row["StateName"])
+            state = resolve_state(row.get("ProjectId"), row.get("StateName"))[0]
             cost = float(row["RevisedCost"])
             
             # Compute empirical milestone delay from official dates

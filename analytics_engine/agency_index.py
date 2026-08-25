@@ -5,6 +5,7 @@ Aggregates 2,207 central projects across executing PSUs and Line Ministries.
 """
 
 import os
+import re
 import json
 import hashlib
 import numpy as np
@@ -15,6 +16,98 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 ENTITY_MAPPING_PATH = os.path.join(BASE_DIR, "paimana_extracted", "CANONICAL_ENTITIES_MAPPING.json")
 SHAPLEY_PATH = os.path.join(BASE_DIR, "artifacts", "shapley.parquet")
+
+
+_BRACKET_SUFFIX = re.compile(r"[\[\(]\s*[^\[\]\(\)]{2,16}\s*[\]\)]\s*$")
+_DASH_ACRONYM = re.compile(r"\s*[-–—]\s*[A-Z]{3,12}\s*$")
+_PUNCT = re.compile(r"[\s,\.;:&/\-–—]+")
+
+
+def _normalise_agency(raw: str) -> str:
+    """Group key for an unmapped agency name.
+
+    This replaces `raw[:30]`, which was silently wrong in both directions:
+
+      * It MERGED distinct agencies sharing a 30-character prefix. Measured on this
+        corpus that pooled 7 separate IITs into one "agency" and 5 separate NITs into
+        another, so their delay and overrun statistics were averaged together and
+        reported as a single institution's track record.
+      * It did nothing to merge the same agency written three ways -- "Central Public
+        Works Department (CPWD)", "... - CPWD" and "... [CPWD]" stayed three agencies.
+
+    So: strip a trailing acronym written in brackets or after a dash, fold punctuation
+    and case, and keep everything else. A trailing acronym must be >= 3 capitals to be
+    stripped, which deliberately preserves the two-letter state suffixes that DO mark
+    different agencies ("Department of Water Resources-JH" vs "-MH") and the roman
+    numerals that mark railway divisions.
+    """
+    s = (raw or "").strip()
+    if not s or s.lower() == "nan":
+        return "CENTRAL_PSU"
+    s = _BRACKET_SUFFIX.sub("", s).strip()
+    s = _DASH_ACRONYM.sub("", s).strip()
+    s = _PUNCT.sub(" ", s).strip().upper()
+    # Space-insensitive, because the source writes the same ministry both ways:
+    # "Ministry of Petroleum & Natural Gas" (103 projects) and
+    # "MinistryofPetroleumNaturalGas" (24) were two separate agencies on the ranking.
+    # Verified against the full corpus: exactly two groups merge under this rule
+    # (that ministry and Central Railway) and no unrelated agency collides.
+    s = s.replace(" ", "")
+    return s or "CENTRAL_PSU"
+
+
+def _resolve_agency_groups(raw_names, entity_map) -> dict:
+    """Map every raw COMPANYNAME spelling to one agency group key.
+
+    Two independent signals say "these are the same agency", and neither alone is
+    sufficient on this corpus:
+
+      * The curated entity map knows that HPCL, BPCL and ONGC all roll up to the
+        Ministry of Petroleum & Natural Gas -- domain knowledge no string rule
+        recovers.
+      * String normalisation knows that "MinistryofPetroleumNaturalGas" is the same
+        ministry as "Ministry of Petroleum & Natural Gas" -- which the curated map
+        missed, leaving 24 projects filed under a second, phantom ministry that
+        appeared as its own row on the accountability ranking.
+
+    So both signals union into one equivalence relation rather than one overriding
+    the other. The group key prefers a curated canonical id when the component
+    contains one, so downstream ids stay stable and readable.
+    """
+    parent: dict = {}
+
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    for raw in raw_names:
+        union("R:" + raw, "K:" + _normalise_agency(raw))
+        cid = (entity_map.get(raw) or {}).get("canonical_id")
+        if cid:
+            union("R:" + raw, "C:" + cid)
+
+    # Choose a stable, human-readable key per component.
+    members: dict = {}
+    for raw in raw_names:
+        members.setdefault(find("R:" + raw), []).append(raw)
+
+    out = {}
+    for root, raws in members.items():
+        cids = sorted({(entity_map.get(r) or {}).get("canonical_id")
+                       for r in raws} - {None})
+        key = cids[0] if cids else _normalise_agency(raws[0])
+        for r in raws:
+            out[r] = key
+    return out
+
 
 class AgencyIndexEngine:
     def __init__(self):
@@ -52,12 +145,22 @@ class AgencyIndexEngine:
             with open(ENTITY_MAPPING_PATH, "r", encoding="utf-8") as f:
                 self.entity_map = json.load(f).get("mapping_by_raw_string", {})
 
-        def get_canonical(row):
-            raw = str(row["COMPANYNAME"])
-            ent = self.entity_map.get(raw, {})
-            return ent.get("canonical_id") or (raw[:30] if raw != "nan" else "CENTRAL_PSU")
+        self.df["RawAgencyName"] = self.df["COMPANYNAME"].astype(str)
+        groups = _resolve_agency_groups(
+            sorted(set(self.df["RawAgencyName"])), self.entity_map)
+        self.df["CanonicalAgency"] = self.df["RawAgencyName"].map(groups)
 
-        self.df["CanonicalAgency"] = self.df.apply(get_canonical, axis=1)
+        # Display name = the raw string the ministry itself writes most often for this
+        # agency (ties broken by the longest, then alphabetically, so it is fully
+        # deterministic). Nothing is re-cased. `.title()` was previously applied here
+        # and mangled every Indian acronym in the portfolio -- NHAI rendered as "Nhai",
+        # NTPC as "Ntpc", MoRTH as "Morth", DoT as "Telecom Dot". Taking the source
+        # spelling verbatim fixes all of them at once and cannot invent a new one.
+        self.display_names = {}
+        for key, grp in self.df.groupby("CanonicalAgency"):
+            counts = grp["RawAgencyName"].value_counts()
+            best = max(counts.items(), key=lambda kv: (kv[1], len(kv[0]), kv[0]))[0]
+            self.display_names[key] = best if best and best != "nan" else str(key)
 
         # Load Shapley scores
         if os.path.exists(SHAPLEY_PATH):
@@ -111,7 +214,7 @@ class AgencyIndexEngine:
 
             records.append({
                 "agency_id": agency,
-                "agency_name": agency.replace("_", " ").title(),
+                "agency_name": self.display_names.get(agency, str(agency)),
                 "total_projects": total_projects,
                 "delayed_projects": delayed_projects,
                 "delay_rate_perc": round(delay_rate, 1),

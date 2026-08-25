@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { apiFetch } from './authClient';
 import { DollarSign, Sliders, ShieldAlert, TrendingUp, CheckCircle2, Zap, BarChart2, Layers } from 'lucide-react';
 
 export default function VittaVyuhaView() {
@@ -7,13 +8,15 @@ export default function VittaVyuhaView() {
   const [enforceNer, setEnforceNer] = useState(true);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [denied, setDenied] = useState(null);
 
   const runAllocation = useCallback(async (b, k, ner) => {
     setLoading(true);
     try {
-      const res = await fetch('/api/amey/allocate', {
+      // Requires the allocate_capital permission; a non-admin gets a clear 403 message
+      // rather than a silently empty panel.
+      const res = await apiFetch('/api/amey/allocate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           budget_pool_cr: b,
           risk_dial_kappa: k,
@@ -21,10 +24,8 @@ export default function VittaVyuhaView() {
           agency_absorption_multiplier: 1.25,
         }),
       });
-      if (res.ok) {
-        const json = await res.json();
-        setData(json);
-      }
+      if (res.ok) { setData(res.data); setDenied(null); }
+      else { setData(null); setDenied(res.error); }
     } catch (e) {
       console.error(e);
     } finally {
@@ -66,7 +67,14 @@ export default function VittaVyuhaView() {
           </div>
 
           {/* Solve Speed Badge */}
-          {data && (
+          {denied && !loading && (
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 flex items-start gap-2">
+          <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-amber-600" />
+          <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
+        </div>
+      )}
+
+      {data && (
             <div className="flex items-center gap-2 bg-emerald-950/80 px-3.5 py-2 rounded-xl border border-emerald-500/40 text-emerald-400">
               <Zap className="w-4 h-4 text-emerald-400" />
               <div>
@@ -168,12 +176,33 @@ export default function VittaVyuhaView() {
             <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
               <span className="text-[10px] font-bold text-gov-muted uppercase">North-East Region Share</span>
               <p className="text-xl font-black text-gov-navy mt-1">₹{data.ner_allocated_cr.toLocaleString()} Cr</p>
+              {/* The badge tracks ner_floor_met. It previously rendered a green check
+                  and the words "Quota Met" unconditionally, so a solve that MISSED the
+                  statutory floor would still have displayed as compliant. */}
               <div className="flex items-center gap-1 mt-0.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded">
-                  {data.ner_share_perc.toFixed(1)}% (10% Quota Met)
+                {data.ner_floor_met
+                  ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  : <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />}
+                <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
+                  data.ner_floor_met
+                    ? 'text-emerald-800 bg-emerald-100'
+                    : 'text-rose-800 bg-rose-100'}`}>
+                  {data.ner_share_perc.toFixed(1)}%{' '}
+                  ({data.ner_floor_met ? '10% quota met' : 'BELOW 10% statutory floor'})
                 </span>
               </div>
+              {data.ner_coverage && (
+                <p className="text-[9px] text-gov-muted mt-1.5 leading-snug">
+                  Computed on{' '}
+                  <strong className="text-gov-navy">
+                    {data.ner_coverage.state_reported_by_ministry.toLocaleString('en-IN')}
+                  </strong>{' '}
+                  projects whose state the ministry recorded.{' '}
+                  {data.ner_coverage.state_absent.toLocaleString('en-IN')} projects carry
+                  no reported state and cannot count toward a statutory floor, even where
+                  this console infers their location from imagery geocodes.
+                </p>
+              )}
             </div>
 
             <div className="bg-white p-4 rounded-xl border-2 border-gov-navy shadow-card">

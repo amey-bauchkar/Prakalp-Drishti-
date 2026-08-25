@@ -1,0 +1,4014 @@
+{
+  "generated_by": "satellite_pipeline/backfill_states_from_geocode.py",
+  "method": "nearest GeoNames populated place (feature class P/A) to the project's existing geocode, within 150 km; admin1 -> state",
+  "provenance_warning": "These states are INFERRED from coordinates, not reported by PAIMANA. They must be labelled as inferred wherever they are shown, and they are excluded from the statutory NER floor, which is computed only on states the ministry itself reported.",
+  "excluded_precision_tiers": [
+    "NATIONAL_CENTROID_MATCH"
+  ],
+  "max_match_km": 150.0,
+  "stats": {
+    "already_known": 1181,
+    "recovered": 666,
+    "skipped_unusable_precision": 360,
+    "no_place_within_range": 0,
+    "no_coordinates": 0
+  },
+  "states": {
+    "706718": {
+      "state": "Manipur",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.84
+    },
+    "701121": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.18
+    },
+    "701101": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.11
+    },
+    "612788": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.66
+    },
+    "612787": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.21
+    },
+    "612786": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.54
+    },
+    "701128": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.65
+    },
+    "701107": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.35
+    },
+    "701127": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 3.38
+    },
+    "612063": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.64
+    },
+    "611047": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.6
+    },
+    "400010": {
+      "state": "Ladakh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.12
+    },
+    "612789": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.23
+    },
+    "619054": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.38
+    },
+    "701113": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.17
+    },
+    "612194": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.23
+    },
+    "611495": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.28
+    },
+    "612183": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "618977": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 4.05
+    },
+    "701122": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "701105": {
+      "state": "Goa",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.97
+    },
+    "706724": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.73
+    },
+    "701091": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.01
+    },
+    "611602": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.91
+    },
+    "611440": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.64
+    },
+    "612791": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.48
+    },
+    "611570": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.16
+    },
+    "612793": {
+      "state": "Sikkim",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.48
+    },
+    "613800": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.16
+    },
+    "611016": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.01
+    },
+    "611017": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.98
+    },
+    "616223": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.02
+    },
+    "400148": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.05
+    },
+    "616229": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615185": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "616050": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.87
+    },
+    "400177": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.85
+    },
+    "613798": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.51
+    },
+    "613799": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.0
+    },
+    "615916": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "616233": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.02
+    },
+    "400183": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.05
+    },
+    "615330": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400149": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.23
+    },
+    "615193": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.26
+    },
+    "400392": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.31
+    },
+    "400033": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.03
+    },
+    "400179": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.01
+    },
+    "616231": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.01
+    },
+    "400369": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400162": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.74
+    },
+    "400180": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.89
+    },
+    "400138": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.45
+    },
+    "400145": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400172": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "616225": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 3.3
+    },
+    "400353": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "400178": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.23
+    },
+    "400354": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.58
+    },
+    "612838": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.58
+    },
+    "615331": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.2
+    },
+    "615206": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.62
+    },
+    "615917": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "400424": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.21
+    },
+    "615914": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.03
+    },
+    "615860": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.24
+    },
+    "615192": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.03
+    },
+    "615862": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.88
+    },
+    "400185": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.63
+    },
+    "616232": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.63
+    },
+    "400018": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 7.69
+    },
+    "615861": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.43
+    },
+    "616226": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.63
+    },
+    "400187": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.65
+    },
+    "612816": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.2
+    },
+    "613795": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "616236": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.01
+    },
+    "615818": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.24
+    },
+    "619032": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.13
+    },
+    "400312": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.23
+    },
+    "613803": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615859": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.91
+    },
+    "615865": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.32
+    },
+    "615858": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.24
+    },
+    "613802": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.23
+    },
+    "400074": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.95
+    },
+    "615191": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615183": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.74
+    },
+    "617278": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "615199": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.47
+    },
+    "400073": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.16
+    },
+    "400147": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.16
+    },
+    "617287": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.16
+    },
+    "619172": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.23
+    },
+    "613801": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.41
+    },
+    "615189": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_EXACT_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "617288": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.69
+    },
+    "400313": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400173": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.1
+    },
+    "400425": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.0
+    },
+    "613808": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.5
+    },
+    "615919": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "615857": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.24
+    },
+    "400181": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.85
+    },
+    "615188": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.9
+    },
+    "400321": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.74
+    },
+    "615982": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400151": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.64
+    },
+    "616230": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 3.3
+    },
+    "613794": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.23
+    },
+    "616234": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.23
+    },
+    "400144": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.23
+    },
+    "400160": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.99
+    },
+    "615864": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.88
+    },
+    "400152": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.37
+    },
+    "617416": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "619171": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.35
+    },
+    "619053": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615918": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615187": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "613804": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "400136": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.24
+    },
+    "615184": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "619055": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "615186": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 8.36
+    },
+    "615195": {
+      "state": "Uttarakhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 14.37
+    },
+    "613793": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.2
+    },
+    "400166": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.63
+    },
+    "400182": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.55
+    },
+    "615190": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_TOKEN_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "615822": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "400315": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.51
+    },
+    "400165": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.09
+    },
+    "615843": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.1
+    },
+    "615820": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.18
+    },
+    "400186": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 3.3
+    },
+    "615821": {
+      "state": "Arunachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.07
+    },
+    "616044": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.4
+    },
+    "615194": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 1.53
+    },
+    "615863": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "REGIONAL_COALFIELD_CENTROID",
+      "nearest_place_km": 0.24
+    },
+    "617233": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "617282": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.09
+    },
+    "617412": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.72
+    },
+    "617280": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "619033": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.15
+    },
+    "610940": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.16
+    },
+    "606479": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.89
+    },
+    "611963": {
+      "state": "Uttarakhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.15
+    },
+    "612885": {
+      "state": "Meghalaya",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.2
+    },
+    "611961": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.21
+    },
+    "602098": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.11
+    },
+    "612876": {
+      "state": "Mizoram",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.5
+    },
+    "612916": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "612894": {
+      "state": "Himachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.4
+    },
+    "605292": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.0
+    },
+    "609996": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.79
+    },
+    "609736": {
+      "state": "Sikkim",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.87
+    },
+    "616886": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.81
+    },
+    "613013": {
+      "state": "Nagaland",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.39
+    },
+    "612883": {
+      "state": "Sikkim",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.03
+    },
+    "609019": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.41
+    },
+    "612851": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.1
+    },
+    "611957": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.81
+    },
+    "606112": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.17
+    },
+    "400081": {
+      "state": "Manipur",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.32
+    },
+    "617299": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.15
+    },
+    "618981": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.29
+    },
+    "611699": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.44
+    },
+    "611716": {
+      "state": "Arunachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "709748": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.52
+    },
+    "602579": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.1
+    },
+    "619311": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 2.91
+    },
+    "602194": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.35
+    },
+    "602532": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "605155": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.31
+    },
+    "602593": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.97
+    },
+    "400261": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.3
+    },
+    "400062": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.08
+    },
+    "602184": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.37
+    },
+    "605156": {
+      "state": "Sikkim",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.74
+    },
+    "602535": {
+      "state": "Ladakh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 13.25
+    },
+    "612142": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.48
+    },
+    "602096": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 4.61
+    },
+    "602185": {
+      "state": "Uttarakhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.05
+    },
+    "602181": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.89
+    },
+    "604833": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.92
+    },
+    "617839": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.52
+    },
+    "701269": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.49
+    },
+    "616235": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "400077": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.17
+    },
+    "400035": {
+      "state": "Tripura",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.94
+    },
+    "604852": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.81
+    },
+    "400012": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.85
+    },
+    "400043": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.33
+    },
+    "617829": {
+      "state": "Mizoram",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 7.38
+    },
+    "400301": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.26
+    },
+    "400078": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.6
+    },
+    "701349": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.45
+    },
+    "709759": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.91
+    },
+    "701263": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.35
+    },
+    "400235": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.59
+    },
+    "701171": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.74
+    },
+    "701167": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.8
+    },
+    "701170": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.11
+    },
+    "701168": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.92
+    },
+    "707044": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.3
+    },
+    "707050": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.47
+    },
+    "617883": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.76
+    },
+    "617882": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.93
+    },
+    "612186": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.26
+    },
+    "612185": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.27
+    },
+    "612748": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.06
+    },
+    "612513": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.05
+    },
+    "612745": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "612188": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.93
+    },
+    "612213": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "612259": {
+      "state": "Uttarakhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "612167": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.22
+    },
+    "612688": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.63
+    },
+    "616691": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.38
+    },
+    "702668": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.67
+    },
+    "705742": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "705741": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "707410": {
+      "state": "Haryana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.69
+    },
+    "707414": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.71
+    },
+    "701570": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.35
+    },
+    "400426": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.53
+    },
+    "709829": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 2.38
+    },
+    "615202": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.32
+    },
+    "400171": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.22
+    },
+    "709801": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "617822": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.38
+    },
+    "709782": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.31
+    },
+    "709786": {
+      "state": "Nagaland",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.56
+    },
+    "709776": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 4.18
+    },
+    "612998": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.2
+    },
+    "619312": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "619196": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.52
+    },
+    "709768": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.23
+    },
+    "709773": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "709770": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.67
+    },
+    "709791": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "709792": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.41
+    },
+    "709838": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.08
+    },
+    "709780": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.88
+    },
+    "616858": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.68
+    },
+    "610985": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.27
+    },
+    "701344": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "617302": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.33
+    },
+    "709798": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.24
+    },
+    "612853": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.55
+    },
+    "607701": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 3.21
+    },
+    "709753": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.52
+    },
+    "709760": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "709761": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.2
+    },
+    "709752": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.2
+    },
+    "709777": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.57
+    },
+    "709783": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.14
+    },
+    "709778": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.06
+    },
+    "604859": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "709842": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.94
+    },
+    "619191": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.51
+    },
+    "400120": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.91
+    },
+    "701228": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.33
+    },
+    "709785": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.78
+    },
+    "709750": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.97
+    },
+    "400119": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.91
+    },
+    "616933": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.7
+    },
+    "701330": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.11
+    },
+    "701341": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.31
+    },
+    "701354": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.15
+    },
+    "604791": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.0
+    },
+    "619328": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.16
+    },
+    "619223": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.81
+    },
+    "701329": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.06
+    },
+    "619314": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.23
+    },
+    "709797": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.27
+    },
+    "611917": {
+      "state": "Haryana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "612790": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.2
+    },
+    "400161": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.41
+    },
+    "619226": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.2
+    },
+    "709849": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.7
+    },
+    "400087": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.28
+    },
+    "709790": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.23
+    },
+    "709840": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.93
+    },
+    "709774": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.4
+    },
+    "617304": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.08
+    },
+    "709799": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.8
+    },
+    "617837": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.25
+    },
+    "617828": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.03
+    },
+    "701350": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "616254": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.32
+    },
+    "701568": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.08
+    },
+    "400203": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "400416": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.86
+    },
+    "612834": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.41
+    },
+    "616697": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.95
+    },
+    "709819": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.66
+    },
+    "705498": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.59
+    },
+    "705506": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.83
+    },
+    "705502": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.78
+    },
+    "705500": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.52
+    },
+    "709815": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "709816": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.48
+    },
+    "709817": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.39
+    },
+    "612072": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.4
+    },
+    "612815": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.68
+    },
+    "709818": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.55
+    },
+    "705505": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "705919": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.57
+    },
+    "613788": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "705356": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 5.21
+    },
+    "616843": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.89
+    },
+    "705774": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.76
+    },
+    "705918": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "705771": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.02
+    },
+    "705583": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.18
+    },
+    "617252": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.1
+    },
+    "611751": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.6
+    },
+    "617361": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.12
+    },
+    "616587": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.23
+    },
+    "705495": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.92
+    },
+    "705863": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.64
+    },
+    "400204": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.64
+    },
+    "703586": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.52
+    },
+    "617824": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 8.44
+    },
+    "705941": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.66
+    },
+    "705464": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "705663": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.39
+    },
+    "616586": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "705782": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.63
+    },
+    "706777": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "706860": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.82
+    },
+    "706835": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.63
+    },
+    "705510": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.76
+    },
+    "705777": {
+      "state": "Himachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.04
+    },
+    "705428": {
+      "state": "Himachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "705780": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "611884": {
+      "state": "Haryana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.06
+    },
+    "706854": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.44
+    },
+    "400232": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.6
+    },
+    "616588": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.96
+    },
+    "705396": {
+      "state": "Meghalaya",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.67
+    },
+    "705424": {
+      "state": "Chandigarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.61
+    },
+    "616227": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 7.23
+    },
+    "705562": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.03
+    },
+    "705454": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 7.29
+    },
+    "705756": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.47
+    },
+    "617284": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.15
+    },
+    "612096": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "705762": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "400023": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "617374": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.71
+    },
+    "705433": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.37
+    },
+    "617880": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.88
+    },
+    "618972": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.88
+    },
+    "617379": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.45
+    },
+    "613003": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.66
+    },
+    "705482": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.93
+    },
+    "400019": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.6
+    },
+    "705392": {
+      "state": "Nagaland",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "705566": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "617364": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.67
+    },
+    "616856": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.42
+    },
+    "616857": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.97
+    },
+    "705628": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.44
+    },
+    "705660": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.14
+    },
+    "400291": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.32
+    },
+    "705512": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.06
+    },
+    "400048": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.35
+    },
+    "400047": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "400277": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.45
+    },
+    "705639": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "705373": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.96
+    },
+    "612827": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.39
+    },
+    "616694": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.2
+    },
+    "618986": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.33
+    },
+    "705490": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.78
+    },
+    "602792": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.59
+    },
+    "612845": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "705444": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.31
+    },
+    "617321": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.05
+    },
+    "705765": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.0
+    },
+    "618978": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.71
+    },
+    "617201": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.71
+    },
+    "611752": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.53
+    },
+    "617224": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.09
+    },
+    "705752": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.85
+    },
+    "611754": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.13
+    },
+    "705633": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.97
+    },
+    "706922": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.41
+    },
+    "705419": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.41
+    },
+    "705366": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "705650": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "706950": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 4.05
+    },
+    "705662": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.35
+    },
+    "705493": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.21
+    },
+    "705763": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.09
+    },
+    "705507": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.41
+    },
+    "705511": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.5
+    },
+    "705784": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.86
+    },
+    "705588": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.28
+    },
+    "705514": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.35
+    },
+    "705362": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.23
+    },
+    "617290": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.62
+    },
+    "900874": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.58
+    },
+    "617373": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.68
+    },
+    "705598": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.43
+    },
+    "705608": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.35
+    },
+    "400006": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.07
+    },
+    "705616": {
+      "state": "Himachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.24
+    },
+    "705391": {
+      "state": "Manipur",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.37
+    },
+    "705450": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.44
+    },
+    "705730": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.04
+    },
+    "705492": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.26
+    },
+    "400247": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 4.39
+    },
+    "709809": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.46
+    },
+    "706844": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.98
+    },
+    "705651": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.35
+    },
+    "705612": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.2
+    },
+    "705364": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.46
+    },
+    "705668": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.47
+    },
+    "617200": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.53
+    },
+    "400220": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.13
+    },
+    "706898": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.32
+    },
+    "705358": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.0
+    },
+    "617832": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.19
+    },
+    "705375": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.19
+    },
+    "709810": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "705513": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.01
+    },
+    "611918": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.54
+    },
+    "705436": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.05
+    },
+    "705638": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.75
+    },
+    "611927": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "705766": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.03
+    },
+    "705480": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.33
+    },
+    "705785": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.18
+    },
+    "607653": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.21
+    },
+    "705783": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.85
+    },
+    "616842": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.39
+    },
+    "705489": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.5
+    },
+    "611615": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.4
+    },
+    "705437": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.18
+    },
+    "706940": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.53
+    },
+    "705491": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.16
+    },
+    "705667": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.56
+    },
+    "705458": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.39
+    },
+    "706757": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.11
+    },
+    "705755": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.54
+    },
+    "705772": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.33
+    },
+    "616699": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.68
+    },
+    "611452": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.48
+    },
+    "706780": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.2
+    },
+    "706779": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.54
+    },
+    "706781": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.9
+    },
+    "705728": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.9
+    },
+    "617240": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "705401": {
+      "state": "Arunachal Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 7.57
+    },
+    "705528": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 4.13
+    },
+    "709812": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 2.56
+    },
+    "400298": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.07
+    },
+    "400223": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.66
+    },
+    "705799": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "705410": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.3
+    },
+    "705629": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "617408": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.15
+    },
+    "616839": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.3
+    },
+    "705400": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 8.01
+    },
+    "709813": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.54
+    },
+    "705794": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.51
+    },
+    "705793": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.46
+    },
+    "618995": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.47
+    },
+    "705453": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.52
+    },
+    "705434": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.36
+    },
+    "619326": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.49
+    },
+    "705764": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.5
+    },
+    "705933": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.5
+    },
+    "709814": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.32
+    },
+    "706776": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.94
+    },
+    "709808": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.22
+    },
+    "616695": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.57
+    },
+    "705747": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.89
+    },
+    "705789": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "400280": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.55
+    },
+    "705779": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.16
+    },
+    "705385": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.08
+    },
+    "617404": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "705503": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.06
+    },
+    "616841": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.64
+    },
+    "611944": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.31
+    },
+    "706763": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.82
+    },
+    "705617": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.18
+    },
+    "705481": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.46
+    },
+    "706759": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.8
+    },
+    "617406": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.1
+    },
+    "705457": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.1
+    },
+    "705494": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "613786": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.68
+    },
+    "613002": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.59
+    },
+    "613015": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.55
+    },
+    "613785": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.31
+    },
+    "611861": {
+      "state": "Haryana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.07
+    },
+    "705429": {
+      "state": "Uttarakhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.87
+    },
+    "706856": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.78
+    },
+    "615915": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.7
+    },
+    "617403": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.1
+    },
+    "705527": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.13
+    },
+    "400205": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 0.75
+    },
+    "602797": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.41
+    },
+    "705363": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.17
+    },
+    "705526": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.45
+    },
+    "611971": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 6.66
+    },
+    "617390": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_EXACT_UNCONSTRAINED",
+      "nearest_place_km": 0.0
+    },
+    "705659": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.48
+    },
+    "705912": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.94
+    },
+    "617345": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.29
+    },
+    "705761": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 2.03
+    },
+    "705432": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.65
+    },
+    "705735": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.55
+    },
+    "705743": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.35
+    },
+    "705359": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.35
+    },
+    "400273": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.74
+    },
+    "400022": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.78
+    },
+    "400234": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GEONAMES_EXACT_UNCONSTRAINED",
+      "nearest_place_km": 0.0
+    },
+    "400275": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.18
+    },
+    "705726": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.82
+    },
+    "705635": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.21
+    },
+    "705496": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 3.34
+    },
+    "617213": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.3
+    },
+    "705632": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.35
+    },
+    "705648": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.45
+    },
+    "400253": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.31
+    },
+    "705520": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.31
+    },
+    "705479": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.14
+    },
+    "705497": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "400271": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "705237": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.94
+    },
+    "703585": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.62
+    },
+    "603210": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.72
+    },
+    "701668": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.44
+    },
+    "601812": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.76
+    },
+    "707419": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.24
+    },
+    "701658": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.69
+    },
+    "701657": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.69
+    },
+    "707229": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "400188": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.92
+    },
+    "701564": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "400382": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.76
+    },
+    "701586": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "400121": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.72
+    },
+    "400065": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.04
+    },
+    "617242": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.19
+    },
+    "612781": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.83
+    },
+    "617257": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.56
+    },
+    "617256": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.96
+    },
+    "617255": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.96
+    },
+    "617249": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.69
+    },
+    "617243": {
+      "state": "Chhattisgarh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.96
+    },
+    "617254": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.12
+    },
+    "617251": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.6
+    },
+    "617253": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.62
+    },
+    "709826": {
+      "state": "Puducherry",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "617250": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.69
+    },
+    "617338": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.56
+    },
+    "617248": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.56
+    },
+    "617246": {
+      "state": "West Bengal",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.29
+    },
+    "108841": {
+      "state": "Goa",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.62
+    },
+    "709857": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.1
+    },
+    "707215": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 6.77
+    },
+    "615337": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 4.38
+    },
+    "612856": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.66
+    },
+    "617182": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.56
+    },
+    "617802": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.59
+    },
+    "617391": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "617068": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.61
+    },
+    "602223": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.45
+    },
+    "617271": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.41
+    },
+    "617270": {
+      "state": "Odisha",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 5.41
+    },
+    "617807": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.93
+    },
+    "619030": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.17
+    },
+    "617808": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.17
+    },
+    "619227": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.46
+    },
+    "617375": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.7
+    },
+    "615343": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.07
+    },
+    "617801": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.75
+    },
+    "617186": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.3
+    },
+    "616672": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.36
+    },
+    "400005": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 3.39
+    },
+    "611656": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.07
+    },
+    "611657": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.07
+    },
+    "612140": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.36
+    },
+    "612138": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.61
+    },
+    "615345": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.07
+    },
+    "615338": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.35
+    },
+    "612134": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.27
+    },
+    "612133": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.21
+    },
+    "615344": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.8
+    },
+    "615346": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.46
+    },
+    "615333": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.82
+    },
+    "615334": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.28
+    },
+    "615332": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.88
+    },
+    "615340": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.23
+    },
+    "615339": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.49
+    },
+    "616670": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.01
+    },
+    "900808": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "619029": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.17
+    },
+    "606781": {
+      "state": "Jammu and Kashmir",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.2
+    },
+    "617269": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 4.14
+    },
+    "617803": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.37
+    },
+    "617183": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "619228": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.37
+    },
+    "615335": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 2.47
+    },
+    "608301": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.26
+    },
+    "611659": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.25
+    },
+    "611737": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.76
+    },
+    "702639": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.61
+    },
+    "702631": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.72
+    },
+    "612878": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.29
+    },
+    "702625": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.97
+    },
+    "702665": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.68
+    },
+    "702635": {
+      "state": "Karnataka",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.51
+    },
+    "619031": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.52
+    },
+    "617207": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.76
+    },
+    "617206": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.32
+    },
+    "702633": {
+      "state": "Delhi",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.5
+    },
+    "702626": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.06
+    },
+    "612068": {
+      "state": "Rajasthan",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.48
+    },
+    "702628": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.44
+    },
+    "702664": {
+      "state": "Kerala",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.31
+    },
+    "619052": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.76
+    },
+    "619022": {
+      "state": "Haryana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.79
+    },
+    "702637": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.15
+    },
+    "702658": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.5
+    },
+    "702627": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.19
+    },
+    "617225": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_CORRIDOR_MIDPOINT",
+      "nearest_place_km": 1.04
+    },
+    "617226": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.32
+    },
+    "618971": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.13
+    },
+    "618985": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "702630": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.73
+    },
+    "616594": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.87
+    },
+    "616600": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 2.33
+    },
+    "616611": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.21
+    },
+    "616612": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.44
+    },
+    "616615": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.84
+    },
+    "616616": {
+      "state": "Bihar",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.58
+    },
+    "702760": {
+      "state": "Tamil Nadu",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.19
+    },
+    "702741": {
+      "state": "Jharkhand",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.85
+    },
+    "702682": {
+      "state": "Assam",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.01
+    },
+    "702793": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.49
+    },
+    "702798": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.94
+    },
+    "703021": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.34
+    },
+    "702833": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.46
+    },
+    "702958": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 1.66
+    },
+    "702840": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.22
+    },
+    "702842": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.37
+    },
+    "702851": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.9
+    },
+    "702742": {
+      "state": "Telangana",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.39
+    },
+    "702810": {
+      "state": "Madhya Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "GAZETTEER_CITY_MATCH",
+      "nearest_place_km": 0.51
+    },
+    "707267": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.94
+    },
+    "701386": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.59
+    },
+    "400101": {
+      "state": "Andhra Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.0
+    },
+    "701408": {
+      "state": "Uttar Pradesh",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.42
+    },
+    "701372": {
+      "state": "Gujarat",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 4.81
+    },
+    "701411": {
+      "state": "Punjab",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.6
+    },
+    "400107": {
+      "state": "Maharashtra",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 0.08
+    },
+    "701384": {
+      "state": "Goa",
+      "state_source": "INFERRED_FROM_GEOCODE",
+      "geocode_precision": "OSM_LANDMARK_MATCH",
+      "nearest_place_km": 1.1
+    }
+  }
+}

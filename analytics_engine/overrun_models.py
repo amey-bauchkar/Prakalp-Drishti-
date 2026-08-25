@@ -56,6 +56,13 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+# Importable as a package module AND runnable as a script: the direct-script form
+# has the file's own directory on sys.path but not the repository root, so the
+# absolute package import fails. Fall back to the sibling module in that case.
+try:
+    from analytics_engine.state_resolution import clean_text
+except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
+    from state_resolution import clean_text
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -211,7 +218,7 @@ def build_frame() -> pd.DataFrame:
     out = pd.DataFrame({
         "project_id": df["ProjectId"].astype(str),
         "sector": df["SectorName"].astype(str).fillna("Unspecified"),
-        "state": df["StateName"].astype(str).fillna("National"),
+        "state": df["StateName"].map(lambda v: clean_text(v) or "National"),
         "entity": df["COMPANYNAME"].astype(str).map(lambda x: ent.get(x, "OTHER")),
         "company_raw": df["COMPANYNAME"].astype(str),
         # ---- CUF features (all knowable without the revision) ----
@@ -287,16 +294,55 @@ def build_frame() -> pd.DataFrame:
     return out
 
 
+def fit_medians(frame: pd.DataFrame, numeric: List[str],
+                rows: Optional[np.ndarray] = None) -> Dict[str, float]:
+    """Imputation medians, fitted on TRAIN ROWS ONLY.
+
+    Previously `_design` recomputed a median from whichever frame it was handed. That
+    was wrong twice over:
+
+      1. At fit time it was handed the full frame, so the median for every feature
+         absorbed test-cohort values. Under a chronological split that is a leak of the
+         future into the past -- exactly the failure mode the temporal split exists to
+         prevent.
+      2. At serve time it was handed a SINGLE ROW. A missing feature on that row made
+         the column all-NaN, so it imputed 0.0 rather than the training median (and
+         emitted `All-NaN slice encountered`). For a feature like wpi_construction_yoy,
+         0.0 is not a neutral value -- it is "zero construction inflation", a scenario
+         the training data never contained. Every served prediction for a project with
+         one missing external feature was computed on a vector off the training
+         manifold.
+
+    Fitting here and persisting the result into the artifact makes train-time and
+    serve-time imputation identical by construction.
+    """
+    idx = frame.index if rows is None else frame.index[rows]
+    sub = frame.loc[idx]
+    med: Dict[str, float] = {}
+    for c in numeric:
+        col = pd.to_numeric(sub[c], errors="coerce").astype(float).to_numpy()
+        finite = col[np.isfinite(col)]
+        # A feature with no finite training value carries no information. 0.0 is used
+        # only as a placeholder to keep the column shape stable; it is reported as dead
+        # rather than silently trusted.
+        med[c] = float(np.median(finite)) if finite.size else 0.0
+    return med
+
+
 def _design(frame: pd.DataFrame, numeric: List[str], sectors: List[str],
-            entities: List[str]) -> np.ndarray:
-    cols = [pd.to_numeric(frame[c], errors="coerce").astype(float).to_numpy() for c in numeric]
+            entities: List[str], medians: Optional[Dict[str, float]] = None) -> np.ndarray:
+    """Build the design matrix. `medians` MUST be supplied by callers that serve
+    predictions, so imputation matches what the model was fitted on."""
+    cols = []
+    for c in numeric:
+        col = pd.to_numeric(frame[c], errors="coerce").astype(float).to_numpy(copy=True)
+        fill = 0.0 if medians is None else float(medians.get(c, 0.0))
+        if medians is None:
+            finite = col[np.isfinite(col)]
+            fill = float(np.median(finite)) if finite.size else 0.0
+        col[~np.isfinite(col)] = fill
+        cols.append(col)
     X = np.column_stack(cols) if cols else np.empty((len(frame), 0))
-    # Median imputation; medians come from the column itself so no train/test leak of
-    # distributional info beyond what a deployed system would also see.
-    for j in range(X.shape[1]):
-        col = X[:, j]
-        med = np.nanmedian(col)
-        col[np.isnan(col)] = 0.0 if np.isnan(med) else med
     oh = []
     for s in sectors:
         oh.append((frame["sector"] == s).to_numpy(float))
@@ -345,7 +391,8 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
     entities = sorted(d.iloc[tr]["entity"].value_counts().head(12).index.tolist())
 
     def run(numeric: List[str], tag: str) -> dict:
-        X = _design(d, numeric, sectors, entities)
+        # Medians from the TRAIN slice only -- see fit_medians for why.
+        X = _design(d, numeric, sectors, entities, medians=fit_medians(d, numeric, tr))
         res = {}
 
         # --- deployable naive baseline: predict the TRAIN mean -------------------
@@ -373,6 +420,7 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
         res["gradient_boosting"] = _metrics(y[te], gbm.predict(X[te]))
 
         res["_model"] = gbm
+        res["_numeric"] = list(numeric)
         res["_X"] = X
         res["_feature_names"] = numeric + [f"sector={s}" for s in sectors] + \
                                 [f"entity={e}" for e in entities]
@@ -396,21 +444,35 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
                              if c not in ("sanction_year",)]
     cal_free = run(calendar_free_numeric, "calendar_free")
 
+    # Which variant is the one this system actually stands behind. Everything that
+    # describes "the model" -- the drivers panel, the deployed artifact, the
+    # Dimension (b) comparison -- refers to THIS one, so the console never explains a
+    # model it does not serve.
+    deployed_key = ("cuf_only"
+                    if cuf["gradient_boosting"]["mae"] <= full["gradient_boosting"]["mae"]
+                    else "cuf_plus_external")
+    dep = cuf if deployed_key == "cuf_only" else full
+
     ratio = None
     if "slip" in target:
         rv_std = float(np.nanstd(d["sanction_year"] + d["planned_months"] / 12.0))
         ratio = round(rv_std, 2)
 
-    # --- Outcome (f): permutation importance on the richer model ---
+    # --- Outcome (f): permutation importance on the DEPLOYED model ---
+    # This was measured on the richer variant regardless of which one shipped, so the
+    # drivers panel credited graph_shapley_criticality as the top escalation driver
+    # while the served model did not contain that column at all. An officer reading
+    # "this is what drives escalation" must be reading the model that produced the
+    # number next to it.
     pi = permutation_importance(
-        full["_model"], full["_X"][full["_test_idx"]], y[full["_test_idx"]],
+        dep["_model"], dep["_X"][dep["_test_idx"]], y[dep["_test_idx"]],
         n_repeats=10, random_state=RANDOM_SEED, scoring="neg_mean_absolute_error")
     drivers = sorted(
         [{"feature": nm,
           "mae_increase_when_shuffled": round(float(m), 4),
           "std": round(float(s), 4),
           "is_external": nm in EXTERNAL_NUMERIC}
-         for nm, m, s in zip(full["_feature_names"], pi.importances_mean, pi.importances_std)],
+         for nm, m, s in zip(dep["_feature_names"], pi.importances_mean, pi.importances_std)],
         key=lambda r: -r["mae_increase_when_shuffled"])[:15]
 
     def clean(block: dict) -> dict:
@@ -422,28 +484,62 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
     # "predict the overrun for project X".
     if target in DEPLOYABLE_TARGETS:
         import joblib
+        # WHICH model gets deployed is a measured decision, not an assumption.
+        #
+        # This block previously hardcoded the CUF+external model on the reasoning that
+        # more data cannot hurt. On this corpus it does: with the imputation leak fixed,
+        # the external block moves cost-overrun MAE from 16.24 to 17.90. Deploying the
+        # richer model would have served every officer a prediction measurably worse
+        # than the one we could have served, while the benchmark page advertised the
+        # better number. The variant with the lowest held-out MAE wins; if that is the
+        # smaller feature set, the smaller feature set ships.
+        variant, win = deployed_key, dep
+        win_mae = float(win["gradient_boosting"]["mae"])
+        # And it only ships at all if it beats what an officer could do unaided.
+        conv_mae = min(float(win["sector_mean_baseline"]["mae"]),
+                       float(win["naive_train_mean"]["mae"]))
         joblib.dump({
-            "model": full["_model"],
-            "numeric_features": CUF_NUMERIC + EXTERNAL_NUMERIC,
+            "model": win["_model"],
+            "numeric_features": win["_numeric"],
+            # Serve-time imputation must equal train-time imputation, so the fitted
+            # medians travel with the model rather than being recomputed per request.
+            "impute_medians": fit_medians(d, win["_numeric"], tr),
             "sectors": sectors,
             "entities": entities,
-            "feature_names": full["_feature_names"],
+            "feature_names": win["_feature_names"],
             "target": target,
+            "variant": variant,
             "validation": "chronological",
             "maturity_gate_years": MIN_MATURITY_YEARS,
-            "test_mae": clean(full)["gradient_boosting"]["mae"],
+            "test_mae": round(win_mae, 3),
+            "best_conventional_mae": round(conv_mae, 3),
+            "beats_conventional": bool(win_mae < conv_mae),
             "trained_on_years": [int(d.iloc[tr]["sanction_year"].min()),
                                  int(d.iloc[tr]["sanction_year"].max())],
         }, MODEL_PATH)
+        print(f"  DEPLOYED variant={variant}  test MAE={win_mae:.3f}  "
+              f"(best conventional {conv_mae:.3f}, "
+              f"{'beats' if win_mae < conv_mae else 'LOSES TO'} it)")
 
     cuf_c, full_c, calfree_c = clean(cuf), clean(full), clean(cal_free)
     gbm_mae_cuf = cuf_c["gradient_boosting"]["mae"]
     gbm_mae_full = full_c["gradient_boosting"]["mae"]
-    ols_mae = full_c["ols_linear_regression"]["mae"]
-    best_conv = min(ols_mae, full_c["sector_mean_baseline"]["mae"])
 
-    naive_mae = full_c["naive_train_mean"]["mae"]
-    lift = (naive_mae - gbm_mae_full) / naive_mae * 100 if naive_mae else None
+    # Dimension (b) asks whether ML provides gains over conventional methods. The
+    # honest referent is the model this system actually SERVES, not the largest one we
+    # happened to fit. Note this cuts BOTH ways and is not a way of flattering the
+    # result: on this corpus it moves the reported cost-overrun gain DOWN, from 3.22%
+    # to 2.57%, because the leaner feature set that wins on MAE (16.240) also makes the
+    # OLS baseline much stronger (16.669 vs 23.272). Comparing our deployed model
+    # against a baseline crippled by features we chose not to ship would have been a
+    # rigged comparison. Both variants stay in the payload, so the reader can check.
+    dep_c = cuf_c if deployed_key == "cuf_only" else full_c
+    gbm_mae_dep = dep_c["gradient_boosting"]["mae"]
+    ols_mae = dep_c["ols_linear_regression"]["mae"]
+    best_conv = min(ols_mae, dep_c["sector_mean_baseline"]["mae"])
+
+    naive_mae = dep_c["naive_train_mean"]["mae"]
+    lift = (naive_mae - gbm_mae_dep) / naive_mae * 100 if naive_mae else None
 
     return {
         "target": target,
@@ -487,12 +583,16 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
         },
         # Dimension (b): does ML beat conventional methods, on identical data?
         "ml_vs_conventional": {
+            "evaluated_variant": deployed_key,
+            "variant_note": (
+                "Measured on the feature set this system deploys, selected by held-out "
+                "MAE. The other variant's numbers are in the block of the same name."),
             "best_conventional_mae": round(best_conv, 3),
-            "ml_mae": round(gbm_mae_full, 3),
-            "mae_improvement": round(best_conv - gbm_mae_full, 3),
-            "mae_improvement_pct": round((best_conv - gbm_mae_full) / best_conv * 100, 2)
+            "ml_mae": round(gbm_mae_dep, 3),
+            "mae_improvement": round(best_conv - gbm_mae_dep, 3),
+            "mae_improvement_pct": round((best_conv - gbm_mae_dep) / best_conv * 100, 2)
             if best_conv else None,
-            "ml_is_better": bool(gbm_mae_full < best_conv),
+            "ml_is_better": bool(gbm_mae_dep < best_conv),
         },
         # Dimension (c): do external variables add anything, same model class?
         "cuf_vs_external_ablation": {
@@ -621,7 +721,8 @@ def predict_cost_overrun(project_id: str):
     if row.empty:
         return None
 
-    X = _design(row, art["numeric_features"], art["sectors"], art["entities"])
+    X = _design(row, art["numeric_features"], art["sectors"], art["entities"],
+                medians=art.get("impute_medians"))
     pred = float(art["model"].predict(X)[0])
     mae = float(art.get("test_mae") or 0.0)
     observed = row.iloc[0].get("cost_overrun_pct")
@@ -693,7 +794,8 @@ def evaluate_lead_time(threshold_pct: float = 15.0) -> dict:
     if len(d) < 100:
         return {"available": False, "reason": f"only {len(d)} mature labelled projects"}
 
-    X = _design(d, art["numeric_features"], art["sectors"], art["entities"])
+    X = _design(d, art["numeric_features"], art["sectors"], art["entities"],
+                medians=art.get("impute_medians"))
     pred = art["model"].predict(X)
 
     flagged = pred >= threshold_pct

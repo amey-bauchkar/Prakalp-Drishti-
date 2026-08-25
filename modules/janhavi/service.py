@@ -11,6 +11,8 @@ import csv
 import math
 from typing import Dict, Any, List, Optional
 
+from analytics_engine.state_resolution import clean_text
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MONSOON_PATH = os.path.join(BASE_DIR, "paimana_extracted", "advanced_macro", "IMD_STATE_MONSOON_ANOMALIES_2005_2025.csv")
 MASTER_PROJECTS_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -142,7 +144,7 @@ class VarshaSpeedEngine:
                         rev_cost = float(row.get("RevisedCost", 0) or cost)
                         delay = float(row.get("Delay_Months", 0) or 0)
                         progress = float(row.get("PhysicalProgress", 0) or 0)
-                        state = row.get("StateName", "").strip() or "Multi-State"
+                        state = clean_text(row.get("StateName")) or "Multi-State"
                         sector = row.get("SectorName", "").strip() or "Infrastructure"
                         self.projects_cache.append({
                             "project_id": row.get("ProjectId", ""),

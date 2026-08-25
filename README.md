@@ -26,7 +26,7 @@ SIH PS/
 │
 ├── 🎨 frontend/                              # React + Vite Frontend Dashboard (Isolated per Member)
 │   ├── src/                                  # Shared AppShell, Navbar, Theme, and Reusable UI Primitives
-│   ├── amey/                                 # Amey's Views (Fan Charts, DAG, MILP Slider, Briefing)
+│   ├── amey/                                 # Amey's Views (Fan Charts, DAG, LP Slider, Briefing)
 │   ├── tanmay/                               # Tanmay's Views (Satya Kavach Dashboard)
 │   ├── parth/                                # Parth's Views (Artha Netra PSU Health Cards)
 │   ├── janhavi/                              # Janhavi's Views (Varsha Speed Monsoon Maps)
@@ -47,7 +47,7 @@ SIH PS/
 
 | Member | Module Name | Backend Folder | Frontend Folder | Key Output |
 | :--- | :--- | :--- | :--- | :--- |
-| **Amey** | `KAAL-CHAKRA`, `SETU-GRAPH`, `VITTA-VYUHA`, `PRAGATI-SAARTHI` | `modules/amey/` | `frontend/amey/` | Schedule Survival, Dependency DAG, Stochastic MILP Allocator, Deterministic Briefings |
+| **Amey** | `KAAL-CHAKRA`, `SETU-GRAPH`, `VITTA-VYUHA`, `PRAGATI-SAARTHI` | `modules/amey/` | `frontend/amey/` | Conformalised Schedule Quantiles, Dependency DAG, Stochastic LP Allocator, Deterministic Briefings |
 | **Tanmay** | `SATYA-KAVACH` | `modules/tanmay/` | `frontend/tanmay/` | 20% Cost Overrun Anti-Gaming & Contractor Claim Evasion Detector |
 | **Parth** | `ARTHA-NETRA` | `modules/parth/` | `frontend/parth/` | PSU Contractor Financial Health, Debt Ratios & Stock Market Risk |
 | **Janhavi** | `VARSHA-SPEED` | `modules/janhavi/` | `frontend/janhavi/` | IMD Monsoon Rainfall Pattern Impact & Seasonal Work-Window Adjustment |

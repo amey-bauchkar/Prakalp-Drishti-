@@ -18,6 +18,13 @@ import json
 import hashlib
 import numpy as np
 import pandas as pd
+# Importable as a package module AND runnable as a script: the direct-script form
+# has the file's own directory on sys.path but not the repository root, so the
+# absolute package import fails. Fall back to the sibling module in that case.
+try:
+    from analytics_engine.state_resolution import resolve_state, clean_text, is_reported_state
+except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
+    from state_resolution import resolve_state, clean_text, is_reported_state
 from scipy.optimize import milp, linprog, LinearConstraint, Bounds
 
 from analytics_engine.contracts import AllocationRequest, AllocationResult, ProjectAllocation
@@ -68,8 +75,28 @@ class VittaVyuhaEngine:
             lambda x: entity_map.get(str(x), {}).get("canonical_id") or str(x) if pd.notna(x) else "CENTRAL_PSU"
         )
 
-        # Map NER Flag
+        # Map NER Flag.
+        #
+        # Deliberately computed on ministry-REPORTED geography only. 1,026 projects
+        # (46.5%) have no StateName in the PAIMANA extract; 666 of those now carry a
+        # state inferred offline from their geocode, and that inference is good enough
+        # to display (validated 73/73 against projects whose names contain a major
+        # city). It is NOT good enough to move public money: the 10% North-Eastern
+        # Region floor is a statutory constraint, and satisfying it on the strength of
+        # a nearest-populated-place guess would not survive audit. So the floor binds
+        # on what the ministry itself recorded, and the coverage gap is published
+        # alongside the result rather than hidden inside it.
+        self.df["StateReported"] = self.df["StateName"].map(is_reported_state)
         self.df["IsNER"] = self.df["StateName"].isin(NER_STATES)
+        self._state_coverage = {
+            "projects_total": int(len(self.df)),
+            "state_reported_by_ministry": int(self.df["StateReported"].sum()),
+            "state_absent": int((~self.df["StateReported"]).sum()),
+            "ner_floor_basis": "ministry-reported StateName only",
+            "note": ("Projects with no reported state cannot be counted toward or "
+                     "against the statutory NER floor. Inferred states are used for "
+                     "display and analysis but never for this constraint."),
+        }
 
         # Load Shapley Scores if available
         if os.path.exists(SHAPLEY_PATH):
@@ -332,7 +359,7 @@ class VittaVyuhaEngine:
                 project_id=str(row["ProjectId"]),
                 project_name=str(row["ProjectName"]),
                 canonical_entity=str(row.get("CANONICAL_ENTITY") or row.get("COMPANYNAME") or "CENTRAL_PSU"),
-                state=str(row["StateName"]),
+                state=resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 is_ner=bool(is_ner[i]),
                 requested_capex_cr=float(round(demands[i], 2)),
                 allocated_capex_cr=allocated_val,
@@ -359,6 +386,7 @@ class VittaVyuhaEngine:
             agency_shadow_prices=agency_shadow_prices,
             allocations=project_allocs,
             closure_error_perc=closure_error,
+            ner_coverage=getattr(self, "_state_coverage", None),
             solve_time_ms=solve_duration,
             focus_project_id=req.shocked_project_id,
             focus_project_is_candidate=focus_is_candidate

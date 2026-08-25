@@ -43,6 +43,13 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+# Importable as a package module AND runnable as a script: the direct-script form
+# has the file's own directory on sys.path but not the repository root, so the
+# absolute package import fails. Fall back to the sibling module in that case.
+try:
+    from analytics_engine.state_resolution import resolve_state, clean_text
+except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
+    from state_resolution import resolve_state, clean_text
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -170,7 +177,8 @@ class RiskIndexEngine:
             if _load_predictor() is not None:
                 art = _load_predictor()
                 fr = _frame_cached()
-                Xall = _design(fr, art["numeric_features"], art["sectors"], art["entities"])
+                Xall = _design(fr, art["numeric_features"], art["sectors"], art["entities"],
+                               medians=art.get("impute_medians"))
                 preds = art["model"].predict(Xall)
                 predicted_overrun = dict(zip(fr["project_id"].astype(str), preds))
         except Exception:
@@ -230,7 +238,7 @@ class RiskIndexEngine:
                 "project_id": pid,
                 "project_name": str(row["ProjectName"]),
                 "sector": sector,
-                "state": str(row["StateName"]),
+                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 "agency": entity,
                 "risk_score": round(float(score), 1),
                 "risk_band": _band(score),

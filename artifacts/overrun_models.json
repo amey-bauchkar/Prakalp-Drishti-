@@ -51,7 +51,7 @@
       "train_target_mean": 19.58,
       "test_target_mean": 5.91,
       "deployable": true,
-      "headline_mae_lift_vs_naive_pct": 18.5,
+      "headline_mae_lift_vs_naive_pct": 27.5,
       "headline_note": "MAE lift over a train-mean baseline is the honest headline under temporal distribution shift. R2 compares against the TEST mean, which nobody has at prediction time, so a negative R2 alongside a positive MAE lift means the model beats what an officer could actually do unaided.",
       "n_usable": 1057,
       "n_train": 792,
@@ -94,14 +94,14 @@
           "rmse": 26.044
         },
         "ols_linear_regression": {
-          "r2": -0.93,
-          "mae": 23.747,
-          "rmse": 33.961
+          "r2": -0.8838,
+          "mae": 23.272,
+          "rmse": 33.552
         },
         "gradient_boosting": {
-          "r2": -0.1362,
-          "mae": 18.276,
-          "rmse": 26.058
+          "r2": -0.1226,
+          "mae": 17.899,
+          "rmse": 25.901
         }
       },
       "calendar_free": {
@@ -116,126 +116,128 @@
           "rmse": 26.044
         },
         "ols_linear_regression": {
-          "r2": -1.2693,
-          "mae": 26.844,
-          "rmse": 36.825
+          "r2": -1.1702,
+          "mae": 25.859,
+          "rmse": 36.013
         },
         "gradient_boosting": {
-          "r2": -0.1797,
-          "mae": 18.495,
-          "rmse": 26.551
+          "r2": -0.2377,
+          "mae": 19.169,
+          "rmse": 27.197
         }
       },
       "calendar_identity": {
         "applies": false,
         "explanation": "Not applicable: cost_overrun_pct is not recoverable from any feature, since RevisedCost is neither a feature nor derivable from OriginalCost.",
-        "r2_with_calendar": -0.1362,
-        "r2_calendar_free": -0.1797,
-        "r2_attributable_to_calendar": 0.0435
+        "r2_with_calendar": -0.1226,
+        "r2_calendar_free": -0.2377,
+        "r2_attributable_to_calendar": 0.1151
       },
       "ml_vs_conventional": {
-        "best_conventional_mae": 18.495,
-        "ml_mae": 18.276,
-        "mae_improvement": 0.219,
-        "mae_improvement_pct": 1.18,
+        "evaluated_variant": "cuf_only",
+        "variant_note": "Measured on the feature set this system deploys, selected by held-out MAE. The other variant's numbers are in the block of the same name.",
+        "best_conventional_mae": 16.669,
+        "ml_mae": 16.24,
+        "mae_improvement": 0.429,
+        "mae_improvement_pct": 2.57,
         "ml_is_better": true
       },
       "cuf_vs_external_ablation": {
         "cuf_only_mae": 16.24,
-        "with_external_mae": 18.276,
-        "mae_improvement": -2.036,
-        "mae_improvement_pct": -12.54,
+        "with_external_mae": 17.899,
+        "mae_improvement": -1.659,
+        "mae_improvement_pct": -10.22,
         "external_helps": false
       },
       "drivers": [
         {
-          "feature": "graph_shapley_criticality",
-          "mae_increase_when_shuffled": 13.5942,
-          "std": 0.8635,
-          "is_external": true
-        },
-        {
-          "feature": "sector=Roads & Highways",
-          "mae_increase_when_shuffled": 11.1308,
-          "std": 1.0302,
+          "feature": "sector=Coal",
+          "mae_increase_when_shuffled": 0.4279,
+          "std": 0.1177,
           "is_external": false
         },
         {
           "feature": "log_original_cost",
-          "mae_increase_when_shuffled": 7.5447,
-          "std": 0.621,
-          "is_external": false
-        },
-        {
-          "feature": "psu_debt_to_equity",
-          "mae_increase_when_shuffled": 0.2019,
-          "std": 0.1665,
-          "is_external": true
-        },
-        {
-          "feature": "planned_months",
-          "mae_increase_when_shuffled": 0.1654,
-          "std": 0.2512,
-          "is_external": false
-        },
-        {
-          "feature": "wpi_construction_yoy",
-          "mae_increase_when_shuffled": 0.1344,
-          "std": 0.0267,
-          "is_external": true
-        },
-        {
-          "feature": "wpi_cumulative_drift",
-          "mae_increase_when_shuffled": 0.0931,
-          "std": 0.0383,
-          "is_external": true
-        },
-        {
-          "feature": "physical_progress",
-          "mae_increase_when_shuffled": 0.092,
-          "std": 0.1203,
-          "is_external": false
-        },
-        {
-          "feature": "entity=MoRTH",
-          "mae_increase_when_shuffled": 0.0916,
-          "std": 0.0355,
+          "mae_increase_when_shuffled": 0.228,
+          "std": 0.2239,
           "is_external": false
         },
         {
           "feature": "entity=JAL_SHAKTI",
-          "mae_increase_when_shuffled": 0.0747,
-          "std": 0.0161,
+          "mae_increase_when_shuffled": 0.1481,
+          "std": 0.0112,
           "is_external": false
         },
         {
-          "feature": "sector=Coal",
-          "mae_increase_when_shuffled": 0.0663,
-          "std": 0.0341,
+          "feature": "planned_months",
+          "mae_increase_when_shuffled": 0.1385,
+          "std": 0.1964,
           "is_external": false
         },
         {
-          "feature": "monsoon_volatility",
-          "mae_increase_when_shuffled": 0.0651,
-          "std": 0.0274,
-          "is_external": true
+          "feature": "sector=Roads & Highways",
+          "mae_increase_when_shuffled": 0.1152,
+          "std": 0.0801,
+          "is_external": false
         },
         {
-          "feature": "eo_surface_change_pct",
-          "mae_increase_when_shuffled": 0.0608,
-          "std": 0.0443,
-          "is_external": true
+          "feature": "entity=MoRTH",
+          "mae_increase_when_shuffled": 0.0666,
+          "std": 0.0095,
+          "is_external": false
         },
         {
           "feature": "entity=NHAI",
-          "mae_increase_when_shuffled": 0.0572,
-          "std": 0.0437,
+          "mae_increase_when_shuffled": 0.049,
+          "std": 0.0868,
           "is_external": false
         },
         {
           "feature": "sector=Healthcare",
-          "mae_increase_when_shuffled": 0.0402,
-          "std": 0.0198,
+          "mae_increase_when_shuffled": 0.0147,
+          "std": 0.0196,
+          "is_external": false
+        },
+        {
+          "feature": "physical_progress",
+          "mae_increase_when_shuffled": 0.0144,
+          "std": 0.1496,
+          "is_external": false
+        },
+        {
+          "feature": "entity=COAL_INDIA",
+          "mae_increase_when_shuffled": 0.0003,
+          "std": 0.0227,
+          "is_external": false
+        },
+        {
+          "feature": "sanction_year",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Aviation & Aviation Infrastructure",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Education",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Electricity Generation",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Energy Storage",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
           "is_external": false
         }
       ]
@@ -255,7 +257,7 @@
       "train_target_mean": 39.37,
       "test_target_mean": 19.71,
       "deployable": false,
-      "headline_mae_lift_vs_naive_pct": -29.9,
+      "headline_mae_lift_vs_naive_pct": 49.0,
       "headline_note": "MAE lift over a train-mean baseline is the honest headline under temporal distribution shift. R2 compares against the TEST mean, which nobody has at prediction time, so a negative R2 alongside a positive MAE lift means the model beats what an officer could actually do unaided.",
       "n_usable": 971,
       "n_train": 728,
@@ -298,14 +300,14 @@
           "rmse": 27.088
         },
         "ols_linear_regression": {
-          "r2": 0.4166,
-          "mae": 7.672,
-          "rmse": 9.845
+          "r2": 0.4146,
+          "mae": 7.648,
+          "rmse": 9.862
         },
         "gradient_boosting": {
-          "r2": -4.0701,
-          "mae": 26.73,
-          "rmse": 29.021
+          "r2": -3.9148,
+          "mae": 26.26,
+          "rmse": 28.573
         }
       },
       "calendar_free": {
@@ -320,84 +322,86 @@
           "rmse": 27.088
         },
         "ols_linear_regression": {
-          "r2": -13.738,
-          "mae": 46.813,
-          "rmse": 49.48
+          "r2": -9.686,
+          "mae": 39.452,
+          "rmse": 42.132
         },
         "gradient_boosting": {
-          "r2": -11.6428,
-          "mae": 42.473,
-          "rmse": 45.828
+          "r2": -13.1867,
+          "mae": 45.267,
+          "rmse": 48.546
         }
       },
       "calendar_identity": {
         "applies": true,
         "explanation": "slip_months = RevisedDate - OriginalEndDate, and OriginalEndDate is recoverable from sanction_year + planned_months. RevisedDate is tightly clustered (std ~1.3y) while OriginalEndDate is not (std ~9.3y), so much of the apparent accuracy is an arithmetic identity rather than learned skill. The calendar_free block is the defensible skill estimate.",
-        "r2_with_calendar": -4.0701,
-        "r2_calendar_free": -11.6428,
-        "r2_attributable_to_calendar": 7.5727
+        "r2_with_calendar": -3.9148,
+        "r2_calendar_free": -13.1867,
+        "r2_attributable_to_calendar": 9.2719
       },
       "ml_vs_conventional": {
-        "best_conventional_mae": 7.672,
-        "ml_mae": 26.73,
-        "mae_improvement": -19.058,
-        "mae_improvement_pct": -248.41,
+        "evaluated_variant": "cuf_only",
+        "variant_note": "Measured on the feature set this system deploys, selected by held-out MAE. The other variant's numbers are in the block of the same name.",
+        "best_conventional_mae": 7.895,
+        "ml_mae": 10.498,
+        "mae_improvement": -2.603,
+        "mae_improvement_pct": -32.97,
         "ml_is_better": false
       },
       "cuf_vs_external_ablation": {
         "cuf_only_mae": 10.498,
-        "with_external_mae": 26.73,
-        "mae_improvement": -16.232,
-        "mae_improvement_pct": -154.62,
+        "with_external_mae": 26.26,
+        "mae_improvement": -15.762,
+        "mae_improvement_pct": -150.14,
         "external_helps": false
       },
       "drivers": [
         {
           "feature": "planned_months",
-          "mae_increase_when_shuffled": 0.5212,
-          "std": 0.1429,
-          "is_external": false
-        },
-        {
-          "feature": "graph_shapley_criticality",
-          "mae_increase_when_shuffled": 0.0537,
-          "std": 0.071,
-          "is_external": true
-        },
-        {
-          "feature": "monsoon_departure_pct",
-          "mae_increase_when_shuffled": 0.0394,
-          "std": 0.0712,
-          "is_external": true
-        },
-        {
-          "feature": "entity=COAL_INDIA",
-          "mae_increase_when_shuffled": 0.028,
-          "std": 0.0243,
+          "mae_increase_when_shuffled": 3.2123,
+          "std": 0.3797,
           "is_external": false
         },
         {
           "feature": "log_original_cost",
-          "mae_increase_when_shuffled": 0.0241,
-          "std": 0.088,
+          "mae_increase_when_shuffled": 0.1946,
+          "std": 0.1342,
           "is_external": false
         },
         {
           "feature": "sector=Roads & Highways",
-          "mae_increase_when_shuffled": 0.0159,
-          "std": 0.0246,
-          "is_external": false
-        },
-        {
-          "feature": "entity=NHIDCL",
-          "mae_increase_when_shuffled": 0.0008,
-          "std": 0.0006,
+          "mae_increase_when_shuffled": 0.0689,
+          "std": 0.0721,
           "is_external": false
         },
         {
           "feature": "entity=MoRTH",
-          "mae_increase_when_shuffled": 0.0007,
-          "std": 0.0095,
+          "mae_increase_when_shuffled": 0.0581,
+          "std": 0.0307,
+          "is_external": false
+        },
+        {
+          "feature": "entity=COAL_INDIA",
+          "mae_increase_when_shuffled": 0.0305,
+          "std": 0.0328,
+          "is_external": false
+        },
+        {
+          "feature": "entity=NHAI",
+          "mae_increase_when_shuffled": 0.0141,
+          "std": 0.0022,
+          "is_external": false
+        },
+        {
+          "feature": "entity=INDIAN_RAILWAYS",
+          "mae_increase_when_shuffled": 0.0132,
+          "std": 0.0041,
+          "is_external": false
+        },
+        {
+          "feature": "entity=JAL_SHAKTI",
+          "mae_increase_when_shuffled": 0.0011,
+          "std": 0.0033,
           "is_external": false
         },
         {
@@ -405,18 +409,6 @@
           "mae_increase_when_shuffled": 0.0,
           "std": 0.0,
           "is_external": false
-        },
-        {
-          "feature": "psu_debt_to_equity",
-          "mae_increase_when_shuffled": 0.0,
-          "std": 0.0,
-          "is_external": true
-        },
-        {
-          "feature": "psu_profit_margin",
-          "mae_increase_when_shuffled": 0.0,
-          "std": 0.0,
-          "is_external": true
         },
         {
           "feature": "sector=Coal",
@@ -438,6 +430,18 @@
         },
         {
           "feature": "sector=Energy Storage",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Healthcare",
+          "mae_increase_when_shuffled": 0.0,
+          "std": 0.0,
+          "is_external": false
+        },
+        {
+          "feature": "sector=Oil & Gas",
           "mae_increase_when_shuffled": 0.0,
           "std": 0.0,
           "is_external": false

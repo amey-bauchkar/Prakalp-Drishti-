@@ -8,14 +8,24 @@ import UnifiedCockpitView from './UnifiedCockpitView';
 import AgencyIndexView from './AgencyIndexView';
 import GeocodePrecisionPanel from './GeocodePrecisionPanel';
 import ModelBenchmarkView from './ModelBenchmarkView';
+import LoginGate, { SessionBar } from './LoginGate';
 
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
   const [selectedProjectId, setSelectedProjectId] = useState(() => {
-    // 400301 (Irugur-Devangonthi pipeline): HIGH-confidence site-level geocode, 22.8%
-    // measured surface change at the 94th sector percentile, 12 change zones. Chosen so
-    // the comparator opens on a project where the imagery genuinely shows the works.
-    return localStorage.getItem('prakalp:selectedProjectId') || '400301';
+    // 619092 (Jind-Gohana 4-laning, Haryana). Chosen so every panel opens on a project
+    // that can actually exercise it: HIGH-confidence site-level geocode with 25.7%
+    // measured surface change across 12 change zones, a real Rs 994 -> 1,607 Cr
+    // (61.7%) cost overrun, and a 2019 sanction so it clears the model's 5-year
+    // maturity gate rather than being censored out of it.
+    //
+    // It replaced 400301, whose PAIMANA record is internally inconsistent: a petroleum
+    // pipeline whose COMPANYNAME is "Department of Water Resources", so the entity
+    // resolver correctly but confusingly labelled it JAL_SHAKTI. Two rows in the
+    // corpus have that contradiction and it is a source-data error, not ours -- but
+    // the default project is the first thing anyone sees, and it should not be one of
+    // them. 619092's COMPANYNAME (NHAI) and LineMinistry (MoRTH) agree.
+    return localStorage.getItem('prakalp:selectedProjectId') || '619092';
   });
 
   useEffect(() => {
@@ -40,7 +50,10 @@ export default function AmeyMasterView() {
   ];
 
   return (
+    <LoginGate>
     <div className="space-y-6 font-sans">
+      <SessionBar />
+
       {/* Module Navigation Tabs */}
       <div className="bg-white p-2 rounded-2xl border border-gov-border shadow-soft flex flex-wrap gap-2">
         {tabs.map((tab) => {
@@ -107,5 +120,6 @@ export default function AmeyMasterView() {
         )}
       </div>
     </div>
+    </LoginGate>
   );
 }
