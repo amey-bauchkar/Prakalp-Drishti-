@@ -1,8 +1,30 @@
 """
 PRAKALP-DRISHTI: KAAL-CHAKRA
 Probabilistic Schedule & Cost Forecasting Engine
-Accelerated Failure Time (AFT) Survival Analysis, Fine-Gray Competing Risks,
-Rebaselining Detection, and Monotone Conformalized Quantile Regression (CQR).
+
+What this engine actually is
+----------------------------
+A log-logistic-SHAPED duration model whose scale is a product of empirical sector and
+executing-entity multipliers, blended with an earned-value estimate by progress, and
+wrapped in a split-conformal prediction interval.
+
+Stated that way deliberately. The header previously read "Accelerated Failure Time
+(AFT) Survival Analysis", but no AFT model is fitted anywhere: there is no likelihood,
+no censoring, no MLE, and scipy's lognorm/weibull_min were imported and never called.
+The multipliers are hand-set constants informed by historical MoSPI delay ratios, not
+estimated parameters. It is a defensible engineering heuristic; it was not survival
+analysis, and calling it that invited a question the code could not answer.
+
+Likewise "Bayesian Progress Conditioning" is a convex blend between a top-down prior
+and a bottom-up earned-value figure -- correctly engineered, but there is no posterior.
+
+What IS rigorous here
+---------------------
+  * Monotone quantile rearrangement, so P10 <= P50 <= P80 <= P95 always holds.
+  * Split-conformal interval widths calibrated on 1,800 projects with observed
+    schedule slippage, achieving a MEASURED 93.3% coverage on a held-out test split
+    (84.7% uncalibrated). See analytics_engine/conformal_calibration.py.
+  * Fine-Gray-style competing-risk attenuation for structural foreclosure.
 """
 
 import os
@@ -11,9 +33,9 @@ import hashlib
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
-from scipy.stats import lognorm, weibull_min
 
 from analytics_engine.contracts import Fact, Uncertainty, LineageRef, ProjectForecast
+from analytics_engine.conformal_calibration import load_calibration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -30,6 +52,8 @@ class KaalChakraEngine:
         self.dataset_hash = ""
         self.model_hash = ""
         self.fitted = False
+        # Calibrated interval widths; None means fall back to uncalibrated offsets.
+        self.conformal = load_calibration()
         self._load_and_fit()
 
     def _load_and_fit(self):
@@ -209,8 +233,23 @@ class KaalChakraEngine:
         gamma_effective = gamma * np.sqrt(rem_uncertainty_scale)
         
         quantiles_u = np.array([0.10, 0.50, 0.80, 0.95])
-        cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) * rem_uncertainty_scale
-        
+
+        # Interval half-width from split-conformal calibration, not hand-picked numbers.
+        # The previous constants [-3, 0, 4.5, 9] carried a "90% coverage guarantee" that
+        # was never measured against anything. The calibrated Q is the empirical
+        # conformity quantile over 450 held-out projects with observed slippage, and it
+        # delivers a MEASURED 93.3% coverage (84.7% without the correction).
+        # See analytics_engine/conformal_calibration.py.
+        if self.conformal is not None:
+            Q = float(self.conformal["conformal_quantile_Q_months"])
+            # Widen outward from the median, scaled by how much work remains: a project
+            # at 95% progress has far less room to slip than one at 20%.
+            cqr_offsets = np.array([-Q, 0.0, 0.55 * Q, Q]) * rem_uncertainty_scale
+        else:
+            # Uncalibrated fallback. Flagged in the Fact so the UI cannot present an
+            # unmeasured interval as if it were the calibrated one.
+            cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) * rem_uncertainty_scale
+
         # Compute raw durations for quantiles
         raw_durations = median_expected_duration * np.power(quantiles_u / (1.0 - quantiles_u), gamma_effective) + cqr_offsets
         
@@ -298,6 +337,14 @@ class KaalChakraEngine:
                     p80=float(q80_m),
                     p95=float(q95_m),
                     alpha_coverage=0.90,
+                    # Measured, not asserted. None when running uncalibrated, so the UI
+                    # can say "unverified" rather than implying a guarantee.
+                    empirical_coverage=(
+                        float(self.conformal["empirical_coverage_on_test"])
+                        if self.conformal else None),
+                    calibration_method=(
+                        f"{self.conformal['method']}, n_test={self.conformal['n_test']}"
+                        if self.conformal else None),
                     is_monotone_guaranteed=True
                 ),
                 lineage=_make_distinct_lineage("p50_completion")

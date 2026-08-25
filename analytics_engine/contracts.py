@@ -26,7 +26,13 @@ class Uncertainty(BaseModel):
     p50: float = Field(..., description="50th percentile median forecast")
     p80: float = Field(..., description="80th percentile conservative bound")
     p95: float = Field(..., description="95th percentile worst-case tail bound")
-    alpha_coverage: float = Field(default=0.90, description="Finite-sample marginal coverage level (e.g. 0.90 for 90%)")
+    alpha_coverage: float = Field(default=0.90, description="Nominal target coverage level (e.g. 0.90 for 90%)")
+    empirical_coverage: Optional[float] = Field(
+        default=None,
+        description="Coverage MEASURED on a held-out test split by split-conformal calibration. "
+                    "None means the interval is uncalibrated and its coverage is unverified.")
+    calibration_method: Optional[str] = Field(
+        default=None, description="How the interval width was derived; None = hand-set constants")
     is_monotone_guaranteed: bool = Field(default=True, description="Strictly verified P10 <= P50 <= P80 <= P95")
 
 class Fact(BaseModel):

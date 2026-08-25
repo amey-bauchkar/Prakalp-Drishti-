@@ -1,7 +1,14 @@
 """
 PRAKALP-DRISHTI: VITTA-VYUHA
 Two-Stage Stochastic Capital Allocation Optimizer
-Mixed-Integer Linear Programming (MILP) with Rockafellar-Uryasev CVaR90,
+Continuous Linear Program (HiGHS) with Rockafellar-Uryasev CVaR90,
+
+Note on naming: every decision variable is continuous (integrality is all-zero in the
+milp() call), so this is an LP, not a mixed-integer program. It was previously
+described as a MILP. Capital tranches are genuinely divisible, so the continuous
+relaxation is the correct model here -- but the label had to match the mathematics.
+A true MILP would add a binary fund/defer indicator per project with a minimum viable
+tranche; that is a deliberate future upgrade, not what runs today.
 SOS2 S-Curves, Statutory 10% NER Floor, Dual Shadow Prices, and Closure Error Diagnostics.
 """
 
@@ -69,7 +76,7 @@ class VittaVyuhaEngine:
             shapley_df = pd.read_parquet(SHAPLEY_PATH)
             self.shapley_scores = dict(zip(shapley_df["project_id"].astype(str), shapley_df["shapley_phi"]))
 
-        # Select Top 60 Strategic High-Priority Projects across NER and National sectors for live MILP optimization
+        # Select Top 60 Strategic High-Priority Projects across NER and National sectors for live LP optimization
         ner_sample = self.df[self.df["IsNER"]].nlargest(15, "RevisedCost")
         non_ner_sample = self.df[~self.df["IsNER"]].nlargest(45, "RevisedCost")
         self.candidate_df = pd.concat([ner_sample, non_ner_sample]).reset_index(drop=True)
@@ -372,7 +379,7 @@ if __name__ == "__main__":
     engine = get_vitta_vyuha_engine()
     req = AllocationRequest(budget_pool_cr=12000.0, risk_dial_kappa=0.75, enforce_ner_floor=True)
     res = engine.optimize_allocation(req)
-    print("VITTA-VYUHA Two-Stage Stochastic MILP Optimization Output:")
+    print("VITTA-VYUHA Two-Stage Stochastic LP Optimization Output:")
     print(f"  Budget Pool: ₹{res.total_budget_pool_cr:,.2f} Cr")
     print(f"  Total Allocated: ₹{res.total_allocated_cr:,.2f} Cr")
     print(f"  NER Allocated: ₹{res.ner_allocated_cr:,.2f} Cr ({res.ner_share_perc:.1f}% vs 10% statutory floor)")
@@ -381,4 +388,4 @@ if __name__ == "__main__":
     print(f"  Dual Shadow Price π(Budget): {res.shadow_price_budget_pi:.3f} (₹ return per ₹1 Cr capex)")
     print(f"  Linearization Closure Error: {res.closure_error_perc}%")
     print(f"  Solve Time: {res.solve_time_ms} ms (Sub-2s guarantee met!)")
-    print("\nVerified VITTA-VYUHA Two-Stage Stochastic MILP optimizer successfully generated!")
+    print("\nVerified VITTA-VYUHA Two-Stage Stochastic LP optimizer successfully generated!")

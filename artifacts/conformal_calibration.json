@@ -1,0 +1,62 @@
+{
+  "method": "split-conformal CQR (Romano, Patterson & Candes 2019)",
+  "target": "schedule slippage in months (RevisedDate - OriginalEndDate)",
+  "target_caveat": "Slippage of the OFFICIAL target date, not actual completion. The corpus does not record actual completion for ongoing projects.",
+  "alpha": 0.09999999999999998,
+  "target_coverage": 0.9,
+  "n_labelled": 1800,
+  "n_train": 900,
+  "n_calibration": 450,
+  "n_test": 450,
+  "conformal_quantile_Q_months": 5.185,
+  "empirical_coverage_on_test": 0.9333,
+  "uncalibrated_coverage_on_test": 0.8467,
+  "mean_interval_width_months": 61.78,
+  "per_quantile": {
+    "0.1": {
+      "residual_offset_months": 0.0,
+      "calibration_mae_months": 24.655769734071328
+    },
+    "0.5": {
+      "residual_offset_months": 0.046519693088105336,
+      "calibration_mae_months": 16.17188826224201
+    },
+    "0.8": {
+      "residual_offset_months": 5.44086749603146,
+      "calibration_mae_months": 19.636074732603134
+    },
+    "0.95": {
+      "residual_offset_months": 19.633162845645856,
+      "calibration_mae_months": 35.89972623648016
+    }
+  },
+  "sectors": [
+    "Aviation & Aviation Infrastructure",
+    "Coal",
+    "Education",
+    "Electricity Generation",
+    "Energy Storage",
+    "Healthcare",
+    "Oil & Gas",
+    "Railways",
+    "Roads & Highways",
+    "Transmission & Distribution",
+    "Waste & Water",
+    "Water Resources"
+  ],
+  "entities": [
+    "AAI",
+    "COAL_INDIA",
+    "EMPLOYEE_S_STATE_INSURANCE_COM",
+    "INDIAN_RAILWAYS",
+    "JAL_SHAKTI",
+    "MINISTRYOFPETROLEUMNATURALGAS",
+    "MOHUA",
+    "MoRTH",
+    "NHAI",
+    "NHIDCL",
+    "PETROLEUM_GAS",
+    "POWERGRID"
+  ],
+  "random_seed": 42
+}

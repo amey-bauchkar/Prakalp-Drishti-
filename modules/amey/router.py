@@ -186,7 +186,7 @@ def run_unified_causal_simulation(sim: SimulationRequest):
         # 2. Dependency Cascade with Delay Shock Threaded
         subgraph = graph.get_k_hop_subgraph(sim.project_id, k=2, delay_shock_months=sim.delay_shock_months)
         
-        # 3. MILP Capital Rebalance with User Budget Pool & Delay Shock
+        # 3. LP Capital Rebalance with User Budget Pool & Delay Shock
         alloc_res = vitta.optimize_allocation(AllocationRequest(
             budget_pool_cr=sim.budget_pool_cr,
             risk_dial_kappa=sim.risk_dial_kappa,
