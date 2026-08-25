@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRAKALP-DRISHTI | Decision Intelligence Platform</title>
+  
+  <!-- Tailwind CSS & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #080c14;
+      color: #f1f5f9;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+    
+    .glass-card-hover {
+      transition: all 0.25s ease-in-out;
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .gauge-ring {
+      transition: stroke-dashoffset 1s ease-in-out;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b0f19; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+  </style>
+</head>
+<body class="min-h-screen pb-20">
+
+  <!-- TOP HEADER & CONTROLS -->
+  <header class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-amber-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white">PRAKALP-DRISHTI</h1>
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">National Infra AI</span>
+          </div>
+          <p class="text-xs text-slate-400">Infrastructure Decision Intelligence &amp; Risk Platform</p>
+        </div>
+      </div>
+
+      <!-- Navigation Page Tabs -->
+      <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+        <button id="tabNivaranBtn" onclick="switchPage('nivaran')" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+          <i data-lucide="scale" class="w-4 h-4"></i>
+          <span>PAGE 1: NIVARAN (Contract &amp; Dispute Risk)</span>
+        </button>
+        <button id="tabAnumatiBtn" onclick="switchPage('anumati')" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all">
+          <i data-lucide="git-merge" class="w-4 h-4"></i>
+          <span>PAGE 2: ANUMATI (Approvals &amp; Delays)</span>
+        </button>
+      </div>
+
+      <!-- Active Project Selector & SQLite Sync Indicator -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
+          <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i>
+          <label for="projectSelect" class="text-xs text-slate-400 font-medium">Project:</label>
+          <select id="projectSelect" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer max-w-[200px] truncate" onchange="onProjectSelectChange(this.value)">
+            <option value="">Loading SQLite Projects...</option>
+          </select>
+        </div>
+
+        <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-medium shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="dbStatusBadge">SQLite DB Synced</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 pt-6 space-y-8">
+
+    <!-- COMMON PROJECT HEADER CARD -->
+    <div id="projectHero" class="glass-card rounded-2xl p-6 relative overflow-hidden">
+      <div class="absolute -right-12 -top-12 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        <div class="space-y-2">
+          <div class="flex items-center space-x-3">
+            <span id="projectSectorBadge" class="px-2.5 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">Roads &amp; Highways</span>
+            <span id="projectMospiCode" class="text-xs font-mono text-slate-400">MoSPI-HWY-2026-089</span>
+            <span id="projectActiveIdBadge" class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">PRJ-NH-2026-089</span>
+          </div>
+          <h2 id="projectName" class="text-2xl font-extrabold text-white tracking-tight">Bharatmala Express Highway Expansion (Package 4)</h2>
+          <p id="projectAgency" class="text-xs text-slate-300 flex items-center gap-2">
+            <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span>Executing Agency: NHAI / Ministry of Road Transport &amp; Highways</span>
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-6 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+          <div class="text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sanctioned Cost</p>
+            <p id="projectCost" class="text-xl font-bold text-white mono mt-0.5">₹3,450.0 Cr</p>
+          </div>
+          <div class="h-8 w-px bg-slate-800"></div>
+          <div class="text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Overall Risk Score</p>
+            <div class="flex items-center justify-center space-x-1 mt-0.5">
+              <span id="overallRiskScore" class="text-2xl font-black text-red-400 mono">81.0</span>
+              <span class="text-xs text-slate-500">/ 100</span>
+            </div>
+          </div>
+          <div class="h-8 w-px bg-slate-800"></div>
+          <div class="text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Risk Level</p>
+            <span id="overallRiskBadge" class="inline-block mt-1 px-3 py-1 text-xs font-extrabold bg-red-500/20 text-red-400 border border-red-500/30 rounded-md">CRITICAL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plain English Directive Alert -->
+      <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-start space-x-3 bg-slate-900/60 p-3 rounded-xl">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
+        <div>
+          <p class="text-[11px] font-bold text-amber-400 uppercase">Decision Directive for Project Authority &amp; Public Officers:</p>
+          <p id="executiveDirective" class="text-xs text-slate-200 leading-relaxed font-medium mt-0.5">
+            CRITICAL INTERVENTION DIRECTIVE: Project exhibits severe administrative friction. Immediate intervention required by Project Authority.
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================================================= -->
+    <!-- PAGE 1: NIVARAN (Contractual, Legal & Dispute Risk Engine)                                 -->
+    <!-- ========================================================================================= -->
+    <div id="pageNivaran" class="space-y-8">
+      
+      <!-- NIVARAN INTRO BANNER IN COMMON MAN WORDS -->
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-indigo-500 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-indigo-400 font-bold text-sm">
+            <i data-lucide="scale" class="w-5 h-5"></i>
+            <span>NIVARAN ENGINE: HOW LIKELY IS THIS PROJECT TO END UP IN COURT OR SHUT DOWN?</span>
+          </div>
+          <span class="px-2.5 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 rounded border border-indigo-500/30">MODULE 1 OF 2</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          <strong>What this page does in simple terms:</strong> NIVARAN scans the legal contract clauses, inspects the builder's track record (how many times they have sued the government before), and checks whether unpaid bills or delayed variation approvals are pushing the contractor toward arbitration or site abandonment.
+        </p>
+      </div>
+
+      <!-- NIVARAN EXECUTIVE STATS 3-COLUMN CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Card 1: Litigation Probability -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Court Dispute / Work Stoppage Chance</p>
+          
+          <div class="relative w-36 h-36 flex items-center justify-center">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
+              <circle id="gaugeCircle" cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" class="text-red-500 gauge-ring" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="45" stroke-linecap="round" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span id="litigationProbText" class="text-3xl font-black text-white mono">82%</span>
+              <span class="text-[9px] text-slate-400 font-bold uppercase">Litigation Risk</span>
+            </div>
+          </div>
+
+          <span id="disputeRiskBadge" class="mt-3 text-xs font-extrabold px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-md">CRITICAL RISK</span>
+          <p class="text-[11px] text-slate-400 mt-2">Predicted chance this contract will enter formal arbitration or court litigation.</p>
+        </div>
+
+        <!-- Card 2: Contractor Financial Solvency & Risk Index -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Builder Risk Index</p>
+              <span id="nivaranContractorSolvencyBadge" class="text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">BBB+ Solvency</span>
+            </div>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="litigationIndexText" class="text-3xl font-black text-amber-400 mono">81.7</span>
+              <span class="text-xs text-slate-500 font-bold">/ 100 Index</span>
+            </div>
+            <p id="nivaranContractorNameSubtitle" class="text-xs font-semibold text-indigo-300 mt-1">L1 Infrastructure Projects India Ltd</p>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span>Past Arbitrations Filed:</span>
+              <strong id="nivaranPastArbitrations" class="text-white mono">4 Cases</strong>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Disputed Money Claimed:</span>
+              <strong id="nivaranDisputedClaims" class="text-red-400 mono">₹285.5 Cr</strong>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Blacklisting Risk Status:</span>
+              <strong id="nivaranBlacklistFlag" class="text-emerald-400">Clear (Good Standing)</strong>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+            <strong>Plain English Meaning:</strong> <span id="nivaranContractorPlainSummary">Builder has moderate financial standing. Sensitive to cashflow bottlenecks and price escalations.</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Unpaid Bills & Change Orders Pressure -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Payment &amp; Scope Friction</p>
+            <p class="text-xl font-bold text-white mt-1">Cashflow Bottleneck</p>
+            <p class="text-[11px] text-slate-400">Delayed payments and unpaid extra work are the #1 cause of builders stopping construction.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Pending Extra Work</span>
+              <p id="pendingVariationsText" class="text-base font-bold text-amber-400 mono mt-1">5 orders (₹68.4 Cr)</p>
+              <span class="text-[10px] text-slate-500">Unapproved >90 days</span>
+            </div>
+            <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+              <span class="text-[10px] text-slate-400 font-bold uppercase">Unpaid Milestone Bills</span>
+              <p id="delayedInvoicesText" class="text-base font-bold text-red-400 mono mt-1">3 bills (115 days)</p>
+              <span class="text-[10px] text-slate-500">Exceeds credit SLA</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+            <strong>Plain English Meaning:</strong> The builder is owed money for months. If bills aren't cleared promptly, they can legally halt machinery and claim idle damages.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- STATISTICAL VISUALIZATIONS ROW (CHARTS) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Chart 1: Dispute Risk Factors Breakdown (Donut Chart) -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-400"></i>
+                Dispute Risk Triggers Breakdown
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Which problems are causing the highest risk of court dispute?</p>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="disputeFactorsChart"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">Unencumbered Land Delivery &amp; Unindexed Material Costs form >60% of total legal vulnerability.</p>
+        </div>
+
+        <!-- Chart 2: Contractor Financial Profile & Claims (Bar Chart) -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i>
+                Contractor Financial Exposure (₹ Cr)
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Comparing Active Work Size vs Disputed Quantum vs Pending Bills</p>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="contractorFinancialsChart"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">High disputed value relative to active contract indicates high litigation inclination.</p>
+        </div>
+
+        <!-- Chart 3: Clause Risk Severity Distribution (Polar / Doughnut) -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="file-warning" class="w-4 h-4 text-amber-400"></i>
+                Contract Clause Danger Ratings
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Distribution of Flagged Contract Flaws by Severity</p>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="clauseSeverityChart"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">Identified flawed clauses that give contractors legal grounds for delay claims.</p>
+        </div>
+
+      </div>
+
+      <!-- CONTRACT DANGER CLAUSES IN PLAIN ENGLISH -->
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="alert-octagon" class="w-5 h-5 text-red-400"></i>
+              Flagged Contract Clauses (Explained in Plain English)
+            </h3>
+            <p class="text-xs text-slate-400">Our NLP AI read the contract agreement and found these high-risk clauses that cause legal disputes.</p>
+          </div>
+          <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-lg">
+            Flagged: <strong id="nivaranClauseCountNumber">3</strong> Clauses
+          </span>
+        </div>
+
+        <!-- Dynamic List of Plain-English Clauses -->
+        <div id="nivaranFlaggedClausesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Preemptive Action Card -->
+        <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-5 space-y-2">
+          <div class="flex items-center space-x-2 text-xs font-bold text-indigo-400">
+            <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+            <span>NIVARAN PREEMPTIVE INTERVENTION DIRECTIVE (ACTION REQUIRED TODAY)</span>
+          </div>
+          <p id="nivaranActionText" class="text-xs text-slate-200 leading-relaxed font-medium">
+            Convene Dispute Avoidance Committee (DAC) within 14 days to clear pending variation orders. Expedite interim invoice release for delayed milestone payments to restore contractor cash flow.
+          </p>
+        </div>
+      </div>
+
+      <!-- CONTRACTOR INTELLIGENCE REGISTRY TABLE -->
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="users" class="w-5 h-5 text-emerald-400"></i>
+              Contractors Intelligence Registry (SQLite Database)
+            </h3>
+            <p class="text-xs text-slate-400">Track record of major infrastructure contractors, solvency ratings, and litigation histories.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span id="dbContractorCountBadge" class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded">5 Contractors Synced</span>
+            <span class="text-xs font-mono text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded">SQLite DB</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+                <th class="py-3 px-4">Contractor ID</th>
+                <th class="py-3 px-4">Agency Name</th>
+                <th class="py-3 px-4">Sector</th>
+                <th class="py-3 px-4 text-center">Solvency</th>
+                <th class="py-3 px-4 text-center">Past Arbitrations</th>
+                <th class="py-3 px-4 text-right">Disputed Quantum</th>
+                <th class="py-3 px-4 text-center">Litigation Index</th>
+                <th class="py-3 px-4 text-center">Risk Tier</th>
+              </tr>
+            </thead>
+            <tbody id="contractorsTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Dynamic Contractor Rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LIVE INTERACTIVE CLAUSE PLAYGROUND -->
+      <div class="glass-card rounded-2xl p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+              Live Interactive Contract Clause Classifier
+            </h3>
+            <p class="text-xs text-slate-400">Paste any DPR tender clause or contract paragraph to detect hidden litigation traps instantly.</p>
+          </div>
+          <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded">FastAPI POST /api/v1/nivaran/assess-dispute-risk</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <label class="block text-xs font-bold text-slate-300">Contract / DPR Clause Text to Test:</label>
+            <textarea id="customContractText" rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono leading-relaxed" placeholder="Paste contract clause text here..."></textarea>
+            <button type="button" onclick="runCustomNivaranTest()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-lg shadow-indigo-600/30">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Classify Legal Risks &amp; Generate Common-Man Explanation</span>
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-xs font-bold text-slate-300">Engine JSON Evaluation Output:</label>
+            <pre id="jsonViewer" class="w-full h-52 bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-emerald-400 font-mono overflow-auto leading-tight">Run test to see live output...</pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ========================================================================================= -->
+    <!-- PAGE 2: ANUMATI (Statutory Approvals & Bureaucratic Stagnation Tracker)                   -->
+    <!-- ========================================================================================= -->
+    <div id="pageAnumati" class="space-y-8 hidden">
+      
+      <!-- ANUMATI INTRO BANNER IN COMMON MAN WORDS -->
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-blue-500 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-blue-400 font-bold text-sm">
+            <i data-lucide="git-merge" class="w-5 h-5"></i>
+            <span>ANUMATI ENGINE: WHERE ARE GOVERNMENT APPROVALS STUCK &amp; HOW MUCH MONEY IS BEING WASTED?</span>
+          </div>
+          <span class="px-2.5 py-0.5 text-[10px] font-bold bg-blue-500/20 text-blue-300 rounded border border-blue-500/30">MODULE 2 OF 2</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          <strong>What this page does in simple terms:</strong> Major national projects require 5 critical permissions: Forest, Wildlife, Environment, Land Handover, and Utility Shifting. ANUMATI checks which ministry or district office is sitting on the file, calculates how many days it is overdue beyond the official government deadline, and tracks files bouncing back and forth in endless clarification loops ("File Ping-Pong").
+        </p>
+      </div>
+
+      <!-- ANUMATI EXECUTIVE STATS 3-COLUMN CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Card 1: Clearance Status & Stagnation Index -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Overall Clearance Status</p>
+            <div class="flex items-center space-x-3 mt-2">
+              <span id="clearanceStatusBadge" class="text-2xl font-black text-red-400 mono">STALLED</span>
+              <span id="loopbackBadge" class="px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded">3 LOOPS DETECTED</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-2">Files are held up beyond permissible time limits.</p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-baseline">
+              <span class="text-xs text-slate-400">Bureaucracy Delay Index (RSI):</span>
+              <span id="rsiScoreText" class="text-xl font-black text-amber-400 mono">1.75x</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              <strong>Plain English:</strong> Taking <strong class="text-amber-300">1.75 times</strong> longer than the maximum standard time allowed by government rules.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-800 pt-3">
+            <span>Primary Bottleneck:</span>
+            <strong id="anumatiBottleneckDeptText" class="text-indigo-400 font-semibold">MoEFCC Regional Office</strong>
+          </div>
+        </div>
+
+        <!-- Card 2: Quantified Delay Cost Bleed (Taxpayer Money Wasted) -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4 bg-gradient-to-br from-red-950/20 to-slate-900/60">
+          <div>
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-bold text-red-400 uppercase tracking-wider">Financial Delay Bleed</p>
+              <span class="text-[10px] font-bold px-2 py-0.5 bg-red-500/20 text-red-300 rounded border border-red-500/30">Taxpayer Money</span>
+            </div>
+            <div class="flex items-baseline space-x-2 mt-2">
+              <span id="daysOverdueText" class="text-3xl font-black text-red-400 mono">90 Days</span>
+              <span class="text-xs text-slate-400">Overdue</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">Cumulative idle machinery &amp; construction inflation cost.</p>
+          </div>
+
+          <div class="bg-red-950/30 border border-red-500/30 p-3.5 rounded-xl space-y-1">
+            <p class="text-[10px] font-bold text-red-400 uppercase">Estimated Monetary Loss:</p>
+            <p id="economicImpactText" class="text-xs text-slate-200 font-medium leading-relaxed">
+              Overdue by 90 days. Estimated cumulative capital inflation of ₹130.5 Cr (at ₹1.45 Cr/day).
+            </p>
+          </div>
+
+          <p class="text-[11px] text-slate-400">
+            <strong>Plain English:</strong> Every single day this project is delayed in paperwork costs the public approx <strong class="text-white">₹1.45 Cr per day</strong> in inflation and idle staff.
+          </p>
+        </div>
+
+        <!-- Card 3: PMO PRAGATI Escalation Directive Brief -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <p class="text-xs font-bold text-amber-400 uppercase tracking-wider">Inter-Departmental Escalation</p>
+            <p class="text-lg font-bold text-white mt-1">PMO PRAGATI Brief</p>
+            <p class="text-[11px] text-slate-400">Automated executive memo ready for Secretary / Cabinet Secretariat joint review.</p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+            <p class="text-[10px] font-bold text-amber-400 uppercase">Generated Executive Memo:</p>
+            <p id="pragatiMemoText" class="text-[11px] font-mono text-slate-200 line-clamp-3">
+              PRAGATI PMO ESCALATION DIRECTIVE: Project is STALLED in administrative paper loop under MoEFCC Regional Office. Delay beyond benchmark: 90 days.
+            </p>
+          </div>
+
+          <button type="button" onclick="openPragatiModal()" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-lg shadow-amber-600/30">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Open Full PMO PRAGATI Brief</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- STATISTICAL VISUALIZATIONS ROW (CHARTS) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Chart 1: 5-Stage Approval Time Taken vs Benchmark Limit (Bar Chart) -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4 lg:col-span-2">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-blue-400"></i>
+                Statutory Approvals: Actual Days Taken vs Official Government Benchmark (Days)
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Bars exceeding the benchmark line indicate illegal or excessive bureaucratic delays.</p>
+          </div>
+          <div class="h-64 relative">
+            <canvas id="clearanceComparisonChart"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">Forest Clearance &amp; Land Handover are substantially exceeding statutory SLA deadlines.</p>
+        </div>
+
+        <!-- Chart 2: Department Delay Contribution (Pie Chart) -->
+        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-amber-400"></i>
+                Delay Share by Department
+              </h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Which agency holds the biggest share of overdue days?</p>
+          </div>
+          <div class="h-64 relative flex items-center justify-center">
+            <canvas id="deptDelayShareChart"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">MoEFCC Forest Division &amp; District Revenue Collectorate account for >70% of delays.</p>
+        </div>
+
+      </div>
+
+      <!-- STEP-BY-STEP 5-STAGE CLEARANCE PIPELINE -->
+      <div class="glass-card rounded-2xl p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-400"></i>
+              5-Stage Statutory Clearance Pipeline (Step-by-Step Status)
+            </h3>
+            <p class="text-xs text-slate-400">Track each mandatory government permission and see exactly why it is progressing or stuck.</p>
+          </div>
+          <span class="text-xs font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-lg">
+            PARIVESH 2.0 &amp; MoSPI Integrated
+          </span>
+        </div>
+
+        <div id="clearanceStepper" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Dynamic Clearance Cards rendered via JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- PMO PRAGATI MODAL DIALOG -->
+  <div id="pragatiModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <i data-lucide="building" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white">PMO PRAGATI Review Brief</h3>
+            <p class="text-xs text-slate-400">Inter-Departmental Escalation &amp; Resolution Directive</p>
+          </div>
+        </div>
+        <button type="button" aria-label="Close PMO PRAGATI modal" onclick="closePragatiModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-amber-950/30 border border-amber-500/30 p-4 rounded-xl text-xs space-y-2">
+          <p class="font-bold text-amber-400 uppercase tracking-wide">Cabinet Secretariat Directive Draft:</p>
+          <p id="modalPragatiMemoText" class="text-slate-200 leading-relaxed font-mono">Loading escalation memo...</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+            <span class="text-slate-400">Bottleneck Agency:</span>
+            <p id="pragatiDeptText" class="font-bold text-white mt-0.5">MoEFCC Regional Office</p>
+          </div>
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+            <span class="text-slate-400">Cumulative Days Overdue:</span>
+            <p id="pragatiDaysText" class="font-bold text-red-400 mono mt-0.5">90 Days</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 border-t border-slate-800 pt-4">
+        <button type="button" onclick="closePragatiModal()" class="bg-slate-800 text-slate-300 text-xs font-semibold px-4 py-2 rounded-lg">Close</button>
+        <button type="button" onclick="alert('Escalation Directive copied to clipboard and marked transmitted to Cabinet Secretariat PRAGATI system.')" class="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center space-x-1.5 shadow-lg shadow-amber-600/30">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Transmit to Cabinet Secretariat</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================================= -->
+  <!-- JAVASCRIPT: DATA FETCHING, PAGE SWITCHING & CHART RENDERING                               -->
+  <!-- ========================================================================================= -->
+  <script>
+    let currentProjectData = null;
+    let allContractorsList = [];
+
+    // Chart instances references
+    let chartDisputeFactors = null;
+    let chartContractorFinancials = null;
+    let chartClauseSeverity = null;
+    let chartClearanceComparison = null;
+    let chartDeptDelayShare = null;
+
+    // Switch between Page 1 (NIVARAN) and Page 2 (ANUMATI)
+    function switchPage(page) {
+      const pNivaran = document.getElementById('pageNivaran');
+      const pAnumati = document.getElementById('pageAnumati');
+      const btnNivaran = document.getElementById('tabNivaranBtn');
+      const btnAnumati = document.getElementById('tabAnumatiBtn');
+
+      if (page === 'nivaran') {
+        pNivaran.classList.remove('hidden');
+        pAnumati.classList.add('hidden');
+        btnNivaran.className = "flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+        btnAnumati.className = "flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all";
+      } else {
+        pNivaran.classList.add('hidden');
+        pAnumati.classList.remove('hidden');
+        btnAnumati.className = "flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-lg shadow-blue-600/30";
+        btnNivaran.className = "flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition-all";
+      }
+      lucide.createIcons();
+    }
+
+    // Populate project dropdown from SQLite DB
+    async function populateProjectsDropdown() {
+      const select = document.getElementById('projectSelect');
+      try {
+        const res = await fetch('/api/v1/projects');
+        const projects = await res.json();
+        if (projects && projects.length > 0) {
+          select.innerHTML = '';
+          projects.forEach((p, idx) => {
+            const opt = document.createElement('option');
+            opt.value = p.project_id;
+            opt.innerText = `${p.project_id} - ${p.project_name}`;
+            if (idx === 0) opt.selected = true;
+            select.appendChild(opt);
+          });
+          document.getElementById('dbStatusBadge').innerText = `${projects.length} SQLite Projects Online`;
+          await loadProjectData(projects[0].project_id);
+        } else {
+          await loadProjectData('PRJ-NH-2026-089');
+        }
+      } catch (err) {
+        console.error("Failed to load projects list from SQLite API:", err);
+        await loadProjectData('PRJ-NH-2026-089');
+      }
+    }
+
+    async function onProjectSelectChange(projectId) {
+      if (projectId) {
+        await loadProjectData(projectId);
+      }
+    }
+
+    // Load Combined Governance Project Profile
+    async function loadProjectData(projectId) {
+      try {
+        const res = await fetch(`/api/v1/governance/combined-risk-profile/${projectId}`);
+        const data = await res.json();
+        currentProjectData = data;
+        renderDashboard(data);
+      } catch (err) {
+        console.error("Failed to fetch project data:", err);
+      }
+    }
+
+    // Load Contractors from SQLite
+    async function loadContractorsTable() {
+      try {
+        const res = await fetch('/api/v1/contractors');
+        const contractors = await res.json();
+        allContractorsList = contractors;
+        const tbody = document.getElementById('contractorsTableBody');
+        tbody.innerHTML = '';
+        
+        const ctrCountBadge = document.getElementById('dbContractorCountBadge');
+        if (ctrCountBadge) {
+          ctrCountBadge.innerText = `${contractors.length} Contractors Synced`;
+        }
+
+        contractors.forEach(c => {
+          let tierBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LOW RISK</span>';
+          if (c.litigation_exposure_index >= 75) {
+            tierBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-red-500/10 text-red-400 border border-red-500/20">CRITICAL</span>';
+          } else if (c.litigation_exposure_index >= 45) {
+            tierBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">ELEVATED</span>';
+          }
+
+          const tr = `
+            <tr class="hover:bg-slate-900/50 transition-colors">
+              <td class="py-3 px-4 font-bold text-indigo-400">${c.contractor_id}</td>
+              <td class="py-3 px-4 font-sans font-semibold text-white">${c.agency_name}</td>
+              <td class="py-3 px-4 text-slate-300 font-sans">${c.category}</td>
+              <td class="py-3 px-4 text-center font-bold text-amber-400">${c.financial_solvency_rating}</td>
+              <td class="py-3 px-4 text-center text-slate-300">${c.past_arbitration_count}</td>
+              <td class="py-3 px-4 text-right text-red-400 font-bold">₹${c.disputed_variation_value_cr.toFixed(1)} Cr</td>
+              <td class="py-3 px-4 text-center font-bold text-white">${c.litigation_exposure_index.toFixed(1)}</td>
+              <td class="py-3 px-4 text-center">${tierBadge}</td>
+            </tr>
+          `;
+          tbody.insertAdjacentHTML('beforeend', tr);
+        });
+      } catch (err) {
+        console.error("Failed to load contractors table:", err);
+      }
+    }
+
+    // Main Render Function
+    function renderDashboard(data) {
+      const meta = data.project_metadata;
+      const niv = data.nivaran_assessment;
+      const anu = data.anumati_assessment;
+
+      // Header details
+      document.getElementById('projectName').innerText = meta.project_name;
+      document.getElementById('projectSectorBadge').innerText = meta.sector;
+      document.getElementById('projectMospiCode').innerText = meta.mospi_monitoring_code;
+      document.getElementById('projectActiveIdBadge').innerText = meta.project_id;
+      document.getElementById('projectAgency').innerText = `Executing Agency: ${meta.executing_agency}`;
+      document.getElementById('projectCost').innerText = `₹${meta.total_sanctioned_cost_cr.toLocaleString()} Cr`;
+      
+      document.getElementById('overallRiskScore').innerText = data.overall_administrative_risk_score.toFixed(1);
+      const riskBadge = document.getElementById('overallRiskBadge');
+      riskBadge.innerText = data.governance_risk_category;
+
+      if (data.governance_risk_category === "CRITICAL") {
+        riskBadge.className = "inline-block mt-1 px-3 py-1 text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 rounded-md glow-red";
+      } else if (data.governance_risk_category === "HIGH") {
+        riskBadge.className = "inline-block mt-1 px-3 py-1 text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-md glow-amber";
+      } else if (data.governance_risk_category === "MODERATE") {
+        riskBadge.className = "inline-block mt-1 px-3 py-1 text-xs font-bold bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 rounded-md";
+      } else {
+        riskBadge.className = "inline-block mt-1 px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-md glow-emerald";
+      }
+
+      document.getElementById('executiveDirective').innerText = data.executive_summary_directive;
+
+      // -------------------------------------------------------------
+      // PAGE 1: NIVARAN RENDER
+      // -------------------------------------------------------------
+      document.getElementById('litigationProbText').innerText = `${Math.round(niv.litigation_probability * 100)}%`;
+      document.getElementById('disputeRiskBadge').innerText = `${niv.dispute_risk_level} RISK`;
+      document.getElementById('litigationIndexText').innerText = niv.contractor_litigation_index.toFixed(1);
+      document.getElementById('nivaranClauseCountNumber').innerText = niv.flagged_clauses.length;
+      document.getElementById('nivaranActionText').innerText = niv.recommended_preemptive_action;
+
+      const offset = 251.2 - (251.2 * niv.litigation_probability);
+      document.getElementById('gaugeCircle').style.strokeDashoffset = offset;
+
+      // Match Contractor Profile
+      const matchedCtr = allContractorsList.find(c => c.contractor_id === meta.assigned_contractor_id) || allContractorsList[0] || {};
+      document.getElementById('nivaranContractorNameSubtitle').innerText = matchedCtr.agency_name || "Assigned Infrastructure Builder";
+      document.getElementById('nivaranContractorSolvencyBadge').innerText = `${matchedCtr.financial_solvency_rating || 'BBB+'} Rating`;
+      document.getElementById('nivaranPastArbitrations').innerText = `${matchedCtr.past_arbitration_count || 0} Cases Filed`;
+      document.getElementById('nivaranDisputedClaims').innerText = `₹${(matchedCtr.disputed_variation_value_cr || 0).toFixed(1)} Cr`;
+      
+      const isBlacklisted = matchedCtr.blacklisting_risk_flag;
+      document.getElementById('nivaranBlacklistFlag').innerText = isBlacklisted ? "⚠️ High Risk Flag (Show Cause)" : "Clear (Good Standing)";
+      document.getElementById('nivaranBlacklistFlag').className = isBlacklisted ? "text-red-400 font-bold" : "text-emerald-400 font-bold";
+
+      if (matchedCtr.litigation_exposure_index >= 75) {
+        document.getElementById('nivaranContractorPlainSummary').innerText = "Builder exhibits aggressive dispute history. High probability of dragging delayed invoices to High Court.";
+      } else if (matchedCtr.litigation_exposure_index >= 45) {
+        document.getElementById('nivaranContractorPlainSummary').innerText = "Builder has moderate financial standing. Sensitive to cashflow bottlenecks and price escalations.";
+      } else {
+        document.getElementById('nivaranContractorPlainSummary').innerText = "Builder operates with disciplined dispute avoidance record and solid working capital reserves.";
+      }
+
+      // Operational metrics (pending variations and delayed bills)
+      if (data.operational_metrics) {
+        const op = data.operational_metrics;
+        document.getElementById('pendingVariationsText').innerText = `${op.pending_variation_orders_gt_90d} orders (₹${op.pending_variation_value_cr.toFixed(1)} Cr)`;
+        document.getElementById('delayedInvoicesText').innerText = `${op.unpaid_milestone_invoices_count} bills (${op.max_invoice_delay_days} days)`;
+      }
+
+      // Render Plain English Flagged Clauses
+      renderPlainEnglishClauses(niv.flagged_clauses);
+
+      // -------------------------------------------------------------
+      // PAGE 2: ANUMATI RENDER
+      // -------------------------------------------------------------
+      document.getElementById('clearanceStatusBadge').innerText = anu.overall_clearance_status;
+      document.getElementById('rsiScoreText').innerText = `${anu.regulatory_stagnation_index.toFixed(2)}x`;
+      document.getElementById('daysOverdueText').innerText = `${anu.days_overdue} Days`;
+      document.getElementById('economicImpactText').innerText = anu.economic_impact_delay_risk;
+      document.getElementById('anumatiBottleneckDeptText').innerText = anu.bottleneck_department;
+
+      const loopBadge = document.getElementById('loopbackBadge');
+      if (anu.paperwork_loopbacks_detected) {
+        loopBadge.innerText = "PAPERWORK LOOPS DETECTED";
+        loopBadge.className = "px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded animate-pulse";
+      } else {
+        loopBadge.innerText = "NO PAPERWORK LOOPS";
+        loopBadge.className = "px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded";
+      }
+
+      // Stepper cards for 5 stages
+      renderClearanceStepperCards(anu.stage_breakdown);
+
+      // Pragati PMO Brief
+      document.getElementById('pragatiMemoText').innerText = anu.recommended_escalation_memo;
+      document.getElementById('modalPragatiMemoText').innerText = anu.recommended_escalation_memo;
+      document.getElementById('pragatiDeptText').innerText = anu.bottleneck_department;
+      document.getElementById('pragatiDaysText').innerText = `${anu.days_overdue} Days`;
+
+      // Playground snippet sync
+      document.getElementById('customContractText').value = niv.flagged_clauses.map(c => c.snippet).join('\n\n');
+      document.getElementById('jsonViewer').innerText = JSON.stringify(data, null, 2);
+
+      // -------------------------------------------------------------
+      // RENDER ALL CHARTS
+      // -------------------------------------------------------------
+      renderNivaranCharts(data);
+      renderAnumatiCharts(data);
+      lucide.createIcons();
+    }
+
+    // Render Plain English Clause Cards
+    function renderPlainEnglishClauses(clauses) {
+      const container = document.getElementById('nivaranFlaggedClausesContainer');
+      container.innerHTML = '';
+      if (!clauses || clauses.length === 0) {
+        container.innerHTML = '<div class="col-span-2 p-6 bg-slate-900/60 rounded-xl border border-slate-800 text-center text-xs text-slate-400">No high-risk contractual clauses detected in this agreement.</div>';
+        return;
+      }
+
+      clauses.forEach(c => {
+        let badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+        if (c.severity === "CRITICAL") badgeColor = "bg-red-500/10 text-red-400 border-red-500/20";
+
+        let plainExplanation = "";
+        let whyItMatters = "";
+
+        if (c.category.includes("LAND") || c.clause_title.includes("Land")) {
+          plainExplanation = "The contract starts work before the government has 100% finished buying and clearing the land.";
+          whyItMatters = "When the builder's bulldozers sit idle waiting for land, they legally charge millions every month in idle machinery claims.";
+        } else if (c.category.includes("ESCALATION") || c.clause_title.includes("Escalation")) {
+          plainExplanation = "The contract forces a fixed price and doesn't adjust when steel or cement prices skyrocket.";
+          whyItMatters = "When material prices spike by 20%, the builder runs out of cash, slows down work, and files a lawsuit to avoid bankruptcy.";
+        } else if (c.category.includes("VARIATION") || c.clause_title.includes("Variation")) {
+          plainExplanation = "The government changed the project design/scope without approving extra time or revised rates.";
+          whyItMatters = "Unapproved extra work causes huge unpaid bills, resulting in the contractor walking off site.";
+        } else {
+          plainExplanation = "Imbalanced penalty or dispute clause that transfers disproportionate risk to the executing party.";
+          whyItMatters = "Creates immediate friction when minor delays occur, prompting court stays and injunctions.";
+        }
+
+        const cardHtml = `
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3 flex flex-col justify-between">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  ${c.clause_title}
+                </span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded border ${badgeColor}">${c.severity} RISK</span>
+              </div>
+              <div class="bg-slate-950 p-2.5 rounded border border-slate-800/80 text-[11px] font-mono text-slate-300">
+                "${c.snippet}"
+              </div>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+              <p class="text-slate-200">
+                <strong class="text-amber-400">💡 In Plain Words:</strong> ${plainExplanation}
+              </p>
+              <p class="text-slate-300">
+                <strong class="text-red-400">⚠️ Why It Causes Trouble:</strong> ${whyItMatters}
+              </p>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    // Render Clearance Stepper Cards
+    function renderClearanceStepperCards(stages) {
+      const container = document.getElementById('clearanceStepper');
+      container.innerHTML = '';
+      if (!stages || stages.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400">No clearance stages recorded.</p>';
+        return;
+      }
+
+      stages.forEach((st, idx) => {
+        const isStag = st.is_stagnated;
+        const isLoop = st.paperwork_loopback_detected;
+        let badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        let statusTitle = "ON TRACK";
+        let plainReason = "Stage processing within standard official government deadline.";
+
+        if (isStag) {
+          badgeColor = "bg-red-500/10 text-red-400 border-red-500/20";
+          statusTitle = "STALLED OVERDUE";
+          plainReason = `Overdue by ${st.days_pending - st.benchmark_days} days. Approval is stuck in departmental review.`;
+        } else if (st.stagnation_ratio > 0.85) {
+          badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+          statusTitle = "NEAR DEADLINE";
+          plainReason = "Nearing maximum allowed SLA time. Requires prompt signature.";
+        }
+
+        if (isLoop) {
+          plainReason += " ⚠️ Officers raised clarification queries multiple times without resolving.";
+        }
+
+        const card = `
+          <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                  ${idx + 1}
+                </span>
+                <span class="text-xs font-bold text-white">${st.stage_name}</span>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded border ${badgeColor}">${statusTitle}</span>
+            </div>
+
+            <div class="bg-slate-950 p-2.5 rounded border border-slate-800/80 flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Time Elapsed vs Allowed:</span>
+              <strong class="${isStag ? 'text-red-400' : 'text-white'}">${st.days_pending} / ${st.benchmark_days} days (${st.stagnation_ratio}x)</strong>
+            </div>
+
+            <div class="text-xs space-y-1 text-slate-300">
+              <p><strong class="text-slate-400">Responsible Ministry/Dept:</strong> ${st.department}</p>
+              <p><strong class="text-amber-400">Plain English Status:</strong> ${plainReason}</p>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', card);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // CHART.JS RENDERING IMPLEMENTATION
+    // -------------------------------------------------------------
+    function renderNivaranCharts(data) {
+      const niv = data.nivaran_assessment;
+      const op = data.operational_metrics || {};
+
+      // 1. Dispute Factors Chart (Donut)
+      const ctx1 = document.getElementById('disputeFactorsChart').getContext('2d');
+      if (chartDisputeFactors) chartDisputeFactors.destroy();
+      chartDisputeFactors = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: ['Land Delivery Delays', 'Unindexed Material Costs', 'Unapproved Variation Work', 'Unpaid Milestone Bills'],
+          datasets: [{
+            data: [35, 25, 25, 15],
+            backgroundColor: ['#ef4444', '#f59e0b', '#6366f1', '#3b82f6'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10, family: 'Plus Jakarta Sans' } } }
+          },
+          cutout: '70%'
+        }
+      });
+
+      // 2. Contractor Financials Chart (Bar)
+      const ctx2 = document.getElementById('contractorFinancialsChart').getContext('2d');
+      if (chartContractorFinancials) chartContractorFinancials.destroy();
+      const meta = data.project_metadata;
+      const ctrDisputeVal = niv.contractor_litigation_index > 50 ? 285.5 : 15.0;
+      const pendingVarVal = op.pending_variation_value_cr || 68.4;
+
+      chartContractorFinancials = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: ['Active Contract', 'Disputed Claims', 'Pending Variations'],
+          datasets: [{
+            label: 'Amount in ₹ Crore',
+            data: [meta.total_sanctioned_cost_cr, ctrDisputeVal, pendingVarVal],
+            backgroundColor: ['#6366f1', '#ef4444', '#f59e0b'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+          }
+        }
+      });
+
+      // 3. Clause Severity Chart (Doughnut)
+      const ctx3 = document.getElementById('clauseSeverityChart').getContext('2d');
+      if (chartClauseSeverity) chartClauseSeverity.destroy();
+      const criticalClauses = niv.flagged_clauses.filter(c => c.severity === 'CRITICAL').length;
+      const highClauses = niv.flagged_clauses.filter(c => c.severity === 'HIGH').length;
+      const medClauses = Math.max(1, niv.flagged_clauses.filter(c => c.severity === 'MEDIUM').length);
+
+      chartClauseSeverity = new Chart(ctx3, {
+        type: 'pie',
+        data: {
+          labels: ['Critical Risk Clauses', 'High Risk Clauses', 'Medium Friction Clauses'],
+          datasets: [{
+            data: [criticalClauses || 1, highClauses || 2, medClauses],
+            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function renderAnumatiCharts(data) {
+      const anu = data.anumati_assessment;
+      const stages = anu.stage_breakdown || [];
+
+      // 1. Clearance Comparison Chart (Bar)
+      const ctx1 = document.getElementById('clearanceComparisonChart').getContext('2d');
+      if (chartClearanceComparison) chartClearanceComparison.destroy();
+      
+      const labels = stages.map(s => s.stage_name.split('(')[0].trim());
+      const actualDays = stages.map(s => s.days_pending);
+      const benchmarkDays = stages.map(s => s.benchmark_days);
+
+      chartClearanceComparison = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Actual Days Elapsed',
+              data: actualDays,
+              backgroundColor: '#ef4444',
+              borderRadius: 6
+            },
+            {
+              label: 'Government Benchmark SLA (Days)',
+              data: benchmarkDays,
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { color: '#94a3b8', font: { size: 10 } } }
+          },
+          scales: {
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+          }
+        }
+      });
+
+      // 2. Department Delay Share (Pie Chart)
+      const ctx2 = document.getElementById('deptDelayShareChart').getContext('2d');
+      if (chartDeptDelayShare) chartDeptDelayShare.destroy();
+      
+      const deptMap = {};
+      stages.forEach(s => {
+        const d = s.department.split('&')[0].trim();
+        deptMap[d] = (deptMap[d] || 0) + s.days_pending;
+      });
+
+      chartDeptDelayShare = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(deptMap),
+          datasets: [{
+            data: Object.values(deptMap),
+            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 } } }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // Modal helpers
+    function openPragatiModal() {
+      document.getElementById('pragatiModal').classList.remove('hidden');
+    }
+    function closePragatiModal() {
+      document.getElementById('pragatiModal').classList.add('hidden');
+    }
+
+    // Live Custom Clause Test
+    async function runCustomNivaranTest() {
+      const text = document.getElementById('customContractText').value;
+      const payload = {
+        project_id: "CUSTOM-TEST-001",
+        project_name: "Interactive Custom DPR Contract Evaluation",
+        contract_text_or_summary: text,
+        contractor_data: {
+          agency_name: "Custom Infrastructure Agency",
+          past_arbitration_count: 2,
+          disputed_variation_value_cr: 45.0,
+          historical_legal_stays: 1,
+          total_active_contract_value_cr: 500.0
+        },
+        operational_metrics: {
+          pending_variation_orders_gt_90d: 3,
+          pending_variation_value_cr: 22.0,
+          unpaid_milestone_invoices_count: 2,
+          max_invoice_delay_days: 80,
+          pending_time_extension_requests: 1
+        }
+      };
+
+      try {
+        const res = await fetch('/api/v1/nivaran/assess-dispute-risk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        document.getElementById('jsonViewer').innerText = JSON.stringify(json, null, 2);
+        renderPlainEnglishClauses(json.flagged_clauses);
+        document.getElementById('nivaranClauseCountNumber').innerText = json.flagged_clauses.length;
+      } catch (err) {
+        document.getElementById('jsonViewer').innerText = "Error calling endpoint: " + err;
+      }
+    }
+
+    // App Initialization
+    document.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      await loadContractorsTable();
+      await populateProjectsDropdown();
+    });
+  </script>
+</body>
+</html>
