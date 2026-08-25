@@ -10,7 +10,7 @@
 3. [The 5 Core Mathematical & Algorithmic Engines](#3-the-5-core-mathematical--algorithmic-engines)
    - [3.1 KAAL-CHAKRA: Probabilistic Schedule Risk & Competing Risks Survival Engine](#31-kaal-chakra-probabilistic-schedule-risk--competing-risks-survival-engine)
    - [3.2 SETU-GRAPH: Max-Plus Cascade Algebra & Shapley Systemic Criticality](#32-setu-graph-max-plus-cascade-algebra--shapley-systemic-criticality)
-   - [3.3 VITTA-VYUHA: Two-Stage Stochastic MILP with Rockafellar-Uryasev CVaR90](#33-vitta-vyuha-two-stage-stochastic-milp-with-rockafellar-uryasev-cvar90)
+   - [3.3 VITTA-VYUHA: Two-Stage Stochastic LP with Rockafellar-Uryasev CVaR90](#33-vitta-vyuha-two-stage-stochastic-lp-with-rockafellar-uryasev-cvar90)
    - [3.4 PRAGATI-SAARTHI: 3-Layer Zero-Hallucination & Merkle Proof Lineage](#34-pragati-saarthi-3-layer-zero-hallucination--merkle-proof-lineage)
    - [3.5 UNIFIED CAUSAL COCKPIT & SOVEREIGN AGENCY INDEX (AEAI)](#35-unified-causal-cockpit--sovereign-agency-index-aeai)
 4. [The 4 Auxiliary Forensics & Environmental Modules](#4-the-4-auxiliary-forensics--environmental-modules)
@@ -40,7 +40,7 @@ MoSPI currently maintains **PAIMANA** (Project Appraisal, Implementation, and Mo
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ Level 7: Incentive-Aligned (Mechanism Design — Makes truth-telling the optimal strategy)│
 │ Level 6: Verified (Physical Earth Observation — Satellite proof vs. self-reported data)│
-│ Level 5: Prescriptive (Operations Research — Constrained MILP capital allocation)      │
+│ Level 5: Prescriptive (Operations Research — Constrained LP capital allocation)        │
 │ Level 4: Causal (Double Machine Learning — True policy intervention treatment effects) │
 │ Level 3: Predictive (Reference Class Forecasting — Calibrated probability distributions)│
 │ Level 2: Diagnostic (Network Graph Contagion — Root cause tracing across agencies)     │
@@ -61,7 +61,7 @@ MoSPI currently maintains **PAIMANA** (Project Appraisal, Implementation, and Mo
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH             │      │ 3. VITTA-VYUHA           │   │
-│   │ • AFT Log-Logistic / Weib │ ───► │ • Multi-Modal DAG Network │ ───► │ • Two-Stage MILP (HiGHS) │   │
+│   │ • Conformalised Quantiles │ ───► │ • Multi-Modal DAG Network │ ───► │ • Two-Stage LP (HiGHS)   │   │
 │   │ • Competing Risks (CIF)   │      │ • Max-Plus Schedule Float │      │ • CVaR90 Risk Dial (κ)   │   │
 │   │ • P10-P95 Fan Chart       │      │ • Shapley Value Contagion │      │ • 10% NER Statutory Floor│   │
 │   │ • Baseline Reset Detection│      │ • Free vs Total Float     │      │ • Dual Shadow Prices (π) │   │
@@ -157,10 +157,10 @@ $$\varphi_j = \sum_{C \subseteq N \setminus \{j\}} \frac{|C|!\,(n - |C| - 1)!}{n
 
 ---
 
-### 3.3 VITTA-VYUHA: Two-Stage Stochastic MILP with Rockafellar-Uryasev CVaR90
+### 3.3 VITTA-VYUHA: Two-Stage Stochastic LP with Rockafellar-Uryasev CVaR90
 
 #### 1. Optimization Formulation
-Formulated as a Two-Stage Stochastic Mixed-Integer Linear Program (**MILP**) solved via the **HiGHS** simplex engine in under **$10\text{ ms}$**:
+Formulated as a Two-Stage Stochastic **Linear Program** solved via the **HiGHS** simplex engine in under **$10\text{ ms}$**. Naming note: every decision variable is continuous (`integrality` is all-zero), because capital tranches are genuinely divisible. It is an LP and is labelled as one -- a true MILP would add a binary fund/defer indicator with a minimum viable tranche, a deliberate future upgrade rather than what runs today. This distinction is load-bearing for the duals below: **an LP has valid dual variables; a MILP does not**, so the shadow prices we publish are meaningful precisely *because* the formulation is continuous:
 
 $$\min_{x, y, z, \lambda, \eta, \zeta, w, u} \quad (1 - \kappa) \sum_{s \in \mathcal{S}} p_s L_s \;+\; \kappa \left[ \eta + \frac{1}{1 - \alpha} \sum_{s \in \mathcal{S}} p_s \zeta_s \right]$$
 
@@ -260,7 +260,7 @@ All inter-module communication is governed by strict Pydantic v2 data contracts 
 - `LineageRef`: Query SHA-256, Dataset SHA-256, Model SHA-256, Merkle Root, and Merkle Proof path.
 - `ProjectForecast`: Comprehensive probabilistic forecast and baseline reset counts.
 - `DependencyNode` & `DependencySubGraph`: Float values, locked capital, and Shapley criticality $\varphi$.
-- `AllocationRequest` & `AllocationResult`: MILP budget pool, CVaR risk dial $\kappa$, NER floor, and shadow prices $\pi$.
+- `AllocationRequest` & `AllocationResult`: LP budget pool, CVaR risk dial $\kappa$, NER floor, and shadow prices $\pi$.
 
 ---
 
@@ -311,7 +311,7 @@ PRAKALP-DRISHTI enforces 8 strict CI lint rules (R1–R8):
 |---|---|---|---|
 | **Portfolio Capacity** | 2,207 Mega-Projects | **2,207 Projects in RAM** | ✅ 100% Active |
 | **Query Latency** | $<50\text{ ms}$ | **$<5\text{ ms}$ per project** | ✅ Ultra-Fast |
-| **MILP Solve Speed** | $<2,000\text{ ms}$ | **$8.7\text{ ms}$ (HiGHS Solver)** | ✅ 230x Faster |
+| **LP Solve Speed** | $<2,000\text{ ms}$ | **$8.7\text{ ms}$ (HiGHS Solver)** | ✅ 230x Faster |
 | **Quantile Monotonicity**| $P_{10} \le P_{50} \le P_{80} \le P_{95}$ | **100% Strictly Monotone** | ✅ 0 Inversions |
 | **Cryptographic Integrity**| RFC 8785 JCS + SHA-256 | **100% Verified Merkle Tree** | ✅ Tamper-Proof |
 | **Deployment Model** | Sovereign Edge / Air-Gapped | **Single Unified Port (8000)** | ✅ Air-Gapped Ready |

@@ -205,10 +205,10 @@ for pid in TEST_IDS[:5]:
 
 
 # ========================================================================
-# AUDIT 3: VITTA-VYUHA — MILP Constraint Satisfaction
+# AUDIT 3: VITTA-VYUHA — LP Constraint Satisfaction
 # ========================================================================
 print("\n" + "=" * 80)
-print("AUDIT 3: VITTA-VYUHA (Stochastic MILP Allocation)")
+print("AUDIT 3: VITTA-VYUHA (Stochastic LP Allocation)")
 print("=" * 80)
 
 vitta = get_vitta_vyuha_engine()

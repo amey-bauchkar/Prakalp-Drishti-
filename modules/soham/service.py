@@ -10,6 +10,8 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, List
 
+from analytics_engine.state_resolution import resolve_state
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 
@@ -47,7 +49,7 @@ class DPRScorerEngine:
                 "project_id": str(row["ProjectId"]),
                 "project_name": str(row["ProjectName"]),
                 "sector": str(row["SectorName"]),
-                "state": str(row["StateName"]),
+                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 "agency": str(row["COMPANYNAME"]),
                 "sanction_date": str(row["SanctionDate"])[:10],
                 "dpr_scoping_quality_score": round(np.random.uniform(42.0, 64.0), 1),

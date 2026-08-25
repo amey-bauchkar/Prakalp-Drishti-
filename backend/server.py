@@ -9,6 +9,7 @@ import sys
 import json
 import pandas as pd
 from typing import Optional
+from analytics_engine.state_resolution import resolve_state
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
@@ -78,7 +79,7 @@ def load_in_memory_cache():
                 "project_id": pid,
                 "project_name": str(row["ProjectName"]),
                 "sector": str(row["SectorName"]),
-                "state": str(row["StateName"]),
+                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 "company": str(row["COMPANYNAME"]),
                 "original_cost_cr": float(row["OriginalCost"]),
                 "revised_cost_cr": float(row["RevisedCost"]),

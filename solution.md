@@ -18,7 +18,7 @@ It replaces static, self-reported project tracking with **real-time probabilisti
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH             │      │ 3. VITTA-VYUHA           │   │
-│   │ • AFT Log-Logistic Model  │ ───► │ • Multi-Modal DAG Network │ ───► │ • Two-Stage MILP (HiGHS) │   │
+│   │ • Conformalised Quantiles │ ───► │ • Multi-Modal DAG Network │ ───► │ • Two-Stage LP (HiGHS)   │   │
 │   │ • Competing Risks Absorber│      │ • Max-Plus Schedule Float │      │ • CVaR90 Risk Dial       │   │
 │   │ • P10-P95 Fan Chart       │      │ • Shapley Value Contagion │      │ • 10% NER Statutory Floor│   │
 │   │ • Baseline Reset Detection│      │ • Free vs Total Float     │      │ • Dual Shadow Prices (π) │   │
@@ -74,7 +74,7 @@ It replaces static, self-reported project tracking with **real-time probabilisti
 ---
 
 ### 💰 Feature 3: VITTA-VYUHA (Smart Budget Allocation & Rebalancing)
-* **Optimization Formulation:** Two-Stage Stochastic Mixed-Integer Linear Program (**MILP**) solved via the **HiGHS** simplex solver in under **$10\text{ ms}$**.
+* **Optimization Formulation:** Two-Stage Stochastic **Linear Program** (continuous -- every decision variable is a divisible capital tranche, so `integrality` is all-zero) solved via the **HiGHS** simplex solver in under **$10\text{ ms}$**. An LP has valid duals; a MILP does not, so the published shadow prices are meaningful precisely because the model is continuous.
 * **Rockafellar-Uryasev Tail Risk ($\text{CVaR}_{90}$):** Balances expected completion yield against extreme financial disruption through an adjustable risk dial $\kappa \in [0, 1]$:
   $$\max \quad (1 - \kappa) \cdot \mathbb{E}[\text{Yield}] - \kappa \cdot \text{CVaR}_{90}(\text{Capital at Risk})$$
 * **Piecewise-Linear SOS2 Tranches:** Models diminishing marginal returns on capital (Tranche 1: 40%, Tranche 2: 35%, Tranche 3: 25%) to ensure smooth, realistic fund distribution.
@@ -118,7 +118,7 @@ It replaces static, self-reported project tracking with **real-time probabilisti
 | :--- | :--- | :--- | :--- |
 | **Portfolio Capacity** | 2,207 Mega-Projects | **2,207 Projects in RAM** | ✅ 100% Active |
 | **Query Latency** | $<50\text{ ms}$ | **$<5\text{ ms}$ per project** | ✅ Ultra-Fast |
-| **MILP Solve Speed** | $<2,000\text{ ms}$ | **$8.7\text{ ms}$ (HiGHS Solver)** | ✅ 230x Faster |
+| **LP Solve Speed** | $<2,000\text{ ms}$ | **$8.7\text{ ms}$ (HiGHS Solver)** | ✅ 230x Faster |
 | **Mathematical Monotonicity** | $P_{10} \le P_{50} \le P_{80} \le P_{95}$ | **100% Strictly Monotone** | ✅ 0 Inversions |
 | **Cryptographic Proofs** | RFC 8785 JCS + SHA-256 | **100% Verified Merkle Tree** | ✅ Tamper-Proof |
 | **Deployment Model** | Sovereign Edge / Air-Gapped | **1 Single Unified Port (8000)** | ✅ Complete Integration |

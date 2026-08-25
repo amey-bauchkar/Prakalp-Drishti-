@@ -33,6 +33,13 @@ import hashlib
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
+# Importable as a package module AND runnable as a script: the direct-script form
+# has the file's own directory on sys.path but not the repository root, so the
+# absolute package import fails. Fall back to the sibling module in that case.
+try:
+    from analytics_engine.state_resolution import resolve_state, clean_text
+except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
+    from state_resolution import resolve_state, clean_text
 
 from analytics_engine.contracts import Fact, Uncertainty, LineageRef, ProjectForecast
 from analytics_engine.conformal_calibration import load_calibration
@@ -177,7 +184,7 @@ class KaalChakraEngine:
         pid = str(p["ProjectId"])
         pname = str(p["ProjectName"])
         sector = str(p["SectorName"])
-        state = str(p["StateName"])
+        state = resolve_state(p.get("ProjectId"), p.get("StateName"))[0]
         entity = str(p["CANONICAL_ENTITY"])
         
         orig_cost = float(p["OriginalCost"])

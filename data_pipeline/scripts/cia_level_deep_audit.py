@@ -5,7 +5,7 @@ Exhaustive verification of 100% of data, engines, cryptographic proofs, and imag
 2. Satellite Image Assets: 4,414 files exist, verified readable, correct aspect, non-zero bytes
 3. KAAL-CHAKRA: 2,207/2,207 survival forecasts, strict quantile monotonicity (P10 <= P50 <= P80 <= P95), valid dates, no timestamp overflows
 4. SETU-GRAPH: Full DAG connectivity, strict acyclicity check across 2,207 subgraphs, Monte Carlo Shapley efficiency axiom sum(phi) == total_locked
-5. VITTA-VYUHA: 100 stochastic MILP solves across varying kappa/budget, 10% statutory NER floor compliance, dynamic LP dual shadow prices
+5. VITTA-VYUHA: 100 stochastic LP solves across varying kappa/budget, 10% statutory NER floor compliance, dynamic LP dual shadow prices
 6. PRAGATI-SAARTHI: 2,207 bilingual PMO briefs, SHA-256 Merkle root consistency, sibling inclusion proof integrity
 7. SATELLITE FUSION: 2,207 optical corroborations, divergence metrics, statutory alerts
 8. AGENCY INDEX: Complete agency hierarchy aggregation, velocity scores, contagion ratings
@@ -204,7 +204,7 @@ def run_cia_audit():
     print(f"  • SETU-GRAPH Sub-DAGs: 50/50 Random Sample Sub-DAGs strictly acyclic & dynamic locked capital verified (Base ₹{sub_base.total_cascade_locked_p50_cr:,.2f} Cr -> Shock ₹{sub_shock.total_cascade_locked_p50_cr:,.2f} Cr); true downstream cascade confirmed on at least one sampled subgraph")
 
     # ──────────────────────────────────────────────────────────────────────────
-    # SECTION 5: VITTA-VYUHA MILP ALLOCATOR & DUAL MULTIPLIERS AUDIT
+    # SECTION 5: VITTA-VYUHA LP ALLOCATOR & DUAL MULTIPLIERS AUDIT
     # ──────────────────────────────────────────────────────────────────────────
     print("\n[PHASE 5/8] VITTA-VYUHA Stochastic Capital Optimizer & NER Floor...")
     vitta = get_vitta_vyuha_engine()
@@ -224,9 +224,9 @@ def run_cia_audit():
             assert res.shadow_price_budget_pi >= 0.0, f"Invalid budget dual price at B={b}: {res.shadow_price_budget_pi}"
             assert res.closure_error_perc < 5.0, f"Closure error above bound: {res.closure_error_perc}%"
             assert len(res.agency_shadow_prices) > 0, "Missing agency shadow prices"
-    print(f"  • VITTA-VYUHA Verdict: 20/20 MILP Stress Scenarios Optimal (100% NER Floor, HiGHS Duals & Closure Error < 5%)")
+    print(f"  • VITTA-VYUHA Verdict: 20/20 LP Stress Scenarios Optimal (100% NER Floor, HiGHS Duals & Closure Error < 5%)")
 
-    # Verify a targeted delay shock genuinely re-optimizes the MILP for a real candidate project
+    # Verify a targeted delay shock genuinely re-optimizes the LP for a real candidate project
     # (a project inside the top-60 pool that receives non-zero baseline funding at a scarce budget).
     scarce_req = AllocationRequest(budget_pool_cr=3000.0, risk_dial_kappa=0.75, enforce_ner_floor=True)
     baseline_res = vitta.optimize_allocation(scarce_req)
@@ -350,7 +350,7 @@ def run_cia_audit():
         print("  • High-Res Satellite Imagery: 4,414 / 4,414 Images Verified (800x800 px sub-meter, Real CV Deltas)")
         print("  • KAAL-CHAKRA: 2,207 / 2,207 Monotone Quantile Forecasts (True Delay Shock Response)")
         print("  • SETU-GRAPH: 2,207 Sub-DAGs Strictly Acyclic & Float Propagation Verified")
-        print("  • VITTA-VYUHA: 100% Optimal MILP Solves & HiGHS Dual Shadow Prices (Closure Error < 5%)")
+        print("  • VITTA-VYUHA: 100% Optimal LP Solves & HiGHS Dual Shadow Prices (Closure Error < 5%)")
         print("  • PRAGATI-SAARTHI: 100% Cryptographic Merkle Proofs & Live Tamper Defense Verified")
         print("  • SATELLITE FUSION: 100% Dual-Epoch Coverage & Non-Random Optical Variance")
         print("  • AGENCY INDEX: 100% Cross-Agency Performance Aggregated")

@@ -135,6 +135,7 @@ class AllocationResult(BaseModel):
     solve_time_ms: float
     focus_project_id: Optional[str] = Field(default=None, description="The project_id a delay shock was targeted at, if any")
     focus_project_is_candidate: bool = Field(default=True, description="Whether focus_project_id is inside this quarter's top-60 capital-priority candidate pool. False means the shock cannot affect this engine's output for that project.")
+    ner_coverage: Optional[Dict[str, Any]] = Field(default=None, description="Geographic coverage the statutory NER floor was evaluated over. 46.5% of projects carry no ministry-reported state, and the floor binds only on reported geography, so this reports the basis rather than leaving it implicit.")
 
 class CabinetBriefing(BaseModel):
     doc_hash: str

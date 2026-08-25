@@ -56,6 +56,6 @@ Despite national initiatives like **PM-GatiShakti** and regular **PRAGATI** revi
 | :--- | :--- | :--- |
 | **Timeline Prediction** | Contractor promises & hidden baseline resets | Calibrated AI survival modeling with $P_{10}–P_{95}$ confidence intervals |
 | **Supply Chain Contagion** | Departmental silos with invisible domino delays | Multi-modal DAG dependency networks with Max-Plus float absorption |
-| **Fund Allocation** | Historical linear disbursements | Two-stage stochastic optimization (MILP) maximizing national progress |
+| **Fund Allocation** | Historical linear disbursements | Two-stage stochastic optimization (LP) maximizing national progress |
 | **Ground-Truth Verification** | Self-reported progress metrics | Dual-epoch sub-meter optical satellite imagery comparison |
 | **Executive Governance** | Static PDFs vulnerable to data disputes | Tamper-proof, cryptographically verified bilingual Cabinet briefings |

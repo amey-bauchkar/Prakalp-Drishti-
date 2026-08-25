@@ -185,7 +185,7 @@ Any viable solution addressing this problem statement must satisfy the following
 2. **Mathematical Rigor & Monotonicity**:
    - Quantile bounds must guarantee strict non-crossing monotonicity: $P_{10} \le $P_{50} \le $P_{80} \le $P_{95}$.
    - Supply-chain graph must be condensed into a strict DAG via Tarjan SCC to eliminate circular deadlocks.
-   - Capital allocation must be formulated as a Two-Stage Stochastic MILP with CVaR90 tail risk.
+   - Capital allocation must be formulated as a Two-Stage Stochastic LP with CVaR90 tail risk.
 3. **Zero-Trust Physical Verification**:
    - Must integrate sub-meter dual-epoch satellite imagery (optical + SAR) with an automated EO-eligibility classifier.
 4. **Zero-Hallucination Governance Briefings**:
@@ -203,7 +203,7 @@ Any viable solution addressing this problem statement must satisfy the following
 |---|---|---|
 | **Timeline Prediction** | Static DPR target dates & hidden baseline resets | Calibrated AFT survival modeling with $P_{10}–P_{95}$ conformal bounds |
 | **Cross-Project Risk** | Siloed ministry tracking with invisible cascade delays | Multi-modal DAG with Max-Plus float algebra & Shapley systemic criticality |
-| **Capital Allocation** | Historical quarterly disbursements & linear rationing | Two-stage stochastic MILP with CVaR90 risk dial & statutory 10% NER floor |
+| **Capital Allocation** | Historical quarterly disbursements & linear rationing | Two-stage stochastic LP with CVaR90 risk dial & statutory 10% NER floor |
 | **Ground-Truth Audit** | Unverified contractor self-reporting web forms | Multi-sensor dual-epoch optical + SAR satellite remote corroboration |
 | **Integrity & Forensics**| 18–20% CCEA threshold gaming & arbitrary price gouging | McCrary density discontinuity testing & CPWD Clause 10CC formula audit |
 | **Executive Governance** | 800-page static PDFs vulnerable to data disputes | Deterministic bilingual Cabinet notes with cryptographic Merkle proof lineage |

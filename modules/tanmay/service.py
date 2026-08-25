@@ -17,6 +17,8 @@ import numpy as np
 import pandas as pd
 from typing import Dict, Any, List, Optional
 
+from analytics_engine.state_resolution import resolve_state
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 WPI_PATH = os.path.join(BASE_DIR, "paimana_extracted", "advanced_macro", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv")
@@ -210,7 +212,7 @@ class SatyaKavachEngine:
                 "project_id": str(row["ProjectId"]),
                 "project_name": str(row["ProjectName"]),
                 "sector": str(row["SectorName"]),
-                "state": str(row["StateName"]),
+                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 "agency": str(row["COMPANYNAME"]),
                 "canonical_agency": str(row["CanonicalAgency"]),
                 "original_cost_cr": orig_cost,
@@ -331,7 +333,7 @@ class SatyaKavachEngine:
                 "project_id": str(row["ProjectId"]),
                 "project_name": str(row["ProjectName"]),
                 "sector": str(row["SectorName"]),
-                "state": str(row["StateName"]),
+                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
                 "agency": str(row["COMPANYNAME"]),
                 "sanction_year": int(row["SanctionYear"]),
                 "original_cost_cr": orig_cost,

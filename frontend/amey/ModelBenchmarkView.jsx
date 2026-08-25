@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FlaskConical, AlertTriangle, TrendingUp, Layers, ShieldAlert, Info } from 'lucide-react';
+import { apiFetch } from './authClient';
 
 const API = 'http://127.0.0.1:8000';
 
@@ -36,15 +37,25 @@ export default function ModelBenchmarkView() {
   const [bench, setBench] = useState(null);
   const [queue, setQueue] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [queueDenied, setQueueDenied] = useState(null);
+  const [leadTime, setLeadTime] = useState(null);
 
   useEffect(() => {
     let dead = false;
+    // /benchmark is public (it describes model quality, not project data).
+    // /early-warning requires read_alerts, so a 403 is rendered as a role message
+    // rather than an empty panel.
     Promise.all([
       fetch(`${API}/api/amey/benchmark`).then((r) => r.json()).catch(() => null),
-      fetch(`${API}/api/amey/early-warning?limit=12`).then((r) => r.json()).catch(() => null),
-    ]).then(([b, q]) => {
+      apiFetch('/api/amey/early-warning?limit=12'),
+      fetch(`${API}/api/amey/lead-time`).then((r) => r.json()).catch(() => null),
+    ]).then(([b, q, lt]) => {
       if (dead) return;
-      setBench(b); setQueue(q); setLoading(false);
+      setBench(b);
+      setQueue(q.ok ? q.data : null);
+      setQueueDenied(q.ok ? null : q.error);
+      setLeadTime(lt);
+      setLoading(false);
     });
     return () => { dead = true; };
   }, []);
@@ -71,6 +82,9 @@ export default function ModelBenchmarkView() {
       {/* ── Dimension (b): ML vs conventional ─────────────────────────── */}
       {Object.entries(bench.targets || {}).map(([target, blk]) => {
         const mv = blk.ml_vs_conventional;
+        // Show the variant that is actually deployed, not whichever block is largest.
+        const variant = mv?.evaluated_variant || 'cuf_plus_external';
+        const rows = blk[variant] || blk.cuf_plus_external;
         const ab = blk.cuf_vs_external_ablation;
         const ci = blk.calendar_identity;
         return (
@@ -82,7 +96,10 @@ export default function ModelBenchmarkView() {
                   {TARGET_LABEL[target] || target}
                 </h3>
                 <span className="text-[10px] text-gov-muted">
-                  n={blk.n_usable} · held-out test={blk.n_test} · identical split for every model
+                  n={blk.n_usable} · held-out test={blk.n_test} · identical split for every model ·
+                  feature set <strong className="font-mono">
+                    {variant === 'cuf_only' ? 'CUF only' : 'CUF + external'}
+                  </strong> (chosen by held-out MAE)
                 </span>
               </div>
             </div>
@@ -99,7 +116,7 @@ export default function ModelBenchmarkView() {
                 </thead>
                 <tbody className="divide-y divide-gov-border">
                   {['sector_mean_baseline', 'ols_linear_regression', 'gradient_boosting'].map((m) => {
-                    const row = blk.cuf_plus_external[m];
+                    const row = rows[m];
                     const isML = m === 'gradient_boosting';
                     return (
                       <tr key={m} className={isML ? 'bg-gov-surface/60' : ''}>
@@ -196,6 +213,59 @@ export default function ModelBenchmarkView() {
           </div>
         );
       })}
+
+      {/* ── Outcome (d): is the warning actually EARLY? ───────────────── */}
+      {leadTime?.available && (
+        <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card">
+          <div className="flex items-center gap-2 border-b border-gov-border pb-3 mb-3">
+            <AlertTriangle className="w-4 h-4 text-gov-navy" />
+            <div>
+              <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
+                Early-Warning Validation — measured, not asserted
+              </h3>
+              <span className="text-[10px] text-gov-muted">
+                Sanction-time information only · n={leadTime.n_evaluated} mature projects
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { k: 'Precision', v: leadTime.precision, sub: `vs ${leadTime.base_rate} base rate`,
+                good: leadTime.precision > leadTime.base_rate },
+              { k: 'Recall', v: leadTime.recall, sub: 'of eventual overruns caught', good: leadTime.recall > 0.7 },
+              { k: 'F1', v: leadTime.f1, sub: 'balance of the two', good: leadTime.f1 > 0.6 },
+              { k: 'Median lead', v: `${leadTime.median_lead_months} mo`,
+                sub: 'sanction → recorded revision', good: true },
+            ].map((m) => (
+              <div key={m.k} className="bg-gov-surface p-3 rounded-xl border border-gov-border">
+                <span className="text-[9px] uppercase text-gov-muted font-bold block">{m.k}</span>
+                <span className={`text-lg font-black font-mono ${m.good ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {m.v ?? '—'}
+                </span>
+                <span className="text-[9px] text-gov-muted block">{m.sub}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-gov-muted mt-2.5">
+            Lift over base rate ={' '}
+            <strong className="text-gov-navy">
+              {(leadTime.precision / leadTime.base_rate).toFixed(2)}×
+            </strong>{' '}
+            better than flagging at random. Reported as precision/recall rather than
+            accuracy: at a {(leadTime.base_rate * 100).toFixed(0)}% base rate, accuracy
+            would be dominated by true negatives and would flatter the result.
+          </p>
+        </div>
+      )}
+
+      {queueDenied && (
+        <div className="bg-white p-5 rounded-2xl border border-amber-200 bg-amber-50 text-xs font-semibold text-amber-900 flex items-start gap-2">
+          <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-amber-600" />
+          <span>{queueDenied}
+            <span className="block font-normal mt-0.5">The early-warning queue requires the monitoring officer role or above.</span>
+          </span>
+        </div>
+      )}
 
       {/* ── Outcome (d): early-warning queue ──────────────────────────── */}
       {queue?.alerts && (
