@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { 
-  Building2, Clock, GitBranch, DollarSign, FileText, 
-  ShieldAlert, TrendingUp, CloudRain, Search, Sparkles, 
-  MapPin, CheckCircle2, Layers, Globe, ShieldCheck 
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
+import { Search, Menu, X, ChevronRight } from 'lucide-react';
 
-// Member Views (Zero-Conflict Modular Imports)
 import AmeyMasterView from '../amey/index.jsx';
 import SatyaKavachView from '../tanmay/index.jsx';
 import ArthaNetraView from '../parth/index.jsx';
@@ -16,133 +11,283 @@ import EOAuditorView from '../aditya/index.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 
-// Shell Navigation Header
-const MasterNavbar = () => {
+/* ─── Government Utility Bar ─────────────────────────────────── */
+function UtilityBar() {
+  return (
+    <div className="bg-gov-navy-dark text-[11px] text-gray-300 py-1.5">
+      <div className="gov-content flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="text-white font-medium">भारत सरकार</span>
+          <span className="opacity-40">|</span>
+          <span>Government of India</span>
+          <span className="opacity-30 hidden sm:inline">·</span>
+          <span className="hidden sm:inline">Ministry of Statistics &amp; Programme Implementation</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:inline opacity-70">Accessibility</span>
+          <span className="hidden sm:inline opacity-70">Contact</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Institutional Header + Navigation ──────────────────────── */
+function InstitutionalHeader() {
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') setMobileOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const navItems = [
-    { path: '/', label: 'Decision Intelligence Hub', icon: Sparkles, badge: 'Core 5 Engines' },
-    { path: '/tanmay', label: 'Satya-Kavach', icon: ShieldAlert, badge: '20% Anti-Gaming' },
-    { path: '/parth', label: 'Artha-Netra', icon: TrendingUp, badge: 'PSU Health' },
-    { path: '/janhavi', label: 'Varsha-Speed', icon: CloudRain, badge: 'Monsoon Impact' },
-    { path: '/soham', label: 'DPR-Scorer', icon: FileText, badge: 'Proposal QC' },
-    { path: '/aditya', label: 'EO-Auditor', icon: MapPin, badge: 'Satellite War Room' },
-    { path: '/karya-dakshata', label: 'Karya-Dakshata', icon: Layers, badge: 'De-Biasing' },
+    { to: '/', label: 'Home' },
+    { to: '/tanmay', label: 'SATYA-KAVACH' },
+    { to: '/parth', label: 'ARTHA-NETRA' },
+    { to: '/janhavi', label: 'VARSHA-SPEED' },
+    { to: '/soham', label: 'DPR-SCORER' },
+    { to: '/aditya', label: 'EO-AUDITOR' },
+    { to: '/karya-dakshata', label: 'KARYA-DAKSHATA' },
   ];
 
   return (
-    <header className="bg-gov-navy text-white sticky top-0 z-40 border-b border-gov-navy-light shadow-elevated">
-      {/* Top Gold Tricolor Accent Bar */}
-      <div className="h-1 bg-gradient-to-r from-[#FF9933] via-white to-[#138808]" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* Brand & Logo */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-gov-accent flex items-center justify-center text-gov-navy font-black shadow-soft">
-              <Building2 className="w-6 h-6" />
+    <header className="bg-white border-b border-border-default sticky top-0 z-50">
+      <div className="gov-content">
+        {/* Brand + Search + Mobile toggle */}
+        <div className="flex items-center justify-between py-3 gap-6">
+          <Link to="/" className="shrink-0 group">
+            <div className="text-gov-navy font-semibold text-lg tracking-tight leading-tight">
+              PRAKALP-DRISHTI
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-base tracking-tight text-white">प्रकल्प-दृष्टि</span>
-                <span className="text-[10px] font-black uppercase tracking-widest bg-white/10 text-gov-accent px-2 py-0.5 rounded border border-white/20">
-                  PRAKALP-DRISHTI
-                </span>
-              </div>
-              <span className="text-[10px] text-gov-muted-light block hidden sm:block">
-                MoSPI Central Sector Mega-Projects Decision Intelligence System
-              </span>
+            <div className="text-[11px] text-text-muted font-medium tracking-wide">
+              National Infrastructure Analytics
             </div>
-          </div>
+          </Link>
 
-          {/* Center: Global Project Search Bar across 2,207 projects */}
-          <div className="flex-1 max-w-md hidden md:block">
+          {/* Desktop search */}
+          <div className="flex-1 max-w-md hidden lg:block">
             <ProjectSearchBar />
           </div>
 
-          {/* Right Header Badges */}
-          <div className="hidden lg:flex items-center gap-3 text-xs shrink-0">
-            <span className="px-2.5 py-1 rounded bg-white/10 text-white/90 border border-white/20 font-bold flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              2,207 Projects (₹31.4L Cr)
-            </span>
-            <span className="px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-300 border border-emerald-500/30 font-bold">
-              Air-Gapped
-            </span>
-          </div>
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `px-3 py-2 text-[13px] font-medium rounded transition-colors ${
+                    isActive
+                      ? 'text-gov-navy font-semibold bg-gov-saffron-light'
+                      : 'text-text-secondary hover:text-gov-navy hover:bg-gray-50'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden p-2 text-gov-navy hover:bg-gray-50 rounded"
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
 
-        {/* Mobile Search Bar Row (Visible on small screens) */}
-        <div className="md:hidden pb-2">
+        {/* Mobile search */}
+        <div className="lg:hidden pb-3">
           <ProjectSearchBar />
         </div>
+      </div>
 
-        {/* Navigation Bar */}
-        <div className="flex overflow-x-auto py-2 gap-2 border-t border-white/10 no-scrollbar">
+      {/* Saffron active indicator line (desktop) */}
+      <div className="hidden lg:block gov-content">
+        <div className="flex">
           {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = item.to === '/'
+              ? location.pathname === '/'
+              : location.pathname === item.to;
             return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
-                  isActive
-                    ? 'bg-gov-accent text-gov-navy shadow-soft'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
+              <div
+                key={item.to}
+                className="px-3"
+                style={{ visibility: isActive ? 'visible' : 'hidden' }}
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{item.label}</span>
-                <span className={`text-[9px] px-1.5 py-0.2 rounded font-black ${
-                  isActive ? 'bg-gov-navy text-gov-accent' : 'bg-white/10 text-white/70'
-                }`}>
-                  {item.badge}
-                </span>
-              </Link>
+                <div className="h-[2px] bg-gov-saffron rounded-t" style={{ width: '100%' }} />
+              </div>
             );
           })}
         </div>
       </div>
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-border-default bg-white">
+          <nav className="gov-content py-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive = item.to === '/'
+                ? location.pathname === '/'
+                : location.pathname === item.to;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={`block px-3 py-2.5 text-sm font-medium rounded ${
+                    isActive
+                      ? 'text-gov-navy bg-gov-saffron-light border-l-2 border-gov-saffron'
+                      : 'text-text-secondary hover:bg-gray-50'
+                  }`}
+                >
+                  {item.label}
+                </NavLink>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   );
-};
+}
 
-export const App = () => {
+/* ─── Breadcrumbs ────────────────────────────────────────────── */
+function Breadcrumbs() {
+  const location = useLocation();
+  if (location.pathname === '/') return null;
+
+  const labels = {
+    '/tanmay': 'SATYA-KAVACH',
+    '/parth': 'ARTHA-NETRA',
+    '/janhavi': 'VARSHA-SPEED',
+    '/soham': 'DPR-SCORER',
+    '/aditya': 'EO-AUDITOR',
+    '/karya-dakshata': 'KARYA-DAKSHATA',
+  };
+
+  const current = labels[location.pathname] || location.pathname;
+
+  return (
+    <div className="breadcrumbs">
+      <Link to="/">Home</Link>
+      <span className="sep">/</span>
+      <span>Analytics</span>
+      <span className="sep">/</span>
+      <span className="text-text-primary font-medium">{current}</span>
+    </div>
+  );
+}
+
+/* ─── Institutional Footer ───────────────────────────────────── */
+function InstitutionalFooter() {
+  return (
+    <footer className="bg-gov-navy-dark text-gray-400 mt-auto">
+      <div className="gov-content py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {/* Identity */}
+          <div className="space-y-3">
+            <div className="text-white font-semibold text-base">PRAKALP-DRISHTI</div>
+            <p className="text-[13px] leading-relaxed text-gray-400">
+              Autonomous decision intelligence platform for central sector mega-projects.
+              Monitoring 2,207 public infrastructure works under MoSPI Problem Statement SIH26103.
+            </p>
+            <div className="text-[12px] text-gray-500 pt-1">
+              Ministry of Statistics &amp; Programme Implementation<br />
+              Government of India · New Delhi
+            </div>
+          </div>
+
+          {/* Analytics */}
+          <div className="space-y-3">
+            <div className="text-[11px] uppercase tracking-wider font-semibold text-gray-300">Analytics</div>
+            <ul className="space-y-2 text-[13px]">
+              <li><Link to="/" className="text-gray-400 hover:text-gov-saffron transition-colors">Decision Intelligence Hub</Link></li>
+              <li><Link to="/tanmay" className="text-gray-400 hover:text-gov-saffron transition-colors">SATYA-KAVACH — Contract Compliance</Link></li>
+              <li><Link to="/parth" className="text-gray-400 hover:text-gov-saffron transition-colors">ARTHA-NETRA — PSU Solvency</Link></li>
+              <li><Link to="/janhavi" className="text-gray-400 hover:text-gov-saffron transition-colors">VARSHA-SPEED — Monsoon Impact</Link></li>
+              <li><Link to="/soham" className="text-gray-400 hover:text-gov-saffron transition-colors">DPR-SCORER — Proposal Quality</Link></li>
+              <li><Link to="/aditya" className="text-gray-400 hover:text-gov-saffron transition-colors">EO-AUDITOR — Satellite Verification</Link></li>
+              <li><Link to="/karya-dakshata" className="text-gray-400 hover:text-gov-saffron transition-colors">KARYA-DAKSHATA — De-Biasing Simulator</Link></li>
+            </ul>
+          </div>
+
+          {/* Framework */}
+          <div className="space-y-3">
+            <div className="text-[11px] uppercase tracking-wider font-semibold text-gray-300">Statutory Framework</div>
+            <ul className="space-y-2 text-[13px] text-gray-400">
+              <li>CCEA 20% Cost Overrun Threshold</li>
+              <li>CPWD Clause 10CC Escalation Cap</li>
+              <li>Public Investment Board Guidelines</li>
+              <li>NITI Aayog Review Framework</li>
+              <li>National Election Commission Calendar</li>
+            </ul>
+          </div>
+
+          {/* Platform */}
+          <div className="space-y-3">
+            <div className="text-[11px] uppercase tracking-wider font-semibold text-gray-300">Platform</div>
+            <ul className="space-y-2 text-[13px] text-gray-400">
+              <li>Methodology</li>
+              <li>Data Sources</li>
+              <li>Coverage &amp; Limitations</li>
+              <li>Accessibility Statement</li>
+              <li>Terms of Use</li>
+            </ul>
+            <div className="pt-3 text-[12px] text-gray-500">
+              Air-gapped sovereign deployment.<br />
+              All computation runs locally.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom legal strip */}
+      <div className="border-t border-white/10">
+        <div className="gov-content py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-gray-500">
+          <span>© {new Date().getFullYear()} Government of India · Smart India Hackathon 2026</span>
+          <div className="flex items-center gap-4">
+            <span>Privacy Policy</span>
+            <span>Copyright</span>
+            <span>Disclaimer</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── App Shell ──────────────────────────────────────────────── */
+export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gov-surface flex flex-col font-sans">
-        <MasterNavbar />
-        
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Routes>
-            {/* Core Decision Engines (Amey) */}
-            <Route path="/" element={<AmeyMasterView />} />
+      <div className="min-h-screen flex flex-col font-sans">
+        <UtilityBar />
+        <InstitutionalHeader />
 
-            {/* Teammate Dedicated Views */}
-            <Route path="/tanmay" element={<SatyaKavachView />} />
-            <Route path="/parth" element={<ArthaNetraView />} />
-            <Route path="/janhavi" element={<VarshaSpeedView />} />
-            <Route path="/soham" element={<DPRScorerView />} />
-            <Route path="/aditya" element={<EOAuditorView />} />
-            <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
-          </Routes>
+        <main className="flex-1">
+          <div className="gov-content py-8">
+            <Breadcrumbs />
+            <Routes>
+              <Route path="/" element={<AmeyMasterView />} />
+              <Route path="/tanmay" element={<SatyaKavachView />} />
+              <Route path="/parth" element={<ArthaNetraView />} />
+              <Route path="/janhavi" element={<VarshaSpeedView />} />
+              <Route path="/soham" element={<DPRScorerView />} />
+              <Route path="/aditya" element={<EOAuditorView />} />
+              <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
+            </Routes>
+          </div>
         </main>
 
-        {/* Footer */}
-        <footer className="bg-white border-t border-gov-border py-6 text-center text-xs text-gov-muted">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span className="font-bold text-gov-navy">
-              प्रकल्प-दृष्टि (Prakalp-Drishti) · Smart India Hackathon 2026
-            </span>
-            <span className="text-[11px]">
-              MoSPI Problem Statement SIH26103 · Built with zero mock data on 2,207 live projects
-            </span>
-          </div>
-        </footer>
+        <InstitutionalFooter />
       </div>
     </BrowserRouter>
   );
-};
-
-export default App;
+}
