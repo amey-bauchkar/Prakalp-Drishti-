@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Satellite, Globe, RefreshCw, ArrowRight, MapPin } from 'lucide-react';
+import { Satellite, Globe, RefreshCw, ArrowRight, MapPin, ShieldAlert, FileText, CheckCircle2 } from 'lucide-react';
+import CombinedDashboard from './src/components/CombinedDashboard';
 
 export default function EOAuditorView() {
+  const [activeTab, setActiveTab] = useState('satellite'); // 'satellite' | 'governance'
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -25,20 +27,20 @@ export default function EOAuditorView() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-7 space-y-4">
             <div className="text-[12px] font-semibold uppercase tracking-widest text-gov-saffron">
-              EO-AUDITOR · Satellite Ground-Truth Verification
+              EO-AUDITOR · Satellite Ground-Truth &amp; Governance Intelligence
             </div>
             <h1 className="text-[36px] leading-[1.12] font-semibold text-gov-navy tracking-tight">
-              Earth Observation Satellite<br />
-              Verification System
+              Earth Observation &amp;<br />
+              Governance Risk Intelligence
             </h1>
             <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
-              Sub-meter dual-epoch satellite intelligence cross-referencing reported physical progress 
-              against high-resolution optical imagery (2018 Baseline vs 2023 Current) via computer vision 
-              change detection algorithms.
+              Sub-meter dual-epoch satellite intelligence cross-referencing reported progress 
+              against optical imagery (2018 Baseline vs 2023 Current), paired with NIVARAN grievance 
+              forensics and ANUMATI environmental clearance tracking.
             </p>
             <div className="flex items-center gap-4 pt-1">
-              <a href="#satellite-viewer" className="btn-primary">
-                Open Satellite Viewer <ArrowRight className="w-4 h-4" />
+              <a href="#module-workspace" className="btn-primary">
+                Explore War Room <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -48,39 +50,55 @@ export default function EOAuditorView() {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-4">Coverage</div>
               <div className="text-[42px] font-semibold text-gov-navy leading-none tracking-tight">2,207</div>
               <div className="text-[14px] text-text-secondary mt-2">Georeferenced projects</div>
-              <div className="text-[12px] text-text-muted mt-1">100% catalog coverage</div>
+              <div className="text-[12px] text-text-muted mt-1">100% catalog coverage · Dual-epoch CV</div>
             </div>
           </div>
         </div>
       </section>
 
-      {loading ? (
-        <div className="loading-center"><RefreshCw className="w-5 h-5 animate-spin" />Connecting to satellite imagery catalog…</div>
-      ) : data ? (
-        <>
-          {/* ═══════ STAT STRIP ═══════ */}
-          <div className="stat-strip -mx-6 sm:mx-0 sm:rounded-lg overflow-hidden mb-12">
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Total Georeferenced</div>
-              <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">{data.total_georeferenced_coverage}</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Projects with coordinates</div>
-            </div>
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Verified On Track</div>
-              <div className="text-[28px] font-semibold text-gov-success mt-1 tracking-tight">{data.verified_on_track_count}</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Ground truth matches report</div>
-            </div>
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Optical Discrepancies</div>
-              <div className="text-[28px] font-semibold text-gov-danger mt-1 tracking-tight">{data.critical_discrepancies_flagged}</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Progress reported without visible change</div>
-            </div>
+      {/* ═══════ STAT STRIP ═══════ */}
+      {data && (
+        <div className="stat-strip -mx-6 sm:mx-0 sm:rounded-lg overflow-hidden mb-12">
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Total Georeferenced</div>
+            <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">{data.total_georeferenced_coverage}</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Projects with coordinates</div>
           </div>
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Verified On Track</div>
+            <div className="text-[28px] font-semibold text-gov-success mt-1 tracking-tight">{data.verified_on_track_count}</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Ground truth matches report</div>
+          </div>
+          <div className="stat-strip-item">
+            <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Optical Discrepancies</div>
+            <div className="text-[28px] font-semibold text-gov-danger mt-1 tracking-tight">{data.critical_discrepancies_flagged}</div>
+            <div className="text-[12px] text-text-muted mt-0.5">Progress reported without visible change</div>
+          </div>
+        </div>
+      )}
 
-          {/* ═══════ SATELLITE VIEWER ═══════ */}
-          <section id="satellite-viewer" className="pb-12">
-            <h2 className="text-[22px] font-semibold text-gov-navy mb-6">Dual-Epoch Satellite Inspector</h2>
+      {/* ═══════ WORKSPACE TABS ═══════ */}
+      <section id="module-workspace" className="pb-12">
+        <div className="module-tabs overflow-x-auto mb-8">
+          <button
+            onClick={() => setActiveTab('satellite')}
+            className={`module-tab ${activeTab === 'satellite' ? 'active' : ''}`}
+          >
+            Satellite Ground-Truth Inspector
+          </button>
+          <button
+            onClick={() => setActiveTab('governance')}
+            className={`module-tab ${activeTab === 'governance' ? 'active' : ''}`}
+          >
+            NIVARAN &amp; ANUMATI Risk Intelligence
+          </button>
+        </div>
 
+        {/* Tab 1: Satellite Viewer */}
+        {activeTab === 'satellite' && (
+          loading ? (
+            <div className="loading-center"><RefreshCw className="w-5 h-5 animate-spin" />Connecting to satellite imagery catalog…</div>
+          ) : data ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Project list */}
               <div className="bg-white border border-border-default rounded-lg overflow-hidden">
@@ -184,20 +202,34 @@ export default function EOAuditorView() {
                 </div>
               )}
             </div>
-          </section>
+          ) : null
+        )}
 
-          {/* ═══════ METHODOLOGY ═══════ */}
-          <section className="bg-white border border-border-default rounded-lg p-8">
-            <h3 className="text-[16px] font-semibold text-gov-navy mb-3">Methodology</h3>
-            <p className="text-[13px] text-text-secondary leading-relaxed max-w-3xl">
-              Dual-epoch satellite imagery sourced from ESRI Living Atlas high-resolution optical catalog. 
-              Computer vision change detection algorithms compute Edge Density Growth, Color Saturation Shift, 
-              and the Optical Construction Activity Index (OCAI) to quantify ground-truth physical progress 
-              independently of reported metrics.
-            </p>
-          </section>
-        </>
-      ) : null}
+        {/* Tab 2: NIVARAN & ANUMATI Governance Risk Intelligence */}
+        {activeTab === 'governance' && (
+          <div className="space-y-6">
+            <div className="bg-white border border-border-default rounded-lg p-5">
+              <h3 className="text-[16px] font-semibold text-gov-navy mb-1">NIVARAN &amp; ANUMATI Governance Risk Intelligence</h3>
+              <p className="text-[13px] text-text-secondary">
+                Combines CPGRAMS public grievance NLP analysis (NIVARAN) with PARIVESH environmental clearance risk modeling (ANUMATI).
+              </p>
+            </div>
+            <CombinedDashboard projectId="PRJ-NH-2026-089" />
+          </div>
+        )}
+      </section>
+
+      {/* ═══════ METHODOLOGY ═══════ */}
+      <section className="bg-white border border-border-default rounded-lg p-8">
+        <h3 className="text-[16px] font-semibold text-gov-navy mb-3">Methodology</h3>
+        <p className="text-[13px] text-text-secondary leading-relaxed max-w-3xl">
+          Dual-epoch satellite imagery sourced from ESRI Living Atlas high-resolution optical catalog. 
+          Computer vision change detection algorithms compute Edge Density Growth, Color Saturation Shift, 
+          and the Optical Construction Activity Index (OCAI) to quantify ground-truth physical progress 
+          independently of reported metrics. Environmental clearances are monitored via the PARIVESH database 
+          and grievances via CPGRAMS data feeds.
+        </p>
+      </section>
     </div>
   );
 }
