@@ -14,6 +14,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
+BACKEND_DIR = os.path.join(BASE_DIR, "backend")
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
+
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -90,7 +94,7 @@ def load_in_memory_cache():
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
 
 # Dynamic Auto-Discovery of Member Routers (Zero-Conflict Protocol)
-MEMBERS = ["amey", "tanmay", "parth", "janhavi", "soham", "aditya"]
+MEMBERS = ["amey", "tanmay", "parth", "janhavi", "soham", "aditya", "karya_dakshata"]
 for member in MEMBERS:
     try:
         mod = __import__(f"modules.{member}.router", fromlist=["router"])
