@@ -1,0 +1,6 @@
+contractor_id,agency_name,category,rating_class,past_arbitration_count,disputed_variation_value_cr,historical_legal_stays,total_active_contract_value_cr,completed_projects_count,financial_solvency_rating,blacklisting_risk_flag,litigation_exposure_index,primary_dispute_triggers
+CTR-IND-001,L1 Infrastructure Projects India Ltd,Highways & Expressways,Class-1A Super,4,285.5,2,1200.0,18,BBB+,0,81.65,"Land Handover Delays, Steel/Cement Price Escalation Capping"
+CTR-IND-002,Apex Civil Infra Consortium,Railways & Heavy Trackwork,Class-1A Super,1,15.0,0,3500.0,34,AA+,0,12.3,Signal Equipment Import Clearance
+CTR-IND-003,Metro-Tech Infra Solutions Consortium,Urban Transit & Tunnels,Class-1 Special,6,410.0,3,1850.0,12,A-,1,92.8,"Unilateral Scope Variations, Utility Shifting Billing Stalls"
+CTR-IND-004,Skyline Urban Buildcon JV,Urban Mass Rapid Transit,Class-1 Special,2,44.0,1,1820.0,14,BBB,0,52.4,"Utility Clearance Disagreements, Tree Translocation Stalls"
+CTR-IND-005,Zenith Electropower Infra,Power & Transmission,Class-1 Special,0,0.0,0,950.0,22,AAA,0,5.0,None - Operational within benchmark
