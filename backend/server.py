@@ -9,11 +9,12 @@ import sys
 import json
 import pandas as pd
 from typing import Optional
-from analytics_engine.state_resolution import resolve_state
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
+
+from analytics_engine.state_resolution import resolve_state
 
 from fastapi import FastAPI, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
