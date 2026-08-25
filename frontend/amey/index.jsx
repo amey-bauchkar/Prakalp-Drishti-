@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, GitBranch, DollarSign, FileText, Sparkles, Building2 } from 'lucide-react';
+import { Clock, GitBranch, DollarSign, FileText, Sparkles, Building2, FlaskConical } from 'lucide-react';
 import KaalChakraView from './KaalChakraView';
 import SetuGraphView from './SetuGraphView';
 import VittaVyuhaView from './VittaVyuhaView';
@@ -7,6 +7,7 @@ import PragatiSaarthiView from './PragatiSaarthiView';
 import UnifiedCockpitView from './UnifiedCockpitView';
 import AgencyIndexView from './AgencyIndexView';
 import GeocodePrecisionPanel from './GeocodePrecisionPanel';
+import ModelBenchmarkView from './ModelBenchmarkView';
 
 export default function AmeyMasterView() {
   const [activeTab, setActiveTab] = useState('unified_cockpit');
@@ -35,6 +36,7 @@ export default function AmeyMasterView() {
     { id: 'vitta_vyuha', label: 'VITTA-VYUHA', desc: 'Smart Budget Allocation & Rebalancing', icon: DollarSign },
     { id: 'pragati_saarthi', label: 'PRAGATI-SAARTHI', desc: 'Executive Briefing & Audit Trail', icon: FileText },
     { id: 'agency_index', label: 'AGENCY INDEX', desc: 'Agency Track Record & Speed Ranking', icon: Building2 },
+    { id: 'benchmark', label: 'MODEL EVIDENCE', desc: 'AI vs Statistics, Drivers & Early Warning', icon: FlaskConical },
   ];
 
   return (
@@ -93,6 +95,9 @@ export default function AmeyMasterView() {
         )}
         {activeTab === 'pragati_saarthi' && (
           <PragatiSaarthiView selectedProjectId={selectedProjectId} />
+        )}
+        {activeTab === 'benchmark' && (
+          <ModelBenchmarkView />
         )}
         {activeTab === 'agency_index' && (
           <div className="space-y-6">

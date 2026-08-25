@@ -238,3 +238,82 @@ def get_geocode_precision():
         return data
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Unreadable precision artifact: {exc}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MoSPI Outcomes (a), (c), (d), (e), (f) and Dimensions (b), (c)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from analytics_engine.risk_index import get_risk_index_engine
+from analytics_engine.overrun_models import load_models as _load_overrun_models
+
+
+@router.get("/benchmark")
+def get_model_benchmark():
+    """Outcome (e) + Dimension (b): conventional statistics vs AI/ML, same split.
+
+    Also carries Dimension (c) -- the CUF-only vs CUF+external ablation -- and
+    Outcome (f) driver attribution, because all three come out of the same fitted
+    models and separating them across endpoints would invite them to drift apart.
+    """
+    models = _load_overrun_models()
+    if not models:
+        return {
+            "available": False,
+            "reason": "No benchmark artifact. Run: python analytics_engine/overrun_models.py",
+        }
+    models["available"] = True
+    return models
+
+
+@router.get("/risk/{project_id}")
+def get_project_risk(project_id: str):
+    """Outcome (c): composite risk score with per-component contributions."""
+    try:
+        r = get_risk_index_engine().get_project_risk(project_id)
+        if not r:
+            raise HTTPException(status_code=404, detail=f"No risk score for project {project_id}")
+        return r
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/early-warning")
+def get_early_warning(
+    limit: int = Query(default=25, ge=1, le=200),
+    band: Optional[str] = None,
+    sector: Optional[str] = None,
+):
+    """Outcome (d): ranked queue of projects warranting review this cycle.
+
+    Ordered by exposure-weighted priority (risk x sqrt(capex)) rather than raw risk,
+    so a small very-risky project and a huge moderately-risky one are both surfaced
+    instead of the queue filling with one category.
+    """
+    try:
+        return get_risk_index_engine().get_early_warning_queue(
+            limit=limit, band=band, sector=sector)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class CopilotQuestion(BaseModel):
+    question: str
+    project_id: str = "400188"
+
+
+@router.post("/ask")
+def ask_copilot(q: CopilotQuestion):
+    """Outcome (h): grounded natural-language Q&A over the Fact layer.
+
+    No generative model participates -- see analytics_engine/copilot_qa.py for why that
+    is a deliberate strengthening of the zero-hallucination requirement rather than a
+    shortcut around the LLM one.
+    """
+    try:
+        from analytics_engine.copilot_qa import answer_question
+        return answer_question(q.question, q.project_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
