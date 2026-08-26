@@ -101,3 +101,9 @@
 {"ts": "2026-08-26T11:02:59", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-08-26T11:04:27", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-08-26T11:04:27", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:09:28", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T11:11:44", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T11:11:49", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T11:11:50", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T11:12:07", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:12:07", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
