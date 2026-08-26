@@ -7,8 +7,8 @@ import DecisionHubView from '../amey/DecisionHubView.jsx';
 import SatyaKavachView from '../tanmay/index.jsx';
 import ArthaNetraView from '../parth/index.jsx';
 import VarshaSpeedView from '../janhavi/index.jsx';
-import DPRScorerView from '../soham/index.jsx';
-import EOAuditorView from '../aditya/index.jsx';
+import NivaranView from '../aditya/NivaranView.jsx';
+import AnumatiView from '../aditya/AnumatiView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -118,7 +118,8 @@ function InstitutionalHeader() {
     { to: '/tanmay', label: 'SATYA-KAVACH' },
     { to: '/parth', label: 'ARTHA-NETRA' },
     { to: '/janhavi', label: 'VARSHA-SPEED' },
-    { to: '/soham', label: 'DPR-SCORER' },
+    { to: '/nivaran', label: 'NIVARAN' },
+    { to: '/anumati', label: 'ANUMATI' },
     { to: '/karya-dakshata', label: 'KARYA-DAKSHATA' },
   ];
 
@@ -294,7 +295,8 @@ function InstitutionalFooter() {
               <li><Link to="/tanmay" className="text-slate-300 hover:text-gov-saffron transition-colors">SATYA-KAVACH — Contract Compliance</Link></li>
               <li><Link to="/parth" className="text-slate-300 hover:text-gov-saffron transition-colors">ARTHA-NETRA — Financial Health</Link></li>
               <li><Link to="/janhavi" className="text-slate-300 hover:text-gov-saffron transition-colors">VARSHA-SPEED — Climate Exposure</Link></li>
-              <li><Link to="/soham" className="text-slate-300 hover:text-gov-saffron transition-colors">DPR-SCORER — Sanction Integrity</Link></li>
+              <li><Link to="/nivaran" className="text-slate-300 hover:text-gov-saffron transition-colors">NIVARAN — Contract &amp; Dispute Risk</Link></li>
+              <li><Link to="/anumati" className="text-slate-300 hover:text-gov-saffron transition-colors">ANUMATI — Statutory Clearances</Link></li>
               <li><Link to="/decision-hub" className="text-slate-300 hover:text-gov-saffron transition-colors">DECISION INTELLIGENCE HUB</Link></li>
             </ul>
           </div>
@@ -351,9 +353,10 @@ export default function App() {
             <Route path="/tanmay" element={<SatyaKavachView />} />
             <Route path="/parth" element={<ArthaNetraView />} />
             <Route path="/janhavi" element={<VarshaSpeedView />} />
-            <Route path="/soham" element={<DPRScorerView />} />
+            <Route path="/nivaran" element={<NivaranView />} />
+            <Route path="/anumati" element={<AnumatiView />} />
             <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
-            <Route path="/eo-auditor" element={<EOAuditorView />} />
+            <Route path="/aditya" element={<NivaranView />} />
           </Routes>
         </main>
 
