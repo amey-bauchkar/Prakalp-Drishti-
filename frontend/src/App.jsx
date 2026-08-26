@@ -338,6 +338,31 @@ function InstitutionalFooter() {
   );
 }
 
+/* ─── Not Found ──────────────────────────────────────────────────
+   A government portal must say what happened rather than showing an
+   empty frame; routes do get retired, and bookmarks outlive them. */
+function NotFoundView() {
+  return (
+    <div className="panel panel-accent p-8 sm:p-10 max-w-2xl mx-auto my-10 text-center">
+      <div className="microlabel mb-2">HTTP 404 · Page Not Found</div>
+      <h2 className="font-heading font-extrabold text-gov-navy mb-2">
+        This page is not part of the portal
+      </h2>
+      <p className="text-[12.5px] text-gov-muted leading-relaxed mb-5 max-w-md mx-auto">
+        The address you requested does not match any module. It may have been
+        retired or renamed. Use the navigation above, or return to the decision
+        console.
+      </p>
+      <Link to="/decision-hub" className="btn-primary">
+        Go to Decision Hub
+      </Link>
+      <div className="hashline mt-5 pt-4 border-t border-gov-border">
+        {typeof window !== 'undefined' ? window.location.pathname : ''}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Application Shell ─────────────────────────────────── */
 export default function App() {
   return (
@@ -357,6 +382,13 @@ export default function App() {
             <Route path="/anumati" element={<AnumatiView />} />
             <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
             <Route path="/aditya" element={<NivaranView />} />
+
+            {/* Catch-all. Without it an unmatched path rendered the header and
+                footer around a completely empty <main> — a blank screen with no
+                explanation. That is reachable today through a stale bookmark:
+                /soham and /eo-auditor were routes until recently and now match
+                nothing. */}
+            <Route path="*" element={<NotFoundView />} />
           </Routes>
         </main>
 

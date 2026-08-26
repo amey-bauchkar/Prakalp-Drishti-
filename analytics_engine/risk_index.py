@@ -55,6 +55,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
                             "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
+ENTITY_MAP_PATH = os.path.join(BASE_DIR, "paimana_extracted",
+                               "CANONICAL_ENTITIES_MAPPING.json")
 
 # Declared policy weights. Sum to 1.0 over available components.
 COMPONENT_WEIGHTS = {
@@ -73,6 +75,23 @@ COMPONENT_WEIGHTS = {
 }
 
 BAND_THRESHOLDS = [(75.0, "CRITICAL"), (55.0, "HIGH"), (35.0, "MODERATE"), (0.0, "LOW")]
+
+
+def _readable_entity(entity: str) -> str:
+    """Last-resort label for an entity the agency index does not rank.
+
+    The index drops organisations with a single project, so a handful of alerts
+    can reference an id with no display name. Underscores become spaces and
+    genuine acronyms keep their capitals; nothing is title-cased, because that is
+    what turned NHAI into "Nhai" in the first place.
+    """
+    if not entity:
+        return "Not specified"
+    parts = str(entity).replace("_", " ").split()
+    out = []
+    for w in parts:
+        out.append(w if (len(w) <= 5 and w.isupper()) else w.capitalize())
+    return " ".join(out)
 
 
 def _band(score: float) -> str:
@@ -158,6 +177,29 @@ class RiskIndexEngine:
                 catalog = {str(c["project_id"]): c for c in json.load(f)}
 
         agency_delay = {a["agency_id"]: a.get("delay_rate_perc") for a in agency.agency_records}
+        # The alert queue previously showed the raw canonical id -- an officer read
+        # "TELECOM_DOT", "MINISTRYOFPETROLEUMNATURALGAS" and the 30-char truncation
+        # "NATIONAL_HIGH_SPEED_RAIL_CORPO". The agency engine already resolves proper
+        # display names, so reuse them here instead of inventing a second convention.
+        agency_display = {a["agency_id"]: a.get("agency_name") for a in agency.agency_records}
+
+        # Second source, for entities the index does not rank (it drops any
+        # organisation with a single project). 42 canonical_ids in the entity
+        # mapping were themselves truncated to 30 characters when that file was
+        # built -- NATIONAL_HIGH_SPEED_RAIL_CORPO, INDIAN_INSTITUTE_OF_TECHNOLOGY
+        # and so on -- but each row still carries the untruncated canonical_name.
+        # Reading that is what turns "National HIGH SPEED RAIL CORPO" back into
+        # "National High Speed Rail Corporation [NHSRC]".
+        try:
+            with open(ENTITY_MAP_PATH, "r", encoding="utf-8") as fh:
+                _emap = json.load(fh).get("mapping_by_raw_string", {})
+            for _raw, _v in _emap.items():
+                cid = _v.get("canonical_id")
+                nm = _v.get("canonical_name") or _v.get("raw_name")
+                if cid and nm:
+                    agency_display.setdefault(cid, nm)
+        except Exception:
+            pass
 
         # Portfolio-relative scale for contagion, so the component means "large relative
         # to the rest of the portfolio" rather than "large in absolute rupees".
@@ -239,7 +281,7 @@ class RiskIndexEngine:
                 "project_name": str(row["ProjectName"]),
                 "sector": sector,
                 "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
-                "agency": entity,
+                "agency": agency_display.get(entity) or _readable_entity(entity),
                 "risk_score": round(float(score), 1),
                 "risk_band": _band(score),
                 "components": {k: (None if v is None else round(v, 1)) for k, v in comps.items()},
