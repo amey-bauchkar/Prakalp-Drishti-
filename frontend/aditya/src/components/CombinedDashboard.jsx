@@ -44,7 +44,7 @@ export default function CombinedDashboard({ projectId = "PRJ-NH-2026-089" }) {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center space-x-3">
-              <span className="px-2.5 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md">{project_metadata.sector}</span>
+              <span className="tag tag-info">{project_metadata.sector}</span>
               <span className="text-xs font-mono text-slate-400">{project_metadata.mospi_monitoring_code}</span>
             </div>
             <h2 className="text-2xl font-extrabold text-white mt-1">{project_metadata.project_name}</h2>

@@ -59,7 +59,7 @@ export default function ModelBenchmarkView() {
 
   if (loading) {
     return (
-      <div className="bg-white p-12 rounded-3xl border border-border-default shadow-card text-center">
+      <div className="panel p-7 text-center">
         <FlaskConical className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-3" />
         <p className="text-gov-navy font-bold text-sm">Loading empirical model benchmarks and early-warning queue…</p>
       </div>
@@ -68,8 +68,8 @@ export default function ModelBenchmarkView() {
 
   if (!bench || bench.available === false) {
     return (
-      <div className="bg-white p-7 rounded-3xl border border-border-default shadow-card">
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+      <div className="panel p-4">
+        <div className="note note-warn flex items-start gap-3">
           <FlaskConical className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
           <span><strong>Benchmarks not yet fitted.</strong> {bench?.reason}</span>
         </div>
@@ -80,9 +80,9 @@ export default function ModelBenchmarkView() {
   return (
     <div className="space-y-8 font-sans">
       {/* Sovereign Top Header */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+      <section className="panel p-4 sm:p-5">
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
             <FlaskConical className="w-3.5 h-3.5 text-gov-saffron" />
             <span>Module 7 · Model Evidence &amp; Benchmarks</span>
           </div>
@@ -103,9 +103,9 @@ export default function ModelBenchmarkView() {
         const ab = blk.cuf_vs_external_ablation;
         const ci = blk.calendar_identity;
         return (
-          <div key={target} className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+          <div key={target} className="panel p-4 sm:p-5 space-y-6">
             <div className="flex items-center gap-3 border-b border-border-default pb-4">
-              <div className="w-10 h-10 rounded-xl bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border flex items-center justify-center shrink-0">
                 <TrendingUp className="w-5 h-5 text-gov-saffron" />
               </div>
               <div>
@@ -151,9 +151,9 @@ export default function ModelBenchmarkView() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className={`p-5 rounded-2xl border text-[12.5px] ${mv.ml_is_better
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-                : 'bg-amber-50 border-amber-300 text-amber-950'}`}>
+              <div className={`text-[12.5px] block ${mv.ml_is_better
+                ? 'note note-ok'
+                : 'note note-warn'}`}>
                 <span className="font-bold uppercase text-[10px] tracking-wider block mb-1 font-mono">
                   Dimension (b) — AI/ML vs Conventional Econometric Baseline
                 </span>
@@ -162,9 +162,9 @@ export default function ModelBenchmarkView() {
                       against the strongest conventional baseline method.</>
                   : <>The conventional method <strong>matches or beats</strong> ML here. Reported as measured.</>}
               </div>
-              <div className={`p-5 rounded-2xl border text-[12.5px] ${ab.external_helps
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-                : 'bg-amber-50 border-amber-300 text-amber-950'}`}>
+              <div className={`text-[12.5px] block ${ab.external_helps
+                ? 'note note-ok'
+                : 'note note-warn'}`}>
                 <span className="font-bold uppercase text-[10px] tracking-wider block mb-1 font-mono">
                   Dimension (c) — CUF Baseline vs Multi-Modal External Ingestion
                 </span>
@@ -176,7 +176,7 @@ export default function ModelBenchmarkView() {
 
             {/* Honesty disclosure: part of this target's accuracy is arithmetic. */}
             {ci?.applies && (
-              <div className="flex items-start gap-3 p-4 rounded-2xl bg-rose-50 border border-rose-300 text-[12px] text-rose-950">
+              <div className="note note-critical flex items-start gap-3 text-rose-950">
                 <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
                 <span>
                   <strong>Calendar-identity disclosure.</strong> Slippage is measured against the
@@ -207,11 +207,13 @@ export default function ModelBenchmarkView() {
                       <span className="w-56 shrink-0 truncate font-mono text-gov-navy font-medium" title={d.feature}>
                         {d.feature}
                       </span>
-                      <div className="flex-1 h-3 bg-slate-100 rounded-full border border-slate-200 overflow-hidden">
-                        <div className={`h-full rounded-full ${d.is_external ? 'bg-sky-500' : 'bg-gov-navy'}`}
-                             style={{ width: `${pctW}%` }} />
+                      <div className="meter flex-1">
+                        <div
+                          className={`meter-fill ${d.is_external ? 'meter-fill-accent' : ''}`}
+                          style={{ width: `${pctW}%` }}
+                        />
                       </div>
-                      <span className="w-16 text-right font-mono text-text-muted font-bold">
+                      <span className="w-16 text-right font-mono text-gov-muted font-semibold">
                         {fmt(d.mae_increase_when_shuffled, 2)}
                       </span>
                       <span className={`w-16 text-[9px] font-bold uppercase font-mono ${d.is_external ? 'text-sky-700' : 'text-text-muted'}`}>
@@ -233,7 +235,7 @@ export default function ModelBenchmarkView() {
 
       {/* ── Outcome (d): is the warning actually EARLY? ───────────────── */}
       {leadTime?.available && (
-        <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-5">
+        <div className="panel p-4 sm:p-5 space-y-5">
           <div className="flex items-center gap-2 border-b border-border-default pb-4">
             <AlertTriangle className="w-5 h-5 text-gov-saffron" />
             <div>
@@ -245,7 +247,7 @@ export default function ModelBenchmarkView() {
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="hairgrid hairgrid-4">
             {[
               { k: 'Precision (PPV)', v: leadTime.precision, sub: `vs ${leadTime.base_rate} base rate`,
                 good: leadTime.precision > leadTime.base_rate },
@@ -254,12 +256,12 @@ export default function ModelBenchmarkView() {
               { k: 'Median Lead-Time', v: `${leadTime.median_lead_months} mo`,
                 sub: 'sanction → recorded revision', good: true },
             ].map((m) => (
-              <div key={m.k} className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <span className="text-[10px] uppercase text-text-muted font-bold block font-mono">{m.k}</span>
-                <span className={`text-xl font-black font-mono ${m.good ? 'text-emerald-700' : 'text-amber-700'}`}>
+              <div key={m.k} className="metric-cell">
+                <span className="metric-label">{m.k}</span>
+                <span className={`metric-value ${m.good ? 'metric-pos' : 'metric-warn'}`}>
                   {m.v ?? '—'}
                 </span>
-                <span className="text-[10px] text-text-muted block mt-0.5">{m.sub}</span>
+                <span className="metric-sub">{m.sub}</span>
               </div>
             ))}
           </div>
@@ -276,7 +278,7 @@ export default function ModelBenchmarkView() {
       )}
 
       {queueDenied && (
-        <div className="bg-white p-6 rounded-3xl border border-rose-300 bg-rose-50 text-xs font-semibold text-rose-800 flex items-start gap-2 shadow-sm">
+        <div className="note note-critical flex items-start gap-2">
           <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
           <span>{queueDenied}
             <span className="block font-normal mt-1">The early-warning queue requires the monitoring officer role or above.</span>
@@ -286,7 +288,7 @@ export default function ModelBenchmarkView() {
 
       {/* ── Outcome (d): early-warning queue ──────────────────────────── */}
       {queue?.alerts && (
-        <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-5">
+        <div className="panel p-4 sm:p-5 space-y-5">
           <div className="flex items-center justify-between border-b border-border-default pb-4 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-600" />
@@ -308,7 +310,7 @@ export default function ModelBenchmarkView() {
             {queue.alerts.map((a, i) => (
               <div key={a.project_id} className="flex items-start gap-3 p-3.5 rounded-2xl border border-border-default hover:bg-slate-50 transition-colors">
                 <span className="text-[11px] font-mono text-text-muted w-6 shrink-0 pt-0.5 font-bold">#{i + 1}</span>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border shrink-0 font-mono ${BAND_CLS[a.risk_band] || BAND_CLS.LOW}`}>
+                <span className={`px-2.5 py-0.5 rounded-sm text-[10px] font-bold border shrink-0 font-mono ${BAND_CLS[a.risk_band] || BAND_CLS.LOW}`}>
                   {a.risk_band} {a.risk_score}
                 </span>
                 <div className="min-w-0 flex-1">

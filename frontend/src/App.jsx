@@ -43,7 +43,7 @@ function UtilityBar() {
             <div className="flex items-center gap-1.5 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700 text-[9.5px]">
               <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
               <span className="font-bold text-white">{session.username}</span>
-              <span className="bg-rose-500/20 text-rose-300 px-1 py-0.2 rounded border border-rose-500/40 uppercase font-black text-[8.5px] font-mono">
+              <span className="tag bg-rose-500/15 text-rose-200 border-rose-400/40">
                 {String(session.role).replace(/_/g, ' ')}
               </span>
               <button
@@ -126,7 +126,7 @@ function InstitutionalHeader() {
               <span className="font-heading font-black text-[17px] text-gov-navy tracking-tight leading-none">
                 PRAKALP-DRISHTI
               </span>
-              <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded-full text-[8.5px] font-extrabold uppercase tracking-wider bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border font-mono">
+              <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8.5px] font-extrabold uppercase tracking-wider bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border font-mono">
                 MoSPI · CCEA AI Engine
               </span>
             </div>
@@ -216,12 +216,12 @@ function InstitutionalHeader() {
 /* ─── Institutional Footer (GIGW 3.0 Standard) ───────────────── */
 function InstitutionalFooter() {
   const partnerLogos = [
-    { name: 'National Portal of India', sub: 'india.gov.in', badge: '🇮🇳' },
-    { name: 'Open Government Data', sub: 'data.gov.in', badge: '📊' },
-    { name: 'Digital India', sub: 'Power to Empower', badge: '⚡' },
-    { name: 'PM GatiShakti', sub: 'National Master Plan', badge: '🚆' },
-    { name: 'MoSPI', sub: 'Ministry of Statistics', badge: '🏛️' },
-    { name: 'NITI Aayog', sub: 'National Institution', badge: '🎯' },
+    { name: 'National Portal of India', sub: 'india.gov.in', badge: 'IN' },
+    { name: 'Open Government Data', sub: 'data.gov.in', badge: 'OGD' },
+    { name: 'Digital India', sub: 'Power to Empower', badge: 'DI' },
+    { name: 'PM GatiShakti', sub: 'National Master Plan', badge: 'NMP' },
+    { name: 'MoSPI', sub: 'Ministry of Statistics', badge: 'MoSPI' },
+    { name: 'NITI Aayog', sub: 'National Institution', badge: 'NITI' },
   ];
 
   return (
@@ -229,13 +229,15 @@ function InstitutionalFooter() {
       {/* Sovereign Partner Strip */}
       <div className="bg-white border-y border-border-default py-6">
         <div className="gov-content">
-          <div className="flex flex-wrap items-center justify-between gap-6 opacity-90 grayscale hover:grayscale-0 transition-all duration-300">
+          <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
             {partnerLogos.map((p) => (
-              <div key={p.name} className="flex items-center gap-3">
-                <span className="text-2xl">{p.badge}</span>
-                <div>
-                  <div className="text-xs font-bold text-gov-navy font-heading">{p.name}</div>
-                  <div className="text-[10px] text-text-muted">{p.sub}</div>
+              <div key={p.name} className="flex items-center gap-2.5">
+                <span className="circular-partner-badge font-heading font-extrabold text-[9.5px] tracking-tight text-gov-navy shrink-0">
+                  {p.badge}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold text-gov-navy font-heading leading-tight">{p.name}</div>
+                  <div className="text-[9.5px] text-gov-muted font-mono">{p.sub}</div>
                 </div>
               </div>
             ))}

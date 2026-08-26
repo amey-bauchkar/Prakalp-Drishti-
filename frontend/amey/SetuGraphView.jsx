@@ -29,10 +29,10 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
   return (
     <div className="space-y-8 font-sans">
       {/* Top Banner */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+      <section className="panel p-4 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <GitBranch className="w-3.5 h-3.5 text-gov-saffron" />
               <span>Module 2 · Project Dependencies</span>
             </div>
@@ -65,7 +65,7 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
       </section>
 
       {loading && (
-        <div className="p-12 text-center text-text-muted font-bold text-sm bg-white rounded-3xl border border-border-default shadow-card">
+        <div className="p-12 text-center text-text-muted font-bold text-sm panel">
           <Activity className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
           Analyzing Project Connections &amp; Delay Buffers...
         </div>
@@ -75,24 +75,24 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
         <div className="space-y-8">
           {/* Top KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Connected Projects</span>
               <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.nodes.length} Projects</p>
               <span className="text-[11.5px] text-emerald-800 font-bold flex items-center gap-1 mt-1 font-sans">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Clean Dependency Flow
               </span>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Supply Chain Links</span>
               <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.edges.length} Connections</p>
               <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">Physical &amp; Strategic Links</span>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Likely Contagion Capital Exposure (P50)</span>
               <p className="text-[30px] font-black text-amber-600 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p50_cr.toLocaleString()} Cr</p>
               <span className="text-[11.5px] text-amber-800 font-bold mt-1 block font-sans">Likely Contagion Capital at Risk</span>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-rose-300 bg-rose-50/40 shadow-card">
+            <div className="note note-critical">
               <span className="text-[11.5px] font-black text-rose-700 uppercase tracking-wider font-mono">Stress-Tested Tail Capital Exposure (P95)</span>
               <p className="text-[30px] font-black text-rose-700 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p95_cr.toLocaleString()} Cr</p>
               <span className="text-[11.5px] text-rose-700 font-bold mt-1 block font-sans">Severe Contagion Exposure Bound</span>
@@ -100,7 +100,7 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
           </div>
 
           {/* Subgraph Nodes & Float Table */}
-          <div className="bg-white rounded-3xl border border-border-default shadow-card overflow-hidden p-7 sm:p-9 space-y-6">
+          <div className="panel overflow-hidden p-4 sm:p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-gov-saffron" />
@@ -141,13 +141,13 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
                         ₹{node.cost_cr.toLocaleString()} Cr
                       </td>
                       <td>
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono">
+                        <span className="note note-ok font-mono">
                           {node.free_float_months.toFixed(1)} mo Buffer
                         </span>
                       </td>
                       <td className="text-center">
                         {node.propagated_delay_months > 0 ? (
-                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 text-rose-800 border border-rose-300 font-mono">
+                          <span className="note note-critical font-mono">
                             +{node.propagated_delay_months.toFixed(1)} Mo Propagated Delay
                           </span>
                         ) : (

@@ -41,10 +41,10 @@ export default function VittaVyuhaView() {
   return (
     <div className="space-y-8 font-sans">
       {/* Top Header Banner */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+      <section className="panel p-4 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <DollarSign className="w-3.5 h-3.5 text-gov-saffron" />
               <span>Module 3 · Smart Budget Rebalancing</span>
             </div>
@@ -58,14 +58,14 @@ export default function VittaVyuhaView() {
 
           {/* Solve Speed Badge */}
           {denied && !loading && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-300 text-xs font-semibold text-rose-800 flex items-start gap-2 shadow-sm">
+            <div className="note note-critical flex items-start gap-2">
               <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
               <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
             </div>
           )}
 
           {data && (
-            <div className="flex items-center gap-3 bg-emerald-50 px-5 py-3 rounded-2xl border border-emerald-300 text-emerald-800 shadow-sm shrink-0">
+            <div className="note note-ok flex items-center gap-3 shrink-0">
               <Zap className="w-5 h-5 text-emerald-600" />
               <div>
                 <span className="text-[10px] uppercase font-bold text-emerald-700 block font-mono">Optimization Speed</span>
@@ -77,7 +77,7 @@ export default function VittaVyuhaView() {
       </section>
 
       {/* Interactive Controls Bar */}
-      <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+      <div className="panel p-4 sm:p-5 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Budget Pool Slider */}
           <div className="space-y-3">
@@ -156,21 +156,21 @@ export default function VittaVyuhaView() {
       {data && (
         <div className="space-y-8">
           {/* Top KPI Cards & Dual Shadow Prices */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Total Funds Allocated</span>
-              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{data.total_allocated_cr.toLocaleString()} Cr</p>
-              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">out of ₹{data.total_budget_pool_cr.toLocaleString()} Cr envelope</span>
+          <div className="hairgrid hairgrid-4">
+            <div className="metric-cell">
+              <span className="metric-label">Total Funds Allocated</span>
+              <p className="metric-value metric-value-lg">₹{data.total_allocated_cr.toLocaleString()} Cr</p>
+              <span className="metric-sub">out of ₹{data.total_budget_pool_cr.toLocaleString()} Cr envelope</span>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">North-East Region Share</span>
-              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{data.ner_allocated_cr.toLocaleString()} Cr</p>
+            <div className="metric-cell">
+              <span className="metric-label">North-East Region Share</span>
+              <p className="metric-value metric-value-lg">₹{data.ner_allocated_cr.toLocaleString()} Cr</p>
               <div className="flex items-center gap-1.5 mt-1">
                 {data.ner_floor_met
                   ? <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   : <ShieldAlert className="w-4 h-4 text-rose-600" />}
-                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full font-mono ${
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-sm font-mono ${
                   data.ner_floor_met
                     ? 'text-emerald-800 bg-emerald-50 border border-emerald-300'
                     : 'text-rose-800 bg-rose-50 border border-rose-300'}`}>
@@ -192,21 +192,21 @@ export default function VittaVyuhaView() {
               )}
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border-2 border-gov-navy shadow-card">
-              <span className="text-[11.5px] font-bold text-gov-navy uppercase tracking-wider font-mono">Marginal Capital Efficiency (Dual Shadow Price π)</span>
-              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">+{data.shadow_price_budget_pi.toFixed(3)}</p>
-              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">Marginal progress yield gained per additional ₹1 Cr budget envelope</span>
+            <div className="metric-cell panel-accent">
+              <span className="metric-label">Marginal Capital Efficiency (Dual Shadow Price π)</span>
+              <p className="metric-value metric-value-lg">+{data.shadow_price_budget_pi.toFixed(3)}</p>
+              <span className="metric-sub">Marginal progress yield gained per additional ₹1 Cr budget envelope</span>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Optimization Optimality Status</span>
+            <div className="metric-cell">
+              <span className="metric-label">Optimization Optimality Status</span>
               <p className="text-[30px] font-black text-emerald-700 mt-1 tracking-tight font-mono">100%</p>
               <span className="text-[11.5px] text-emerald-800 font-bold mt-1 block font-sans">100% Globally Optimal (Simplex LP Solved)</span>
             </div>
           </div>
 
           {/* Allocation Table */}
-          <div className="bg-white rounded-3xl border border-border-default shadow-card overflow-hidden p-7 sm:p-9 space-y-6">
+          <div className="panel overflow-hidden p-4 sm:p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2">
                 <BarChart2 className="w-5 h-5 text-gov-saffron" />
@@ -241,7 +241,7 @@ export default function VittaVyuhaView() {
                       <td>
                         <span className="font-medium text-gov-navy">{alloc.state}</span>
                         {alloc.is_ner && (
-                          <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-800 border border-purple-300">
+                          <span className="ml-2 px-2 py-0.5 rounded-sm text-[10px] font-bold bg-purple-50 text-purple-800 border border-purple-300">
                             North-East Quota
                           </span>
                         )}
@@ -253,7 +253,7 @@ export default function VittaVyuhaView() {
                         ₹{alloc.allocated_capex_cr.toLocaleString()} Cr
                       </td>
                       <td className="text-center">
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono">
+                        <span className="note note-ok font-mono">
                           +{alloc.completion_yield_phi}%
                         </span>
                       </td>

@@ -162,7 +162,7 @@ export const BeforeAfterSlider = ({
 
           {/* Bottom Hint */}
           <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none z-10">
-            <span className="text-[10px] font-bold text-white/80 bg-black/50 px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+            <span className="text-[10px] font-bold text-white/80 bg-black/50 px-2.5 py-0.5 rounded-sm backdrop-blur-xs">
               ⟵ Drag slider left/right to compare repair ⟶
             </span>
           </div>

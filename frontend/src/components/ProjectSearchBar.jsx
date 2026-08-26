@@ -115,7 +115,7 @@ export default function ProjectSearchBar() {
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-elevated border border-border-default z-50 max-h-[420px] overflow-hidden flex flex-col animate-in fade-in-50 slide-in-from-top-2 duration-150">
           <div className="px-4 py-2.5 border-b border-border-default bg-slate-50 flex items-center justify-between text-[11px] font-bold text-text-muted uppercase tracking-wider font-mono">
-            <span>{query.trim() === '' ? '⚡ Quick Access Projects' : `Found ${filteredProjects.length} matching projects`}</span>
+            <span>{query.trim() === '' ? 'Quick access projects' : `Found ${filteredProjects.length} matching projects`}</span>
             <span>MoSPI Database</span>
           </div>
 

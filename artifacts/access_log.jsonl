@@ -92,3 +92,12 @@
 {"ts": "2026-08-26T09:59:26", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-08-26T09:59:30", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-08-26T09:59:43", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:01:40", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T11:01:43", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T11:01:43", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T11:02:08", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:02:15", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T11:02:18", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:02:59", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T11:04:27", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T11:04:27", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}

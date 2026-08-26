@@ -24,7 +24,7 @@ export default function AmeyMasterView() {
       finding: '1.65× density spike',
       findingLabel: 'CCEA Threshold Discontinuity',
       icon: ShieldCheck,
-      accent: 'border-t-4 border-t-amber-500 bg-amber-50/50 text-amber-950',
+      accent: 'panel-accent',
     },
     {
       name: 'ARTHA-NETRA',
@@ -34,7 +34,7 @@ export default function AmeyMasterView() {
       finding: 'Granger-causal',
       findingLabel: 'Equity-Delay Coupling',
       icon: TrendingUp,
-      accent: 'border-t-4 border-t-emerald-600 bg-emerald-50/50 text-emerald-950',
+      accent: 'panel-authority',
     },
     {
       name: 'VARSHA-SPEED',
@@ -44,7 +44,7 @@ export default function AmeyMasterView() {
       finding: '±15% anomaly',
       findingLabel: 'Predicts 2–8 Month Delays',
       icon: CloudRain,
-      accent: 'border-t-4 border-t-blue-500 bg-blue-50/50 text-blue-950',
+      accent: 'panel-accent',
     },
     {
       name: 'DPR-SCORER',
@@ -54,18 +54,18 @@ export default function AmeyMasterView() {
       finding: '23% of portfolio',
       findingLabel: 'Pre-Election Rush Approvals',
       icon: FileText,
-      accent: 'border-t-4 border-t-purple-600 bg-purple-50/50 text-purple-950',
+      accent: 'panel-accent',
     },
   ];
 
   const circularPartners = [
-    { name: 'PM GatiShakti', sub: 'National Master Plan', symbol: '🚆' },
-    { name: 'Make in India', sub: 'National Initiative', symbol: '⚙️' },
-    { name: 'Digital India', sub: 'Power to Empower', symbol: '⚡' },
-    { name: 'MoSPI', sub: 'Govt. of India', symbol: '🏛️' },
-    { name: 'NITI Aayog', sub: 'Think Tank', symbol: '🎯' },
-    { name: 'NIC MeghRaj', sub: 'Cloud Infrastructure', symbol: '☁️' },
-    { name: 'Open Data', sub: 'data.gov.in', symbol: '📊' },
+    { name: 'PM GatiShakti', sub: 'National Master Plan', symbol: 'NMP' },
+    { name: 'Make in India', sub: 'National Initiative', symbol: 'MII' },
+    { name: 'Digital India', sub: 'Power to Empower', symbol: 'DI' },
+    { name: 'MoSPI', sub: 'Govt. of India', symbol: 'MoSPI' },
+    { name: 'NITI Aayog', sub: 'Think Tank', symbol: 'NITI' },
+    { name: 'NIC MeghRaj', sub: 'Cloud Infrastructure', symbol: 'NIC' },
+    { name: 'Open Data', sub: 'data.gov.in', symbol: 'OGD' },
   ];
 
   return (
@@ -75,7 +75,7 @@ export default function AmeyMasterView() {
             SLIDE 1: CENTERED SAFFRON LANDING SECTION
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-1" className="snap-slide-section flex flex-col justify-center">
-          <div className="hero-saffron-banner rounded-3xl shadow-elevated text-white relative overflow-hidden py-14 px-6 sm:px-12 lg:px-16">
+          <div className="hero-saffron-banner text-white relative overflow-hidden py-12 px-6 sm:px-12 lg:px-16">
             {/* Subtle India Gate Vector Silhouette Watermark */}
             <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-2xl pointer-events-none opacity-10 flex items-end justify-center">
               <svg viewBox="0 0 500 400" className="w-full h-full fill-current text-white">
@@ -85,29 +85,29 @@ export default function AmeyMasterView() {
 
             {/* Centered Main Narrative */}
             <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-4 py-1.5 rounded-full text-[11.5px] sm:text-[12px] font-bold tracking-widest uppercase text-white border border-white/20">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2.5 bg-white/[0.06] pl-2.5 pr-3.5 py-1 rounded-sm text-[10px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Ministry of Statistics &amp; Programme Implementation</span>
               </div>
 
-              <h1 className="font-heading font-extrabold text-[34px] sm:text-[46px] lg:text-[54px] leading-[1.12] text-white tracking-tight">
+              <h1 className="font-heading font-extrabold text-[30px] sm:text-[40px] lg:text-[46px] leading-[1.08] text-white tracking-[-0.03em]">
                 National Decision Intelligence for India's 2,207 Mega-Projects
               </h1>
 
-              <p className="text-white/95 text-[16px] sm:text-[18px] leading-relaxed max-w-3xl mx-auto font-sans">
+              <p className="text-ink-200 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl mx-auto font-sans">
                 Real-time oversight platform monitoring ₹31.4 Lakh Crore in sovereign capital investments. 
                 Equipped with mathematical de-biasing, financial stress testing, and delay contagion modeling.
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <Link to="/decision-hub" className="btn-saffron-pill text-[14px] py-3.5 px-8 group shadow-lg">
+                <Link to="/decision-hub" className="btn-saffron-pill text-[12px] py-2.5 px-6 group">
                   <span>Enter Decision Hub</span>
-                  <ArrowRight className="w-4 h-4 text-gov-saffron-dark group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
 
                 <button
                   onClick={() => scrollToSection('slide-3')}
-                  className="inline-flex items-center gap-1.5 text-white text-[14px] font-bold tracking-wide py-3.5 px-6 rounded-full bg-white/15 hover:bg-white/25 border border-white/30 backdrop-blur-sm transition-all"
+                  className="inline-flex items-center gap-1.5 text-white text-[12px] font-extrabold uppercase tracking-institutional py-2.5 px-5 rounded-sm bg-transparent hover:bg-white/10 border border-white/30 transition-colors"
                 >
                   <span>View Four Engines</span>
                   <ChevronRight className="w-4 h-4" />
@@ -115,19 +115,21 @@ export default function AmeyMasterView() {
               </div>
 
               {/* Centered Metric Pill Strip */}
-              <div className="pt-6 border-t border-white/20 max-w-2xl mx-auto grid grid-cols-3 gap-6 text-center">
-                <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15">
-                  <div className="text-[24px] sm:text-[28px] font-black text-white leading-none font-mono">2,207</div>
-                  <div className="text-[12px] text-white/80 mt-1 font-medium">Monitored Works</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15">
-                  <div className="text-[24px] sm:text-[28px] font-black text-white leading-none font-mono">₹31.4L Cr</div>
-                  <div className="text-[12px] text-white/80 mt-1 font-medium">Capital Portfolio</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15">
-                  <div className="text-[24px] sm:text-[28px] font-black text-white leading-none font-mono">100%</div>
-                  <div className="text-[12px] text-white/80 mt-1 font-medium">Air-Gapped Sovereign</div>
-                </div>
+              <div className="pt-7 mt-1 border-t border-white/15 max-w-2xl mx-auto grid grid-cols-3 divide-x divide-white/12">
+                {[
+                  { v: '2,207', k: 'Monitored Works' },
+                  { v: '₹31.4L Cr', k: 'Capital Portfolio' },
+                  { v: '100%', k: 'Air-Gapped Sovereign' },
+                ].map((m) => (
+                  <div key={m.k} className="px-3 text-center">
+                    <div className="font-mono text-[21px] sm:text-[25px] font-semibold text-white leading-none tracking-[-0.02em]">
+                      {m.v}
+                    </div>
+                    <div className="text-[9.5px] uppercase tracking-institutional text-ink-200 mt-2 font-bold">
+                      {m.k}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -138,7 +140,7 @@ export default function AmeyMasterView() {
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-2" className="snap-slide-section flex flex-col justify-center space-y-8">
           {/* Top Parchment Ribbon */}
-          <div className="card-parchment-gold rounded-3xl p-8 sm:p-10 relative overflow-hidden shadow-card border border-gov-gold-border">
+          <div className="card-parchment-gold p-7 sm:p-8 relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-4 flex items-center justify-center lg:justify-start gap-5">
                 <div className="w-20 h-24 text-gov-green-map flex items-center justify-center shrink-0">
@@ -165,7 +167,7 @@ export default function AmeyMasterView() {
               </div>
 
               <div className="lg:col-span-3 flex flex-col items-center lg:items-end justify-center text-center lg:text-right">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gov-green-light text-gov-green-map border border-gov-green-map/40 text-[12px] font-bold mb-2">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-sm bg-gov-green-light text-gov-green-map border border-gov-green-map/40 text-[12px] font-bold mb-2">
                   <ShieldCheck className="w-4 h-4" />
                   <span>100% Verified Catalog</span>
                 </div>
@@ -177,7 +179,7 @@ export default function AmeyMasterView() {
           {/* 2-Column Statutory Directives */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Left: General Information */}
-            <div className="lg:col-span-5 bg-white border border-border-default rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between">
+            <div className="lg:col-span-5 panel p-8 sm:p-10 flex flex-col justify-between">
               <div>
                 <h3 className="font-heading font-extrabold text-[19px] sm:text-[21px] text-gov-navy border-b border-border-default pb-4 mb-5 flex items-center gap-2.5">
                   <Layers className="w-5 h-5 text-gov-saffron" />
@@ -210,7 +212,7 @@ export default function AmeyMasterView() {
             </div>
 
             {/* Right: Feature Focus Card */}
-            <div className="lg:col-span-7 bg-white border border-border-default rounded-3xl p-8 sm:p-10 shadow-card flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-7 panel p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light px-3 py-1 rounded border border-gov-gold-border">
@@ -267,11 +269,11 @@ export default function AmeyMasterView() {
                 <Link
                   key={mod.to}
                   to={mod.to}
-                  className={`card-gov-programme p-7 sm:p-8 rounded-3xl flex flex-col justify-between group shadow-card ${mod.accent}`}
+                  className={`panel ${mod.accent} p-6 flex flex-col justify-between group`}
                 >
                   <div className="space-y-4">
-                    <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center shadow-subtle group-hover:scale-105 transition-transform">
-                      <Icon className="w-7 h-7 text-gov-navy" />
+                    <div className="w-9 h-9 rounded-sm bg-gov-surface border border-gov-border flex items-center justify-center group-hover:border-gov-saffron transition-colors">
+                      <Icon className="w-4 h-4 text-gov-navy" strokeWidth={2} />
                     </div>
 
                     <div>
@@ -306,10 +308,10 @@ export default function AmeyMasterView() {
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-4" className="snap-slide-section flex flex-col justify-center space-y-8">
           {/* McCrary Density Card */}
-          <div className="bg-gov-navy rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-elevated">
+          <div className="command-header p-7 sm:p-10 text-white relative overflow-hidden">
             <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-8 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gov-saffron text-white text-[11px] font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-gov-saffron text-white text-[11px] font-bold uppercase tracking-widest">
                   <span>Featured Empirical Finding</span>
                 </div>
                 <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] leading-tight text-white">
@@ -332,7 +334,7 @@ export default function AmeyMasterView() {
               </div>
 
               <div className="lg:col-span-4 flex justify-center lg:justify-end">
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-7 text-center w-full max-w-sm">
+                <div className="border border-white/15 bg-white/[0.04] rounded-sm p-6 text-center w-full max-w-sm">
                   <div className="text-[52px] sm:text-[58px] font-black text-white font-heading leading-none font-mono">1.65×</div>
                   <div className="text-[14px] font-bold text-slate-200 mt-2">McCrary Discontinuity Ratio</div>
                   <div className="text-[12px] text-gov-saffron-light mt-1 font-mono">p &lt; 0.001 · Highly Significant</div>
@@ -344,7 +346,7 @@ export default function AmeyMasterView() {
           {/* 3 Executive Bulletins */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
             {/* Notice 1 */}
-            <div className="bulletin-paper-card p-7 rounded-3xl flex flex-col justify-between">
+            <div className="bulletin-paper-card p-6 pt-7 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[11px] text-text-muted font-bold font-mono">
                   <span className="text-gov-saffron uppercase">Cabinet Flash</span>
@@ -365,7 +367,7 @@ export default function AmeyMasterView() {
             </div>
 
             {/* Notice 2 */}
-            <div className="bulletin-paper-card p-7 rounded-3xl flex flex-col justify-between">
+            <div className="bulletin-paper-card p-6 pt-7 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[11px] text-text-muted font-bold font-mono">
                   <span className="text-emerald-700 uppercase">Solvency Alert</span>
@@ -386,7 +388,7 @@ export default function AmeyMasterView() {
             </div>
 
             {/* Notice 3 */}
-            <div className="bulletin-paper-card p-7 rounded-3xl flex flex-col justify-between">
+            <div className="bulletin-paper-card p-6 pt-7 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[11px] text-text-muted font-bold font-mono">
                   <span className="text-blue-700 uppercase">Weather Advisory</span>
@@ -413,10 +415,10 @@ export default function AmeyMasterView() {
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-5" className="snap-slide-section flex flex-col justify-center space-y-8">
           {/* Decision Hub Action Banner */}
-          <div className="bg-gradient-to-r from-gov-navy to-gov-navy-light rounded-3xl p-8 sm:p-12 lg:p-14 text-white shadow-elevated border border-slate-700/60 relative overflow-hidden">
+          <div className="command-header p-7 sm:p-10 lg:p-12 text-white relative overflow-hidden">
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="space-y-3.5 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gov-saffron/30 text-gov-saffron-light border border-gov-saffron/40 text-[11px] font-bold uppercase tracking-wider">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-gov-saffron/30 text-gov-saffron-light border border-gov-saffron/40 text-[11px] font-bold uppercase tracking-wider">
                   <Cpu className="w-4 h-4 text-gov-saffron" />
                   <span>Interactive Simulation Hub</span>
                 </div>
@@ -449,14 +451,16 @@ export default function AmeyMasterView() {
             <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-10 py-3">
               {circularPartners.map((partner) => (
                 <div key={partner.name} className="flex flex-col items-center gap-2 group cursor-pointer">
-                  <div className="circular-partner-badge w-16 h-16 sm:w-20 sm:h-20 text-3xl sm:text-4xl">
-                    <span className="group-hover:scale-110 transition-transform">{partner.symbol}</span>
+                  <div className="circular-partner-badge w-14 h-14 sm:w-16 sm:h-16">
+                    <span className="font-heading font-extrabold text-[11px] sm:text-[12px] tracking-tight text-gov-navy">
+                      {partner.symbol}
+                    </span>
                   </div>
                   <div className="text-center">
-                    <div className="text-[13px] sm:text-[13.5px] font-bold text-gov-navy group-hover:text-gov-saffron transition-colors">
+                    <div className="text-[11.5px] font-bold text-gov-navy group-hover:text-gov-saffron transition-colors leading-tight">
                       {partner.name}
                     </div>
-                    <div className="text-[10.5px] text-text-muted font-medium">{partner.sub}</div>
+                    <div className="text-[9.5px] text-gov-muted font-mono">{partner.sub}</div>
                   </div>
                 </div>
               ))}

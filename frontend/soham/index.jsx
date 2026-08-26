@@ -15,10 +15,10 @@ export default function DPRScorerView() {
   return (
     <div className="space-y-8 font-sans">
       {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card">
+      <section className="panel p-4 sm:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <FileText className="w-3.5 h-3.5 text-gov-saffron" />
               <span>DPR-SCORER · Proposal Quality Forensics</span>
             </div>
@@ -56,17 +56,17 @@ export default function DPRScorerView() {
         <>
           {/* ═══════ STAT STRIP ═══════ */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Rush Sanctions</div>
               <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.election_rush_sanction_count}</div>
               <div className="text-[12px] text-text-muted mt-1 font-medium">{data.election_rush_percentage}% of national portfolio</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Avg Delay Penalty</div>
               <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">+{data.avg_delay_penalty_election_rush_months} months</div>
               <div className="text-[12px] text-text-muted mt-1 font-medium">Excess delay from premature sanction</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Statutory Rule</div>
               <div className="text-[20px] font-black text-gov-navy mt-2 font-mono">80% ROW Possession</div>
               <div className="text-[12px] text-text-muted mt-1 font-medium">Required before financial sanction</div>
@@ -74,7 +74,7 @@ export default function DPRScorerView() {
           </div>
 
           {/* ═══════ FLAGGED PROJECTS TABLE ═══════ */}
-          <section id="rush-table" className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card space-y-6">
+          <section id="rush-table" className="panel p-4 sm:p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <h2 className="font-heading font-extrabold text-[22px] text-gov-navy">Projects Sanctioned During Pre-Election Quarters</h2>
               <span className="text-[12px] text-text-muted font-mono font-bold">{data.flagged_rush_projects?.length} Flagged Projects</span>
@@ -109,7 +109,7 @@ export default function DPRScorerView() {
           </section>
 
           {/* ═══════ METHODOLOGY ═══════ */}
-          <section className="bg-white border border-border-default rounded-3xl p-8 sm:p-10 shadow-card">
+          <section className="panel p-5 sm:p-6">
             <h3 className="text-[17px] font-heading font-extrabold text-gov-navy mb-3">Methodology</h3>
             <p className="text-[14px] text-text-secondary leading-relaxed max-w-3xl font-sans">
               Project sanction dates cross-referenced against Election Commission of India calendars 

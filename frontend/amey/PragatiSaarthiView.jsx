@@ -36,18 +36,17 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   return (
     <div className="space-y-8 font-sans relative">
       {/* Top Header Banner */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+      <section className="panel p-4 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <FileText className="w-3.5 h-3.5 text-gov-saffron" />
               <span>Module 4 · Executive Governance</span>
             </div>
             <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight flex items-center gap-2">
               <span>PRAGATI-SAARTHI: Bilingual Cabinet Review Note</span>
             </h2>
-            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
-              Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
+            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed"> Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
             </p>
           </div>
 
@@ -61,8 +60,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                   ? 'bg-gov-navy text-white shadow-sm'
                   : 'text-text-secondary hover:text-gov-navy'
               }`}
-            >
-              English
+            > English
             </button>
             <button
               onClick={() => setLang('hi')}
@@ -79,14 +77,13 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
       </section>
 
       {loading && (
-        <div className="p-12 text-center text-text-muted font-bold text-sm bg-white rounded-3xl border border-border-default shadow-card">
-          <FileText className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
-          Preparing Fact-Verified Executive Briefing Note...
+        <div className="p-12 text-center text-text-muted font-bold text-sm panel">
+          <FileText className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" /> Preparing Fact-Verified Executive Briefing Note...
         </div>
       )}
 
       {denied && !loading && (
-        <div className="p-5 rounded-3xl bg-rose-50 border border-rose-300 text-xs font-semibold text-rose-800 shadow-sm">
+        <div className="note note-critical">
           {denied}
           <span className="block font-normal mt-1">Cabinet briefings require the ministry officer or administrator role.</span>
         </div>
@@ -96,12 +93,11 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Briefing Note (2 Columns) */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+            <div className="panel p-4 sm:p-5 space-y-6">
               {/* Header Info */}
               <div className="border-b border-border-default pb-5 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider">
-                    Cabinet Review Reference Dossier: MoSPI Project Record #{data.project_id}
+                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider"> Cabinet Review Reference Dossier: MoSPI Project Record #{data.project_id}
                   </span>
                   <span className="text-[11.5px] font-mono text-text-muted font-bold">{data.generated_at}</span>
                 </div>
@@ -138,8 +134,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               <div className="pt-4 border-t border-border-default space-y-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span className="text-[12px] font-bold text-gov-navy uppercase tracking-wider font-heading">
-                    Click Any Metric to Inspect its Source &amp; Proof
+                  <span className="text-[12px] font-bold text-gov-navy uppercase tracking-wider font-heading"> Click Any Metric to Inspect its Source &amp; Proof
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
@@ -162,7 +157,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
           {/* Right Column: Top Decisions & Constraints */}
           <div className="lg:col-span-1 space-y-6">
             {/* Top Actionable Decisions */}
-            <div className="bg-white p-7 rounded-3xl border border-border-default shadow-card space-y-5">
+            <div className="panel p-4 space-y-5">
               <div className="flex items-center gap-2 border-b border-border-default pb-4">
                 <Sparkles className="w-4 h-4 text-gov-saffron" />
                 <h3 className="text-[14px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
@@ -174,7 +169,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                 {data.top_decisions.map((dec, idx) => (
                   <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full font-mono ${
+                      <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-sm font-mono ${
                         dec.priority === 'HIGH' ? 'bg-rose-50 text-rose-800 border border-rose-300' : 'bg-amber-50 text-amber-800 border border-amber-300'
                       }`}>
                         {dec.priority} PRIORITY
@@ -184,8 +179,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                     <p className="text-[12.5px] font-bold text-gov-navy leading-snug font-sans">
                       {lang === 'en' ? dec.recommendation_en : dec.recommendation_hi}
                     </p>
-                    <div className="text-[11px] font-mono text-emerald-800 font-bold">
-                      Estimated Capital Safeguarded: ₹{dec.impact_cr.toLocaleString()} Cr
+                    <div className="text-[11px] font-mono text-emerald-800 font-bold"> Estimated Capital Safeguarded: ₹{dec.impact_cr.toLocaleString()} Cr
                     </div>
                   </div>
                 ))}
@@ -196,15 +190,12 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
             <div className="bg-gov-navy text-white p-6 sm:p-7 rounded-3xl border border-slate-700 space-y-4 shadow-elevated">
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4 text-gov-saffron" />
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-gov-saffron-light font-heading">
-                  Cryptographic Integrity &amp; Lineage Assurance
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-gov-saffron-light font-heading"> Cryptographic Integrity &amp; Lineage Assurance
                 </h3>
               </div>
-              <p className="text-[12px] text-slate-300 leading-relaxed font-sans">
-                Every number in this Cabinet note is locked to official database records. No fabricated data or hallucinated estimates can enter this document.
+              <p className="text-[12px] text-slate-300 leading-relaxed font-sans"> Every number in this Cabinet note is locked to official database records. No fabricated data or hallucinated estimates can enter this document.
               </p>
-              <div className="bg-black/40 p-3 rounded-xl border border-white/10 font-mono text-[10.5px] text-white/90 break-all">
-                Security Hash: {data.merkle_root}
+              <div className="bg-black/40 p-3 rounded-xl border border-white/10 font-mono text-[10.5px] text-white/90 break-all"> Security Hash: {data.merkle_root}
               </div>
             </div>
           </div>
@@ -261,7 +252,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                     activeFact.lineage.merkle_proof.map((p, idx) => (
                       <div key={idx} className="flex items-center justify-between text-[9.5px] font-mono bg-white p-1.5 rounded-lg border border-slate-200">
                         <span className="text-gov-navy truncate max-w-[200px]">{p.hash}</span>
-                        <span className="bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded uppercase font-bold text-[8.5px] border border-sky-200">{p.position}</span>
+                        <span className="note note-info uppercase">{p.position}</span>
                       </div>
                     ))
                   ) : (
@@ -280,15 +271,12 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
             <div className="p-5 bg-gov-navy text-white rounded-2xl border border-slate-700 space-y-3.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-gov-saffron-light uppercase flex items-center gap-1.5 font-heading">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Real-Time Cryptographic Merkle Verification Test
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> Real-Time Cryptographic Merkle Verification Test
                 </span>
-                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-mono">
-                  Live Verification
+                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-sm font-mono"> Live Verification
                 </span>
               </div>
-              <p className="text-[12px] text-slate-300 leading-snug font-sans">
-                Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
+              <p className="text-[12px] text-slate-300 leading-snug font-sans"> Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
               </p>
               
               <div className="space-y-2">
@@ -318,19 +306,18 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                         const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
                         
                         if (proofValid && valuesMatch) {
-                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">✅ AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>`;
+                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>`;
                         } else if (proofValid && !valuesMatch) {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 FAKE DATA DETECTED: Entered "${inputVal}" does not match audited value "${serverValue}". Edit rejected immediately!</span>`;
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">FAKE DATA DETECTED: Entered "${inputVal}" does not match audited value "${serverValue}". Edit rejected immediately!</span>`;
                         } else {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">🚨 VERIFICATION FAILED: Source proof did not validate on the server.</span>`;
+                          resEl.innerHTML = `<span class="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>`;
                         }
                       } catch (err) {
-                        resEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Verification check error: ${err.message}. Ensure backend is running.</span>`;
+                        resEl.innerHTML = `<span class="text-amber-400 font-bold">Verification check error: ${err.message}. Ensure backend is running.</span>`;
                       }
                     }}
                     className="btn-saffron-pill px-3.5 py-2 text-xs font-bold uppercase transition-all shrink-0"
-                  >
-                    Validate Lineage Hash
+                  > Validate Lineage Hash
                   </button>
                 </div>
                 <div id="tamperResult" className="text-[11px] font-mono min-h-6 pt-1"></div>
@@ -340,8 +327,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
             <button
               onClick={() => setDrawerOpen(false)}
               className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider"
-            >
-              Close Drawer
+            > Close Drawer
             </button>
           </div>
         </div>

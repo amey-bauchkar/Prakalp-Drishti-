@@ -43,35 +43,52 @@ export default function DecisionHubView() {
   return (
     <LoginGate>
       <div className="space-y-6 pb-20">
-        {/* Sleek Engine Tabs Bar without Scrollbar */}
-        <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-3 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-sm">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
-            {engines.map((eng) => {
-              const Icon = eng.icon;
-              const isActive = activeEngine === eng.id;
-              return (
-                <button
-                  key={eng.id}
-                  onClick={() => setActiveEngine(eng.id)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-[12.5px] font-bold transition-all whitespace-nowrap ${
-                    isActive
-                      ? 'bg-gov-navy text-white shadow-elevated'
-                      : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
-                  }`}
-                >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-gov-saffron-light' : 'text-slate-400'}`} />
-                  <span>{eng.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="hidden xl:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-xs shrink-0 font-mono shadow-subtle mr-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-text-muted font-bold">Active Dossier:</span>
-            <strong className="text-gov-navy font-bold">Project #{selectedProjectId}</strong>
-          </div>
+        {/* ── Console masthead + live dossier telemetry ───────────────── */}
+        <div className="telemetry justify-between">
+          <span className="flex items-center gap-2 flex-wrap">
+            <b>DECISION INTELLIGENCE CONSOLE</b>
+            <span className="sep">/</span>
+            <span>{engines.length} ENGINES</span>
+            <span className="sep">/</span>
+            <span>2,207 PROJECTS</span>
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>ACTIVE DOSSIER</span>
+            <b>#{selectedProjectId}</b>
+          </span>
         </div>
+
+        {/* Engine register.
+            Was a horizontally-scrolling strip of rounded pill buttons on a
+            tinted bar, where the labels truncated and the active state relied
+            on a drop shadow. Engines now occupy a shared hairline lattice as
+            one continuous selector: each cell carries its full name and its
+            function, and the active engine is held on the deep ground with a
+            gold edge. Nothing scrolls out of reach. */}
+        <nav className="engine-rail" role="tablist" aria-label="Decision engines">
+          {engines.map((eng) => {
+            const Icon = eng.icon;
+            const isActive = activeEngine === eng.id;
+            return (
+              <button
+                key={eng.id}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActiveEngine(eng.id)}
+                className={`engine-tab ${isActive ? 'active' : ''}`}
+              >
+                <span className="engine-tab-icon">
+                  <Icon className="w-3.5 h-3.5" strokeWidth={2} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="engine-tab-name">{eng.label}</span>
+                  <span className="engine-tab-desc">{eng.desc}</span>
+                </span>
+              </button>
+            );
+          })}
+        </nav>
 
         {/* Active Engine View (Clean, Direct Rendering) */}
         <div>

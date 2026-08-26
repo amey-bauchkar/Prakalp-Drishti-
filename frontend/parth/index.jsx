@@ -15,10 +15,10 @@ export default function ArthaNetraView() {
   return (
     <div className="space-y-8 font-sans">
       {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card">
+      <section className="panel p-4 sm:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <TrendingUp className="w-3.5 h-3.5 text-gov-saffron" />
               <span>ARTHA-NETRA · PSU Financial Solvency</span>
             </div>
@@ -67,7 +67,7 @@ export default function ArthaNetraView() {
           </div>
 
           {/* ═══════ PSU HEALTH MATRIX ═══════ */}
-          <section id="psu-matrix" className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card space-y-6">
+          <section id="psu-matrix" className="panel p-4 sm:p-5 space-y-6">
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <h2 className="font-heading font-extrabold text-[22px] text-gov-navy">PSU Health Matrix &amp; Altman Z-Score Telemetry</h2>
               <span className="text-[12px] text-text-muted font-mono font-bold">{data.psu_risk_records?.length} Public Sector Undertakings</span>
@@ -112,7 +112,7 @@ export default function ArthaNetraView() {
           </section>
 
           {/* ═══════ METHODOLOGY ═══════ */}
-          <section className="bg-white border border-border-default rounded-3xl p-8 sm:p-10 shadow-card">
+          <section className="panel p-5 sm:p-6">
             <h3 className="text-[17px] font-heading font-extrabold text-gov-navy mb-3">Methodology</h3>
             <p className="text-[14px] text-text-secondary leading-relaxed max-w-3xl font-sans">
               Altman Z-score distress classification applied to the latest available annual financial statements 

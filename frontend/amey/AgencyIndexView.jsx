@@ -22,7 +22,7 @@ export default function AgencyIndexView() {
 
   if (loading) {
     return (
-      <div className="bg-white p-12 rounded-3xl border border-border-default shadow-card text-center">
+      <div className="panel p-7 text-center">
         <div className="w-10 h-10 border-4 border-gov-navy border-t-transparent rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gov-navy font-bold text-sm">Synthesizing Agency Accountability Scores across 2,207 Projects...</p>
       </div>
@@ -39,10 +39,10 @@ export default function AgencyIndexView() {
   return (
     <div className="space-y-8 font-sans">
       {/* Header Banner */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+      <section className="panel p-4 sm:p-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <Building2 className="w-3.5 h-3.5 text-gov-saffron" />
               <span>Agency Performance Scorecard</span>
             </div>
@@ -56,15 +56,15 @@ export default function AgencyIndexView() {
 
           {/* Tier Stat Badges */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-emerald-50 border border-emerald-300 px-4 py-3 rounded-2xl text-center shadow-subtle">
+            <div className="note note-ok text-center">
               <span className="text-[10px] uppercase font-bold text-emerald-800 block font-mono">Exemplary Delivery (Tier 1)</span>
               <span className="text-[24px] font-black text-emerald-950 font-mono">{data?.tier_1_agencies || 0}</span>
             </div>
-            <div className="bg-amber-50 border border-amber-300 px-4 py-3 rounded-2xl text-center shadow-subtle">
+            <div className="note note-warn text-center">
               <span className="text-[10px] uppercase font-bold text-amber-800 block font-mono">Watchlist / Moderate Slip (Tier 2)</span>
               <span className="text-[24px] font-black text-amber-950 font-mono">{data?.tier_2_agencies || 0}</span>
             </div>
-            <div className="bg-rose-50 border border-rose-300 px-4 py-3 rounded-2xl text-center shadow-subtle">
+            <div className="note note-critical text-center">
               <span className="text-[10px] uppercase font-bold text-rose-800 block font-mono">Critical Delay Risk (Tier 3)</span>
               <span className="text-[24px] font-black text-rose-950 font-mono">{data?.tier_3_agencies || 0}</span>
             </div>
@@ -73,7 +73,7 @@ export default function AgencyIndexView() {
       </section>
 
       {/* Filter Bar */}
-      <div className="bg-white p-5 rounded-3xl border border-border-default shadow-card flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="panel p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-96">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
@@ -105,7 +105,7 @@ export default function AgencyIndexView() {
       </div>
 
       {/* Leaderboard Table */}
-      <div className="bg-white rounded-3xl border border-border-default shadow-card overflow-hidden p-7 sm:p-9 space-y-6">
+      <div className="panel overflow-hidden p-4 sm:p-5 space-y-6">
         <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
@@ -154,14 +154,14 @@ export default function AgencyIndexView() {
                     </span>
                   </td>
                   <td className="text-center">
-                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 font-mono">
+                    <div className="inline-flex items-center gap-1 px-3 py-1 rounded-sm bg-slate-100 border border-slate-200 font-mono">
                       <span className="font-black text-xs text-gov-navy">{agency.velocity_score}</span>
                       <span className="text-[10px] text-text-muted">/100</span>
                     </div>
                   </td>
                   <td className="text-center">
                     <span
-                      className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider inline-block font-mono"
+                      className="px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-wider inline-block font-mono"
                       style={{
                         backgroundColor: `${agency.status_color}18`,
                         color: agency.status_color,
