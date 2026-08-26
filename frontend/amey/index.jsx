@@ -34,7 +34,7 @@ export default function AmeyMasterView() {
       finding: 'Granger-causal',
       findingLabel: 'Equity-Delay Coupling',
       icon: TrendingUp,
-      accent: 'panel-authority',
+      accent: 'panel-accent',
     },
     {
       name: 'VARSHA-SPEED',
@@ -47,13 +47,23 @@ export default function AmeyMasterView() {
       accent: 'panel-accent',
     },
     {
-      name: 'DPR-SCORER',
-      to: '/soham',
-      title: 'Proposal Quality Forensics',
-      desc: 'Audits project approval timestamps against national & state election cycles to detect rushed foundation approvals lacking 80% Right-of-Way acquisition.',
-      finding: '23% of portfolio',
-      findingLabel: 'Pre-Election Rush Approvals',
-      icon: FileText,
+      name: 'NIVARAN',
+      to: '/nivaran',
+      title: 'Contract & Legal Risk',
+      desc: 'NLP scrutiny of CPWD GCC clauses, contractor litigation track records, and predictive arbitration modeling to preempt contractor site abandonment.',
+      finding: '78.5 Exposure',
+      findingLabel: 'Litigation Index',
+      icon: Scale,
+      accent: 'panel-accent',
+    },
+    {
+      name: 'ANUMATI',
+      to: '/anumati',
+      title: 'Statutory Clearances (PARIVESH)',
+      desc: '5-stage clearance pipeline tracking, Regulatory Stagnation Index (RSI), and central-state paperwork loopback anomaly detection.',
+      finding: '1.72× RSI',
+      findingLabel: 'Regulatory Stagnation',
+      icon: GitBranch,
       accent: 'panel-accent',
     },
   ];
@@ -120,9 +130,9 @@ export default function AmeyMasterView() {
 
                 <button
                   onClick={() => scrollToSection('slide-3')}
-                  className="inline-flex items-center gap-1.5 text-white text-[12px] font-extrabold uppercase tracking-institutional py-2 px-4.5 rounded-sm bg-white/5 hover:bg-white/15 border border-white/30 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-white text-[12px] font-extrabold uppercase tracking-institutional py-2 px-5 rounded-sm bg-white/5 hover:bg-white/15 border border-white/30 transition-colors whitespace-nowrap cursor-pointer"
                 >
-                  <span>View Four Engines</span>
+                  <span>Explore Engines</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -262,7 +272,7 @@ export default function AmeyMasterView() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
-            SLIDE 3: FOUR ANALYTICAL PROGRAMMES (PAGE 3)
+            SLIDE 3: FIVE ANALYTICAL PROGRAMMES (PAGE 3)
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-3" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-6 sm:py-8 space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-2">
@@ -273,44 +283,44 @@ export default function AmeyMasterView() {
               OVERSIGHT PROGRAMMES
             </h2>
             <p className="text-text-secondary text-[14px] sm:text-[15px]">
-              Four empirical oversight engines built on econometric and statistical foundations.
+              Empirical oversight engines built on econometric, statutory, and climate risk foundations.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {modules.map((mod) => {
               const Icon = mod.icon;
               return (
                 <Link
                   key={mod.to}
                   to={mod.to}
-                  className={`panel ${mod.accent} p-5 sm:p-6 flex flex-col justify-between group rounded-2xl min-h-[340px] sm:min-h-[360px] shadow-xs hover:shadow-md transition-all`}
+                  className={`panel ${mod.accent} p-4.5 sm:p-5 flex flex-col justify-between group rounded-2xl min-h-[320px] sm:min-h-[340px] shadow-xs hover:shadow-md transition-all`}
                 >
-                  <div className="space-y-3">
-                    <div className="w-9 h-9 rounded-xl bg-gov-surface border border-gov-border flex items-center justify-center group-hover:border-gov-saffron transition-colors">
-                      <Icon className="w-4.5 h-4.5 text-gov-navy" strokeWidth={2} />
+                  <div className="space-y-2.5">
+                    <div className="w-8.5 h-8.5 rounded-xl bg-gov-surface border border-gov-border flex items-center justify-center group-hover:border-gov-saffron transition-colors">
+                      <Icon className="w-4 h-4 text-gov-navy" strokeWidth={2} />
                     </div>
 
                     <div>
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-1 font-mono">
+                      <div className="text-[10.5px] font-bold uppercase tracking-wider text-text-muted mb-0.5 font-mono">
                         {mod.name}
                       </div>
-                      <h3 className="font-heading font-extrabold text-[16px] sm:text-[17.5px] text-gov-navy group-hover:text-gov-saffron transition-colors leading-snug">
+                      <h3 className="font-heading font-extrabold text-[15px] sm:text-[16px] text-gov-navy group-hover:text-gov-saffron transition-colors leading-snug">
                         {mod.title}
                       </h3>
                     </div>
 
-                    <p className="text-[13px] sm:text-[13.5px] text-text-secondary leading-relaxed">
+                    <p className="text-[12px] sm:text-[12.5px] text-text-secondary leading-relaxed">
                       {mod.desc}
                     </p>
                   </div>
 
-                  <div className="pt-3.5 mt-4 border-t border-slate-200/80 flex items-center justify-between">
+                  <div className="pt-3 mt-3 border-t border-slate-200/80 flex items-center justify-between">
                     <div>
-                      <div className="text-[14.5px] font-mono font-black text-gov-navy">{mod.finding}</div>
-                      <div className="text-[10px] text-text-muted font-medium">{mod.findingLabel}</div>
+                      <div className="text-[13.5px] font-mono font-black text-gov-navy">{mod.finding}</div>
+                      <div className="text-[9.5px] text-text-muted font-medium">{mod.findingLabel}</div>
                     </div>
-                    <ChevronRight className="w-4.5 h-4.5 text-slate-400 group-hover:text-gov-saffron group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-gov-saffron group-hover:translate-x-1 transition-all" />
                   </div>
                 </Link>
               );
