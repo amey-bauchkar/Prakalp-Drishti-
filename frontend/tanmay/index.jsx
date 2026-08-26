@@ -12,6 +12,8 @@ export default function SatyaKavachView() {
   const [clauseData, setClauseData] = useState(null);
   const [rankingsData, setRankingsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProjectId, setSelectedProjectId] = useState(() => localStorage.getItem('prakalp:selectedProjectId') || '619092');
+  const [activeProject, setActiveProject] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
 
@@ -26,6 +28,37 @@ export default function SatyaKavachView() {
   const [simOtherWeight, setSimOtherWeight] = useState(25);
   const [simResult, setSimResult] = useState(null);
   const [simulating, setSimulating] = useState(false);
+
+  // Global project sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
+
+  // When project changes, fetch its metadata to populate simulator & filter table
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetch(`/api/projects/${selectedProjectId}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(p => {
+          if (p) {
+            setActiveProject(p);
+            if (p.original_cost_cr) setSimOrigCost(p.original_cost_cr);
+            if (p.revised_cost_cr) setSimRevCost(p.revised_cost_cr);
+            if (p.sanction_date) {
+              const yr = parseInt(String(p.sanction_date).slice(0, 4));
+              if (yr && yr > 1990 && yr <= 2026) setSimSanctionYear(yr);
+            }
+          }
+        })
+        .catch(() => {});
+    }
+  }, [selectedProjectId]);
 
   useEffect(() => { fetchAllData(); }, []);
 
