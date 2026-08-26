@@ -785,7 +785,7 @@
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
   .snap-slide-container { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-  .snap-slide-section { scroll-snap-align: start; scroll-snap-stop: always; min-height: calc(100vh - 110px); }
+  .snap-slide-section { scroll-snap-align: start; scroll-snap-stop: always; min-height: calc(100vh - 120px); }
 }
 
 /* Respect reduced-motion for every transition defined above. */

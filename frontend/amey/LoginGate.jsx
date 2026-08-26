@@ -109,12 +109,23 @@ export default function LoginGate({ children }) {
       <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Sign-in */}
-        <div className="panel p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Lock className="w-4 h-4 text-gov-navy" />
-            <h2 className="text-sm font-black text-gov-navy uppercase tracking-wider">
-              Secure Sign-In
-            </h2>
+        <div className="panel p-5">
+          <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gov-border">
+            <div className="w-14 h-14 flex items-center justify-center bg-white rounded-lg border border-slate-200 p-0.5 shadow-2xs shrink-0">
+              <img
+                src="/logos/prakalp_drishti_emblem.png"
+                alt="PRAKALP-DRISHTI Sovereign Emblem"
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div>
+              <div className="font-devanagari text-[10.5px] font-bold text-gov-navy leading-none mb-0.5">
+                सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
+              </div>
+              <h2 className="text-sm font-black text-gov-navy uppercase tracking-wider">
+                PRAKALP-DRISHTI Gate
+              </h2>
+            </div>
           </div>
           <p className="text-[11px] text-gov-muted mb-4">
             Access is enforced on the server. Your role determines which data the API will

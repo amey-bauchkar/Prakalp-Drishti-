@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F4F6F9" />
+    </radialGradient>
+    
+    <linearGradient id="saffron-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933" />
+      <stop offset="100%" stop-color="#E06B00" />
+    </linearGradient>
+
+    <linearGradient id="navy-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A1E31" />
+      <stop offset="50%" stop-color="#163B5D" />
+      <stop offset="100%" stop-color="#071626" />
+    </linearGradient>
+
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE57F" />
+      <stop offset="30%" stop-color="#FFC107" />
+      <stop offset="70%" stop-color="#FFA000" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+
+    <linearGradient id="emerald-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#138808" />
+      <stop offset="100%" stop-color="#0B5305" />
+    </linearGradient>
+
+    <filter id="drop-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0A1E31" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Base Circle with Shadow -->
+  <circle cx="250" cy="250" r="230" fill="url(#bg-grad)" stroke="#E2E8F0" stroke-width="2" filter="url(#drop-shadow)" />
+
+  <!-- Outer Sovereign Ring with Tricolor Segment -->
+  <circle cx="250" cy="250" r="215" fill="none" stroke="url(#navy-grad)" stroke-width="5" />
+  <circle cx="250" cy="250" r="205" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4" />
+
+  <!-- Tricolor Arc Crown -->
+  <path d="M 105 145 A 215 215 0 0 1 395 145" fill="none" stroke="url(#saffron-grad)" stroke-width="10" stroke-linecap="round" />
+  <path d="M 105 355 A 215 215 0 0 0 395 355" fill="none" stroke="url(#emerald-grad)" stroke-width="10" stroke-linecap="round" />
+
+  <!-- 4 Cardinal Radar Alignment Markers -->
+  <line x1="250" y1="25" x2="250" y2="45" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round" />
+  <line x1="250" y1="455" x2="250" y2="475" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round" />
+  <line x1="25" y1="250" x2="45" y2="250" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round" />
+  <line x1="455" y1="250" x2="475" y2="250" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round" />
+
+  <!-- INFRASTRUCTURE GRID HORIZON (PRAKALP) -->
+  <g opacity="0.95">
+    <path d="M 130 330 L 250 240 L 370 330 Z" fill="url(#navy-grad)" opacity="0.08" />
+
+    <line x1="250" y1="240" x2="130" y2="340" stroke="url(#navy-grad)" stroke-width="3" stroke-linecap="round" />
+    <line x1="250" y1="240" x2="170" y2="350" stroke="url(#navy-grad)" stroke-width="2" stroke-linecap="round" />
+    <line x1="250" y1="240" x2="210" y2="355" stroke="url(#navy-grad)" stroke-width="1.5" />
+    <line x1="250" y1="240" x2="250" y2="355" stroke="url(#saffron-grad)" stroke-width="2.5" stroke-dasharray="6 6" />
+    <line x1="250" y1="240" x2="290" y2="355" stroke="url(#navy-grad)" stroke-width="1.5" />
+    <line x1="250" y1="240" x2="330" y2="350" stroke="url(#navy-grad)" stroke-width="2" stroke-linecap="round" />
+    <line x1="250" y1="240" x2="370" y2="340" stroke="url(#navy-grad)" stroke-width="3" stroke-linecap="round" />
+
+    <!-- Suspension Bridge Arches -->
+    <path d="M 160 300 Q 205 260 250 280 Q 295 260 340 300" fill="none" stroke="url(#gold-grad)" stroke-width="3.5" />
+    <path d="M 190 315 Q 220 285 250 300 Q 280 285 310 315" fill="none" stroke="url(#gold-grad)" stroke-width="2" />
+    
+    <!-- Bridge Vertical Suspension Cables -->
+    <line x1="205" y1="270" x2="205" y2="305" stroke="url(#gold-grad)" stroke-width="1.5" />
+    <line x1="225" y1="280" x2="225" y2="310" stroke="url(#gold-grad)" stroke-width="1.5" />
+    <line x1="275" y1="280" x2="275" y2="310" stroke="url(#gold-grad)" stroke-width="1.5" />
+    <line x1="295" y1="270" x2="295" y2="305" stroke="url(#gold-grad)" stroke-width="1.5" />
+  </g>
+
+  <!-- SATELLITE ORBITAL RAYS & APERTURE (DRISHTI) -->
+  <ellipse cx="250" cy="220" rx="165" ry="65" fill="none" stroke="url(#navy-grad)" stroke-width="4" transform="rotate(-18 250 220)" stroke-dasharray="12 6" />
+  
+  <!-- Orbiting Telemetry Satellite Node -->
+  <g transform="translate(390, 160) rotate(-18)">
+    <rect x="-12" y="-7" width="24" height="14" rx="3" fill="url(#navy-grad)" stroke="url(#gold-grad)" stroke-width="1.5" />
+    <rect x="-26" y="-5" width="12" height="10" rx="1" fill="#0284C7" stroke="#38BDF8" stroke-width="1" />
+    <rect x="14" y="-5" width="12" height="10" rx="1" fill="#0284C7" stroke="#38BDF8" stroke-width="1" />
+    <circle cx="0" cy="0" r="3" fill="#FF9933" />
+  </g>
+
+  <!-- Concentric Earth Observation Aperture Rings -->
+  <circle cx="250" cy="210" r="70" fill="url(#navy-grad)" stroke="url(#gold-grad)" stroke-width="4" />
+  <circle cx="250" cy="210" r="56" fill="#071626" stroke="url(#saffron-grad)" stroke-width="2.5" />
+
+  <!-- 24-Spoke Golden Ashok Chakra Iris Structure -->
+  <g id="chakra-iris" transform="translate(250, 210)">
+    <circle cx="0" cy="0" r="42" fill="none" stroke="url(#gold-grad)" stroke-width="2" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(0)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(15)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(30)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(45)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(60)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(75)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(90)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(105)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(120)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(135)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(150)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(165)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(180)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(195)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(210)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(225)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(240)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(255)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(270)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(285)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(300)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(315)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(330)" />
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="url(#gold-grad)" stroke-width="1.8" transform="rotate(345)" />
+    <!-- Central Optical Sensor Core -->
+    <circle cx="0" cy="0" r="16" fill="url(#navy-grad)" stroke="url(#gold-grad)" stroke-width="2.5" />
+    <circle cx="0" cy="0" r="8" fill="url(#saffron-grad)" />
+    <circle cx="0" cy="0" r="3" fill="#FFFFFF" />
+  </g>
+
+  <!-- SOVEREIGN BANNER TYPOGRAPHY -->
+  <text x="250" y="395" font-family="'Plus Jakarta Sans', Inter, sans-serif" font-size="24" font-weight="900" fill="#0A1E31" text-anchor="middle" letter-spacing="3.5">PRAKALP-DRISHTI</text>
+  <text x="250" y="418" font-family="'Noto Sans Devanagari', sans-serif" font-size="12.5" font-weight="700" fill="#E06B00" text-anchor="middle" letter-spacing="1.5">प्रकल्प-दृष्टि · स्वायत्त अवसंरचना अन्वेषण</text>
+  <text x="250" y="435" font-family="'Plus Jakarta Sans', Inter, sans-serif" font-size="9" font-weight="800" fill="#64748B" text-anchor="middle" letter-spacing="2">MoSPI · CENTRAL SECTOR MEGA-PROJECTS</text>
+</svg>
