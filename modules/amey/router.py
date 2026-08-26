@@ -77,11 +77,19 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
         briefing = PragatiSaarthiEngine.load_archived_briefing(doc_hash)
         served_from_archive = briefing is not None
 
+        # Resolved before the branch below. It used to be assigned only inside
+        # `if briefing is None`, while the 404 handler further down references it
+        # unconditionally -- so whenever the document WAS found in the archive (the
+        # normal path for an issued note) an unknown fact_id raised UnboundLocalError,
+        # surfaced as HTTP 500, and leaked the internal variable name to the caller.
+        # A forged fact id must fail closed as a clean 404 on the tamper-defence
+        # endpoint, not crash it.
+        target_pid = project_id
+        if not target_pid:
+            parts = fact_id.split("_")
+            target_pid = parts[-1] if (len(parts) >= 3 and parts[-1].isdigit()) else "400188"
+
         if briefing is None:
-            target_pid = project_id
-            if not target_pid:
-                parts = fact_id.split("_")
-                target_pid = parts[-1] if (len(parts) >= 3 and parts[-1].isdigit()) else "400188"
             briefing = engine.generate_cabinet_briefing(target_pid)
         
         target_fact = None
@@ -140,9 +148,11 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
 from analytics_engine.satellite_fusion import get_satellite_fusion_engine
 from analytics_engine.agency_index import get_agency_index_engine
 from analytics_engine.pmo_copilot import get_pmo_copilot_engine
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class SimulationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")  # see AllocationRequest
+
     project_id: str = "400188"
     delay_shock_months: float = 0.0
     budget_pool_cr: float = 15000.0

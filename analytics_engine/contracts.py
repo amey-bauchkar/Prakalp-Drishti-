@@ -5,7 +5,7 @@ Capital Allocation, and Cabinet Briefings.
 """
 
 from typing import List, Dict, Optional, Literal, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 class MerkleProofStep(BaseModel):
@@ -101,6 +101,14 @@ class DependencySubGraph(BaseModel):
     acyclic_dag_verified: bool
 
 class AllocationRequest(BaseModel):
+    # Unknown fields are rejected rather than ignored. Pydantic's default is to
+    # drop them silently, which meant a caller sending `total_budget_cr` (a
+    # plausible typo, or a renamed field after a refactor) had its request
+    # accepted and the capital allocated against the 10,000 Cr DEFAULT instead
+    # of the envelope it asked for -- with a 200 and no warning. On an endpoint
+    # that distributes public capital that has to be an error, not a default.
+    model_config = ConfigDict(extra="forbid")
+
     budget_pool_cr: float = Field(default=10000.0, description="Available capex pool in Crore INR")
     risk_dial_kappa: float = Field(default=0.70, ge=0.0, le=1.0, description="Weight on CVaR90 tail loss vs expected loss")
     enforce_ner_floor: bool = Field(default=True, description="Enforce statutory 10% capex floor for North-Eastern Region")

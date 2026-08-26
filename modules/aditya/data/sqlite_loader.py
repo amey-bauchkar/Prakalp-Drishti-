@@ -11,12 +11,32 @@ except (ImportError, ValueError):
         from app.data.mock_projects import MOCK_PROJECTS_DATABASE, CONTRACTORS_DATABASE
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BASE_DIR, "data", "prakalp_drishti_raw.db")
-if not os.path.exists(DB_PATH):
-    # Try alternate location in workspace
-    ALT_PATH = os.path.join(os.path.dirname(BASE_DIR), "frontend", "aditya", "data", "raw", "prakalp_drishti_raw.db")
-    if os.path.exists(ALT_PATH):
-        DB_PATH = ALT_PATH
+REPO_ROOT = os.path.dirname(os.path.dirname(BASE_DIR))
+
+# The database lives under data/raw/, but only data/ was searched, so
+# os.path.exists() was always False and every request silently fell through to
+# the in-memory MOCK_PROJECTS_DATABASE below. The API was serving invented
+# contractors -- including fabricated arbitration counts and credit ratings
+# attributed to real PSUs -- with a 200 and no indication the data was synthetic.
+# The candidate list is explicit now, and which one won is recorded so a caller
+# can tell where the numbers came from.
+_CANDIDATES = [
+    os.path.join(BASE_DIR, "data", "raw", "prakalp_drishti_raw.db"),
+    os.path.join(BASE_DIR, "data", "prakalp_drishti_raw.db"),
+    os.path.join(REPO_ROOT, "frontend", "aditya", "data", "raw", "prakalp_drishti_raw.db"),
+]
+DB_PATH = next((p for p in _CANDIDATES if os.path.exists(p)), _CANDIDATES[0])
+DB_FOUND = os.path.exists(DB_PATH)
+
+if not DB_FOUND:
+    # Loud, once, at import. A silent fall-back to synthetic records is the one
+    # outcome that must never look like success.
+    import warnings
+    warnings.warn(
+        "aditya: no SQLite source found; serving SYNTHETIC fallback records. "
+        f"Looked in: {_CANDIDATES}",
+        RuntimeWarning, stacklevel=2,
+    )
 
 
 def load_contractors_from_sqlite() -> Dict[str, Dict[str, Any]]:
