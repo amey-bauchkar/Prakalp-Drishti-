@@ -5,12 +5,58 @@ Unlike tests/run_all_tests.py (which checks only that a script exits 0), every
 check here asserts on the CONTENT of the response. A feature "works" if its
 output satisfies the invariant it claims, not if it returns HTTP 200.
 """
-import json, sys, time, urllib.request, urllib.error
+import atexit, json, os, subprocess, sys, time, urllib.request, urllib.error
 from datetime import datetime
 
 B = "http://127.0.0.1:8000"
 RESULTS = []   # (feature, check, ok, detail)
+SERVER_PROC = None
 
+def ensure_server():
+    global SERVER_PROC
+    # 1. Check if server is already running and healthy
+    try:
+        with urllib.request.urlopen(f"{B}/api/health", timeout=1) as resp:
+            if resp.status == 200:
+                return
+    except Exception:
+        pass
+
+    # 2. Auto-spawn uvicorn server in background if not running
+    print("Backend server is not running on port 8000. Auto-starting for verification...")
+    env = os.environ.copy()
+    SERVER_PROC = subprocess.Popen(
+        [sys.executable, "-m", "uvicorn", "backend.server:app", "--host", "127.0.0.1", "--port", "8000"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        env=env
+    )
+    def _cleanup():
+        if SERVER_PROC and SERVER_PROC.poll() is None:
+            SERVER_PROC.terminate()
+            try: SERVER_PROC.wait(timeout=3)
+            except Exception: SERVER_PROC.kill()
+    atexit.register(_cleanup)
+
+    # 3. Wait up to 30 seconds for server health endpoint
+    start = time.time()
+    while time.time() - start < 30:
+        if SERVER_PROC.poll() is not None:
+            err = SERVER_PROC.stderr.read().decode(errors='ignore') if SERVER_PROC.stderr else ""
+            print(f"FATAL: Backend server process exited unexpectedly:\n{err}")
+            sys.exit(2)
+        try:
+            with urllib.request.urlopen(f"{B}/api/health", timeout=1) as resp:
+                if resp.status == 200:
+                    print("Backend server is ready.")
+                    return
+        except Exception:
+            time.sleep(0.5)
+
+    print("FATAL: Timed out waiting for backend server to become ready.")
+    sys.exit(2)
+
+ensure_server()
 
 def call(path, tok=None, method="GET", body=None, timeout=180):
     url = B + path
