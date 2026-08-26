@@ -10,21 +10,26 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --saffron: #E87722;
-  --saffron-light: #FFF4EA;
-  --navy: #163A59;
-  --navy-dark: #0D2B43;
-  --navy-light: #1E5175;
-  --page-bg: #F5F6F8;
+  --saffron: #E65100;
+  --saffron-vibrant: #EA580C;
+  --saffron-light: #FFF7ED;
+  --gold-parchment: #FEF9EE;
+  --gold-border: #FDE68A;
+  --green-map: #15803D;
+  --navy: #0F2942;
+  --navy-dark: #0A1E31;
+  --navy-light: #1E3A8A;
+  --slate-footer: #0F172A;
+  --page-bg: #FAFAF9;
   --surface: #FFFFFF;
-  --text-primary: #1F2933;
-  --text-secondary: #52606D;
-  --text-muted: #7B8794;
-  --border: #D9E0E6;
-  --border-strong: #BCC5CE;
-  --success: #18804B;
-  --warning: #B76A00;
-  --danger: #B42318;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --success: #15803D;
+  --warning: #B45309;
+  --danger: #B91C1C;
 }
 
 /* ── Base ────────────────────────────────────────────── */
@@ -40,26 +45,26 @@
     background: var(--page-bg);
     color: var(--text-primary);
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
   /* Typographic scale */
-  h1 { font-size: 2.5rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; color: var(--navy); }
-  h2 { font-size: 1.75rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; color: var(--navy); }
-  h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.35; color: var(--navy); }
-  h4 { font-size: 1rem; font-weight: 600; line-height: 1.4; color: var(--navy); }
+  h1 { font-family: 'Plus Jakarta Sans', 'Cinzel', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.18; letter-spacing: -0.02em; color: var(--navy); }
+  h2 { font-family: 'Plus Jakarta Sans', 'Cinzel', sans-serif; font-size: 1.85rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: var(--navy); }
+  h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 600; line-height: 1.35; color: var(--navy); }
+  h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 600; line-height: 1.4; color: var(--navy); }
 
   @media (max-width: 768px) {
-    h1 { font-size: 1.75rem; }
-    h2 { font-size: 1.375rem; }
-    h3 { font-size: 1.125rem; }
+    h1 { font-size: 1.85rem; }
+    h2 { font-size: 1.45rem; }
+    h3 { font-size: 1.15rem; }
   }
 
   a { color: var(--navy-light); text-decoration: none; }
-  a:hover { color: var(--saffron); }
+  a:hover { color: var(--saffron-vibrant); }
 
   :focus-visible {
-    outline: 2px solid var(--saffron);
+    outline: 2px solid var(--saffron-vibrant);
     outline-offset: 2px;
   }
 }
@@ -238,21 +243,95 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .status-danger  { background: #FEF2F2; color: var(--danger); }
-  .status-warning { background: #FFF8EB; color: var(--warning); }
-  .status-success { background: #ECFDF5; color: var(--success); }
-  .status-info    { background: #EDF4FA; color: #1D5D91; }
+  /* Sovereign Hero Saffron Gradient */
+  .hero-saffron-banner {
+    background: linear-gradient(135deg, #C2410C 0%, #EA580C 40%, #F97316 80%, #FB923C 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-  /* Loading spinner */
-  .loading-center {
+  /* Sovereign Pill Action Button */
+  .btn-saffron-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 26px;
+    background: #FFFFFF;
+    color: #9A3412;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+    transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+  }
+  .btn-saffron-pill:hover {
+    background: #FFF7ED;
+    color: #7C2D12;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+  }
+
+  /* Gold Parchment Banner */
+  .card-parchment-gold {
+    background: #FEF9EE;
+    border: 1px solid #FDE68A;
+    box-shadow: 0 2px 10px rgba(234, 88, 12, 0.04);
+  }
+
+  /* Official Government Programme Card */
+  .card-gov-programme {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    transition: all 200ms ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  }
+  .card-gov-programme:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+  }
+
+  /* Official Bulletin Paper Card */
+  .bulletin-paper-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    position: relative;
+  }
+  .bulletin-paper-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #EA580C 0%, #F97316 50%, #15803D 100%);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  /* Circular Partner Badge */
+  .circular-partner-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 9999px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 80px 24px;
-    color: var(--text-muted);
-    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: all 180ms ease;
+  }
+  .circular-partner-badge:hover {
+    transform: scale(1.08);
+    border-color: #EA580C;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.15);
   }
 }
 
@@ -262,4 +341,24 @@
   ::-webkit-scrollbar-track { background: #EFF1F3; }
   ::-webkit-scrollbar-thumb { background: #CBD2D9; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #9AA5B1; }
+
+  /* Hide scrollbar utility */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Slide-per-page Scroll Snap System */
+  .snap-slide-container {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  .snap-slide-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: calc(100vh - 110px);
+  }
 }

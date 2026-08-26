@@ -87,3 +87,8 @@
 {"ts": "2026-08-26T01:52:17", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-08-26T01:52:30", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
 {"ts": "2026-08-26T02:17:03", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T03:01:11", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T03:27:05", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "allocate_capital"}
+{"ts": "2026-08-26T09:59:26", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T09:59:30", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T09:59:43", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}

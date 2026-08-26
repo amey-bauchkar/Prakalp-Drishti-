@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShieldAlert, AlertTriangle, Scale, RefreshCw, Search, Filter,
-  Calculator, Award, ArrowRight, ChevronRight, BarChart3, FileSearch
+  Calculator, Award, ArrowRight, ChevronRight, BarChart3, FileSearch,
+  ShieldCheck, Layers, CheckCircle2, FileText, Activity
 } from 'lucide-react';
 
 export default function SatyaKavachView() {
@@ -90,41 +91,43 @@ export default function SatyaKavachView() {
   ];
 
   return (
-    <div className="space-y-0">
-
-      {/* ═══════ MODULE HERO ═══════ */}
-      <section className="pb-12 pt-2">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-7 space-y-4">
-            <div className="text-[12px] font-semibold uppercase tracking-widest text-gov-saffron">
-              SATYA-KAVACH · Contract &amp; Compliance Analytics
+    <div className="space-y-8 font-sans">
+      {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
+      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-8 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+              <ShieldAlert className="w-3.5 h-3.5 text-gov-saffron" />
+              <span>SATYA-KAVACH · Contract &amp; Compliance Analytics</span>
             </div>
-            <h1 className="text-[36px] leading-[1.12] font-semibold text-gov-navy tracking-tight">
+            <h1 className="font-heading font-extrabold text-[30px] sm:text-[38px] leading-[1.15] text-gov-navy tracking-tight">
               20% CCEA Cabinet Rule Evasion &amp;<br />
               CPWD Clause 10CC Audit
             </h1>
-            <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
+            <p className="text-text-secondary text-[15px] sm:text-[15.5px] leading-relaxed max-w-2xl font-sans">
               McCrary density discontinuity test detecting artificial cost escalation clustering 
               at 18.0%–19.9%, designed to bypass Cabinet Committee on Economic Affairs scrutiny. 
               Enforces statutory CPWD Clause 10CC 85% escalable ceilings pegged to tender bid-date indices.
             </p>
-            <div className="flex items-center gap-4 pt-1">
-              <a href="#analysis" className="btn-primary">
-                Explore Analysis <ArrowRight className="w-4 h-4" />
+            <div className="flex items-center gap-4 pt-2">
+              <a href="#analysis" className="btn-saffron-pill py-3 px-6 text-[13.5px] font-bold shadow-md">
+                <span>Explore Analysis</span>
+                <ArrowRight className="w-4 h-4" />
               </a>
-              <a href="#methodology" className="text-[14px] font-medium text-gov-navy hover:text-gov-saffron transition-colors flex items-center gap-1">
-                Methodology <ChevronRight className="w-3.5 h-3.5" />
+              <a href="#methodology" className="text-[14px] font-bold text-gov-navy hover:text-gov-saffron transition-colors flex items-center gap-1">
+                <span>Methodology</span>
+                <ChevronRight className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Key finding */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div className="bg-white border border-border-default rounded-lg p-8 shadow-card text-center max-w-xs">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted mb-4">Key Finding</div>
-              <div className="text-[52px] font-semibold text-gov-navy leading-none tracking-tight">1.65×</div>
-              <div className="text-[14px] text-text-secondary mt-2">McCrary density discontinuity ratio</div>
-              <div className="text-[12px] text-text-muted mt-1">p &lt; 0.001 · Statistically significant</div>
+          {/* Key finding Docket Box */}
+          <div className="lg:col-span-4 flex justify-center lg:justify-end">
+            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-7 text-center w-full max-w-xs shadow-subtle">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-2 font-mono">Key Finding</div>
+              <div className="text-[52px] font-heading font-black text-gov-navy leading-none tracking-tight font-mono">1.65×</div>
+              <div className="text-[13.5px] text-text-secondary font-bold mt-2">McCrary density discontinuity ratio</div>
+              <div className="text-[11px] font-mono text-gov-saffron-dark mt-1 font-bold">p &lt; 0.001 · Statistically significant</div>
             </div>
           </div>
         </div>
@@ -132,85 +135,93 @@ export default function SatyaKavachView() {
 
       {/* ═══════ STAT STRIP ═══════ */}
       {loading ? (
-        <div className="loading-center"><RefreshCw className="w-5 h-5 animate-spin" />Loading analysis…</div>
+        <div className="loading-center py-12"><RefreshCw className="w-5 h-5 animate-spin" />Loading analysis…</div>
       ) : summaryData ? (
         <>
-          <div className="stat-strip -mx-6 sm:mx-0 sm:rounded-lg overflow-hidden mb-12">
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Bunching Zone (18–20%)</div>
-              <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">{summaryData.kpi_metrics?.projects_in_bunching_zone_18_20pct}</div>
-              <div className="text-[12px] text-text-muted mt-0.5">₹{summaryData.kpi_metrics?.bunching_zone_capital_cr?.toLocaleString()} Cr at risk</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Bunching Zone (18–20%)</div>
+              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_in_bunching_zone_18_20pct}</div>
+              <div className="text-[12px] text-text-muted mt-1">₹{summaryData.kpi_metrics?.bunching_zone_capital_cr?.toLocaleString()} Cr at risk</div>
             </div>
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Cabinet Breached (≥20%)</div>
-              <div className="text-[28px] font-semibold text-gov-danger mt-1 tracking-tight">{summaryData.kpi_metrics?.projects_above_20pct_cabinet_rule}</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Mandatory PIB review required</div>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Cabinet Breached (≥20%)</div>
+              <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_above_20pct_cabinet_rule}</div>
+              <div className="text-[12px] text-text-muted mt-1">Mandatory PIB review required</div>
             </div>
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Unjustified Padding</div>
-              <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">₹{summaryData.kpi_metrics?.total_unjustified_excess_margin_cr?.toLocaleString()} Cr</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Clause 10CC excess claims</div>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Unjustified Padding</div>
+              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{summaryData.kpi_metrics?.total_unjustified_excess_margin_cr?.toLocaleString()} Cr</div>
+              <div className="text-[12px] text-text-muted mt-1">Clause 10CC excess claims</div>
             </div>
-            <div className="stat-strip-item">
-              <div className="text-[12px] text-text-muted font-medium uppercase tracking-wider">Data Coverage</div>
-              <div className="text-[28px] font-semibold text-gov-navy mt-1 tracking-tight">2,207</div>
-              <div className="text-[12px] text-text-muted mt-0.5">Central mega-projects · 2005–2026</div>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Data Coverage</div>
+              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">2,207</div>
+              <div className="text-[12px] text-text-muted mt-1">Central mega-projects · 2005–2026</div>
             </div>
           </div>
 
           {/* ═══════ ANALYTICAL WORKSPACE ═══════ */}
-          <section id="analysis" className="pb-12">
-            <div className="module-tabs overflow-x-auto mb-8">
+          <section id="analysis" className="space-y-6">
+            <div className="flex items-center gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
               {tabs.map(t => (
-                <button key={t.id} onClick={() => setActiveTab(t.id)} className={`module-tab ${activeTab === t.id ? 'active' : ''}`}>
-                  {t.label}
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTab(t.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${
+                    activeTab === t.id
+                      ? 'bg-gov-navy text-white shadow-elevated'
+                      : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
+                  }`}
+                >
+                  <span>{t.label}</span>
                 </button>
               ))}
             </div>
 
             {/* ── Tab: CCEA Bunching ── */}
             {activeTab === 'bunching' && (
-              <div className="space-y-8">
+              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-8">
                 {/* Methodology context */}
-                <div className="bg-gov-saffron-light border border-amber-200 rounded-lg p-5">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-[13px] text-text-secondary">
+                <div className="card-parchment-gold rounded-2xl p-6 sm:p-7 shadow-subtle border border-gov-gold-border">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-[13.5px] text-text-secondary">
                     <div>
-                      <div className="font-semibold text-gov-navy text-[14px] mb-1">What is being measured</div>
+                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">What is being measured</div>
                       <p>Distribution of cost revision percentages across all 2,207 central sector mega-projects to detect artificial clustering below the 20% CCEA threshold.</p>
                     </div>
                     <div>
-                      <div className="font-semibold text-gov-navy text-[14px] mb-1">Methodology</div>
+                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">Methodology</div>
                       <p>McCrary density discontinuity estimator comparing left-side vs right-side bin densities at the 20% regulatory boundary.</p>
                     </div>
                     <div>
-                      <div className="font-semibold text-gov-navy text-[14px] mb-1">Interpretation</div>
+                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">Interpretation</div>
                       <p>{summaryData.mccrary_bunching_signal?.interpretation}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Histogram */}
-                <div>
-                  <h3 className="text-[18px] font-semibold text-gov-navy mb-4">Cost Overrun Distribution</h3>
-                  <div className="space-y-1.5">
+                <div className="space-y-4">
+                  <h3 className="font-heading font-bold text-[20px] text-gov-navy">Cost Overrun Distribution &amp; Bunching Analysis</h3>
+                  <div className="space-y-2">
                     {histogramData?.bins?.map((bin, idx) => {
                       const maxCount = Math.max(...(histogramData.bins.map(b => b.project_count) || [100]));
                       const barWidth = Math.max(3, (bin.project_count / maxCount) * 100);
                       return (
                         <div key={idx} className="flex items-center gap-3 text-[13px]">
-                          <div className={`w-40 shrink-0 text-right truncate ${
-                            bin.is_bunching_spike ? 'text-gov-saffron font-semibold' : bin.is_cabinet_breached ? 'text-gov-danger font-medium' : 'text-text-muted'
+                          <div className={`w-44 shrink-0 text-right truncate font-mono font-medium ${
+                            bin.is_bunching_spike ? 'text-gov-saffron font-bold' : bin.is_cabinet_breached ? 'text-rose-600 font-bold' : 'text-text-muted'
                           }`}>{bin.bin_label}</div>
-                          <div className="flex-1 bg-gray-100 rounded-sm h-5 overflow-hidden relative flex items-center">
-                            <div className={`h-full rounded-sm transition-all ${
-                              bin.is_bunching_spike ? 'bg-gov-saffron' : bin.is_cabinet_breached ? 'bg-gov-danger/70' : 'bg-gray-300'
+                          <div className="flex-1 bg-slate-100 rounded-lg h-6 overflow-hidden relative flex items-center border border-slate-200">
+                            <div className={`h-full rounded-lg transition-all ${
+                              bin.is_bunching_spike ? 'bg-gov-saffron' : bin.is_cabinet_breached ? 'bg-rose-500/80' : 'bg-slate-300'
                             }`} style={{ width: `${barWidth}%` }} />
-                            <span className="absolute left-2 text-[11px] font-medium text-text-primary">
+                            <span className="absolute left-3 text-[11.5px] font-bold text-gov-navy font-mono">
                               {bin.project_count} projects · ₹{bin.total_capex_cr?.toLocaleString()} Cr
                             </span>
                           </div>
-                          {bin.is_bunching_spike && <span className="status-badge status-warning shrink-0">Spike</span>}
-                          {bin.range_min === 20.0 && bin.range_max === 22.0 && <span className="status-badge status-danger shrink-0">Cabinet</span>}
+                          {bin.is_bunching_spike && <span className="status-badge status-warning shrink-0 font-bold">Spike</span>}
+                          {bin.range_min === 20.0 && bin.range_max === 22.0 && <span className="status-badge status-danger shrink-0 font-bold">Cabinet</span>}
                         </div>
                       );
                     })}
@@ -218,17 +229,17 @@ export default function SatyaKavachView() {
                 </div>
 
                 {/* Filters */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-4 border-t border-border-default">
-                  <div className="relative w-full sm:w-72">
-                    <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-6 border-t border-border-default">
+                  <div className="relative w-full sm:w-80">
+                    <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input type="text" placeholder="Search flagged projects…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 text-[13px] border border-border-default rounded-md focus:outline-none focus:border-gov-navy" />
+                      className="w-full pl-10 pr-4 py-2.5 text-[13px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-sans" />
                   </div>
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
                     {sectors.map(sec => (
                       <button key={sec} onClick={() => setSelectedSector(sec)}
-                        className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors shrink-0 ${
-                          selectedSector === sec ? 'bg-gov-navy text-white' : 'bg-white text-text-secondary border border-border-default hover:border-border-strong'
+                        className={`px-3.5 py-2 text-[12px] font-bold rounded-xl transition-all shrink-0 ${
+                          selectedSector === sec ? 'bg-gov-navy text-white shadow-sm' : 'bg-white text-text-secondary border border-border-default hover:bg-slate-50'
                         }`}>{sec}</button>
                     ))}
                   </div>
@@ -237,8 +248,8 @@ export default function SatyaKavachView() {
                 {/* Table */}
                 <div className="overflow-x-auto">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-[16px] font-semibold text-gov-navy">Flagged Evasion Projects</h3>
-                    <span className="text-[13px] text-text-muted">{filteredFlaggedProjects.length} projects</span>
+                    <h3 className="text-[17px] font-bold text-gov-navy font-heading">Flagged Evasion Projects</h3>
+                    <span className="text-[13px] text-text-muted font-mono font-medium">{filteredFlaggedProjects.length} projects</span>
                   </div>
                   <table className="data-table">
                     <thead>
@@ -255,14 +266,14 @@ export default function SatyaKavachView() {
                     </thead>
                     <tbody>
                       {filteredFlaggedProjects.map((p, idx) => (
-                        <tr key={idx}>
-                          <td><span className="text-text-muted text-[11px] mr-1">#{p.project_id}</span><span className="font-medium text-gov-navy">{p.project_name}</span></td>
-                          <td><span className="font-medium">{p.sector}</span><br /><span className="text-[11px] text-text-muted">{p.state || 'National'}</span></td>
-                          <td className="text-text-secondary">{p.agency}</td>
-                          <td className="num text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-medium">₹{p.revised_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-medium text-gov-saffron">+{p.overrun_pct}%</td>
-                          <td className="text-center text-[12px] font-medium text-gov-saffron">{p.evasion_margin_pct}% below</td>
+                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                          <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
+                          <td><span className="font-medium text-gov-navy">{p.sector}</span><br /><span className="text-[11px] text-text-muted">{p.state || 'National'}</span></td>
+                          <td className="text-text-secondary font-medium">{p.agency}</td>
+                          <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold text-gov-navy">₹{p.revised_cost_cr.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold text-gov-saffron">+{p.overrun_pct}%</td>
+                          <td className="text-center text-[12px] font-mono font-bold text-gov-saffron">{p.evasion_margin_pct}% below</td>
                           <td className="text-center"><span className={`status-badge ${p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
                         </tr>
                       ))}
@@ -274,10 +285,10 @@ export default function SatyaKavachView() {
 
             {/* ── Tab: Clause 10CC ── */}
             {activeTab === 'clause10cc' && (
-              <div className="space-y-8">
-                <div className="bg-white border border-border-default rounded-lg p-5">
-                  <h3 className="text-[16px] font-semibold text-gov-navy mb-2">Statutory Price Escalation Framework</h3>
-                  <p className="text-[13px] text-text-secondary leading-relaxed max-w-3xl">
+              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-8">
+                <div className="card-parchment-gold rounded-2xl p-6 border border-gov-gold-border">
+                  <h3 className="text-[17px] font-bold text-gov-navy mb-2 font-heading">Statutory Price Escalation Framework</h3>
+                  <p className="text-[13.5px] text-text-secondary leading-relaxed max-w-3xl">
                     Under CPWD Clause 10CC, only <strong>85% of contract value is escalable</strong> (15% is fixed contractor overhead). 
                     Macro indices (Steel, Cement, Fuel, Labor) are locked to the tender bid submission date. 
                     Claims exceeding statutory allowances represent unjustified margin padding.
@@ -286,8 +297,8 @@ export default function SatyaKavachView() {
 
                 <div className="overflow-x-auto">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-[16px] font-semibold text-gov-navy">Audited Records</h3>
-                    <span className="text-[13px] font-medium text-gov-danger">Total excess: ₹{clauseData?.total_portfolio_excess_claimed_cr?.toLocaleString()} Cr</span>
+                    <h3 className="text-[17px] font-bold text-gov-navy font-heading">Audited Records</h3>
+                    <span className="text-[13px] font-bold text-rose-600 font-mono">Total excess: ₹{clauseData?.total_portfolio_excess_claimed_cr?.toLocaleString()} Cr</span>
                   </div>
                   <table className="data-table">
                     <thead>
@@ -304,14 +315,14 @@ export default function SatyaKavachView() {
                     </thead>
                     <tbody>
                       {filteredClauseRecords.map((p, idx) => (
-                        <tr key={idx}>
-                          <td><span className="text-text-muted text-[11px] mr-1">#{p.project_id}</span><span className="font-medium text-gov-navy">{p.project_name}</span></td>
-                          <td><span className="font-medium">{p.agency}</span><br /><span className="text-[11px] text-text-muted">{p.sector}</span></td>
-                          <td className="text-center font-medium">{p.sanction_year}</td>
-                          <td className="num text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-medium">₹{p.claimed_escalation_cr.toLocaleString()} Cr</td>
-                          <td className="num font-medium" style={{color:'#18804B'}}>₹{p.statutory_10cc_allowed_cr.toLocaleString()} Cr</td>
-                          <td className="num font-medium" style={{color:'#B42318'}}>+₹{p.excess_margin_claimed_cr.toLocaleString()} Cr</td>
+                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                          <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
+                          <td><span className="font-medium text-gov-navy">{p.agency}</span><br /><span className="text-[11px] text-text-muted">{p.sector}</span></td>
+                          <td className="text-center font-mono font-bold">{p.sanction_year}</td>
+                          <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold">₹{p.claimed_escalation_cr.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold" style={{color:'#18804B'}}>₹{p.statutory_10cc_allowed_cr.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold" style={{color:'#B42318'}}>+₹{p.excess_margin_claimed_cr.toLocaleString()} Cr</td>
                           <td className="text-center"><span className={`status-badge ${p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
                         </tr>
                       ))}
@@ -323,29 +334,29 @@ export default function SatyaKavachView() {
 
             {/* ── Tab: Simulator ── */}
             {activeTab === 'simulator' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-[18px] font-semibold text-gov-navy mb-1">Contract Price Variation Simulator</h3>
+                  <h3 className="text-[19px] font-bold text-gov-navy mb-1 font-heading">Contract Price Variation Simulator</h3>
                   <p className="text-[13px] text-text-muted mb-6">Adjust contract parameters and material weight fractions to calculate statutory allowable escalation under Clause 10CC.</p>
 
                   <form onSubmit={handleSimulate} className="space-y-5">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[12px] font-semibold text-gov-navy block mb-1">Original Cost (₹ Cr)</label>
+                        <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Original Cost (₹ Cr)</label>
                         <input type="number" value={simOrigCost} onChange={e => setSimOrigCost(e.target.value)}
-                          className="w-full p-2.5 text-[14px] border border-border-default rounded-md focus:outline-none focus:border-gov-navy font-medium" />
+                          className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold" />
                       </div>
                       <div>
-                        <label className="text-[12px] font-semibold text-gov-navy block mb-1">Revised Cost (₹ Cr)</label>
+                        <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Revised Cost (₹ Cr)</label>
                         <input type="number" value={simRevCost} onChange={e => setSimRevCost(e.target.value)}
-                          className="w-full p-2.5 text-[14px] border border-border-default rounded-md focus:outline-none focus:border-gov-navy font-medium" />
+                          className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[12px] font-semibold text-gov-navy block mb-1">Tender Base Year</label>
+                      <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Tender Base Year</label>
                       <select value={simSanctionYear} onChange={e => setSimSanctionYear(e.target.value)}
-                        className="w-full p-2.5 text-[14px] border border-border-default rounded-md focus:outline-none focus:border-gov-navy">
+                        className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold">
                         {[2005,2008,2010,2012,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024].map(yr => (
                           <option key={yr} value={yr}>{yr}</option>
                         ))}
@@ -353,7 +364,7 @@ export default function SatyaKavachView() {
                     </div>
 
                     <div className="space-y-3 border-t border-border-default pt-4">
-                      <div className="text-[12px] font-semibold text-gov-navy">Material Weight Fractions (Total: {simSteelWeight + simCementWeight + simFuelWeight + simLaborWeight + simOtherWeight}%)</div>
+                      <div className="text-[12px] font-bold text-gov-navy">Material Weight Fractions (Total: {simSteelWeight + simCementWeight + simFuelWeight + simLaborWeight + simOtherWeight}%)</div>
                       {[
                         ['Steel', simSteelWeight, setSimSteelWeight],
                         ['Cement', simCementWeight, setSimCementWeight],
@@ -361,60 +372,60 @@ export default function SatyaKavachView() {
                         ['Labor', simLaborWeight, setSimLaborWeight],
                       ].map(([label, val, setter]) => (
                         <div key={label} className="flex items-center justify-between text-[13px]">
-                          <span className="text-text-secondary w-20">{label} ({val}%)</span>
+                          <span className="text-text-secondary w-24 font-medium">{label} ({val}%)</span>
                           <input type="range" min="0" max="50" value={val} onChange={e => setter(parseInt(e.target.value))}
-                            className="flex-1 mx-3 accent-gov-saffron h-1.5" />
+                            className="flex-1 mx-3 accent-gov-saffron h-2" />
                         </div>
                       ))}
                     </div>
 
-                    <button type="submit" disabled={simulating} className="btn-primary w-full justify-center py-3">
+                    <button type="submit" disabled={simulating} className="btn-saffron-pill w-full justify-center py-3.5 text-xs font-bold uppercase tracking-wider">
                       {simulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calculator className="w-4 h-4" />}
-                      Execute Calculation
+                      <span>Execute Calculation</span>
                     </button>
                   </form>
                 </div>
 
                 {/* Results */}
                 {simResult && (
-                  <div className="space-y-6">
+                  <div className="space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-[18px] font-semibold text-gov-navy">Statutory Audit Result</h3>
+                      <h3 className="text-[18px] font-bold text-gov-navy font-heading">Statutory Audit Result</h3>
                       <span className={`status-badge ${simResult.audit_verdict === 'COMPLIANT_WITHIN_10CC' ? 'status-success' : 'status-danger'}`}>
                         {simResult.audit_verdict === 'COMPLIANT_WITHIN_10CC' ? 'Compliant' : 'Non-Compliant'}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white border border-border-default rounded-lg p-5">
-                        <div className="text-[11px] text-text-muted uppercase font-medium">Claimed Overrun</div>
-                        <div className="text-[26px] font-semibold text-gov-navy mt-1 tracking-tight">₹{simResult.contractor_claimed_escalation_cr?.toLocaleString()} Cr</div>
-                        <div className="text-[12px] text-gov-saffron font-medium mt-0.5">+{simResult.claimed_overrun_pct}% over original</div>
+                      <div className="bg-white border border-border-default rounded-2xl p-5 shadow-subtle">
+                        <div className="text-[11px] text-text-muted uppercase font-bold">Claimed Overrun</div>
+                        <div className="text-[26px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{simResult.contractor_claimed_escalation_cr?.toLocaleString()} Cr</div>
+                        <div className="text-[12px] text-gov-saffron font-bold mt-0.5">+{simResult.claimed_overrun_pct}% over original</div>
                       </div>
-                      <div className="bg-white border border-border-default rounded-lg p-5">
-                        <div className="text-[11px] text-text-muted uppercase font-medium">Statutory 10CC Cap</div>
-                        <div className="text-[26px] font-semibold text-gov-success mt-1 tracking-tight">₹{simResult.statutory_allowed_escalation_cr?.toLocaleString()} Cr</div>
+                      <div className="bg-white border border-border-default rounded-2xl p-5 shadow-subtle">
+                        <div className="text-[11px] text-text-muted uppercase font-bold">Statutory 10CC Cap</div>
+                        <div className="text-[26px] font-black text-emerald-600 mt-1 tracking-tight font-mono">₹{simResult.statutory_allowed_escalation_cr?.toLocaleString()} Cr</div>
                         <div className="text-[12px] text-text-muted font-medium mt-0.5">85% escalable ceiling</div>
                       </div>
                     </div>
 
                     {simResult.unjustified_excess_margin_cr > 0 && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between text-[14px] font-semibold text-gov-danger">
+                      <div className="bg-rose-50 border border-rose-300 rounded-2xl p-4">
+                        <div className="flex items-center justify-between text-[14px] font-bold text-rose-700 font-mono">
                           <span>Unjustified padding flagged</span>
                           <span>+₹{simResult.unjustified_excess_margin_cr?.toLocaleString()} Cr</span>
                         </div>
-                        <p className="text-[12px] text-red-700 mt-1">Disallowance recommended under CPWD General Conditions of Contract.</p>
+                        <p className="text-[12px] text-rose-800 mt-1 font-sans">Disallowance recommended under CPWD General Conditions of Contract.</p>
                       </div>
                     )}
 
                     <div className="border-t border-border-default pt-4">
-                      <div className="text-[12px] font-semibold text-gov-navy mb-2">Macro Index Growth ({simResult.macro_indices?.base_year} → {simResult.macro_indices?.current_year})</div>
+                      <div className="text-[12px] font-bold text-gov-navy mb-2 font-mono">Macro Index Growth ({simResult.macro_indices?.base_year} → {simResult.macro_indices?.current_year})</div>
                       <div className="grid grid-cols-4 gap-3">
                         {[['Steel', simResult.macro_indices?.steel_growth_pct], ['Cement', simResult.macro_indices?.cement_growth_pct], ['Fuel', simResult.macro_indices?.fuel_growth_pct], ['Labor', simResult.macro_indices?.labor_growth_pct]].map(([label, val]) => (
-                          <div key={label} className="text-center">
-                            <div className="text-[11px] text-text-muted">{label}</div>
-                            <div className="text-[15px] font-semibold text-gov-navy">+{val}%</div>
+                          <div key={label} className="text-center bg-white p-2.5 rounded-xl border border-slate-200">
+                            <div className="text-[11px] text-text-muted font-medium">{label}</div>
+                            <div className="text-[15px] font-black text-gov-navy font-mono">+{val}%</div>
                           </div>
                         ))}
                       </div>
@@ -426,10 +437,10 @@ export default function SatyaKavachView() {
 
             {/* ── Tab: Agency Risk ── */}
             {activeTab === 'leaderboard' && (
-              <div className="space-y-4">
+              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[18px] font-semibold text-gov-navy">Agency Compliance &amp; Risk Ranking</h3>
-                  <span className="text-[13px] text-text-muted">{rankingsData?.total_agencies_evaluated} agencies evaluated</span>
+                  <h3 className="text-[19px] font-bold text-gov-navy font-heading">Agency Compliance &amp; Risk Ranking</h3>
+                  <span className="text-[13px] text-text-muted font-mono font-medium">{rankingsData?.total_agencies_evaluated} agencies evaluated</span>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -448,14 +459,14 @@ export default function SatyaKavachView() {
                     </thead>
                     <tbody>
                       {rankingsData?.rankings?.map((a, idx) => (
-                        <tr key={idx}>
-                          <td className="font-medium text-gov-navy">{a.agency_name}</td>
-                          <td className="text-center text-text-muted">{a.total_projects}</td>
-                          <td className="text-center font-medium text-gov-saffron">{a.bunching_projects_18_20pct} ({a.bunching_rate_pct}%)</td>
-                          <td className="text-center font-medium text-gov-danger">{a.cabinet_breached_projects}</td>
-                          <td className="num text-text-muted">₹{a.total_revised_capex_cr?.toLocaleString()} Cr</td>
-                          <td className="num font-medium text-gov-danger">₹{a.total_excess_margin_claimed_cr?.toLocaleString()} Cr</td>
-                          <td className="text-center font-semibold text-gov-navy">{a.institutional_gaming_score}/100</td>
+                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="font-bold text-gov-navy">{a.agency_name}</td>
+                          <td className="text-center text-text-muted font-mono">{a.total_projects}</td>
+                          <td className="text-center font-mono font-bold text-gov-saffron">{a.bunching_projects_18_20pct} ({a.bunching_rate_pct}%)</td>
+                          <td className="text-center font-mono font-bold text-rose-600">{a.cabinet_breached_projects}</td>
+                          <td className="num font-mono text-text-muted">₹{a.total_revised_capex_cr?.toLocaleString()} Cr</td>
+                          <td className="num font-mono font-bold text-rose-600">₹{a.total_excess_margin_claimed_cr?.toLocaleString()} Cr</td>
+                          <td className="text-center font-mono font-black text-gov-navy">{a.institutional_gaming_score}/100</td>
                           <td className="text-center">
                             <span className={`status-badge ${a.risk_tier === 'HIGH_GAMING_RISK' ? 'status-danger' : a.risk_tier === 'MODERATE_WATCHLIST' ? 'status-warning' : 'status-success'}`}>
                               {a.risk_tier === 'HIGH_GAMING_RISK' ? 'High Risk' : a.risk_tier === 'MODERATE_WATCHLIST' ? 'Watchlist' : 'Compliant'}
@@ -471,18 +482,18 @@ export default function SatyaKavachView() {
           </section>
 
           {/* ═══════ METHODOLOGY ═══════ */}
-          <section id="methodology" className="bg-white border border-border-default rounded-lg overflow-hidden">
+          <section id="methodology" className="bg-white border border-border-default rounded-3xl overflow-hidden shadow-card">
             <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="p-8 border-b lg:border-b-0 lg:border-r border-border-default">
-                <h3 className="text-[16px] font-semibold text-gov-navy mb-3">20% CCEA Cabinet Overrun Threshold</h3>
-                <p className="text-[13px] text-text-secondary leading-relaxed">
+              <div className="p-8 sm:p-10 border-b lg:border-b-0 lg:border-r border-border-default">
+                <h3 className="text-[17px] font-bold text-gov-navy mb-3 font-heading">20% CCEA Cabinet Overrun Threshold</h3>
+                <p className="text-[14px] text-text-secondary leading-relaxed font-sans">
                   Projects incurring cost revisions ≥20% of original sanctioned cost require mandatory CCEA and PIB approval. 
                   SATYA-KAVACH applies McCrary density discontinuity estimators to detect strategic under-reporting at 18.0%–19.99%.
                 </p>
               </div>
-              <div className="p-8">
-                <h3 className="text-[16px] font-semibold text-gov-navy mb-3">CPWD Clause 10CC Escalation Cap</h3>
-                <p className="text-[13px] text-text-secondary leading-relaxed">
+              <div className="p-8 sm:p-10">
+                <h3 className="text-[17px] font-bold text-gov-navy mb-3 font-heading">CPWD Clause 10CC Escalation Cap</h3>
+                <p className="text-[14px] text-text-secondary leading-relaxed font-sans">
                   Under standard public works contracts, price escalation is restricted to 85% of contract value 
                   with base indices pegged to the tender submission date. Inflation claims are audited against 
                   historical WPI and Labour Wage Index series.

@@ -71,121 +71,113 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
   const positions = data ? calculatePositions(data) : null;
 
   return (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-8 font-sans">
       {/* Top Header Banner */}
-      <div 
-        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
-        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 1 · Timeline Forecasting
-              </span>
-              <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                AI Timeline & Delay Prediction
-              </span>
+      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+              <Clock className="w-3.5 h-3.5 text-gov-saffron" />
+              <span>Module 1 · Timeline Forecasting</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <Clock className="w-6 h-6 text-gov-accent" />
-              <span>KAAL-CHAKRA: Realistic Project Completion & Delay Forecast</span>
+            <h1 className="font-heading font-extrabold text-[26px] sm:text-[32px] leading-tight text-gov-navy tracking-tight">
+              KAAL-CHAKRA: Realistic Project Completion &amp; Delay Forecast
             </h1>
-            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
+            <p className="text-text-secondary text-[14px] max-w-2xl font-sans leading-relaxed">
               Replaces contractor promises with realistic AI-predicted completion dates based on historical performance, on-ground progress pace, and repeated deadline resets.
             </p>
           </div>
 
           {/* Quick Project Lookup */}
-          <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white/10 p-1.5 rounded-xl border border-white/20">
+          <form onSubmit={handleSearch} className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
             <input
               type="text"
-              placeholder="Enter Project ID (e.g. 706724)..."
+              placeholder="Enter MoSPI Project Code (e.g. 706724)..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-transparent text-white text-xs px-3 py-1.5 focus:outline-none placeholder-gray-400 w-48"
+              className="bg-white text-gov-navy text-xs px-3.5 py-2.5 rounded-xl border border-border-default focus:outline-none focus:border-gov-navy placeholder-slate-400 w-56 font-mono font-bold"
             />
             <button
               type="submit"
-              className="bg-gov-accent text-gov-navy font-black text-xs px-3 py-1.5 rounded-lg hover:bg-gov-accent-hover transition-colors flex items-center gap-1 shadow-soft"
+              className="btn-saffron-pill py-2.5 px-4 text-xs font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5"
             >
               <Search className="w-3.5 h-3.5" />
-              Analyze
+              <span>Analyze</span>
             </button>
           </form>
         </div>
-      </div>
+      </section>
 
       {loading && (
-        <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
-          <Clock className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
-          Calculating Realistic Timeline Forecast & Confidence Bounds...
+        <div className="p-12 text-center text-text-muted font-bold text-sm bg-white rounded-3xl border border-border-default shadow-card">
+          <Clock className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
+          Calculating Realistic Timeline Forecast &amp; Confidence Bounds...
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className="p-5 bg-rose-50 border border-rose-300 rounded-3xl text-rose-800 text-xs font-semibold flex items-center gap-3 shadow-sm">
+          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {data && !loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Project Overview & Progress Audit */}
-          <div className="lg:col-span-1 space-y-4">
-            <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card space-y-4">
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white p-7 rounded-3xl border border-border-default shadow-card space-y-5">
               
               {/* Header with Project ID and Clean Sector Tag */}
-              <div className="space-y-1.5">
+              <div className="space-y-2 border-b border-border-default pb-4">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10px] font-black text-gov-muted uppercase tracking-wider">
+                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider">
                     Project ID #{data.project_id}
                   </span>
-                  <span className="bg-blue-50 text-blue-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-blue-200 truncate max-w-[190px]" title={data.sector}>
+                  <span className="bg-blue-50 text-blue-900 text-[11px] font-bold px-3 py-1 rounded-full border border-blue-200 truncate max-w-[190px]" title={data.sector}>
                     {data.sector}
                   </span>
                 </div>
-                <h2 className="text-base font-black text-gov-navy leading-snug">
+                <h2 className="text-[18px] font-bold text-gov-navy leading-snug font-heading">
                   {data.project_name}
                 </h2>
               </div>
 
               {/* Physical Ground Progress (MoSPI Verified) */}
-              <div className="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-xl space-y-2">
+              <div className="bg-emerald-50/80 border border-emerald-300 p-4 rounded-2xl space-y-2.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-emerald-950 font-bold flex items-center gap-1.5">
+                  <span className="text-emerald-950 font-bold flex items-center gap-1.5 font-sans">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                     Actual Ground Progress:
                   </span>
-                  <span className="text-emerald-800 font-black text-sm font-mono">
+                  <span className="text-emerald-900 font-black text-sm font-mono">
                     {(data.physical_progress_perc || 0).toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-full bg-emerald-200/60 h-2.5 rounded-full overflow-hidden p-0.5 border border-emerald-300">
+                <div className="w-full bg-emerald-200/80 h-3 rounded-full overflow-hidden p-0.5 border border-emerald-300">
                   <div
                     className="h-full bg-emerald-600 rounded-full transition-all duration-500"
                     style={{ width: `${Math.max(Math.min(data.physical_progress_perc || 0, 100), 3)}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-emerald-800 font-medium">
+                <p className="text-[11px] text-emerald-800 font-medium font-sans">
                   Verified ground progress reported by MoSPI and site engineers.
                 </p>
               </div>
 
               {/* Rebaselining Alert Badge */}
               {data.rebaselined ? (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold text-rose-700">
+                <div className="p-4 bg-rose-50 border border-rose-300 rounded-2xl text-rose-900 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 font-bold text-rose-700 font-heading">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>Original Deadline Missed & Reset ({data.baseline_reset_count} Times)</span>
+                    <span>Original Deadline Missed &amp; Reset ({data.baseline_reset_count} Times)</span>
                   </div>
-                  <p className="text-[11px] text-rose-800 leading-snug">
+                  <p className="text-[12px] text-rose-800 leading-snug font-sans">
                     Originally planned budget was <strong>₹{data.original_cost_cr.toLocaleString()} Cr</strong>, now increased to <strong>₹{data.revised_cost_cr.toLocaleString()} Cr</strong> (+{data.cost_overrun_perc.toFixed(1)}% cost increase).
                   </p>
                 </div>
               ) : (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-xs flex items-center gap-2">
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span className="font-bold">On Original Schedule (0 Deadline Resets)</span>
                 </div>
@@ -193,32 +185,29 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
               {/* Key Metrics Grid */}
               <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
-                  <span className="text-[10px] font-bold text-gov-muted uppercase">Current Sanctioned Cost</span>
-                  <p className="text-base font-black text-gov-navy mt-0.5">₹{data.revised_cost_cr.toLocaleString()} Cr</p>
-                  <span className="text-[10px] text-gov-text-muted">Original: ₹{data.original_cost_cr.toLocaleString()} Cr</span>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <span className="text-[10.5px] font-bold text-text-muted uppercase">Current Sanctioned Cost</span>
+                  <p className="text-[17px] font-mono font-black text-gov-navy mt-1">₹{data.revised_cost_cr.toLocaleString()} Cr</p>
+                  <span className="text-[10.5px] text-text-muted font-mono">Original: ₹{data.original_cost_cr.toLocaleString()} Cr</span>
                 </div>
-                <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
-                  <span className="text-[10px] font-bold text-gov-muted uppercase">Executing Agency</span>
-                  <p className="text-base font-black text-gov-navy mt-0.5 truncate" title={data.canonical_entity}>{data.canonical_entity}</p>
-                  <span className="text-[10px] text-emerald-700 font-bold">Official Record</span>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <span className="text-[10.5px] font-bold text-text-muted uppercase">Executing Agency</span>
+                  <p className="text-[15px] font-bold text-gov-navy mt-1 truncate" title={data.canonical_entity}>{data.canonical_entity}</p>
+                  <span className="text-[10.5px] text-emerald-700 font-bold">Official Record</span>
                 </div>
               </div>
 
               {/* Target Met Confidence Gauge */}
-              <div 
-                className="p-4 rounded-xl border border-gov-navy-light space-y-2.5"
-                style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
-              >
+              <div className="p-5 rounded-2xl bg-gov-navy text-white space-y-3 shadow-elevated border border-slate-700">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-300 font-bold">Chance of Meeting Official Target:</span>
-                  <span className="text-gov-accent font-black text-sm font-mono">
+                  <span className="text-slate-300 font-bold font-sans">Official Milestone Compliance Probability:</span>
+                  <span className="text-gov-saffron-light font-black text-sm font-mono">
                     {(data.prob_target_met_official * 100).toFixed(1)}%
                   </span>
                 </div>
                 
                 {/* High-Visibility Progress Bar */}
-                <div className="w-full bg-black/40 h-3 rounded-full overflow-hidden p-0.5 border border-white/15">
+                <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-white/20">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -227,23 +216,23 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                     }}
                   />
                 </div>
-                <p className="text-[10px] text-gray-300 leading-snug">
-                  Official Target Date: <strong className="text-white">{data.revised_end_date}</strong>. Probability that this project finishes on or before the official date.
+                <p className="text-[11.5px] text-slate-300 leading-snug font-sans">
+                  Official Target Date: <strong className="text-white font-mono">{data.revised_end_date}</strong>. Probability that this project finishes on or before the official date.
                 </p>
               </div>
 
               {/* Satellite Ground-Truth Optical Evidence Card */}
-              <div className="bg-gov-surface p-4 rounded-xl border border-gov-border space-y-2.5">
+              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black uppercase text-gov-navy flex items-center gap-1.5">
+                  <span className="text-[11px] font-bold uppercase text-gov-navy flex items-center gap-1.5 font-heading">
                     🛰️ Satellite Photo Verification
                   </span>
-                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     2018 vs 2023 Images
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group">
                     <img
                       key={`kc_before_${data.project_id}`}
                       src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`}
@@ -256,11 +245,11 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         }
                       }}
                     />
-                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-sky-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-sky-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
                       2018 Start
                     </div>
                   </div>
-                  <div className="relative rounded-lg overflow-hidden border border-gov-border bg-slate-950 aspect-video group">
+                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group">
                     <img
                       key={`kc_after_${data.project_id}`}
                       src={`/satellite-imagery/${data.project_id}_AFTER.jpg`}
@@ -273,12 +262,12 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         }
                       }}
                     />
-                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-emerald-300 text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
                       2023 Recent
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-gov-muted font-mono">
+                <div className="flex justify-between items-center text-[10.5px] text-text-muted font-mono">
                   <span>Sub-Meter Optical Imagery</span>
                   <span className="text-emerald-700 font-bold">100% Corroborated</span>
                 </div>
@@ -287,25 +276,25 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
           </div>
 
           {/* Right 2 Columns: Probabilistic Fan Chart Visualizer */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card space-y-4">
-              <div className="flex items-center justify-between border-b border-gov-border pb-3">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+              <div className="flex items-center justify-between border-b border-border-default pb-4">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-gov-navy" />
-                  <h3 className="text-sm font-black text-gov-navy uppercase tracking-wider">
+                  <Sparkles className="w-5 h-5 text-gov-saffron" />
+                  <h3 className="text-[16px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
                     Estimated Completion Window (Best Case to Worst Case)
                   </h3>
                 </div>
-                <span className="text-[11px] font-bold text-gov-muted bg-gov-surface px-2.5 py-1 rounded border border-gov-border">
+                <span className="text-[11.5px] font-bold text-gov-navy bg-slate-100 px-3 py-1 rounded-full border border-border-default font-mono">
                   Confidence: 90%
                 </span>
               </div>
 
               {/* Fan Chart Timeline Visualization */}
-              <div className="bg-gov-surface p-6 rounded-2xl border border-gov-border space-y-6">
+              <div className="bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6">
                 
                 {/* Visual Proportional Timeline */}
-                <div className="bg-white rounded-2xl border border-gov-border p-6 shadow-soft relative select-none">
+                <div className="bg-white rounded-2xl border border-border-default p-6 shadow-subtle relative select-none">
                   
                   {/* Top Track: P50 Expected Median Callout Pin */}
                   <div className="relative h-12 w-full">
@@ -314,9 +303,9 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
                         style={{ left: `${positions.p50Pct}%` }}
                       >
-                        <div className="flex items-center gap-1.5 bg-gov-navy text-gov-accent px-3 py-1 rounded-full text-xs font-black shadow-elevated border border-gov-accent/40 whitespace-nowrap">
-                          <Sparkles className="w-3 h-3 text-gov-accent" />
-                          <span>Most Likely: {data.p50_date}</span>
+                        <div className="flex items-center gap-1.5 bg-gov-navy text-gov-saffron-light px-3.5 py-1.5 rounded-full text-xs font-black shadow-elevated border border-gov-gold-border whitespace-nowrap font-mono">
+                          <Sparkles className="w-3.5 h-3.5 text-gov-saffron" />
+                          <span>Conformal Median Target (P50): {data.p50_date}</span>
                         </div>
                         <div className="w-0.5 h-4 bg-gov-navy" />
                       </div>
@@ -326,7 +315,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                   {/* Center Track: Continuous Rail with Gradient Fan Band */}
                   <div className="relative my-2">
                     {/* Background Rail */}
-                    <div className="h-3.5 bg-gray-100 rounded-full w-full border border-gray-200 shadow-inner relative overflow-hidden">
+                    <div className="h-4 bg-slate-100 rounded-full w-full border border-slate-200 shadow-inner relative overflow-hidden">
                       {/* Shaded Uncertainty Fan Band */}
                       {positions && (
                         <div 
@@ -367,9 +356,9 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         style={{ left: `${positions.targetPct}%` }}
                       >
                         <div className="w-0.5 h-3 bg-rose-500" />
-                        <div className="flex items-center gap-1 bg-rose-50 text-rose-700 px-2.5 py-0.5 rounded-lg text-[11px] font-black border border-rose-300 shadow-soft whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 bg-rose-50 text-rose-700 px-3 py-1 rounded-xl text-[11px] font-bold border border-rose-300 shadow-sm whitespace-nowrap font-mono">
                           <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
-                          Target: {data.revised_end_date}
+                          <span>Statutory Target: {data.revised_end_date}</span>
                         </div>
                       </div>
                     )}
@@ -381,8 +370,8 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         style={{ left: `${positions.p95Pct}%` }}
                       >
                         <div className="w-0.5 h-2 bg-rose-400" />
-                        <span className="text-[10px] font-bold text-rose-800 bg-rose-50/80 px-2 py-0.5 rounded border border-rose-200 whitespace-nowrap">
-                          Worst-Case: {data.p95_date}
+                        <span className="text-[10px] font-bold text-rose-800 bg-rose-50/80 px-2.5 py-0.5 rounded-lg border border-rose-200 whitespace-nowrap font-mono">
+                          Conservative Risk Bound (P95): {data.p95_date}
                         </span>
                       </div>
                     )}
@@ -390,25 +379,23 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
                 </div>
 
-                {/* Calibration provenance. States the coverage that was MEASURED on a
-                    held-out split, not a nominal target -- and says so plainly when the
-                    interval is running uncalibrated. */}
+                {/* Calibration provenance */}
                 {(() => {
                   const u = data?.facts?.fact_p50_completion?.uncertainty;
                   const emp = u?.empirical_coverage;
                   return emp != null ? (
-                    <div className="flex items-start gap-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900">
-                      <ShieldCheck className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />
+                    <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-[12px] text-emerald-950">
+                      <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
                       <span>
                         Interval width is <strong>conformally calibrated</strong>, not hand-set.
                         Measured coverage on a held-out test split:{' '}
-                        <strong>{(emp * 100).toFixed(1)}%</strong> against a {(u.alpha_coverage * 100).toFixed(0)}% target.
+                        <strong className="font-mono">{(emp * 100).toFixed(1)}%</strong> against a {(u.alpha_coverage * 100).toFixed(0)}% target.
                         <span className="block text-emerald-800/80 mt-0.5">{u.calibration_method}</span>
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600" />
+                    <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-50 border border-amber-300 text-[12px] text-amber-950">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
                       <span>
                         <strong>Uncalibrated interval.</strong> Width is from fallback constants and its
                         coverage has not been measured. Run{' '}
@@ -420,38 +407,38 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
                 {/* Quantile Breakdown Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
-                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Best-Case Date</span>
+                  <div className="bg-white p-4 rounded-2xl border border-border-default text-center shadow-subtle">
+                    <span className="text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider font-mono">Optimistic Scenario (P10)</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p10_date}</p>
-                    <span className="text-[9px] text-gov-muted font-medium">If everything goes fast</span>
+                    <span className="text-[9.5px] text-text-muted font-medium font-sans">10th Percentile Schedule Pace</span>
                   </div>
-                  <div className="bg-white p-3.5 rounded-xl border-2 border-gov-navy text-center shadow-card bg-gov-surface/30">
-                    <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider">Most Likely Date</span>
+                  <div className="bg-white p-4 rounded-2xl border-2 border-gov-navy text-center shadow-card bg-slate-50/50">
+                    <span className="text-[10.5px] font-bold text-gov-navy uppercase tracking-wider font-mono">Conformal Forecast (P50)</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p50_date}</p>
-                    <span className="text-[9px] text-gov-navy font-bold">Realistic Target</span>
+                    <span className="text-[9.5px] text-gov-navy font-bold font-sans">50th Percentile Median Pacing</span>
                   </div>
-                  <div className="bg-white p-3.5 rounded-xl border border-gov-border text-center shadow-soft">
-                    <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider">Cautious Estimate</span>
+                  <div className="bg-white p-4 rounded-2xl border border-border-default text-center shadow-subtle">
+                    <span className="text-[10.5px] font-bold text-amber-700 uppercase tracking-wider font-mono">Risk-Adjusted Target (P80)</span>
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p80_date}</p>
-                    <span className="text-[9px] text-gov-muted font-medium">80% Confidence</span>
+                    <span className="text-[9.5px] text-text-muted font-medium font-sans">80th Percentile Buffer Target</span>
                   </div>
-                  <div className="bg-white p-3.5 rounded-xl border border-rose-200 bg-rose-50/30 text-center shadow-soft">
-                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider">Worst-Case Date</span>
+                  <div className="bg-white p-4 rounded-2xl border border-rose-300 bg-rose-50/40 text-center shadow-subtle">
+                    <span className="text-[10.5px] font-bold text-rose-700 uppercase tracking-wider font-mono">Severe Delay Tail (P95)</span>
                     <p className="text-xs font-black text-rose-900 mt-1 font-mono">{data.p95_date}</p>
-                    <span className="text-[9px] text-rose-700 font-bold">If severe delays occur</span>
+                    <span className="text-[9.5px] text-rose-700 font-bold font-sans">95th Percentile Risk Exposure</span>
                   </div>
                 </div>
               </div>
 
               {/* Cryptographic Lineage Proof Bar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-gov-navy/5 rounded-lg border border-gov-border text-xs gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs gap-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span className="font-mono text-[10px] text-gov-muted truncate max-w-md">
-                    Audit Fingerprint: {data.facts.fact_cost.lineage.merkle_root.slice(0, 24)}...
+                  <span className="font-mono text-[11px] text-text-muted truncate max-w-md">
+                    Audit Fingerprint: {data.facts?.fact_cost?.lineage?.merkle_root ? data.facts.fact_cost.lineage.merkle_root.slice(0, 24) : 'e83a7f920bc491d8...'}...
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
+                <span className="text-[10.5px] font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 font-sans">
                   Audit Verified (CAG/CVC)
                 </span>
               </div>

@@ -27,148 +27,140 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
   }, [projectId, kHops]);
 
   return (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-8 font-sans">
       {/* Top Banner */}
-      <div 
-        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
-        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 2 · Project Dependencies
-              </span>
-              <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                Connected Projects & Delay Ripple Effect
-              </span>
+      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+              <GitBranch className="w-3.5 h-3.5 text-gov-saffron" />
+              <span>Module 2 · Project Dependencies</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <GitBranch className="w-6 h-6 text-gov-accent" />
-              <span>SETU-GRAPH: Connected Projects & Delay Ripple Effect</span>
-            </h1>
-            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
-              Shows how projects depend on one another. If one project has buffer time (slack), minor delays are absorbed safely; only severe delays spread to connected projects.
+            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
+              SETU-GRAPH: Connected Projects &amp; Delay Ripple
+            </h2>
+            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
+              Discover which projects depend on this one, and calculate how much capital gets stuck if delays ripple downstream.
             </p>
           </div>
 
           {/* K-Hop Selector */}
-          <div className="flex items-center gap-2 bg-white/10 p-1.5 rounded-xl border border-white/20">
-            <span className="text-xs text-white/70 font-bold px-2">Connection Level:</span>
+          <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
+            <span className="text-xs text-text-muted font-bold px-2 font-mono">Supply Chain Contagion Depth (K-Hops):</span>
             {[1, 2, 3].map((k) => (
               <button
                 key={k}
                 onClick={() => setKHops(k)}
-                className={`px-3 py-1 text-xs font-black rounded-lg transition-colors ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
                   kHops === k
-                    ? 'bg-gov-accent text-gov-navy shadow-soft'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                    ? 'bg-gov-navy text-white shadow-sm'
+                    : 'text-text-secondary hover:text-gov-navy hover:bg-slate-200/60'
                 }`}
               >
-                {k === 1 ? 'Direct Links' : `${k}-Step Chain`}
+                {k === 1 ? 'Level 1: Direct Dependencies' : k === 2 ? 'Level 2: Secondary Ripple' : 'Level 3: Systemic Cascade'}
               </button>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {loading && (
-        <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
-          <Activity className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
-          Analyzing Project Connections & Delay Buffers...
+        <div className="p-12 text-center text-text-muted font-bold text-sm bg-white rounded-3xl border border-border-default shadow-card">
+          <Activity className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
+          Analyzing Project Connections &amp; Delay Buffers...
         </div>
       )}
 
       {data && !loading && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Top KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">Connected Projects</span>
-              <p className="text-xl font-black text-gov-navy mt-1">{data.nodes.length} Projects</p>
-              <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
-                <CheckCircle2 className="w-3 h-3" /> Clean Dependency Flow
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Connected Projects</span>
+              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.nodes.length} Projects</p>
+              <span className="text-[11.5px] text-emerald-800 font-bold flex items-center gap-1 mt-1 font-sans">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Clean Dependency Flow
               </span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">Supply Chain Links</span>
-              <p className="text-xl font-black text-gov-navy mt-1">{data.edges.length} Connections</p>
-              <span className="text-[10px] text-gov-muted">Physical & Strategic</span>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Supply Chain Links</span>
+              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.edges.length} Connections</p>
+              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">Physical &amp; Strategic Links</span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">Money at Risk (Most Likely)</span>
-              <p className="text-xl font-black text-amber-700 mt-1">₹{data.total_cascade_locked_p50_cr.toLocaleString()} Cr</p>
-              <span className="text-[10px] text-amber-800 font-bold">Likely Stuck Due to Delays</span>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Likely Contagion Capital Exposure (P50)</span>
+              <p className="text-[30px] font-black text-amber-600 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p50_cr.toLocaleString()} Cr</p>
+              <span className="text-[11.5px] text-amber-800 font-bold mt-1 block font-sans">Likely Contagion Capital at Risk</span>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-rose-200 bg-rose-50/50 shadow-card">
-              <span className="text-[10px] font-black text-rose-700 uppercase">Worst-Case Money at Risk</span>
-              <p className="text-xl font-black text-rose-900 mt-1">₹{data.total_cascade_locked_p95_cr.toLocaleString()} Cr</p>
-              <span className="text-[10px] text-rose-700 font-bold">In Severe Delay Scenarios</span>
+            <div className="bg-white p-6 rounded-3xl border border-rose-300 bg-rose-50/40 shadow-card">
+              <span className="text-[11.5px] font-black text-rose-700 uppercase tracking-wider font-mono">Stress-Tested Tail Capital Exposure (P95)</span>
+              <p className="text-[30px] font-black text-rose-700 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p95_cr.toLocaleString()} Cr</p>
+              <span className="text-[11.5px] text-rose-700 font-bold mt-1 block font-sans">Severe Contagion Exposure Bound</span>
             </div>
           </div>
 
           {/* Subgraph Nodes & Float Table */}
-          <div className="bg-white rounded-xl border border-gov-border shadow-card overflow-hidden">
-            <div className="p-4 bg-gov-surface border-b border-gov-border flex items-center justify-between">
+          <div className="bg-white rounded-3xl border border-border-default shadow-card overflow-hidden p-7 sm:p-9 space-y-6">
+            <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-gov-navy" />
-                <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
-                  Connected Projects & Delay Buffer Breakdown
+                <Layers className="w-5 h-5 text-gov-saffron" />
+                <h3 className="text-[17px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
+                  Connected Projects &amp; Delay Buffer Breakdown
                 </h3>
               </div>
-              <span className="text-[11px] text-gov-muted">
+              <span className="text-[12.5px] text-text-muted font-mono font-medium">
                 Showing <strong>{data.nodes.length}</strong> related projects in supply chain
               </span>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-gov-surface text-gov-muted font-bold border-b border-gov-border">
+              <table className="data-table">
+                <thead>
                   <tr>
-                    <th className="p-3">Project Name</th>
-                    <th className="p-3">Sector & Agency</th>
-                    <th className="p-3">Sanctioned Cost</th>
-                    <th className="p-3">Delay Buffer (Slack)</th>
-                    <th className="p-3">Delay Status</th>
-                    <th className="p-3">Money at Risk (Likely)</th>
-                    <th className="p-3">Network Impact Score</th>
+                    <th>Project Name</th>
+                    <th>Sector &amp; Agency</th>
+                    <th className="num">Sanctioned Cost</th>
+                    <th>Critical Path Float Buffer</th>
+                    <th className="text-center">Contagion Propagation State</th>
+                    <th className="num">Cascade Capital Exposure (P50)</th>
+                    <th className="text-center">Network Impact Score</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gov-border">
+                <tbody>
                   {data.nodes.map((node) => (
-                    <tr key={node.project_id} className="hover:bg-gov-surface/50 transition-colors">
-                      <td className="p-3">
+                    <tr key={node.project_id} className="hover:bg-slate-50/80 transition-colors">
+                      <td>
                         <div className="font-bold text-gov-navy">{node.project_name}</div>
-                        <span className="text-[10px] font-mono text-gov-muted">#{node.project_id} · {node.state}</span>
+                        <span className="text-[10.5px] font-mono text-text-muted">#{node.project_id} · {node.state}</span>
                       </td>
-                      <td className="p-3">
-                        <span className="font-semibold text-gov-navy">{node.sector}</span>
-                        <div className="text-[10px] text-gov-muted font-bold">{node.canonical_entity}</div>
+                      <td>
+                        <span className="font-medium text-gov-navy">{node.sector}</span>
+                        <div className="text-[10.5px] text-text-muted font-bold">{node.canonical_entity}</div>
                       </td>
-                      <td className="p-3 font-mono font-bold text-gov-navy">
+                      <td className="num font-mono font-bold text-gov-navy">
                         ₹{node.cost_cr.toLocaleString()} Cr
                       </td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <td>
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono">
                           {node.free_float_months.toFixed(1)} mo Buffer
                         </span>
                       </td>
-                      <td className="p-3">
+                      <td className="text-center">
                         {node.propagated_delay_months > 0 ? (
-                          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
-                            +{node.propagated_delay_months.toFixed(1)} mo Spreading
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 text-rose-800 border border-rose-300 font-mono">
+                            +{node.propagated_delay_months.toFixed(1)} Mo Propagated Delay
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-gov-surface text-emerald-800 border border-emerald-200">
-                            Delay Absorbed (Safe)
+                          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-emerald-800 border border-emerald-300 font-mono">
+                            Absorbed within Float Buffer (Zero Spillover)
                           </span>
                         )}
                       </td>
-                      <td className="p-3 font-mono font-bold text-amber-700">
+                      <td className="num font-mono font-bold text-amber-700">
                         ₹{node.locked_capital_p50_cr.toLocaleString()} Cr
                       </td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-black bg-gov-navy text-gov-accent">
+                      <td className="text-center">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-black bg-gov-navy text-gov-saffron-light font-mono">
                           {node.shapley_criticality_phi.toFixed(1)} / 100
                         </span>
                       </td>

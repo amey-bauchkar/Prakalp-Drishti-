@@ -4,7 +4,7 @@ import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lo
 
 export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
-  const [lang, setLang] = useState('en'); // 'en' | 'hi'
+  const [lang, setLang] = useState('en');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeFact, setActiveFact] = useState(null);
@@ -34,96 +34,88 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
   };
 
   return (
-    <div className="space-y-6 font-sans relative">
+    <div className="space-y-8 font-sans relative">
       {/* Top Header Banner */}
-      <div 
-        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
-        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 4 · Executive Governance
-              </span>
-              <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                Official Cabinet Note with Verified Audit Trail
-              </span>
+      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+              <FileText className="w-3.5 h-3.5 text-gov-saffron" />
+              <span>Module 4 · Executive Governance</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <FileText className="w-6 h-6 text-gov-accent" />
+            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight flex items-center gap-2">
               <span>PRAGATI-SAARTHI: Bilingual Cabinet Review Note</span>
-            </h1>
-            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
-              Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews. Click any highlighted number to see its exact source and proof that it has not been tampered with.
+            </h2>
+            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
+              Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
             </p>
           </div>
 
           {/* Bilingual Language Switcher */}
-          <div className="flex items-center gap-1 bg-white/10 p-1.5 rounded-xl border border-white/20">
-            <Globe className="w-4 h-4 text-gov-accent ml-2 mr-1" />
+          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
+            <Globe className="w-4 h-4 text-gov-saffron ml-1 mr-0.5" />
             <button
               onClick={() => setLang('en')}
-              className={`px-3 py-1 text-xs font-black rounded-lg transition-colors ${
+              className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
                 lang === 'en'
-                  ? 'bg-gov-accent text-gov-navy shadow-soft'
-                  : 'text-white/80 hover:text-white'
+                  ? 'bg-gov-navy text-white shadow-sm'
+                  : 'text-text-secondary hover:text-gov-navy'
               }`}
             >
               English
             </button>
             <button
               onClick={() => setLang('hi')}
-              className={`px-3 py-1 text-xs font-black rounded-lg transition-colors ${
+              className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
                 lang === 'hi'
-                  ? 'bg-gov-accent text-gov-navy shadow-soft'
-                  : 'text-white/80 hover:text-white'
+                  ? 'bg-gov-navy text-white shadow-sm'
+                  : 'text-text-secondary hover:text-gov-navy'
               }`}
             >
               हिन्दी
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {loading && (
-        <div className="p-12 text-center text-gov-muted font-bold text-sm bg-white rounded-xl border border-gov-border">
-          <FileText className="w-8 h-8 text-gov-accent animate-spin mx-auto mb-2" />
+        <div className="p-12 text-center text-text-muted font-bold text-sm bg-white rounded-3xl border border-border-default shadow-card">
+          <FileText className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
           Preparing Fact-Verified Executive Briefing Note...
         </div>
       )}
 
       {denied && !loading && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900">
+        <div className="p-5 rounded-3xl bg-rose-50 border border-rose-300 text-xs font-semibold text-rose-800 shadow-sm">
           {denied}
-          <span className="block font-normal mt-0.5">Cabinet briefings require the ministry officer or administrator role.</span>
+          <span className="block font-normal mt-1">Cabinet briefings require the ministry officer or administrator role.</span>
         </div>
       )}
 
       {data && !loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Briefing Note (2 Columns) */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-6 rounded-xl border border-gov-border shadow-card space-y-6">
+            <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
               {/* Header Info */}
-              <div className="border-b border-gov-border pb-4 space-y-1">
+              <div className="border-b border-border-default pb-5 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-gov-muted uppercase tracking-wider">
-                    Document ID: #{data.project_id} (Official Record)
+                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider">
+                    Cabinet Review Reference Dossier: MoSPI Project Record #{data.project_id}
                   </span>
-                  <span className="text-[11px] font-mono text-gov-muted">{data.generated_at}</span>
+                  <span className="text-[11.5px] font-mono text-text-muted font-bold">{data.generated_at}</span>
                 </div>
-                <h2 className="text-base font-black text-gov-navy leading-snug">
+                <h2 className="text-[20px] font-extrabold text-gov-navy leading-snug font-heading">
                   {lang === 'en' ? data.title_en : data.title_hi}
                 </h2>
               </div>
 
               {/* Executive Summary */}
-              <div className="p-4 bg-gov-surface rounded-xl border border-gov-border space-y-2">
-                <span className="text-[10px] font-black text-gov-navy uppercase tracking-wider block">
+              <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <span className="text-[11px] font-bold text-gov-navy uppercase tracking-wider block font-heading">
                   {lang === 'en' ? 'Executive Summary & Key Takeaways' : 'कार्यपालक सारांश एवं मुख्य निष्कर्ष'}
                 </span>
-                <p className="text-xs text-gov-text-body leading-relaxed">
+                <p className="text-[13.5px] text-text-secondary leading-relaxed font-sans">
                   {lang === 'en' ? data.summary_en : data.summary_hi}
                 </p>
               </div>
@@ -131,11 +123,11 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               {/* Bilingual Subsections */}
               <div className="space-y-4">
                 {data.bilingual_sections.map((sec) => (
-                  <div key={sec.section_id} className="p-4 rounded-xl border border-gov-border bg-white space-y-2">
-                    <h3 className="text-xs font-black text-gov-navy">
+                  <div key={sec.section_id} className="p-5 rounded-2xl border border-border-default bg-white space-y-2 shadow-subtle">
+                    <h3 className="text-[14px] font-bold text-gov-navy font-heading">
                       {lang === 'en' ? sec.heading_en : sec.heading_hi}
                     </h3>
-                    <p className="text-xs text-gov-text-body leading-relaxed">
+                    <p className="text-[13px] text-text-secondary leading-relaxed font-sans">
                       {lang === 'en' ? sec.content_en : sec.content_hi}
                     </p>
                   </div>
@@ -143,23 +135,23 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
               </div>
 
               {/* Clickable Lineage Audit Tokens */}
-              <div className="pt-2 border-t border-gov-border space-y-3">
+              <div className="pt-4 border-t border-border-default space-y-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span className="text-xs font-black text-gov-navy uppercase tracking-wider">
-                    Click Any Metric to Inspect its Source & Proof
+                  <span className="text-[12px] font-bold text-gov-navy uppercase tracking-wider font-heading">
+                    Click Any Metric to Inspect its Source &amp; Proof
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2.5">
                   {Object.values(data.audit_facts).map((fact) => (
                     <button
                       key={fact.fact_id}
                       onClick={() => handleOpenFact(fact)}
-                      className="px-3 py-1.5 bg-gov-surface hover:bg-gov-accent-light border border-gov-border hover:border-gov-accent rounded-lg text-xs font-bold text-gov-navy transition-all flex items-center gap-2 shadow-soft"
+                      className="px-3.5 py-2 bg-slate-50 hover:bg-gov-saffron-light border border-slate-200 hover:border-gov-saffron rounded-xl text-xs font-bold text-gov-navy transition-all flex items-center gap-2 shadow-sm"
                     >
-                      <span className="text-gov-muted text-[10px]">{fact.label}:</span>
+                      <span className="text-text-muted text-[11px]">{fact.label}:</span>
                       <span className="font-mono font-black text-gov-navy">{fact.formatted_value}</span>
-                      <ArrowRight className="w-3 h-3 text-gov-accent-dark" />
+                      <ArrowRight className="w-3.5 h-3.5 text-gov-saffron" />
                     </button>
                   ))}
                 </div>
@@ -170,30 +162,30 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
           {/* Right Column: Top Decisions & Constraints */}
           <div className="lg:col-span-1 space-y-6">
             {/* Top Actionable Decisions */}
-            <div className="bg-white p-5 rounded-xl border border-gov-border shadow-card space-y-4">
-              <div className="flex items-center gap-2 border-b border-gov-border pb-3">
-                <Sparkles className="w-4 h-4 text-gov-navy" />
-                <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
-                  {lang === 'en' ? 'Key Action Items for Decision Makers' : 'शीर्ष कार्यपालक निर्णय'}
+            <div className="bg-white p-7 rounded-3xl border border-border-default shadow-card space-y-5">
+              <div className="flex items-center gap-2 border-b border-border-default pb-4">
+                <Sparkles className="w-4 h-4 text-gov-saffron" />
+                <h3 className="text-[14px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
+                  {lang === 'en' ? 'High-Level Executive Directives for Cabinet Review' : 'शीर्ष कार्यपालक निर्णय'}
                 </h3>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {data.top_decisions.map((dec, idx) => (
-                  <div key={idx} className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1.5">
+                  <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
-                        dec.priority === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-amber-100 text-amber-800 border border-amber-300'
+                      <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full font-mono ${
+                        dec.priority === 'HIGH' ? 'bg-rose-50 text-rose-800 border border-rose-300' : 'bg-amber-50 text-amber-800 border border-amber-300'
                       }`}>
                         {dec.priority} PRIORITY
                       </span>
-                      <span className="text-[10px] font-bold text-gov-muted">{dec.action_agency}</span>
+                      <span className="text-[11px] font-bold text-text-muted">{dec.action_agency}</span>
                     </div>
-                    <p className="text-xs font-bold text-gov-navy leading-snug">
+                    <p className="text-[12.5px] font-bold text-gov-navy leading-snug font-sans">
                       {lang === 'en' ? dec.recommendation_en : dec.recommendation_hi}
                     </p>
-                    <div className="text-[10px] font-mono text-emerald-800 font-bold">
-                      Money Protected from Delay: ₹{dec.impact_cr.toLocaleString()} Cr
+                    <div className="text-[11px] font-mono text-emerald-800 font-bold">
+                      Estimated Capital Safeguarded: ₹{dec.impact_cr.toLocaleString()} Cr
                     </div>
                   </div>
                 ))}
@@ -201,17 +193,17 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
             </div>
 
             {/* Merkle Tree Provenance Card */}
-            <div className="bg-gov-navy text-white p-5 rounded-xl border border-gov-navy-light space-y-3 shadow-card">
+            <div className="bg-gov-navy text-white p-6 sm:p-7 rounded-3xl border border-slate-700 space-y-4 shadow-elevated">
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-gov-accent" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-gov-accent">
-                  Tamper-Proof Guarantee
+                <Lock className="w-4 h-4 text-gov-saffron" />
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-gov-saffron-light font-heading">
+                  Cryptographic Integrity &amp; Lineage Assurance
                 </h3>
               </div>
-              <p className="text-[11px] text-gov-muted-light leading-relaxed">
+              <p className="text-[12px] text-slate-300 leading-relaxed font-sans">
                 Every number in this Cabinet note is locked to official database records. No fabricated data or hallucinated estimates can enter this document.
               </p>
-              <div className="bg-black/30 p-2.5 rounded-lg border border-white/10 font-mono text-[10px] text-white/90 break-all">
+              <div className="bg-black/40 p-3 rounded-xl border border-white/10 font-mono text-[10.5px] text-white/90 break-all">
                 Security Hash: {data.merkle_root}
               </div>
             </div>
@@ -222,91 +214,91 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
       {/* Slide-Out Audit Lineage Drawer */}
       {drawerOpen && activeFact && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex justify-end transition-opacity">
-          <div className="w-full max-w-md bg-white h-full shadow-2xl p-6 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
-            <div className="flex items-center justify-between border-b border-gov-border pb-4">
-              <div className="flex items-center gap-2">
+          <div className="w-full max-w-md bg-white h-full shadow-2xl p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
+            <div className="flex items-center justify-between border-b border-border-default pb-4">
+              <div className="flex items-center gap-2.5">
                 <Database className="w-5 h-5 text-gov-navy" />
                 <div>
-                  <h3 className="text-sm font-black text-gov-navy">Data Source & Audit Proof</h3>
-                  <span className="text-[10px] font-mono text-gov-muted">Metric ID: {activeFact.fact_id}</span>
+                  <h3 className="text-[16px] font-bold text-gov-navy font-heading">Data Source &amp; Audit Proof</h3>
+                  <span className="text-[10.5px] font-mono text-text-muted">Metric ID: {activeFact.fact_id}</span>
                 </div>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
-                className="p-1.5 rounded-lg bg-gov-surface hover:bg-gov-border text-gov-muted transition-colors"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-text-muted transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Fact Value Card */}
-            <div className="p-4 bg-gov-surface rounded-xl border border-gov-border space-y-1">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">{activeFact.label}</span>
-              <p className="text-2xl font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
-              <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Verified Against Official Database
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5">
+              <span className="text-[11px] font-bold text-text-muted uppercase">{activeFact.label}</span>
+              <p className="text-[28px] font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
+              <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Against Official Database
               </span>
             </div>
 
             {/* Cryptographic Hashes & Positional Proof */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-black text-gov-navy uppercase tracking-wider">Source Verification Details</h4>
+            <div className="space-y-3.5">
+              <h4 className="text-xs font-bold text-gov-navy uppercase tracking-wider font-heading">Source Verification Details</h4>
               
-              <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Query Verification Hash</span>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="text-[10.5px] font-bold text-text-muted uppercase">Query Verification Hash</span>
                 <p className="font-mono text-[10px] text-gov-navy break-all">{activeFact.lineage?.query_sha256 || 'N/A'}</p>
               </div>
 
-              <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Dataset Snapshot Fingerprint</span>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="text-[10.5px] font-bold text-text-muted uppercase">Dataset Snapshot Fingerprint</span>
                 <p className="font-mono text-[10px] text-gov-navy break-all">{activeFact.lineage?.dataset_sha256 || 'N/A'}</p>
               </div>
 
-              <div className="p-3 bg-gov-surface rounded-lg border border-gov-border space-y-1">
-                <span className="text-[10px] font-bold text-gov-muted uppercase">Step-by-Step Proof Path</span>
-                <div className="space-y-1 max-h-24 overflow-y-auto">
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                <span className="text-[10.5px] font-bold text-text-muted uppercase">Step-by-Step Proof Path</span>
+                <div className="space-y-1.5 max-h-28 overflow-y-auto">
                   {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
                     activeFact.lineage.merkle_proof.map((p, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-[9px] font-mono bg-white p-1 rounded border border-gov-border">
+                      <div key={idx} className="flex items-center justify-between text-[9.5px] font-mono bg-white p-1.5 rounded-lg border border-slate-200">
                         <span className="text-gov-navy truncate max-w-[200px]">{p.hash}</span>
-                        <span className="bg-sky-100 text-sky-800 px-1 rounded uppercase font-bold text-[8px]">{p.position}</span>
+                        <span className="bg-sky-50 text-sky-800 px-1.5 py-0.5 rounded uppercase font-bold text-[8.5px] border border-sky-200">{p.position}</span>
                       </div>
                     ))
                   ) : (
-                    <p className="font-mono text-[10px] text-gov-muted">Verified Leaf Record</p>
+                    <p className="font-mono text-[10.5px] text-text-muted">Verified Leaf Record</p>
                   )}
                 </div>
               </div>
 
-              <div className="p-3 bg-gov-navy text-white rounded-lg border border-gov-navy-light space-y-1">
-                <span className="text-[10px] font-bold text-gov-accent uppercase">Audit Security Key</span>
+              <div className="p-3.5 bg-gov-navy text-white rounded-xl border border-slate-700 space-y-1">
+                <span className="text-[10.5px] font-bold text-gov-saffron uppercase">Audit Security Key</span>
                 <p className="font-mono text-[10px] text-white/90 break-all">{activeFact.lineage?.merkle_root || data?.merkle_root || 'N/A'}</p>
               </div>
             </div>
 
             {/* Interactive Live Tamper Defense Test */}
-            <div className="p-4 bg-slate-900 text-white rounded-xl border border-slate-700 space-y-3">
+            <div className="p-5 bg-gov-navy text-white rounded-2xl border border-slate-700 space-y-3.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-gov-accent uppercase flex items-center gap-1.5">
+                <span className="text-xs font-bold text-gov-saffron-light uppercase flex items-center gap-1.5 font-heading">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  Test Fake Data Rejection
+                  Real-Time Cryptographic Merkle Verification Test
                 </span>
-                <span className="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">
-                  Live Test
+                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-mono">
+                  Live Verification
                 </span>
               </div>
-              <p className="text-[11px] text-gray-300 leading-snug">
+              <p className="text-[12px] text-slate-300 leading-snug font-sans">
                 Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
               </p>
               
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase">Enter Value to Test</label>
+              <div className="space-y-2">
+                <label className="text-[10.5px] font-bold text-slate-400 uppercase font-mono">Enter Value to Test</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     defaultValue={activeFact.value}
                     id="tamperInput"
-                    className="flex-1 bg-black/50 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-gov-accent"
+                    className="flex-1 bg-black/40 border border-slate-600 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-gov-saffron"
                   />
                   <button
                     onClick={async () => {
@@ -336,18 +328,18 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                         resEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Verification check error: ${err.message}. Ensure backend is running.</span>`;
                       }
                     }}
-                    className="bg-gov-accent text-gov-navy hover:bg-yellow-400 px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-colors shrink-0"
+                    className="btn-saffron-pill px-3.5 py-2 text-xs font-bold uppercase transition-all shrink-0"
                   >
-                    Check Proof
+                    Validate Lineage Hash
                   </button>
                 </div>
-                <div id="tamperResult" className="text-[10px] font-mono min-h-6 pt-1"></div>
+                <div id="tamperResult" className="text-[11px] font-mono min-h-6 pt-1"></div>
               </div>
             </div>
 
             <button
               onClick={() => setDrawerOpen(false)}
-              className="w-full py-2.5 bg-gov-navy text-gov-accent font-black text-xs rounded-xl hover:bg-gov-navy-hover transition-colors shadow-soft"
+              className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider"
             >
               Close Drawer
             </button>
