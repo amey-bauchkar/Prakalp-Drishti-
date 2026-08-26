@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bg-grad2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </radialGradient>
+    <linearGradient id="saff2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933" />
+      <stop offset="100%" stop-color="#FF6F00" />
+    </linearGradient>
+    <linearGradient id="navy2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A1E31" />
+      <stop offset="100%" stop-color="#1E3A8A" />
+    </linearGradient>
+    <linearGradient id="gold2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="50%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#CA8A04" />
+    </linearGradient>
+    <linearGradient id="green2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16A34A" />
+      <stop offset="100%" stop-color="#14532D" />
+    </linearGradient>
+    <filter id="sh2" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0A1E31" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Hexagonal Sovereign Shield Base -->
+  <polygon points="250,25 450,135 450,365 250,475 50,365 50,135" fill="url(#bg-grad2)" stroke="url(#navy2)" stroke-width="4" filter="url(#sh2)" />
+  <polygon points="250,45 430,145 430,355 250,455 70,355 70,145" fill="none" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- Tri-Vector Dynamic Geometric Wings (Highways, Rail, Satellites) -->
+  <path d="M 250 90 L 110 200 L 160 260 L 250 170 Z" fill="url(#saff2)" opacity="0.95" />
+  <path d="M 160 260 L 110 200 L 140 330 L 250 250 Z" fill="url(#gold2)" opacity="0.9" />
+
+  <path d="M 250 90 L 390 200 L 340 260 L 250 170 Z" fill="url(#navy2)" opacity="0.95" />
+  <path d="M 340 260 L 390 200 L 360 330 L 250 250 Z" fill="#0284C7" opacity="0.9" />
+
+  <path d="M 250 250 L 140 330 L 250 410 L 360 330 Z" fill="url(#green2)" opacity="0.95" />
+
+  <!-- Central Optical Core (Drishti Earth Eye) -->
+  <circle cx="250" cy="210" r="45" fill="#FFFFFF" stroke="url(#navy2)" stroke-width="4" />
+  <circle cx="250" cy="210" r="32" fill="url(#navy2)" />
+  <circle cx="250" cy="210" r="18" fill="url(#saff2)" />
+  <circle cx="250" cy="210" r="8" fill="#FFFFFF" />
+
+  <!-- Text -->
+  <text x="250" y="370" font-family="'Plus Jakarta Sans', Inter, sans-serif" font-size="22" font-weight="900" fill="#0A1E31" text-anchor="middle" letter-spacing="3">PRAKALP-DRISHTI</text>
+  <text x="250" y="392" font-family="'Noto Sans Devanagari', sans-serif" font-size="11.5" font-weight="700" fill="#FF9933" text-anchor="middle">प्रकल्प-दृष्टि · गति शक्ति एवं निर्णय प्रणाली</text>
+  <text x="250" y="408" font-family="'Plus Jakarta Sans', Inter, sans-serif" font-size="8.5" font-weight="800" fill="#64748B" text-anchor="middle" letter-spacing="1.5">MoSPI SOVEREIGN AI ENGINE</text>
+</svg>

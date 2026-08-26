@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
-import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers } from 'lucide-react';
+import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility } from 'lucide-react';
 
 import AmeyMasterView from '../amey/index.jsx';
 import DecisionHubView from '../amey/DecisionHubView.jsx';
@@ -13,83 +13,101 @@ import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import { useSession, clearSession } from '../amey/LoginGate.jsx';
 
-/* ─── Sovereign Government Utility Bar (Compact & Sleek) ───────── */
+/* ─── Sovereign Government Utility Bar (data.gov.in Style) ───────── */
 function UtilityBar() {
-  const [fontSize, setFontSize] = useState('normal');
+  const [theme, setTheme] = useState('default');
   const [lang, setLang] = useState('en');
   const session = useSession();
 
   return (
-    <div className="bg-[#071626] text-[10.5px] text-slate-300 border-b border-slate-800 select-none">
-      {/* Tricolor Saffron/White/Green top ribbon */}
-      <div className="h-[2.5px] w-full flex">
-        <div className="h-full w-1/3 bg-[#FF9933]" />
-        <div className="h-full w-1/3 bg-[#FFFFFF]" />
-        <div className="h-full w-1/3 bg-[#138808]" />
-      </div>
-
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-1 flex items-center justify-between">
+    <div className="bg-[#0060B6] text-white text-[11.5px] font-sans border-b border-[#00509E] select-none">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between">
+        {/* Left: Initiative Tag */}
         <div className="flex items-center gap-2">
-          <span className="font-devanagari font-bold text-white tracking-wide">भारत सरकार</span>
-          <span className="text-slate-600">|</span>
-          <span className="font-semibold text-slate-200">Government of India</span>
-          <span className="hidden md:inline text-slate-600">·</span>
-          <span className="hidden md:inline text-slate-400 font-medium">Ministry of Statistics &amp; Programme Implementation</span>
+          <span className="font-medium tracking-wide">A Digital India &amp; MoSPI Initiative</span>
+          <span className="text-white/40 hidden md:inline">|</span>
+          <span className="text-white/90 hidden md:inline font-devanagari">भारत सरकार · Government of India</span>
         </div>
-        
-        <div className="flex items-center gap-2.5">
-          {/* Active Admin / User Session Badge */}
+
+        {/* Right: Theme Selector & Social / Utility Badges */}
+        <div className="flex items-center gap-3.5">
+          {/* Theme Selector */}
+          <div className="flex items-center gap-1.5 cursor-pointer hover:opacity-90">
+            <span className="text-[11px] font-medium hidden sm:inline text-white/95">Choose your theme:</span>
+            <button
+              onClick={() => setTheme(t => t === 'default' ? 'contrast' : 'default')}
+              className="w-4 h-4 rounded-full border border-white/80 p-0 shadow-xs relative overflow-hidden bg-gradient-to-r from-[#FF9933] to-[#0060B6] shrink-0"
+              title="Toggle Theme"
+            />
+          </div>
+
+          {/* Social / GIGW Icons (Circular white with icons) */}
+          <div className="flex items-center gap-1.5">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors"
+              title="Facebook"
+            >
+              <Facebook className="w-3 h-3 fill-current" />
+            </a>
+
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors font-bold text-[10px]"
+              title="X (Twitter)"
+            >
+              <span className="font-sans font-black text-[10px] leading-none">𝕏</span>
+            </a>
+
+            <a
+              href="/rss"
+              className="w-5 h-5 rounded-full bg-white text-[#FF9933] flex items-center justify-center hover:bg-slate-100 transition-colors"
+              title="RSS Feed"
+            >
+              <Rss className="w-2.5 h-2.5" />
+            </a>
+
+            <button
+              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors"
+              title="Accessibility Options"
+            >
+              <Accessibility className="w-3 h-3" />
+            </button>
+          </div>
+
+          {/* Active Session / Sign Out if authenticated */}
           {session && (
-            <div className="flex items-center gap-1.5 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700 text-[9.5px]">
-              <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span className="font-bold text-white">{session.username}</span>
-              <span className="tag bg-rose-500/15 text-rose-200 border-rose-400/40">
-                {String(session.role).replace(/_/g, ' ')}
-              </span>
+            <div className="flex items-center gap-1.5 bg-white/15 px-2 py-0.5 rounded border border-white/30 text-[10px]">
+              <ShieldCheck className="w-3 h-3 text-emerald-300 shrink-0" />
+              <span className="font-bold">{session.username}</span>
               <button
                 onClick={clearSession}
-                className="text-slate-400 hover:text-rose-400 transition-colors ml-1 font-bold"
-                title="Sign out"
+                className="text-white/80 hover:text-white underline ml-1 font-semibold"
               >
                 Sign out
               </button>
             </div>
           )}
-
-          {/* Font resizing */}
-          <div className="hidden sm:flex items-center gap-1 text-[9.5px] bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700 font-mono">
-            <button onClick={() => setFontSize('sm')} className="hover:text-gov-saffron font-medium px-0.5">A-</button>
-            <span className="text-slate-600">|</span>
-            <button onClick={() => setFontSize('normal')} className="hover:text-gov-saffron font-bold px-0.5">A</button>
-            <span className="text-slate-600">|</span>
-            <button onClick={() => setFontSize('lg')} className="hover:text-gov-saffron font-black px-0.5">A+</button>
-          </div>
-
-          {/* Language toggle */}
-          <button 
-            onClick={() => setLang(l => l === 'en' ? 'hi' : 'en')}
-            className="flex items-center gap-1 bg-gov-saffron/20 text-gov-saffron-light border border-gov-saffron/40 px-2 py-0.5 rounded text-[9.5px] font-bold hover:bg-gov-saffron hover:text-white transition-colors font-mono"
-          >
-            <span>{lang === 'en' ? 'हिन्दी' : 'English'}</span>
-          </button>
-          
-          <span className="hidden sm:inline text-slate-400 hover:text-white transition-colors cursor-pointer text-[9.5px] font-mono font-bold">
-            GIGW 3.0
-          </span>
         </div>
       </div>
     </div>
   );
 }
 
-/* ─── Institutional Header + Navigation (Compact 2-Tier) ──────── */
+/* ─── Institutional Header + Navigation (data.gov.in Style) ──── */
 function InstitutionalHeader() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const session = useSession();
 
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') setMobileOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') { setMobileOpen(false); setSearchOpen(false); } };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
@@ -105,89 +123,37 @@ function InstitutionalHeader() {
   ];
 
   return (
-    <header className="bg-white border-b border-border-default sticky top-0 z-50 shadow-sm select-none">
-      {/* ── Tier 1: Brand & Search Studio ── */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-5">
-        {/* Brand & Emblem */}
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs select-none">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+        {/* Brand & Prakalp Drishti Logo */}
         <Link to="/" className="flex items-center gap-3 shrink-0 group">
-          {/* National Emblem SVG */}
-          <div className="w-7 h-9 flex items-center justify-center text-gov-navy shrink-0 drop-shadow-xs">
-            <svg viewBox="0 0 100 120" className="w-full h-full fill-current text-gov-navy">
-              <path d="M50,5 C40,5 35,15 35,25 C35,38 45,45 50,45 C55,45 65,38 65,25 C65,15 60,5 50,5 Z M30,50 L70,50 L65,70 L35,70 Z M25,75 L75,75 L70,95 L30,95 Z M20,100 L80,100 L75,115 L25,115 Z" opacity="0.9" />
-              <circle cx="50" cy="85" r="5" />
-            </svg>
-          </div>
+          <img
+            src="/logos/prakalp_drishti_emblem.png"
+            alt="PRAKALP-DRISHTI"
+            className="h-12 w-12 sm:h-14 sm:w-14 object-contain group-hover:scale-105 transition-transform"
+          />
 
-          <div className="border-l border-slate-300 pl-3">
-            <div className="font-devanagari text-[11px] font-bold text-gov-navy tracking-tight leading-none mb-0.5">
-              प्रकल्प-दृष्टि · सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
+          <div className="flex flex-col">
+            <div className="font-devanagari text-[10.5px] font-bold text-[#1E2A45] tracking-tight leading-none mb-0.5">
+              सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-black text-[17px] text-gov-navy tracking-tight leading-none">
-                PRAKALP-DRISHTI
+            <div className="flex items-center gap-1.5">
+              <span className="font-heading font-black text-[20px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
+                prakalp<span className="text-[#FF9933]">.drishti</span>
               </span>
-              <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8.5px] font-extrabold uppercase tracking-wider bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border font-mono">
-                MoSPI · CCEA AI Engine
+              <span className="hidden xl:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-300 font-mono">
+                MoSPI · CCEA AI
               </span>
             </div>
-            <div className="text-[10px] text-text-muted font-medium tracking-wide leading-tight">
-              National Infrastructure Decision Intelligence Portal
+            <div className="text-[10px] text-slate-500 font-medium tracking-tight mt-0.5">
+              Autonomous Infrastructure Decision Intelligence
             </div>
           </div>
         </Link>
 
-        {/* Desktop Search Bar */}
-        <div className="flex-1 max-w-sm hidden md:block">
-          <ProjectSearchBar />
-        </div>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden p-2 text-gov-navy hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
-          aria-label="Menu"
-        >
-          {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-        </button>
-      </div>
-
-      {/* ── Tier 2: Sovereign Navigation Rail ── */}
-      <div className="hidden lg:block bg-[#0A1E31] border-t border-[#163B5D]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <nav className="flex items-center gap-1 py-1">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                className={({ isActive }) =>
-                  `px-3.5 py-1.5 text-[11px] font-heading font-extrabold tracking-wider rounded-lg whitespace-nowrap transition-all flex items-center gap-1 ${
-                    isActive
-                      ? 'bg-gov-saffron text-white shadow-sm'
-                      : 'text-slate-300 hover:text-white hover:bg-white/10'
-                  }`
-                }
-              >
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2 text-slate-300 text-[10.5px] font-mono font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>2,207 Active Projects Monitored</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Search & Drawer */}
-      <div className="md:hidden px-4 pb-2.5 pt-1 border-t border-slate-100 bg-slate-50">
-        <ProjectSearchBar />
-      </div>
-
-      {mobileOpen && (
-        <div className="lg:hidden border-t border-border-default bg-[#0A1E31] text-white">
-          <nav className="px-4 py-2.5 space-y-1">
+        {/* Desktop Navigation Menu (data.gov.in layout) */}
+        <div className="hidden lg:flex items-center gap-6">
+          <nav className="flex items-center gap-5 xl:gap-7">
             {navItems.map((item) => {
               const isActive = item.to === '/'
                 ? location.pathname === '/'
@@ -196,13 +162,102 @@ function InstitutionalHeader() {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  className={`block px-3.5 py-2 text-[12px] font-heading font-bold rounded-lg whitespace-nowrap transition-all ${
+                  end={item.to === '/'}
+                  className="flex flex-col items-center group py-1"
+                >
+                  <span
+                    className={`text-[12px] font-heading font-extrabold tracking-wider transition-colors ${
+                      isActive
+                        ? 'text-[#0060B6]'
+                        : 'text-[#1E2A45] group-hover:text-[#0060B6]'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                  {/* data.gov.in Blue Indicator Dot */}
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full mt-1 transition-all ${
+                      isActive ? 'bg-[#0060B6] opacity-100 scale-100' : 'bg-transparent opacity-0 scale-0 group-hover:bg-slate-300 group-hover:opacity-100 group-hover:scale-75'
+                    }`}
+                  />
+                </NavLink>
+              );
+            })}
+          </nav>
+
+          {/* Search Popover Trigger */}
+          <button
+            onClick={() => setSearchOpen(!searchOpen)}
+            className="p-1.5 text-slate-600 hover:text-[#0060B6] hover:bg-slate-100 rounded-full transition-colors"
+            title="Search projects"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+
+          {/* Vertical Divider */}
+          <div className="h-5 w-px bg-slate-300" />
+
+          {/* Login / Register or Role Status */}
+          {session ? (
+            <div className="flex items-center gap-1.5 text-[11.5px] font-heading font-bold text-[#0060B6]">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>{session.username}</span>
+            </div>
+          ) : (
+            <span className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer">
+              LOGIN | REGISTER
+            </span>
+          )}
+        </div>
+
+        {/* Mobile controls */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <button
+            onClick={() => setSearchOpen(!searchOpen)}
+            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200"
+            aria-label="Search"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200"
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Search Bar Drawer */}
+      {searchOpen && (
+        <div className="border-t border-slate-200 bg-slate-50/95 backdrop-blur-sm px-4 py-3">
+          <div className="max-w-2xl mx-auto">
+            <ProjectSearchBar />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden border-t border-slate-200 bg-white shadow-lg">
+          <nav className="px-4 py-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive = item.to === '/'
+                ? location.pathname === '/'
+                : location.pathname === item.to;
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={`flex items-center justify-between px-3.5 py-2.5 text-[13px] font-heading font-bold rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-gov-saffron text-white shadow-sm'
-                      : 'text-slate-300 hover:bg-white/10'
+                      ? 'bg-blue-50 text-[#0060B6] font-black'
+                      : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+                  {isActive && <span className="w-2 h-2 rounded-full bg-[#0060B6]" />}
                 </NavLink>
               );
             })}
@@ -215,35 +270,9 @@ function InstitutionalHeader() {
 
 /* ─── Institutional Footer (GIGW 3.0 Standard) ───────────────── */
 function InstitutionalFooter() {
-  const partnerLogos = [
-    { name: 'National Portal of India', sub: 'india.gov.in', badge: 'IN' },
-    { name: 'Open Government Data', sub: 'data.gov.in', badge: 'OGD' },
-    { name: 'Digital India', sub: 'Power to Empower', badge: 'DI' },
-    { name: 'PM GatiShakti', sub: 'National Master Plan', badge: 'NMP' },
-    { name: 'MoSPI', sub: 'Ministry of Statistics', badge: 'MoSPI' },
-    { name: 'NITI Aayog', sub: 'National Institution', badge: 'NITI' },
-  ];
-
   return (
     <footer className="mt-auto">
-      {/* Sovereign Partner Strip */}
-      <div className="bg-white border-y border-border-default py-6">
-        <div className="gov-content">
-          <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
-            {partnerLogos.map((p) => (
-              <div key={p.name} className="flex items-center gap-2.5">
-                <span className="circular-partner-badge font-heading font-extrabold text-[9.5px] tracking-tight text-gov-navy shrink-0">
-                  {p.badge}
-                </span>
-                <div className="min-w-0">
-                  <div className="text-[11px] font-bold text-gov-navy font-heading leading-tight">{p.name}</div>
-                  <div className="text-[9.5px] text-gov-muted font-mono">{p.sub}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Main Footer Content */}
 
       {/* Main Footer Content */}
       <div className="bg-gov-navy-dark text-white py-12">
@@ -315,7 +344,7 @@ export default function App() {
         <UtilityBar />
         <InstitutionalHeader />
 
-        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
           <Routes>
             <Route path="/" element={<AmeyMasterView />} />
             <Route path="/decision-hub" element={<DecisionHubView />} />
