@@ -19,10 +19,31 @@ const KaryaDakshataSimulator = () => {
             .then(data => {
                 if (data.agencies) {
                     setAgencies(data.agencies);
-                    if (data.agencies.length > 0) setSelectedAgency(data.agencies[0].name);
+                    if (data.agencies.length > 0 && !selectedAgency) setSelectedAgency(data.agencies[0].name);
                 }
             })
             .catch(err => console.error("Failed to load agencies", err));
+    }, []);
+
+    // Global project selection sync
+    useEffect(() => {
+        const handleSelect = (e) => {
+            if (e.detail) {
+                const pid = String(e.detail);
+                fetch(`/api/projects/${pid}`)
+                    .then(r => r.ok ? r.json() : null)
+                    .then(p => {
+                        if (p) {
+                            if (p.company) setSelectedAgency(p.company);
+                            if (p.original_cost_cr) setBaseCost(p.original_cost_cr);
+                            if (p.delayed_months) setBaseTime(Math.max(365, Math.round((p.delayed_months || 12) * 30.4)));
+                        }
+                    })
+                    .catch(() => {});
+            }
+        };
+        window.addEventListener('prakalp:selectProject', handleSelect);
+        return () => window.removeEventListener('prakalp:selectProject', handleSelect);
     }, []);
 
     const runSimulation = async () => {
@@ -311,7 +332,7 @@ const KaryaDakshataSimulator = () => {
                                 <div className="space-y-1">
                                     <h4 className="font-extrabold text-[16px] text-white font-heading">AI Recommendation</h4>
                                     <p className="text-slate-300 text-[13.5px] leading-relaxed font-sans">
-                                        Based on a reliability score of {result.Reliability_Score}, we recommend buffering the budget by an additional {result.Historical_Cost_Variance_Avg} and establishing strict milestone checkpoints every 90 days.
+                                        Based on a reliability score of {Number(result.Reliability_Score).toFixed(1)}, we recommend buffering the budget by an additional {result.Historical_Cost_Variance_Avg} and establishing strict milestone checkpoints every 90 days.
                                     </p>
                                 </div>
                             </div>
