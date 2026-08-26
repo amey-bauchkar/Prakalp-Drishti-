@@ -181,3 +181,17 @@
 {"ts": "2026-08-26T20:52:55", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "allocate_capital"}
 {"ts": "2026-08-26T20:52:55", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-08-26T20:53:12", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_risk"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_risk"}
+{"ts": "2026-08-26T20:59:31", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-08-26T20:59:32", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "read_risk"}
+{"ts": "2026-08-26T20:59:32", "user": "monitor", "role": "monitoring_officer", "action": "ALLOW", "detail": "read_risk"}
+{"ts": "2026-08-26T20:59:32", "user": "monitor", "role": "monitoring_officer", "action": "DENIED", "detail": "read_briefing"}
+{"ts": "2026-08-26T20:59:32", "user": "secretary", "role": "ministry_officer", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-08-26T20:59:32", "user": "analyst", "role": "analyst", "action": "DENIED", "detail": "allocate_capital"}
+{"ts": "2026-08-26T20:59:32", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
