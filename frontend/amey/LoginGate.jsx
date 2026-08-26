@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ShieldCheck, LogIn, AlertTriangle, User, Lock, ChevronRight } from 'lucide-react';
 import { login, fetchRoles, getSession, clearSession, subscribe } from './authClient';
 
+export { clearSession };
+
 /**
  * Sign-in gate for the decision-support console.
  *

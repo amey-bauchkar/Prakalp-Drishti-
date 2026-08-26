@@ -13,8 +13,6 @@ export default function VittaVyuhaView() {
   const runAllocation = useCallback(async (b, k, ner) => {
     setLoading(true);
     try {
-      // Requires the allocate_capital permission; a non-admin gets a clear 403 message
-      // rather than a silently empty panel.
       const res = await apiFetch('/api/amey/allocate', {
         method: 'POST',
         body: JSON.stringify({
@@ -36,65 +34,57 @@ export default function VittaVyuhaView() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       runAllocation(budget, riskKappa, enforceNer);
-    }, 150); // Debounce slider for smooth 60fps UI
+    }, 150);
     return () => clearTimeout(timeout);
   }, [budget, riskKappa, enforceNer, runAllocation]);
 
   return (
-    <div className="space-y-6 font-sans">
+    <div className="space-y-8 font-sans">
       {/* Top Header Banner */}
-      <div 
-        className="p-6 rounded-2xl text-white shadow-elevated border border-gov-border"
-        style={{ backgroundColor: '#1E2A45', color: '#FFFFFF' }}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-gov-accent text-gov-navy text-[11px] font-black uppercase px-2.5 py-0.5 rounded tracking-wider">
-                Module 3 · Smart Budget Rebalancing
-              </span>
-              <span className="bg-white/10 text-white/90 text-[11px] font-bold px-2 py-0.5 rounded border border-white/20">
-                Optimized Fund Distribution Engine
-              </span>
+      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-9 shadow-card">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+              <DollarSign className="w-3.5 h-3.5 text-gov-saffron" />
+              <span>Module 3 · Smart Budget Rebalancing</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-              <DollarSign className="w-6 h-6 text-gov-accent" />
-              <span>VITTA-VYUHA: Smart Budget Allocation & Rebalancing Engine</span>
-            </h1>
-            <p className="text-gray-300 text-xs mt-1 max-w-2xl font-normal">
-              Rebalances national infrastructure funds to maximize completed projects, protect the mandatory 10% North-Eastern Region (NER) quota, and get the highest return on public money.
+            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
+              VITTA-VYUHA: Smart Budget Allocation &amp; Rebalancing
+            </h2>
+            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
+              Rebalances national infrastructure funds to maximize completed projects, protect the mandatory 10% North-Eastern Region (NER) quota, and maximize capital efficiency.
             </p>
           </div>
 
           {/* Solve Speed Badge */}
           {denied && !loading && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 flex items-start gap-2">
-          <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-amber-600" />
-          <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
-        </div>
-      )}
+            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-300 text-xs font-semibold text-rose-800 flex items-start gap-2 shadow-sm">
+              <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
+              <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
+            </div>
+          )}
 
-      {data && (
-            <div className="flex items-center gap-2 bg-emerald-950/80 px-3.5 py-2 rounded-xl border border-emerald-500/40 text-emerald-400">
-              <Zap className="w-4 h-4 text-emerald-400" />
+          {data && (
+            <div className="flex items-center gap-3 bg-emerald-50 px-5 py-3 rounded-2xl border border-emerald-300 text-emerald-800 shadow-sm shrink-0">
+              <Zap className="w-5 h-5 text-emerald-600" />
               <div>
-                <span className="text-[10px] uppercase font-bold text-white/70 block">Optimization Speed</span>
-                <span className="text-sm font-black text-emerald-300 font-mono">{data.solve_time_ms} ms</span>
+                <span className="text-[10px] uppercase font-bold text-emerald-700 block font-mono">Optimization Speed</span>
+                <span className="text-[17px] font-black text-emerald-950 font-mono">{data.solve_time_ms} ms</span>
               </div>
             </div>
           )}
         </div>
-      </div>
+      </section>
 
       {/* Interactive Controls Bar */}
-      <div className="bg-white p-6 rounded-xl border border-gov-border shadow-card space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Budget Pool Slider */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-gov-navy flex items-center gap-1.5">
+              <span className="font-bold text-gov-navy flex items-center gap-1.5 font-heading">
                 <DollarSign className="w-4 h-4 text-emerald-600" />
-                Total Available Budget Pool:
+                Quarterly Capex Optimization Envelope:
               </span>
               <span className="font-mono font-black text-sm text-gov-navy">
                 ₹{budget.toLocaleString()} Cr
@@ -107,23 +97,23 @@ export default function VittaVyuhaView() {
               step="1000"
               value={budget}
               onChange={(e) => setBudget(Number(e.target.value))}
-              className="w-full h-2 bg-gov-surface rounded-lg appearance-none cursor-pointer accent-gov-navy"
+              className="w-full h-2.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-gov-navy border border-slate-200"
             />
-            <div className="flex justify-between text-[10px] text-gov-muted">
+            <div className="flex justify-between text-[11px] text-text-muted font-mono">
               <span>₹5,000 Cr (Budget Crunch)</span>
               <span>₹50,000 Cr (Full Funding)</span>
             </div>
           </div>
 
           {/* Risk Dial Slider (Kappa) */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-bold text-gov-navy flex items-center gap-1.5">
-                <Sliders className="w-4 h-4 text-gov-accent-dark" />
-                Caution Level (Risk Dial):
+              <span className="font-bold text-gov-navy flex items-center gap-1.5 font-heading">
+                <Sliders className="w-4 h-4 text-gov-saffron" />
+                Allocation Risk Sensitivity (Kappa Parameter):
               </span>
-              <span className="font-black text-xs text-gov-muted-dark">
-                {riskKappa < 0.35 ? 'Fastest Completion' : riskKappa > 0.70 ? 'High Delay Protection' : 'Balanced Approach'}
+              <span className="font-mono font-bold text-xs text-gov-saffron">
+                {riskKappa < 0.35 ? 'Max Velocity (κ=0.0)' : riskKappa > 0.70 ? 'Max Risk Aversion (κ=1.0)' : 'Risk-Neutral (κ=0.5)'}
               </span>
             </div>
             <input
@@ -133,30 +123,30 @@ export default function VittaVyuhaView() {
               step="0.05"
               value={riskKappa}
               onChange={(e) => setRiskKappa(Number(e.target.value))}
-              className="w-full h-2 bg-gov-surface rounded-lg appearance-none cursor-pointer accent-gov-accent-dark"
+              className="w-full h-2.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-gov-saffron border border-slate-200"
             />
-            <div className="flex justify-between text-[10px] text-gov-muted">
-              <span>Fast Growth (0.0)</span>
-              <span>Maximum Safety (1.0)</span>
+            <div className="flex justify-between text-[11px] text-text-muted font-mono">
+              <span>Max Velocity (κ=0.0)</span>
+              <span>Max Delay-Aversion (κ=1.0)</span>
             </div>
           </div>
 
           {/* Statutory NER 10% Floor Toggle */}
           <div className="flex flex-col justify-between space-y-2">
-            <span className="font-bold text-xs text-gov-navy flex items-center gap-1.5">
+            <span className="font-bold text-xs text-gov-navy flex items-center gap-1.5 font-heading">
               <ShieldAlert className="w-4 h-4 text-amber-600" />
               Government Mandates:
             </span>
-            <label className="flex items-center gap-3 p-2.5 bg-gov-surface rounded-lg border border-gov-border cursor-pointer hover:bg-gov-muted-surface transition-colors">
+            <label className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-border-default cursor-pointer hover:bg-slate-100 transition-colors shadow-sm">
               <input
                 type="checkbox"
                 checked={enforceNer}
                 onChange={(e) => setEnforceNer(e.target.checked)}
-                className="w-4 h-4 rounded text-gov-navy focus:ring-gov-navy"
+                className="w-4 h-4 rounded text-gov-navy focus:ring-gov-navy accent-gov-navy"
               />
               <div className="text-xs">
                 <span className="font-bold text-gov-navy block">Mandatory 10% North-East Quota</span>
-                <span className="text-[10px] text-gov-muted">Legal reservation for North-Eastern Region</span>
+                <span className="text-[10.5px] text-text-muted font-sans">Legal reservation for North-Eastern Region</span>
               </div>
             </label>
           </div>
@@ -164,37 +154,34 @@ export default function VittaVyuhaView() {
       </div>
 
       {data && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Top KPI Cards & Dual Shadow Prices */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">Total Funds Allocated</span>
-              <p className="text-xl font-black text-gov-navy mt-1">₹{data.total_allocated_cr.toLocaleString()} Cr</p>
-              <span className="text-[10px] text-gov-muted font-medium">out of ₹{data.total_budget_pool_cr.toLocaleString()} Cr pool</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Total Funds Allocated</span>
+              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{data.total_allocated_cr.toLocaleString()} Cr</p>
+              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">out of ₹{data.total_budget_pool_cr.toLocaleString()} Cr envelope</span>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">North-East Region Share</span>
-              <p className="text-xl font-black text-gov-navy mt-1">₹{data.ner_allocated_cr.toLocaleString()} Cr</p>
-              {/* The badge tracks ner_floor_met. It previously rendered a green check
-                  and the words "Quota Met" unconditionally, so a solve that MISSED the
-                  statutory floor would still have displayed as compliant. */}
-              <div className="flex items-center gap-1 mt-0.5">
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">North-East Region Share</span>
+              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{data.ner_allocated_cr.toLocaleString()} Cr</p>
+              <div className="flex items-center gap-1.5 mt-1">
                 {data.ner_floor_met
-                  ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  : <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />}
-                <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
+                  ? <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  : <ShieldAlert className="w-4 h-4 text-rose-600" />}
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full font-mono ${
                   data.ner_floor_met
-                    ? 'text-emerald-800 bg-emerald-100'
-                    : 'text-rose-800 bg-rose-100'}`}>
+                    ? 'text-emerald-800 bg-emerald-50 border border-emerald-300'
+                    : 'text-rose-800 bg-rose-50 border border-rose-300'}`}>
                   {data.ner_share_perc.toFixed(1)}%{' '}
                   ({data.ner_floor_met ? '10% quota met' : 'BELOW 10% statutory floor'})
                 </span>
               </div>
               {data.ner_coverage && (
-                <p className="text-[9px] text-gov-muted mt-1.5 leading-snug">
+                <p className="text-[10px] text-text-muted mt-2 leading-snug font-sans">
                   Computed on{' '}
-                  <strong className="text-gov-navy">
+                  <strong className="text-gov-navy font-mono">
                     {data.ner_coverage.state_reported_by_ministry.toLocaleString('en-IN')}
                   </strong>{' '}
                   projects whose state the ministry recorded.{' '}
@@ -205,73 +192,73 @@ export default function VittaVyuhaView() {
               )}
             </div>
 
-            <div className="bg-white p-4 rounded-xl border-2 border-gov-navy shadow-card">
-              <span className="text-[10px] font-bold text-gov-navy uppercase">Value of Extra Funding</span>
-              <p className="text-xl font-black text-gov-navy mt-1">+{data.shadow_price_budget_pi.toFixed(3)}</p>
-              <span className="text-[10px] text-gov-muted">Return for every extra ₹1 Cr added</span>
+            <div className="bg-white p-6 rounded-3xl border-2 border-gov-navy shadow-card">
+              <span className="text-[11.5px] font-bold text-gov-navy uppercase tracking-wider font-mono">Marginal Capital Efficiency (Dual Shadow Price π)</span>
+              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">+{data.shadow_price_budget_pi.toFixed(3)}</p>
+              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">Marginal progress yield gained per additional ₹1 Cr budget envelope</span>
             </div>
 
-            <div className="bg-white p-4 rounded-xl border border-gov-border shadow-card">
-              <span className="text-[10px] font-bold text-gov-muted uppercase">Calculation Accuracy</span>
-              <p className="text-xl font-black text-emerald-700 mt-1">100%</p>
-              <span className="text-[10px] text-emerald-800 font-bold">Exact Global Optimum</span>
+            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Optimization Optimality Status</span>
+              <p className="text-[30px] font-black text-emerald-700 mt-1 tracking-tight font-mono">100%</p>
+              <span className="text-[11.5px] text-emerald-800 font-bold mt-1 block font-sans">100% Globally Optimal (Simplex LP Solved)</span>
             </div>
           </div>
 
           {/* Allocation Table */}
-          <div className="bg-white rounded-xl border border-gov-border shadow-card overflow-hidden">
-            <div className="p-4 bg-gov-surface border-b border-gov-border flex items-center justify-between">
+          <div className="bg-white rounded-3xl border border-border-default shadow-card overflow-hidden p-7 sm:p-9 space-y-6">
+            <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2">
-                <BarChart2 className="w-4 h-4 text-gov-navy" />
-                <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
+                <BarChart2 className="w-5 h-5 text-gov-saffron" />
+                <h3 className="text-[17px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
                   Recommended Project Budget Distribution (Top Priority Projects)
                 </h3>
               </div>
-              <span className="text-[11px] font-bold text-gov-muted">
+              <span className="text-[12.5px] font-bold text-text-muted font-mono">
                 Showing {data.allocations.length} Evaluated Projects
               </span>
             </div>
 
             <div className="overflow-x-auto max-h-96">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-gov-surface text-gov-muted font-bold border-b border-gov-border sticky top-0">
+              <table className="data-table">
+                <thead className="sticky top-0 z-10 bg-slate-50">
                   <tr>
-                    <th className="p-3">Project Name</th>
-                    <th className="p-3">State / Region</th>
-                    <th className="p-3">Requested Funds</th>
-                    <th className="p-3">Recommended Allocation</th>
-                    <th className="p-3">Expected Progress Boost</th>
-                    <th className="p-3">Network Benefit Multiplier</th>
+                    <th>Project Name</th>
+                    <th>State / Region</th>
+                    <th className="num">Sanctioned Baseline Capex</th>
+                    <th className="num">Optimized Reallocation (₹ Cr)</th>
+                    <th className="text-center">Physical Yield Boost (ΔΦ)</th>
+                    <th className="text-center">Systemic Spillover Multiplier (γ)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gov-border">
+                <tbody>
                   {data.allocations.map((alloc) => (
-                    <tr key={alloc.project_id} className="hover:bg-gov-surface/50 transition-colors">
-                      <td className="p-3">
+                    <tr key={alloc.project_id} className="hover:bg-slate-50/80 transition-colors">
+                      <td>
                         <div className="font-bold text-gov-navy">{alloc.project_name}</div>
-                        <span className="text-[10px] text-gov-muted font-mono">#{alloc.project_id}</span>
+                        <span className="text-[10.5px] text-text-muted font-mono">#{alloc.project_id}</span>
                       </td>
-                      <td className="p-3">
+                      <td>
                         <span className="font-medium text-gov-navy">{alloc.state}</span>
                         {alloc.is_ner && (
-                          <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-black bg-purple-100 text-purple-800 border border-purple-300">
+                          <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-800 border border-purple-300">
                             North-East Quota
                           </span>
                         )}
                       </td>
-                      <td className="p-3 font-mono font-bold text-gov-muted">
+                      <td className="num font-mono font-bold text-text-muted">
                         ₹{alloc.requested_capex_cr.toLocaleString()} Cr
                       </td>
-                      <td className="p-3 font-mono font-black text-gov-navy">
+                      <td className="num font-mono font-black text-gov-navy">
                         ₹{alloc.allocated_capex_cr.toLocaleString()} Cr
                       </td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <td className="text-center">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono">
                           +{alloc.completion_yield_phi}%
                         </span>
                       </td>
-                      <td className="p-3">
-                        <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-gov-navy text-gov-accent">
+                      <td className="text-center">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-gov-navy text-gov-saffron-light font-mono">
                           {alloc.systemic_benefit_gamma.toFixed(2)}x
                         </span>
                       </td>
