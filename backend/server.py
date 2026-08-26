@@ -104,13 +104,19 @@ def load_in_memory_cache():
 # Dynamic Auto-Discovery of Member Routers (Zero-Conflict Protocol)
 MEMBERS = ["amey", "tanmay", "parth", "janhavi", "soham", "aditya", "karya_dakshata"]
 for member in MEMBERS:
-    try:
-        mod = __import__(f"modules.{member}.router", fromlist=["router"])
-        if hasattr(mod, "router"):
-            app.include_router(mod.router)
-            print(f"Mounted auto-discovered router: modules.{member}.router")
-    except Exception as e:
-        print(f"Member router for '{member}' pending implementation ({e})")
+    mounted = False
+    for candidate in (f"modules.{member}.router", f"backend.modules.{member}.router"):
+        try:
+            mod = __import__(candidate, fromlist=["router"])
+            if hasattr(mod, "router"):
+                app.include_router(mod.router)
+                print(f"Mounted auto-discovered router: {candidate}")
+                mounted = True
+                break
+        except Exception as e:
+            continue
+    if not mounted:
+        print(f"Member router for '{member}' pending implementation")
 
 # ── Authentication & RBAC (SIH26103 specifies role-based access) ─────────────
 # Declared BEFORE the SPA catch-all route below: FastAPI matches in declaration order,

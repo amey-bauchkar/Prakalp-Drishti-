@@ -53,7 +53,7 @@ const STATUS_STYLES = {
   EO_UNAVAILABLE: { cls: 'bg-slate-100 text-slate-700 border-slate-300', label: 'Not Verifiable' },
 };
 
-const API = 'http://127.0.0.1:8000';
+const API = '';
 
 export default function SatelliteSwipeView({ projectId = '618402' }) {
   const [data, setData] = useState(null);
@@ -119,7 +119,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
     return (
       <div className="note note-warn flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 shrink-0" />
-        Unable to load satellite audit. Ensure the backend is running on port 8000.
+        Unable to load satellite audit. Ensure the backend server is running.
       </div>
     );
   }
@@ -199,12 +199,27 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           className="relative w-full aspect-square max-h-[560px] mx-auto rounded-xl overflow-hidden border border-gov-border bg-slate-950 select-none cursor-ew-resize touch-none focus:outline-none focus:ring-2 focus:ring-gov-accent"
           style={{ maxWidth: 560 }}
         >
+          {/* Fallback Ground State */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950 text-slate-400">
+            <Satellite className="w-10 h-10 text-slate-600 mb-3 opacity-60 animate-pulse" />
+            <div className="text-xs font-bold font-heading text-slate-300 uppercase tracking-wider">
+              Satellite Optical Telemetry
+            </div>
+            <div className="text-[11px] text-slate-500 font-mono mt-1 max-w-xs">
+              Project Coordinates: {data.latitude?.toFixed(4) || '—'}° N, {data.longitude?.toFixed(4) || '—'}° E
+            </div>
+            <div className="text-[10px] text-amber-400/80 font-mono mt-2 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
+              {data.eo_verdict_reliable ? 'Optical Archive Synchronized' : 'Site Verification Scheduled via Field Audit'}
+            </div>
+          </div>
+
           {/* BEFORE (base layer) */}
           <img
             src={`${API}${data.before_imagery_url}`}
             alt={`2018 baseline imagery for project ${data.project_id}`}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             draggable={false}
+            onError={(e) => { e.target.style.display = 'none'; }}
           />
 
           {/* AFTER (clipped to the swipe position) */}
@@ -214,6 +229,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             draggable={false}
             style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
+            onError={(e) => { e.target.style.display = 'none'; }}
           />
 
           {/* Change-zone boxes, drawn from normalised coords so they scale with the frame */}

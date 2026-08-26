@@ -80,11 +80,11 @@ export default function AmeyMasterView() {
 
   return (
     <LoginGate>
-      <div className="font-sans snap-slide-container space-y-0">
+      <div className="font-sans space-y-8 sm:space-y-12">
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 1: FRAMED SOVEREIGN BLUE HERO BOX (PAGE 1)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-1" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-4 sm:py-5 pb-7">
+        <section id="slide-1" className="py-4 sm:py-8 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden max-w-6xl w-full mx-auto py-5 sm:py-6 px-6 sm:px-12 rounded-2xl shadow-xl border border-[#163B5D]">
             {/* Subtle India Gate Vector Silhouette Watermark */}
             <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-xl pointer-events-none opacity-10 flex items-end justify-center">
@@ -161,7 +161,7 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 2: NATIONAL MANDATE & STATUTORY GOVERNANCE (PAGE 2)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-2" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-6 sm:py-8 space-y-6">
+        <section id="slide-2" className="py-6 sm:py-10 space-y-6">
           {/* Top Parchment Ribbon */}
           <div className="card-parchment-gold p-6 sm:p-7 relative overflow-hidden rounded-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -274,7 +274,7 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 3: FIVE ANALYTICAL PROGRAMMES (PAGE 3)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-3" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-6 sm:py-8 space-y-6">
+        <section id="slide-3" className="py-6 sm:py-10 space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <div className="text-[11px] font-bold uppercase tracking-widest text-gov-saffron">
               Independent Analytical Engines
@@ -331,7 +331,7 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 4: EMPIRICAL FINDINGS & OFFICIAL BULLETINS (PAGE 4)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-4" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-6 sm:py-8 space-y-6">
+        <section id="slide-4" className="py-6 sm:py-10 space-y-6">
           {/* McCrary Density Card */}
           <div className="command-header p-6 sm:p-8 text-white relative overflow-hidden rounded-2xl shadow-lg">
             <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -438,7 +438,7 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 5: DECISION HUB ENTRY & SOVEREIGN PARTNERS (PAGE 5)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-5" className="snap-slide-section min-h-[calc(100vh-100px)] flex flex-col justify-center py-6 sm:py-8 space-y-6">
+        <section id="slide-5" className="py-6 sm:py-10 space-y-6">
           {/* Decision Hub Action Banner */}
           <div className="command-header p-7 sm:p-9 lg:p-10 text-white relative overflow-hidden rounded-2xl shadow-lg">
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">

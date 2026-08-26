@@ -217,7 +217,7 @@ export default function LoginGate({ children }) {
             ))}
             {!roles && (
               <p className="note note-warn">
-                Could not reach the API to list roles. Start the backend on port 8000.
+                Could not reach the API to list roles. Ensure the backend server is running.
               </p>
             )}
           </div>

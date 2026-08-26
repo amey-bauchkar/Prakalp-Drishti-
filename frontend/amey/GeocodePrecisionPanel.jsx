@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Target, AlertTriangle, CheckCircle2, FlaskConical } from 'lucide-react';
 
-const API = 'http://127.0.0.1:8000';
+const API = '';
 
 /**
  * Publishes MEASURED geocoding precision per tier.

@@ -156,28 +156,46 @@ export default function EOAuditorView() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <div className="text-[12px] font-semibold text-gov-navy mb-2">Baseline Epoch (2018-02)</div>
-                      <div className="aspect-video bg-gray-900 rounded-md overflow-hidden border border-border-default relative flex items-center justify-center text-gray-500 text-[12px]">
+                      <div className="aspect-video bg-slate-900 rounded-md overflow-hidden border border-border-default relative flex items-center justify-center text-slate-400 text-[12px]">
                         <img
                           src={`/satellite-imagery/${selectedProject.project_id}_BEFORE.jpg`}
                           alt="2018 Satellite Baseline"
-                          className="w-full h-full object-cover"
-                          onError={(e) => { e.target.style.display = 'none'; }}
+                          className="w-full h-full object-cover relative z-10"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fb = e.target.nextElementSibling;
+                            if (fb) fb.style.display = 'flex';
+                          }}
                         />
-                        <span className="absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white">
+                        <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-3 text-center bg-slate-900 text-slate-400 z-0">
+                          <Satellite className="w-6 h-6 text-slate-500 mb-1.5 opacity-70" />
+                          <span className="text-[10.5px] font-bold uppercase tracking-wider text-slate-300">Baseline Imagery Pending</span>
+                          <span className="text-[9px] text-slate-500 font-mono mt-0.5">High-resolution archive acquisition in queue</span>
+                        </div>
+                        <span className="absolute bottom-2 left-2 z-20 bg-black/70 px-2 py-0.5 rounded text-[10px] text-white font-mono">
                           ESRI 2018
                         </span>
                       </div>
                     </div>
                     <div>
                       <div className="text-[12px] font-semibold text-gov-navy mb-2">Current Epoch (2023-01)</div>
-                      <div className="aspect-video bg-gray-900 rounded-md overflow-hidden border border-border-default relative flex items-center justify-center text-gray-500 text-[12px]">
+                      <div className="aspect-video bg-slate-900 rounded-md overflow-hidden border border-border-default relative flex items-center justify-center text-slate-400 text-[12px]">
                         <img
                           src={`/satellite-imagery/${selectedProject.project_id}_AFTER.jpg`}
                           alt="2023 Satellite Current"
-                          className="w-full h-full object-cover"
-                          onError={(e) => { e.target.style.display = 'none'; }}
+                          className="w-full h-full object-cover relative z-10"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fb = e.target.nextElementSibling;
+                            if (fb) fb.style.display = 'flex';
+                          }}
                         />
-                        <span className="absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white">
+                        <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-3 text-center bg-slate-900 text-slate-400 z-0">
+                          <Satellite className="w-6 h-6 text-slate-500 mb-1.5 opacity-70" />
+                          <span className="text-[10.5px] font-bold uppercase tracking-wider text-slate-300">Current Imagery Pending</span>
+                          <span className="text-[9px] text-slate-500 font-mono mt-0.5">Optical ground-truth scheduled for site</span>
+                        </div>
+                        <span className="absolute bottom-2 left-2 z-20 bg-black/70 px-2 py-0.5 rounded text-[10px] text-white font-mono">
                           ESRI 2023
                         </span>
                       </div>
