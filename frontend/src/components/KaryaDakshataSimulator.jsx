@@ -64,9 +64,9 @@ const KaryaDakshataSimulator = () => {
     return (
         <div className="space-y-8 font-sans max-w-6xl mx-auto">
             {/* Header */}
-            <div className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="panel p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
                         <Activity className="w-3.5 h-3.5 text-gov-saffron" />
                         <span>KARYA-DAKSHATA · Agency Execution Simulator</span>
                     </div>
@@ -82,7 +82,7 @@ const KaryaDakshataSimulator = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Input Panel */}
                 <div className="lg:col-span-4 space-y-6">
-                    <div className="bg-white p-7 sm:p-8 rounded-3xl border border-border-default shadow-card">
+                    <div className="panel p-4 sm:p-5">
                         <h2 className="font-heading font-extrabold text-[19px] text-gov-navy mb-5 flex items-center gap-2.5">
                             <Calculator className="w-5 h-5 text-gov-saffron" />
                             <span>Proposal Inputs</span>
@@ -158,7 +158,7 @@ const KaryaDakshataSimulator = () => {
                 {/* Results Panel */}
                 <div className="lg:col-span-8">
                     {!result && !loading && !error && (
-                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center text-center p-8 bg-white rounded-3xl border border-border-default shadow-card">
+                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center text-center p-8 panel">
                             <div className="w-16 h-16 bg-gov-saffron-light text-gov-saffron-dark rounded-2xl flex items-center justify-center mb-4 border border-gov-gold-border">
                                 <Activity className="w-8 h-8 text-gov-saffron" />
                             </div>
@@ -168,14 +168,14 @@ const KaryaDakshataSimulator = () => {
                     )}
 
                     {error && (
-                        <div className="p-5 bg-rose-50 text-rose-700 rounded-3xl border border-rose-300 flex items-center gap-3">
+                        <div className="note note-critical flex items-center gap-3">
                             <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
                             <span className="font-bold">Engine Error: {error}</span>
                         </div>
                     )}
 
                     {loading && (
-                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center space-y-4 bg-white rounded-3xl border border-border-default shadow-card">
+                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center space-y-4 panel">
                             <div className="relative w-16 h-16">
                                 <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
                                 <div className="absolute inset-0 border-4 border-gov-saffron border-t-transparent rounded-full animate-spin"></div>
@@ -188,10 +188,10 @@ const KaryaDakshataSimulator = () => {
                     {result && !loading && (
                         <div className="space-y-6">
                             {/* Score & Header Card */}
-                            <div className="bg-white p-7 sm:p-8 rounded-3xl border border-border-default shadow-card relative overflow-hidden">
+                            <div className="panel p-4 sm:p-5 relative overflow-hidden">
                                 <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                                     <div className="flex-1 space-y-2">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-bold text-gov-navy uppercase tracking-wider font-mono">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-sm text-xs font-bold text-gov-navy uppercase tracking-wider font-mono">
                                             <Building2 className="w-3.5 h-3.5 text-gov-saffron" />
                                             <span>Agency Profile</span>
                                         </div>
@@ -235,7 +235,7 @@ const KaryaDakshataSimulator = () => {
                             {/* Charts Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Cost Comparison */}
-                                <div className="bg-white p-6 sm:p-7 rounded-3xl border border-border-default shadow-card">
+                                <div className="panel p-4 sm:p-5">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <h3 className="text-text-muted font-bold text-xs uppercase tracking-wider font-mono">Expected Cost</h3>
@@ -270,7 +270,7 @@ const KaryaDakshataSimulator = () => {
                                 </div>
 
                                 {/* Timeline Comparison */}
-                                <div className="bg-white p-6 sm:p-7 rounded-3xl border border-border-default shadow-card">
+                                <div className="panel p-4 sm:p-5">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <h3 className="text-text-muted font-bold text-xs uppercase tracking-wider font-mono">Expected Timeline</h3>

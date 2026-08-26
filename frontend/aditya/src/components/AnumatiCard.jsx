@@ -86,7 +86,7 @@ export default function AnumatiCard({ data }) {
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${stage.is_stagnated ? 'text-red-400 bg-red-500/10 border-red-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
                   {stage.days_pending} / {stage.benchmark_days} days (RSI {stage.stagnation_ratio})
                 </span>
-                {stage.paperwork_loopback_detected && <p className="text-[10px] text-amber-400 font-semibold mt-1">⚠️ Paper Loopback</p>}
+                {stage.paperwork_loopback_detected && <p className="text-[10px] text-amber-400 font-semibold mt-1">Paper Loopback</p>}
               </div>
             </div>
           ))}

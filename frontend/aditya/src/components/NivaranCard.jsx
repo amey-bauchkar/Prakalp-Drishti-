@@ -82,8 +82,8 @@ export default function NivaranCard({ data, onRunCustomText }) {
               <span className="text-slate-300">NLP Clause Risk Score</span>
               <span className="text-amber-400 font-bold font-mono">{clause_risk_score} / 1.0</span>
             </div>
-            <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div className="bg-gradient-to-r from-amber-500 to-red-500 h-full rounded-full" style={{ width: `${clause_risk_score * 100}%` }}></div>
+            <div className="meter">
+              <div className="h-full bg-gov-navy-light" style={{ width: `${clause_risk_score * 100}%` }}></div>
             </div>
           </div>
 
@@ -92,8 +92,8 @@ export default function NivaranCard({ data, onRunCustomText }) {
               <span className="text-slate-300">Contractor Litigation Index</span>
               <span className="text-red-400 font-bold font-mono">{contractor_litigation_index} / 100</span>
             </div>
-            <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-500 via-amber-500 to-red-500 h-full rounded-full" style={{ width: `${contractor_litigation_index}%` }}></div>
+            <div className="meter">
+              <div className="h-full bg-gov-navy-light" style={{ width: `${contractor_litigation_index}%` }}></div>
             </div>
           </div>
         </div>

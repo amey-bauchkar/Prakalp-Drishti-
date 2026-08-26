@@ -4,35 +4,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════
-   PRAKALP-DRISHTI — Institutional Editorial Design System
-   National Infrastructure Analytics · MoSPI · Government of India
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — SOVEREIGN INSTITUTIONAL DESIGN SYSTEM
+   National Infrastructure Decision Terminal · MoSPI · Government of India
+   ═══════════════════════════════════════════════════════════════════════
+
+   The visual target is an instrument, not a dashboard: hairline structure,
+   tabular figures, high information density, and colour that reports state
+   rather than decorating a surface.
+
+   The redefinitions in @layer components are deliberate. Legacy class names
+   (.hero-saffron-banner, .card-gov-programme, .bulletin-paper-card and so
+   on) are kept and re-pointed at the new language, so several hundred
+   existing call sites adopt it without their markup changing and without
+   the domain text, statistical bounds, or API wiring being touched.
+   ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --saffron: #E65100;
-  --saffron-vibrant: #EA580C;
-  --saffron-light: #FFF7ED;
-  --gold-parchment: #FEF9EE;
-  --gold-border: #FDE68A;
-  --green-map: #15803D;
-  --navy: #0F2942;
-  --navy-dark: #0A1E31;
-  --navy-light: #1E3A8A;
-  --slate-footer: #0F172A;
-  --page-bg: #FAFAF9;
-  --surface: #FFFFFF;
-  --text-primary: #1E293B;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --border: #E2E8F0;
-  --border-strong: #CBD5E1;
-  --success: #15803D;
-  --warning: #B45309;
-  --danger: #B91C1C;
+  /* Chrome */
+  --ink-900: #071320;
+  --ink-800: #0B1D2E;
+  --ink-700: #102A40;
+  --ink-600: #1A3A55;
+  --ink-500: #2C5070;
+
+  /* Text */
+  --ink:      #14212E;
+  --ink-soft: #46586B;
+  --ink-mute: #637384;   /* WCAG AA on both #FFF (4.87) and #F7F8F9 (4.58) */
+  --ink-dim:  #9AA8B6;
+
+  /* Paper & structure */
+  --page-bg:     #FBFBFA;
+  --surface:     #FFFFFF;
+  --surface-2:   #F7F8F9;
+  --surface-3:   #F1F3F5;
+  --line:        #E3E6EA;
+  --line-strong: #C9CFD6;
+
+  /* State */
+  --saffron:      #E4610A;
+  --saffron-press:#C2510A;  /* button ground: white text reaches 4.69 */
+  --saffron-deep: #A8410A;
+  --saffron-wash: #FFF4EA;
+  --gold:         #F2B441;
+  --gold-deep:    #8A6A18;
+  --gold-wash:    #FCF7EC;
+  --emerald:      #0E7A4A;
+  --emerald-wash: #EAF6F0;
+  --amber:        #A9680A;
+  --amber-wash:   #FDF6E9;
+  --crimson:      #A81F2D;
+  --crimson-wash: #FCEFF0;
+  --azure:        #17557F;
+  --azure-wash:   #EDF3F8;
+
+  /* Tricolour, for sovereign marks only */
+  --tri-saffron: #FF9933;
+  --tri-green:   #138808;
+  --tri-chakra:  #0A3B8C;
+
+  --hair: 1px solid var(--line);
 }
 
-/* ── Base ────────────────────────────────────────────── */
+/* ── Base ──────────────────────────────────────────────────────────── */
 
 @layer base {
   html {
@@ -43,322 +78,722 @@
   body {
     @apply antialiased font-sans;
     background: var(--page-bg);
-    color: var(--text-primary);
-    font-size: 15px;
-    line-height: 1.65;
+    color: var(--ink);
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
   }
 
-  /* Typographic scale */
-  h1 { font-family: 'Plus Jakarta Sans', 'Cinzel', sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 1.18; letter-spacing: -0.02em; color: var(--navy); }
-  h2 { font-family: 'Plus Jakarta Sans', 'Cinzel', sans-serif; font-size: 1.85rem; font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: var(--navy); }
-  h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 600; line-height: 1.35; color: var(--navy); }
-  h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 600; line-height: 1.4; color: var(--navy); }
+  /* Every numeral in the application is tabular by default: columns of
+     figures must align and must not reflow as values update. */
+  code, kbd, samp, pre, .font-mono, [class*="font-mono"] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+  }
+
+  table { font-variant-numeric: tabular-nums; }
+
+  /* Institutional scale: tight, dense, quiet. */
+  h1 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.95rem; font-weight: 800; line-height: 1.14;
+       letter-spacing: -0.025em; color: var(--ink-800); }
+  h2 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.4rem;  font-weight: 750; line-height: 1.2;
+       letter-spacing: -0.02em;  color: var(--ink-800); }
+  h3 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+       letter-spacing: -0.012em; color: var(--ink-800); }
+  h4 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 0.9rem;  font-weight: 700; line-height: 1.35;
+       color: var(--ink-800); }
 
   @media (max-width: 768px) {
-    h1 { font-size: 1.85rem; }
-    h2 { font-size: 1.45rem; }
-    h3 { font-size: 1.15rem; }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 0.98rem; }
   }
 
-  a { color: var(--navy-light); text-decoration: none; }
-  a:hover { color: var(--saffron-vibrant); }
+  a { color: var(--azure); text-decoration: none; }
+  a:hover { color: var(--saffron-deep); }
 
   :focus-visible {
-    outline: 2px solid var(--saffron-vibrant);
-    outline-offset: 2px;
+    outline: 2px solid var(--saffron);
+    outline-offset: 1px;
+    border-radius: 1px;
   }
-}
 
-/* ── Editorial Layout Utilities ─────────────────────── */
+  ::selection { background: var(--gold); color: var(--ink-900); }
+
+  hr { border: 0; border-top: var(--hair); }
+}
 
 @layer components {
 
-  /* Centered content container */
+  /* ═════ 1. LAYOUT ══════════════════════════════════════════════════ */
+
   .gov-content {
     max-width: 1240px;
     margin-inline: auto;
     padding-inline: 24px;
   }
-  @media (max-width: 640px) {
-    .gov-content { padding-inline: 16px; }
-  }
+  @media (max-width: 640px) { .gov-content { padding-inline: 14px; } }
 
-  /* Section spacing */
-  .gov-section {
-    padding-block: 64px;
-  }
-  .gov-section-sm {
-    padding-block: 40px;
-  }
+  .gov-section    { padding-block: 56px; }
+  .gov-section-sm { padding-block: 32px; }
 
-  /* Horizontal stat strip */
-  .stat-strip {
-    display: flex;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+  /* ═════ 2. THE PANEL ═══════════════════════════════════════════════
+     Replaces `bg-white rounded-2xl border shadow-card`. A panel is a
+     bounded region of the instrument, not an object floating over a
+     background: hairline edge, near-square corners, no drop shadow.     */
+
+  .panel {
     background: var(--surface);
-  }
-  .stat-strip-item {
-    flex: 1;
-    padding: 24px 28px;
-    border-right: 1px solid var(--border);
-    text-align: left;
-  }
-  .stat-strip-item:last-child { border-right: none; }
-  @media (max-width: 768px) {
-    .stat-strip { flex-direction: column; }
-    .stat-strip-item { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 20px; }
-    .stat-strip-item:last-child { border-bottom: none; }
+    border: var(--hair);
+    border-radius: 3px;
+    position: relative;
   }
 
-  /* Tinted editorial section */
-  .gov-tinted {
-    background: var(--saffron-light);
-  }
-  .gov-tinted-navy {
-    background: var(--navy);
-    color: #E0E6EC;
-  }
-
-  /* Editorial feature block (2-col text+visual) */
-  .feature-block {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: center;
-  }
-  @media (max-width: 768px) {
-    .feature-block { grid-template-columns: 1fr; gap: 32px; }
-  }
-
-  /* Clean data table */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .data-table thead th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    padding: 12px 16px;
-    border-bottom: 2px solid var(--border-strong);
-    background: transparent;
-  }
-  .data-table tbody td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-primary);
-    vertical-align: top;
-  }
-  .data-table tbody tr:hover td {
-    background: #F8F9FB;
-  }
-  .data-table .num {
-    font-variant-numeric: tabular-nums;
-    font-family: 'Inter', monospace;
-    text-align: right;
-  }
-
-  /* Module tab navigation */
-  .module-tabs {
+  .panel-head {
     display: flex;
-    gap: 0;
-    border-bottom: 2px solid var(--border);
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 34px;
+    padding: 7px 14px;
+    background: var(--surface-2);
+    border-bottom: var(--hair);
+    border-radius: 3px 3px 0 0;
   }
-  .module-tab {
-    padding: 12px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: color 150ms, border-color 150ms;
+
+  .panel-title {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-800);
+    display: flex;
+    align-items: center;
+    gap: 7px;
     white-space: nowrap;
   }
-  .module-tab:hover { color: var(--text-primary); }
-  .module-tab.active {
-    color: var(--navy);
-    font-weight: 600;
-    border-bottom-color: var(--saffron);
+
+  .panel-meta {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
-  /* Primary action button */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
+  .panel-body  { padding: 14px; }
+  .panel-body-lg { padding: 18px 20px; }
+  .panel-flush { padding: 0; }
+
+  /* An accent edge marks a panel's role without tinting its whole face. */
+  .panel-accent::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
     background: var(--saffron);
-    color: #FFF;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 6px;
-    transition: background 150ms;
-    border: none;
-    cursor: pointer;
+    border-radius: 3px 0 0 3px;
   }
-  .btn-primary:hover { background: #C76210; color: #FFF; }
+  .panel-authority::before { background: var(--gold); }
+  .panel-critical::before  { background: var(--crimson); }
 
-  .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
-    background: transparent;
-    color: var(--navy);
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    transition: all 150ms;
-    cursor: pointer;
+  /* ═════ 3. THE HAIRLINE GRID ═══════════════════════════════════════
+     The single most important device here. Instead of scattering rounded
+     cards across a gap, children sit on a 1px ruled lattice and share
+     their borders. Boxes stop reading as separate objects and start
+     reading as one continuous instrument face.                          */
+
+  .hairgrid {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: var(--hair);
+    border-radius: 3px;
+    overflow: hidden;
   }
-  .btn-outline:hover { border-color: var(--navy); background: #F8F9FB; color: var(--navy); }
+  .hairgrid > * { background: var(--surface); min-width: 0; }
 
-  /* Quiet breadcrumbs */
-  .breadcrumbs {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 32px;
+  .hairgrid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hairgrid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hairgrid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hairgrid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+  @media (max-width: 1024px) {
+    .hairgrid-4, .hairgrid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .hairgrid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
-  .breadcrumbs a { color: var(--text-muted); }
-  .breadcrumbs a:hover { color: var(--navy); }
-  .breadcrumbs .sep { margin-inline: 6px; opacity: 0.5; }
+  @media (max-width: 640px) {
+    .hairgrid-2, .hairgrid-3, .hairgrid-4, .hairgrid-5 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
 
-  /* Status indicators */
-  .status-badge {
+  /* ═════ 4. METRICS ═════════════════════════════════════════════════ */
+
+  .metric-cell { padding: 13px 15px; min-width: 0; }
+
+  .metric-label {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-mute);
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .metric-value {
+    display: block;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 21px;
+    font-weight: 650;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink-800);
+    font-variant-numeric: tabular-nums;
+  }
+  .metric-value-sm { font-size: 15.5px; }
+  .metric-value-lg { font-size: 28px; }
+
+  .metric-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--ink-mute);
+    line-height: 1.4;
+  }
+
+  .metric-pos { color: var(--emerald); }
+  .metric-neg { color: var(--crimson); }
+  .metric-warn { color: var(--amber); }
+
+  /* ═════ 5. STATUS NOTES ════════════════════════════════════════════
+     Replaces the pastel `bg-rose-50 border border-rose-200 rounded-xl`
+     block. State is carried by a 3px rule and the label, so the surface
+     stays near-paper and several notes can stack without the page
+     turning into a colour chart.                                        */
+
+  .note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 9px 12px 9px 11px;
+    border: var(--hair);
+    border-left: 3px solid var(--ink-mute);
+    border-radius: 0 3px 3px 0;
+    background: var(--surface-2);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .note strong, .note b { color: var(--ink); font-weight: 700; }
+
+  .note-info     { border-left-color: var(--azure);   background: var(--azure-wash); color: #123F5E; }
+  .note-ok       { border-left-color: var(--emerald); background: var(--emerald-wash); color: #0A5A37; }
+  .note-warn     { border-left-color: var(--amber);   background: var(--amber-wash); color: #7A4B07; }
+  .note-critical { border-left-color: var(--crimson); background: var(--crimson-wash); color: #7E1721; }
+  .note-authority{ border-left-color: var(--gold);    background: var(--gold-wash); color: #6B520F; }
+
+  .note-info strong, .note-ok strong, .note-warn strong,
+  .note-critical strong, .note-authority strong { color: inherit; }
+
+  /* ═════ 6. TAGS ════════════════════════════════════════════════════
+     Sharp, not pill-shaped. 74 rounded-full chips were doing the work of
+     a status mark; a 2px radius reads as a field on a record instead.    */
+
+  .tag {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 11px;
+    padding: 1.5px 6px;
+    border: var(--hair);
+    border-radius: 2px;
+    background: var(--surface-2);
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 9.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
-  /* Sovereign Hero Saffron Gradient */
-  .hero-saffron-banner {
-    background: linear-gradient(135deg, #C2410C 0%, #EA580C 40%, #F97316 80%, #FB923C 100%);
+  .tag-ok       { border-color: #BFE0CE; background: var(--emerald-wash); color: #0A5A37; }
+  .tag-warn     { border-color: #E8D3A6; background: var(--amber-wash);   color: #7A4B07; }
+  .tag-critical { border-color: #E8BFC3; background: var(--crimson-wash); color: #7E1721; }
+  .tag-info     { border-color: #C2D6E4; background: var(--azure-wash);   color: #123F5E; }
+  .tag-authority{ border-color: var(--gold-border, #E4D3A8); background: var(--gold-wash); color: #6B520F; }
+  .tag-solid    { border-color: var(--ink-800); background: var(--ink-800); color: #FFF; }
+
+  /* ═════ 7. MICRO LABEL ═════════════════════════════════════════════ */
+
+  .microlabel {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-mute);
+  }
+  .microlabel-strong { color: var(--ink-800); font-weight: 800; }
+
+  /* ═════ 8. THE LEDGER ══════════════════════════════════════════════ */
+
+  .ledger, .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ledger thead th, .data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    font-size: 9.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-mute);
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+  }
+
+  .ledger tbody td, .data-table tbody td {
+    padding: 8px 12px;
+    border-bottom: var(--hair);
+    color: var(--ink);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+
+  .ledger tbody tr:last-child td,
+  .data-table tbody tr:last-child td { border-bottom: none; }
+
+  .ledger tbody tr:hover td,
+  .data-table tbody tr:hover td { background: var(--surface-2); }
+
+  .ledger .num, .data-table .num,
+  .ledger td.num, .ledger th.num {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* ═════ 9. COMMAND HEADER ══════════════════════════════════════════
+     Was a saffron gradient wash. Now a deep sovereign ground with a
+     tricolour rule and engraved security-paper hatching — the visual
+     register of an official masthead rather than a marketing banner.    */
+
+  .hero-saffron-banner,
+  .command-header {
     position: relative;
     overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(0,0,0,0.12) 100%),
+      linear-gradient(118deg, #0B1D2E 0%, #102A40 46%, #143755 74%, #0D2438 100%);
+    border: 1px solid #1B3E5C;
+    border-radius: 3px;
+    color: #FFFFFF;
   }
 
-  /* Sovereign Pill Action Button */
-  .btn-saffron-pill {
-    display: inline-flex;
+  /* Tricolour authority rule */
+  .hero-saffron-banner::before,
+  .command-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--tri-saffron) 0%, var(--tri-saffron) 33.33%,
+      #FFFFFF 33.33%, #FFFFFF 66.66%,
+      var(--tri-green) 66.66%, var(--tri-green) 100%);
+    z-index: 2;
+  }
+
+  /* Engraved hatching, at the threshold of visibility */
+  .hero-saffron-banner::after,
+  .command-header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,0.028) 0px,
+      rgba(255,255,255,0.028) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .command-header > *,
+  .hero-saffron-banner > * { position: relative; z-index: 1; }
+
+  /* ═════ 10. TELEMETRY STRIP ════════════════════════════════════════ */
+
+  .stat-strip {
+    display: flex;
+    gap: 1px;
+    background: var(--line);
+    border: var(--hair);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .stat-strip-item {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 15px;
+    background: var(--surface);
+    text-align: left;
+  }
+  @media (max-width: 768px) {
+    .stat-strip { flex-direction: column; }
+  }
+
+  .telemetry {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 26px;
-    background: #FFFFFF;
-    color: #9A3412;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    border-radius: 9999px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
-    transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    flex-wrap: wrap;
+    gap: 0 18px;
+    padding: 6px 14px;
+    background: var(--ink-900);
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 10px;
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .telemetry b { color: #FFF; font-weight: 600; }
+  .telemetry .sep { color: #24425C; }
+
+  /* ═════ 11. CONTROLS ═══════════════════════════════════════════════ */
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 16px;
+    background: var(--saffron-press); color: #FFF;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 750;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    border-radius: 3px; border: 1px solid var(--saffron-deep);
+    cursor: pointer;
+    transition: background 130ms ease, box-shadow 130ms ease;
+  }
+  .btn-primary:hover { background: var(--saffron-deep); color: #FFF; }
+  .btn-primary:active { transform: translateY(0.5px); }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 16px;
+    background: var(--surface); color: var(--ink-800);
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    border-radius: 3px; border: 1px solid var(--line-strong);
+    cursor: pointer;
+    transition: border-color 130ms ease, background 130ms ease;
+  }
+  .btn-outline:hover { border-color: var(--ink-600); background: var(--surface-2); color: var(--ink-800); }
+
+  /* Legacy pill button, re-pointed at the sharp language. */
+  .btn-saffron-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 16px;
+    background: #FFFFFF; color: var(--ink-800);
+    font-size: 11.5px; font-weight: 750;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    border-radius: 3px; border: 1px solid rgba(255,255,255,0.9);
+    cursor: pointer;
+    transition: background 130ms ease;
+  }
+  .btn-saffron-pill:hover { background: var(--gold); color: var(--ink-900); }
+
+  .field {
+    width: 100%;
+    padding: 7px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 12px;
+    color: var(--ink);
+    transition: border-color 130ms ease;
+  }
+  .field:focus { outline: none; border-color: var(--saffron); }
+  .field::placeholder { color: var(--ink-dim); }
+
+  /* Range inputs read as calibrated instrument tracks. */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--line-strong);
+    border-radius: 0;
     cursor: pointer;
   }
-  .btn-saffron-pill:hover {
-    background: #FFF7ED;
-    color: #7C2D12;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    background: var(--ink-800);
+    border: 2px solid #FFF;
+    box-shadow: 0 0 0 1px var(--ink-600);
+    cursor: grab;
   }
+  input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; background: var(--saffron); }
+  input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    background: var(--ink-800);
+    border: 2px solid #FFF;
+    box-shadow: 0 0 0 1px var(--ink-600);
+    cursor: grab;
+  }
+  input[type="range"].accent-gov-saffron::-webkit-slider-thumb { background: var(--saffron); box-shadow: 0 0 0 1px var(--saffron-deep); }
+  input[type="range"].accent-gov-saffron::-moz-range-thumb     { background: var(--saffron); box-shadow: 0 0 0 1px var(--saffron-deep); }
 
-  /* Gold Parchment Banner */
-  .card-parchment-gold {
-    background: #FEF9EE;
-    border: 1px solid #FDE68A;
-    box-shadow: 0 2px 10px rgba(234, 88, 12, 0.04);
-  }
+  /* ═════ 12. NAVIGATION ═════════════════════════════════════════════ */
 
-  /* Official Government Programme Card */
-  .card-gov-programme {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    transition: all 200ms ease;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  .module-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line-strong); }
+  .module-tab {
+    padding: 9px 16px;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-mute);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 130ms, border-color 130ms;
+    white-space: nowrap;
   }
-  .card-gov-programme:hover {
-    border-color: #CBD5E1;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
-  }
+  .module-tab:hover { color: var(--ink-800); }
+  .module-tab.active { color: var(--ink-800); border-bottom-color: var(--saffron); }
 
-  /* Official Bulletin Paper Card */
-  .bulletin-paper-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  /* Engine selector: a register of instruments, not a row of buttons. */
+  .engine-rail {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: var(--hair);
+    border-radius: 3px;
+    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  }
+  /* Below 520px two 168px columns clip the engine names, so the register
+     becomes a single readable list rather than a truncated matrix. */
+  @media (max-width: 520px) {
+    .engine-rail { grid-template-columns: minmax(0, 1fr); }
+  }
+  .engine-tab {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 12px;
+    background: var(--surface);
+    text-align: left;
+    cursor: pointer;
     position: relative;
+    transition: background 130ms ease;
+    min-width: 0;
   }
+  .engine-tab:hover { background: var(--surface-2); }
+  .engine-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
+    background: transparent;
+    transition: background 130ms ease;
+  }
+  .engine-tab.active { background: var(--ink-800); }
+  .engine-tab.active::before { background: var(--gold); }
+  .engine-tab.active .engine-tab-name { color: #FFFFFF; }
+  .engine-tab.active .engine-tab-desc { color: #8DA2B5; }
+  .engine-tab.active .engine-tab-icon { color: var(--gold); border-color: #24425C; background: #0F2B42; }
+
+  .engine-tab-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; flex-shrink: 0;
+    border: var(--hair);
+    border-radius: 2px;
+    background: var(--surface-2);
+    color: var(--ink-600);
+  }
+  .engine-tab-name {
+    display: block;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-800);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .engine-tab-desc {
+    display: block;
+    font-size: 9.5px;
+    color: var(--ink-mute);
+    line-height: 1.35;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .breadcrumbs { font-size: 11px; color: var(--ink-mute); margin-bottom: 18px; }
+  .breadcrumbs a { color: var(--ink-mute); }
+  .breadcrumbs a:hover { color: var(--ink-800); }
+  .breadcrumbs .sep { margin-inline: 6px; opacity: 0.5; }
+
+  /* ═════ 13. LEGACY CLASSES, RE-POINTED ═════════════════════════════ */
+
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1.5px 6px;
+    border: var(--hair);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 9.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  .card-gov-programme,
+  .bulletin-paper-card,
+  .card-parchment-gold {
+    background: var(--surface);
+    border: var(--hair);
+    border-radius: 3px;
+    box-shadow: none;
+    transition: border-color 130ms ease;
+  }
+  .card-gov-programme:hover { border-color: var(--line-strong); transform: none; box-shadow: none; }
+  .card-parchment-gold { background: var(--gold-wash); border-color: var(--gov-gold-border, #E4D3A8); }
+
+  .bulletin-paper-card { position: relative; }
   .bulletin-paper-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #EA580C 0%, #F97316 50%, #15803D 100%);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--tri-saffron) 0%, var(--tri-saffron) 33.33%,
+      #FFFFFF 33.33%, #FFFFFF 66.66%,
+      var(--tri-green) 66.66%, var(--tri-green) 100%);
+    border-radius: 0;
   }
 
-  /* Circular Partner Badge */
   .circular-partner-badge {
-    width: 64px;
-    height: 64px;
-    border-radius: 9999px;
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    transition: all 180ms ease;
+    width: 38px; height: 38px;
+    border-radius: 2px;
+    background: var(--surface);
+    border: var(--hair);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: none;
+    transition: border-color 150ms ease;
   }
-  .circular-partner-badge:hover {
-    transform: scale(1.08);
-    border-color: #EA580C;
-    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.15);
+  .circular-partner-badge:hover { transform: none; border-color: var(--saffron); box-shadow: none; }
+
+  .gov-tinted { background: var(--surface-2); }
+  .gov-tinted-navy { background: var(--ink-800); color: #DCE4EB; }
+
+  .feature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  @media (max-width: 768px) { .feature-block { grid-template-columns: 1fr; gap: 26px; } }
+
+  /* ═════ 13b. METERS ════════════════════════════════════════════════
+     Progress read-outs were 9999px lozenges carrying a saffron-to-emerald
+     gradient, so the fill changed hue along its own length and encoded
+     nothing. A meter is now a square-ended track with a solid fill, which is
+     what lets two meters stacked above one another be compared by eye.      */
+
+  .meter {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background: var(--surface-3);
+    border: var(--hair);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    background: var(--ink-600);
+    border-radius: 0;
+    transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .meter-fill-ok       { background: var(--emerald); }
+  .meter-fill-warn     { background: var(--amber); }
+  .meter-fill-critical { background: var(--crimson); }
+  .meter-fill-accent   { background: var(--saffron); }
+
+  /* ═════ 14. SEALS & PROVENANCE ═════════════════════════════════════ */
+
+  .seal {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 9px;
+    border: 1px solid var(--gov-gold-border, #E4D3A8);
+    border-radius: 2px;
+    background: var(--gold-wash);
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--gold-deep);
+  }
+
+  .hashline {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-size: 10px;
+    color: var(--ink-mute);
+    word-break: break-all;
+    letter-spacing: -0.01em;
   }
 }
 
-/* ── Scrollbar ──────────────────────────────────────── */
+/* ── Utilities ─────────────────────────────────────────────────────── */
+
 @layer utilities {
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #EFF1F3; }
-  ::-webkit-scrollbar-thumb { background: #CBD2D9; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #9AA5B1; }
+  /* Horizontal containment.
+     A flex or grid child defaults to min-width:auto, so a wide ledger inside
+     a panel refuses to shrink and pushes the whole document sideways instead
+     of scrolling within its own frame. Measured on /tanmay at 375px: the page
+     scrolled to 604px. These three rules keep every wide surface -- ledgers,
+     tab strips, chart rows -- scrolling inside its own container. */
+  .overflow-x-auto, .overflow-auto { min-width: 0; }
+  .panel { min-width: 0; }
+  .flex > .overflow-x-auto, .grid > .overflow-x-auto { min-width: 0; }
 
-  /* Hide scrollbar utility */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .num { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; }
+  .hairline-t { border-top: 1px solid var(--line); }
+  .hairline-b { border-bottom: 1px solid var(--line); }
+  .hairline-l { border-left: 1px solid var(--line); }
+  .hairline-r { border-right: 1px solid var(--line); }
 
-  /* Slide-per-page Scroll Snap System */
-  .snap-slide-container {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-  }
-  .snap-slide-section {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    min-height: calc(100vh - 110px);
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: var(--surface-2); }
+  ::-webkit-scrollbar-thumb { background: #C3CBD3; border: 2px solid var(--surface-2); border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+  ::-webkit-scrollbar-corner { background: var(--surface-2); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .snap-slide-container { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  .snap-slide-section { scroll-snap-align: start; scroll-snap-stop: always; min-height: calc(100vh - 110px); }
+}
+
+/* Respect reduced-motion for every transition defined above. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

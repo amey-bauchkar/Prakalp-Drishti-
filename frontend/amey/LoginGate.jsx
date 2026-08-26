@@ -46,11 +46,11 @@ export function SessionBar() {
   if (!session) return null;
   const tone = ROLE_TONE[session.role] || ROLE_TONE.analyst;
   return (
-    <div className="flex items-center justify-between gap-3 bg-white border border-gov-border rounded-xl px-4 py-2 shadow-soft">
+    <div className="flex items-center justify-between gap-3 panel px-4 py-2">
       <div className="flex items-center gap-2 min-w-0">
         <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
         <span className="text-xs font-bold text-gov-navy truncate">{session.username}</span>
-        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${tone}`}>
+        <span className={`px-2 py-0.5 rounded-sm text-[10px] font-black border ${tone}`}>
           {String(session.role).replace(/_/g, ' ')}
         </span>
         {session.ministry && (
@@ -109,7 +109,7 @@ export default function LoginGate({ children }) {
       <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-6">
 
         {/* Sign-in */}
-        <div className="bg-white p-6 rounded-2xl border border-gov-border shadow-card">
+        <div className="panel p-4">
           <div className="flex items-center gap-2 mb-1">
             <Lock className="w-4 h-4 text-gov-navy" />
             <h2 className="text-sm font-black text-gov-navy uppercase tracking-wider">
@@ -152,7 +152,7 @@ export default function LoginGate({ children }) {
             </label>
 
             {error && (
-              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-[11px] text-rose-900">
+              <div className="note note-critical flex items-start gap-2">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-px text-rose-600" />
                 <span>{error}</span>
               </div>
@@ -170,7 +170,7 @@ export default function LoginGate({ children }) {
         </div>
 
         {/* Role directory */}
-        <div className="bg-white p-6 rounded-2xl border border-gov-border shadow-card">
+        <div className="panel p-4">
           <h2 className="text-sm font-black text-gov-navy uppercase tracking-wider mb-1">
             Demonstration Roles
           </h2>
@@ -205,7 +205,7 @@ export default function LoginGate({ children }) {
               </button>
             ))}
             {!roles && (
-              <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg p-2.5">
+              <p className="note note-warn">
                 Could not reach the API to list roles. Start the backend on port 8000.
               </p>
             )}

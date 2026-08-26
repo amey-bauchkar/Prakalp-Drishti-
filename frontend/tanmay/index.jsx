@@ -93,10 +93,10 @@ export default function SatyaKavachView() {
   return (
     <div className="space-y-8 font-sans">
       {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card">
+      <section className="panel p-4 sm:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <ShieldAlert className="w-3.5 h-3.5 text-gov-saffron" />
               <span>SATYA-KAVACH · Contract &amp; Compliance Analytics</span>
             </div>
@@ -139,22 +139,22 @@ export default function SatyaKavachView() {
       ) : summaryData ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Bunching Zone (18–20%)</div>
               <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_in_bunching_zone_18_20pct}</div>
               <div className="text-[12px] text-text-muted mt-1">₹{summaryData.kpi_metrics?.bunching_zone_capital_cr?.toLocaleString()} Cr at risk</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Cabinet Breached (≥20%)</div>
               <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_above_20pct_cabinet_rule}</div>
               <div className="text-[12px] text-text-muted mt-1">Mandatory PIB review required</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Unjustified Padding</div>
               <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{summaryData.kpi_metrics?.total_unjustified_excess_margin_cr?.toLocaleString()} Cr</div>
               <div className="text-[12px] text-text-muted mt-1">Clause 10CC excess claims</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+            <div className="panel p-4">
               <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Data Coverage</div>
               <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">2,207</div>
               <div className="text-[12px] text-text-muted mt-1">Central mega-projects · 2005–2026</div>
@@ -181,7 +181,7 @@ export default function SatyaKavachView() {
 
             {/* ── Tab: CCEA Bunching ── */}
             {activeTab === 'bunching' && (
-              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-8">
+              <div className="panel p-4 sm:p-5 space-y-8">
                 {/* Methodology context */}
                 <div className="card-parchment-gold rounded-2xl p-6 sm:p-7 shadow-subtle border border-gov-gold-border">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-[13.5px] text-text-secondary">
@@ -251,41 +251,43 @@ export default function SatyaKavachView() {
                     <h3 className="text-[17px] font-bold text-gov-navy font-heading">Flagged Evasion Projects</h3>
                     <span className="text-[13px] text-text-muted font-mono font-medium">{filteredFlaggedProjects.length} projects</span>
                   </div>
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Project</th>
-                        <th>Sector / State</th>
-                        <th>Agency</th>
-                        <th className="num">Original Cost</th>
-                        <th className="num">Revised Cost</th>
-                        <th className="num">Overrun</th>
-                        <th className="text-center">Margin to 20%</th>
-                        <th className="text-center">Verdict</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredFlaggedProjects.map((p, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                          <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
-                          <td><span className="font-medium text-gov-navy">{p.sector}</span><br /><span className="text-[11px] text-text-muted">{p.state || 'National'}</span></td>
-                          <td className="text-text-secondary font-medium">{p.agency}</td>
-                          <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold text-gov-navy">₹{p.revised_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold text-gov-saffron">+{p.overrun_pct}%</td>
-                          <td className="text-center text-[12px] font-mono font-bold text-gov-saffron">{p.evasion_margin_pct}% below</td>
-                          <td className="text-center"><span className={`status-badge ${p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
+                  <div className="overflow-x-auto">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Project</th>
+                          <th>Sector / State</th>
+                          <th>Agency</th>
+                          <th className="num">Original Cost</th>
+                          <th className="num">Revised Cost</th>
+                          <th className="num">Overrun</th>
+                          <th className="text-center">Margin to 20%</th>
+                          <th className="text-center">Verdict</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {filteredFlaggedProjects.map((p, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                            <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
+                            <td><span className="font-medium text-gov-navy">{p.sector}</span><br /><span className="text-[11px] text-text-muted">{p.state || 'National'}</span></td>
+                            <td className="text-text-secondary font-medium">{p.agency}</td>
+                            <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
+                            <td className="num font-mono font-bold text-gov-navy">₹{p.revised_cost_cr.toLocaleString()} Cr</td>
+                            <td className="num font-mono font-bold text-gov-saffron">+{p.overrun_pct}%</td>
+                            <td className="text-center text-[12px] font-mono font-bold text-gov-saffron">{p.evasion_margin_pct}% below</td>
+                            <td className="text-center"><span className={`status-badge ${p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
 
             {/* ── Tab: Clause 10CC ── */}
             {activeTab === 'clause10cc' && (
-              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-8">
+              <div className="panel p-4 sm:p-5 space-y-8">
                 <div className="card-parchment-gold rounded-2xl p-6 border border-gov-gold-border">
                   <h3 className="text-[17px] font-bold text-gov-navy mb-2 font-heading">Statutory Price Escalation Framework</h3>
                   <p className="text-[13.5px] text-text-secondary leading-relaxed max-w-3xl">
@@ -300,41 +302,43 @@ export default function SatyaKavachView() {
                     <h3 className="text-[17px] font-bold text-gov-navy font-heading">Audited Records</h3>
                     <span className="text-[13px] font-bold text-rose-600 font-mono">Total excess: ₹{clauseData?.total_portfolio_excess_claimed_cr?.toLocaleString()} Cr</span>
                   </div>
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Project</th>
-                        <th>Agency / Sector</th>
-                        <th className="text-center">Year</th>
-                        <th className="num">Original</th>
-                        <th className="num">Claimed</th>
-                        <th className="num" style={{color:'#18804B'}}>10CC Cap</th>
-                        <th className="num" style={{color:'#B42318'}}>Excess</th>
-                        <th className="text-center">Verdict</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredClauseRecords.map((p, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                          <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
-                          <td><span className="font-medium text-gov-navy">{p.agency}</span><br /><span className="text-[11px] text-text-muted">{p.sector}</span></td>
-                          <td className="text-center font-mono font-bold">{p.sanction_year}</td>
-                          <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold">₹{p.claimed_escalation_cr.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold" style={{color:'#18804B'}}>₹{p.statutory_10cc_allowed_cr.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold" style={{color:'#B42318'}}>+₹{p.excess_margin_claimed_cr.toLocaleString()} Cr</td>
-                          <td className="text-center"><span className={`status-badge ${p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
+                  <div className="overflow-x-auto">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Project</th>
+                          <th>Agency / Sector</th>
+                          <th className="text-center">Year</th>
+                          <th className="num">Original</th>
+                          <th className="num">Claimed</th>
+                          <th className="num" style={{color:'#18804B'}}>10CC Cap</th>
+                          <th className="num" style={{color:'#B42318'}}>Excess</th>
+                          <th className="text-center">Verdict</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {filteredClauseRecords.map((p, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                            <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
+                            <td><span className="font-medium text-gov-navy">{p.agency}</span><br /><span className="text-[11px] text-text-muted">{p.sector}</span></td>
+                            <td className="text-center font-mono font-bold">{p.sanction_year}</td>
+                            <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
+                            <td className="num font-mono font-bold">₹{p.claimed_escalation_cr.toLocaleString()} Cr</td>
+                            <td className="num font-mono font-bold" style={{color:'#18804B'}}>₹{p.statutory_10cc_allowed_cr.toLocaleString()} Cr</td>
+                            <td className="num font-mono font-bold" style={{color:'#B42318'}}>+₹{p.excess_margin_claimed_cr.toLocaleString()} Cr</td>
+                            <td className="text-center"><span className={`status-badge ${p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
 
             {/* ── Tab: Simulator ── */}
             {activeTab === 'simulator' && (
-              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="panel p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-[19px] font-bold text-gov-navy mb-1 font-heading">Contract Price Variation Simulator</h3>
                   <p className="text-[13px] text-text-muted mb-6">Adjust contract parameters and material weight fractions to calculate statutory allowable escalation under Clause 10CC.</p>
@@ -397,12 +401,12 @@ export default function SatyaKavachView() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-white border border-border-default rounded-2xl p-5 shadow-subtle">
+                      <div className="panel p-4">
                         <div className="text-[11px] text-text-muted uppercase font-bold">Claimed Overrun</div>
                         <div className="text-[26px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{simResult.contractor_claimed_escalation_cr?.toLocaleString()} Cr</div>
                         <div className="text-[12px] text-gov-saffron font-bold mt-0.5">+{simResult.claimed_overrun_pct}% over original</div>
                       </div>
-                      <div className="bg-white border border-border-default rounded-2xl p-5 shadow-subtle">
+                      <div className="panel p-4">
                         <div className="text-[11px] text-text-muted uppercase font-bold">Statutory 10CC Cap</div>
                         <div className="text-[26px] font-black text-emerald-600 mt-1 tracking-tight font-mono">₹{simResult.statutory_allowed_escalation_cr?.toLocaleString()} Cr</div>
                         <div className="text-[12px] text-text-muted font-medium mt-0.5">85% escalable ceiling</div>
@@ -410,7 +414,7 @@ export default function SatyaKavachView() {
                     </div>
 
                     {simResult.unjustified_excess_margin_cr > 0 && (
-                      <div className="bg-rose-50 border border-rose-300 rounded-2xl p-4">
+                      <div className="note note-critical">
                         <div className="flex items-center justify-between text-[14px] font-bold text-rose-700 font-mono">
                           <span>Unjustified padding flagged</span>
                           <span>+₹{simResult.unjustified_excess_margin_cr?.toLocaleString()} Cr</span>
@@ -437,7 +441,7 @@ export default function SatyaKavachView() {
 
             {/* ── Tab: Agency Risk ── */}
             {activeTab === 'leaderboard' && (
-              <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-4">
+              <div className="panel p-4 sm:p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[19px] font-bold text-gov-navy font-heading">Agency Compliance &amp; Risk Ranking</h3>
                   <span className="text-[13px] text-text-muted font-mono font-medium">{rankingsData?.total_agencies_evaluated} agencies evaluated</span>

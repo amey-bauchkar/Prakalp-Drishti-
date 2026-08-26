@@ -43,7 +43,7 @@ export default function GeocodePrecisionPanel() {
 
   if (loading) {
     return (
-      <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card text-xs text-gov-muted">
+      <div className="panel p-4 text-xs text-gov-muted">
         Loading geocoding validation…
       </div>
     );
@@ -65,9 +65,9 @@ export default function GeocodePrecisionPanel() {
 
   if (!data || data.available === false) {
     return (
-      <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card">
+      <div className="panel p-4">
         {header}
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
+        <div className="note note-warn flex items-start gap-2">
           <FlaskConical className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
           <span>
             <strong>Not yet measured.</strong> A 200-project stratified sample has been drawn but
@@ -87,7 +87,7 @@ export default function GeocodePrecisionPanel() {
   const control = Object.values(data.tiers || {}).find((t) => t.is_negative_control);
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-gov-border shadow-card">
+    <div className="panel p-4">
       {header}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
@@ -153,8 +153,8 @@ export default function GeocodePrecisionPanel() {
       {control && control.scored > 0 && (
         <div className={`mt-3 flex items-start gap-2 p-2.5 rounded-lg text-[11px] border ${
           data.negative_control_warning
-            ? 'bg-rose-50 border-rose-200 text-rose-900'
-            : 'bg-emerald-50 border-emerald-200 text-emerald-900'}`}>
+            ? 'note note-critical'
+            : 'note note-ok'}`}>
           {data.negative_control_warning
             ? <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
             : <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />}

@@ -102,10 +102,10 @@ export default function VarshaSpeedView() {
   return (
     <div className="space-y-8 font-sans">
       {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="bg-white border border-border-default rounded-3xl p-7 sm:p-10 shadow-card">
+      <section className="panel p-4 sm:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
               <CloudRain className="w-3.5 h-3.5 text-gov-saffron" />
               <span>VARSHA-SPEED · Monsoon Weather Impact</span>
             </div>
@@ -134,22 +134,22 @@ export default function VarshaSpeedView() {
       {/* ═══════ STAT STRIP ═══════ */}
       {impactData?.national_summary && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+          <div className="panel p-4">
             <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Working Window</div>
             <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{impactData.national_summary.average_working_window_months} mo/yr</div>
             <div className="text-[12px] text-text-muted mt-1 font-medium">National average</div>
           </div>
-          <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+          <div className="panel p-4">
             <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Lost Weather Days</div>
             <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">{impactData.national_summary.average_lost_days_per_year} days</div>
             <div className="text-[12px] text-text-muted mt-1 font-medium">Average per year</div>
           </div>
-          <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+          <div className="panel p-4">
             <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Schedule Stretch</div>
             <div className="text-[30px] font-black text-amber-600 mt-1 tracking-tight font-mono">{impactData.national_summary.national_schedule_stretch_multiplier}×</div>
             <div className="text-[12px] text-text-muted mt-1 font-medium">Multiplier</div>
           </div>
-          <div className="bg-white p-6 rounded-3xl border border-border-default shadow-card">
+          <div className="panel p-4">
             <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Most Vulnerable</div>
             <div className="text-[20px] font-black text-rose-600 mt-2 truncate font-heading">{impactData.national_summary.most_vulnerable_state}</div>
             <div className="text-[12px] text-text-muted mt-1 font-medium">Highest weather impact</div>
@@ -315,14 +315,14 @@ export default function VarshaSpeedView() {
             {filteredStates.map((rec, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-3xl border border-border-default shadow-card p-6 space-y-4 hover:border-gov-saffron/40 transition-all"
+                className="panel p-4 space-y-4 hover:border-gov-saffron/40 transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="font-heading font-extrabold text-[17px] text-gov-navy">{rec.state}</h4>
                     <p className="text-[12px] text-text-muted font-medium">{rec.terrain}</p>
                   </div>
-                  <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-bold uppercase ${getRiskBadgeColor(rec.risk_tier)}`}>
+                  <span className={`text-[10px] px-2.5 py-0.5 rounded-sm border font-bold uppercase ${getRiskBadgeColor(rec.risk_tier)}`}>
                     {rec.risk_tier.replace(/_/g, ' ')}
                   </span>
                 </div>
@@ -350,9 +350,9 @@ export default function VarshaSpeedView() {
                     <span>Working Months</span>
                     <span>{rec.effective_working_window_months} / 12.0</span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                  <div className="meter">
                     <div
-                      className="h-full bg-gradient-to-r from-gov-saffron to-emerald-600 rounded-full"
+                      className="h-full bg-gov-navy-light"
                       style={{ width: `${(rec.effective_working_window_months / 12.0) * 100}%` }}
                     ></div>
                   </div>
@@ -377,7 +377,7 @@ export default function VarshaSpeedView() {
       {/* TAB 2: HISTORICAL 20-YEAR IMD DEPARTURES */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'historical' && (
-        <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+        <div className="panel p-4 sm:p-5 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-default pb-4">
             <div>
               <h3 className="font-heading font-extrabold text-[18px] text-gov-navy">20-Year IMD Monsoon Departure Explorer (2005–2025)</h3>
@@ -476,7 +476,7 @@ export default function VarshaSpeedView() {
       {/* TAB 3: PROJECT-LEVEL CLIMATE AUDITOR */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'projects' && (
-        <div className="bg-white p-7 sm:p-9 rounded-3xl border border-border-default shadow-card space-y-6">
+        <div className="panel p-4 sm:p-5 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-default pb-4">
             <div>
               <h3 className="font-heading font-extrabold text-[18px] text-gov-navy">Project-Level Climate Exposure &amp; Schedule Multiplier Audit</h3>
@@ -533,7 +533,7 @@ export default function VarshaSpeedView() {
                       <span className="text-[10.5px] text-text-muted">Working: {p.effective_annual_working_months} Mo/yr</span>
                     </td>
                     <td className="text-center font-mono">
-                      <span className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-300 text-amber-800 font-bold text-xs">
+                      <span className="note note-warn">
                         {p.schedule_stretch_multiplier}x
                       </span>
                     </td>
@@ -549,7 +549,7 @@ export default function VarshaSpeedView() {
       )}
 
       {/* Methodology */}
-      <section className="bg-white border border-border-default rounded-3xl p-8 sm:p-10 shadow-card">
+      <section className="panel p-5 sm:p-6">
         <h3 className="text-[17px] font-heading font-extrabold text-gov-navy mb-3">Methodology</h3>
         <p className="text-[14px] text-text-secondary leading-relaxed max-w-3xl font-sans">
           20-year empirical IMD state-level rainfall departure dataset (2005–2025, 630 state-years). 

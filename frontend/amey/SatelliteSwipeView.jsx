@@ -117,7 +117,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
 
   if (!data) {
     return (
-      <div className="bg-white p-6 rounded-2xl border border-amber-200 bg-amber-50 text-xs font-semibold text-amber-900 flex items-center gap-2">
+      <div className="note note-warn flex items-center gap-2">
         <AlertTriangle className="w-4 h-4 shrink-0" />
         Unable to load satellite audit. Ensure the backend is running on port 8000.
       </div>
@@ -130,7 +130,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
   const boxes = data.change_boxes || [];
 
   return (
-    <div className="bg-white rounded-2xl border border-gov-border shadow-card overflow-hidden">
+    <div className="panel overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gov-border flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
@@ -147,19 +147,19 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
 
         <div className="flex items-center gap-2 flex-wrap">
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black border ${conf.cls}`}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-black border ${conf.cls}`}
             title={data.geocode_confidence_note}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${conf.dot}`} />
             <MapPin className="w-3 h-3" />
             {conf.label}
           </span>
-          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${status.cls}`}>
+          <span className={`px-2.5 py-1 rounded-sm text-[10px] font-black border ${status.cls}`}>
             {status.label}
           </span>
           <button
             onClick={() => setShowBoxes((v) => !v)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border border-gov-border bg-gov-surface text-gov-navy hover:bg-gov-muted-surface transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-bold border border-gov-border bg-gov-surface text-gov-navy hover:bg-gov-muted-surface transition-colors"
             aria-pressed={showBoxes}
           >
             {showBoxes ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
@@ -170,7 +170,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
 
       {/* Suppression notice: shown instead of a verdict when the imagery is of the wrong place */}
       {!reliable && (
-        <div className="mx-4 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2">
+        <div className="note note-critical mx-4 mt-4 flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
           <div className="text-[11px] text-rose-900 leading-snug">
             <strong className="block mb-0.5">Earth-observation verdict withheld for this project.</strong>
