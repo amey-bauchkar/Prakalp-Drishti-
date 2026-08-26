@@ -4,6 +4,28 @@ import { TrendingUp, RefreshCw, ArrowRight, ChevronRight, ShieldCheck, Activity,
 export default function ArthaNetraView() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProjectId, setSelectedProjectId] = useState(() => localStorage.getItem('prakalp:selectedProjectId') || '619092');
+  const [activeProject, setActiveProject] = useState(null);
+
+  // Global project sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetch(`/api/projects/${selectedProjectId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((p) => setActiveProject(p))
+        .catch(() => {});
+    }
+  }, [selectedProjectId]);
 
   useEffect(() => {
     fetch('/api/parth/psu-risk')
@@ -88,24 +110,37 @@ export default function ArthaNetraView() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.psu_risk_records?.map((psu, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="font-bold text-gov-navy">{psu.agency_name}</td>
-                      <td className="text-[12px] font-mono text-text-muted font-semibold">NSE: {psu.ticker}</td>
-                      <td className="text-text-secondary font-medium">{psu.sector}</td>
-                      <td className={`num font-bold font-mono ${psu.debt_to_equity > 2.0 ? 'text-rose-600' : 'text-gov-navy'}`}>{psu.debt_to_equity}×</td>
-                      <td className="num font-bold text-gov-navy font-mono">{psu.altman_z_score}</td>
-                      <td className="num font-bold text-gov-saffron font-mono">+{psu.avg_project_overrun_pct}%</td>
-                      <td className="num font-mono text-text-muted font-bold">₹{(psu.total_monitored_capex_cr / 1000).toFixed(1)}k Cr</td>
-                      <td className="text-center">
-                        <span className={`status-badge ${
-                          psu.debt_to_equity > 2.0 ? 'status-danger' : psu.debt_to_equity > 1.0 ? 'status-warning' : 'status-success'
-                        }`}>
-                          {psu.financial_health_tier}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {data.psu_risk_records?.map((psu, idx) => {
+                    const isMatch = activeProject && activeProject.company && (
+                      psu.agency_name?.toLowerCase().includes(activeProject.company.toLowerCase()) ||
+                      activeProject.company.toLowerCase().includes(psu.agency_name?.toLowerCase())
+                    );
+                    return (
+                      <tr key={idx} className={`transition-colors ${isMatch ? 'bg-amber-50/90 font-bold border-l-4 border-gov-saffron' : 'hover:bg-slate-50/80'}`}>
+                        <td className="font-bold text-gov-navy flex items-center gap-2">
+                          <span>{psu.agency_name}</span>
+                          {isMatch && (
+                            <span className="text-[10px] bg-gov-saffron text-white px-1.5 py-0.2 rounded font-mono font-bold">
+                              ACTIVE DOSSIER
+                            </span>
+                          )}
+                        </td>
+                        <td className="text-[12px] font-mono text-text-muted font-semibold">NSE: {psu.ticker}</td>
+                        <td className="text-text-secondary font-medium">{psu.sector}</td>
+                        <td className={`num font-bold font-mono ${psu.debt_to_equity > 2.0 ? 'text-rose-600' : 'text-gov-navy'}`}>{psu.debt_to_equity}×</td>
+                        <td className="num font-bold text-gov-navy font-mono">{psu.altman_z_score}</td>
+                        <td className="num font-bold text-gov-saffron font-mono">+{psu.avg_project_overrun_pct}%</td>
+                        <td className="num font-mono text-text-muted font-bold">₹{(psu.total_monitored_capex_cr / 1000).toFixed(1)}k Cr</td>
+                        <td className="text-center">
+                          <span className={`status-badge ${
+                            psu.debt_to_equity > 2.0 ? 'status-danger' : psu.debt_to_equity > 1.0 ? 'status-warning' : 'status-success'
+                          }`}>
+                            {psu.financial_health_tier}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
