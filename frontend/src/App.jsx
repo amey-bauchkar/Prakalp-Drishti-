@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, NavLink, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
 import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility } from 'lucide-react';
 
 import AmeyMasterView from '../amey/index.jsx';
 import DecisionHubView from '../amey/DecisionHubView.jsx';
-import SatyaKavachView from '../tanmay/index.jsx';
-import ArthaNetraView from '../parth/index.jsx';
-import VarshaSpeedView from '../janhavi/index.jsx';
-import NivaranView from '../aditya/NivaranView.jsx';
-import AnumatiView from '../aditya/AnumatiView.jsx';
+import SatyaKavachView from './views/SatyaKavachView.jsx';
+import ArthaNivaranView from './views/ArthaNivaranView.jsx';
+import SetuVarshaView from './views/SetuVarshaView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -112,14 +110,15 @@ function InstitutionalHeader() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Four pillars, not eight modules. The engines did not change; the eight
+  // per-developer routes were an org chart on a navbar, which asked an officer
+  // to know who built what before they could find anything.
   const navItems = [
     { to: '/', label: 'HOME' },
-    { to: '/decision-hub', label: 'DECISION HUB' },
-    { to: '/tanmay', label: 'SATYA-KAVACH' },
-    { to: '/parth', label: 'ARTHA-NETRA' },
-    { to: '/janhavi', label: 'VARSHA-SPEED' },
-    { to: '/nivaran', label: 'NIVARAN' },
-    { to: '/anumati', label: 'ANUMATI' },
+    { to: '/decision-hub', label: '1 · DECISION HUB' },
+    { to: '/satya-kavach', label: '2 · SATYA-KAVACH' },
+    { to: '/artha-nivaran', label: '3 · ARTHA-NIVARAN' },
+    { to: '/setu-varsha', label: '4 · SETU-VARSHA' },
     { to: '/karya-dakshata', label: 'KARYA-DAKSHATA' },
   ];
 
@@ -375,13 +374,25 @@ export default function App() {
           <Routes>
             <Route path="/" element={<AmeyMasterView />} />
             <Route path="/decision-hub" element={<DecisionHubView />} />
-            <Route path="/tanmay" element={<SatyaKavachView />} />
-            <Route path="/parth" element={<ArthaNetraView />} />
-            <Route path="/janhavi" element={<VarshaSpeedView />} />
-            <Route path="/nivaran" element={<NivaranView />} />
-            <Route path="/anumati" element={<AnumatiView />} />
+            {/* ── The four consolidated pillars ── */}
+            <Route path="/satya-kavach" element={<SatyaKavachView />} />
+            <Route path="/artha-nivaran" element={<ArthaNivaranView />} />
+            <Route path="/setu-varsha" element={<SetuVarshaView />} />
             <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
-            <Route path="/aditya" element={<NivaranView />} />
+
+            {/* ── Legacy per-developer paths ──
+                Kept as redirects rather than deleted. These URLs are in the
+                team's bookmarks, in the presentation deck and in the README, and
+                a 404 on a demo link is a worse outcome than a redirect. `replace`
+                keeps the back button from bouncing between old and new. */}
+            <Route path="/tanmay" element={<Navigate to="/satya-kavach" replace />} />
+            <Route path="/parth" element={<Navigate to="/artha-nivaran" replace />} />
+            <Route path="/janhavi" element={<Navigate to="/setu-varsha" replace />} />
+            <Route path="/nivaran" element={<Navigate to="/artha-nivaran" replace />} />
+            <Route path="/anumati" element={<Navigate to="/satya-kavach" replace />} />
+            <Route path="/aditya" element={<Navigate to="/setu-varsha" replace />} />
+            <Route path="/soham" element={<Navigate to="/decision-hub" replace />} />
+            <Route path="/eo-auditor" element={<Navigate to="/setu-varsha" replace />} />
 
             {/* Catch-all. Without it an unmatched path rendered the header and
                 footer around a completely empty <main> — a blank screen with no

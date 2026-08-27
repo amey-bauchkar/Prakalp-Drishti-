@@ -244,7 +244,12 @@ class AgencyIndexEngine:
             "tier_2_agencies": sum(1 for a in self.agency_records if a["performance_tier"] == "TIER_2_WATCHLIST"),
             "tier_3_agencies": sum(1 for a in self.agency_records if a["performance_tier"] == "TIER_3_CRITICAL"),
             "top_contagion_agency": self.agency_records[0]["agency_name"] if self.agency_records else "N/A",
-            "agencies": self.agency_records[:30]
+            # The list was silently capped at 30 while the header reported 58,
+            # so anything summing or paginating over `agencies` under-counted by
+            # nearly half with no indication. Return the full set and state its
+            # length, rather than truncating behind a count that disagrees.
+            "agencies_returned": len(self.agency_records),
+            "agencies": self.agency_records,
         }
 
 _agency_instance = None

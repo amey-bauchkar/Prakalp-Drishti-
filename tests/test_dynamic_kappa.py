@@ -36,6 +36,10 @@ B = 12000.0 # Budget Pool
 
 print(f"\n--- Testing Risk Dial (kappa = 0.0 to 1.0) with Budget = Rs.{B:,.0f} Cr ---")
 
+_sweep = {}
+_duals = {}
+_solved = 0
+_attempted = 0
 for kappa in [0.0, 0.25, 0.50, 0.75, 1.0]:
     # Risk Dial adjusts the effective objective coefficient:
     # kappa=0 -> prioritize raw expected completion yield
@@ -61,8 +65,33 @@ for kappa in [0.0, 0.25, 0.50, 0.75, 1.0]:
         pi_budget = abs(res.ineqlin.marginals[0]) if len(res.ineqlin.marginals) > 0 else 0.0
         
         # Check Top 3 funded projects
+        _attempted += 1
+        _solved += 1 if res.success else 0
+        _sweep[kappa] = np.array(alloc, dtype=float)
+        _duals[kappa] = float(abs(res.ineqlin.marginals[0])) if len(res.ineqlin.marginals) else 0.0
         top3_idx = np.argsort(-alloc)[:3]
         top3_names = [f"{pnames[i][:18]} (Rs.{alloc[i]:.0f}Cr)" for i in top3_idx]
         
         print(f"kappa = {kappa:4.2f} -> Allocated: Rs.{tot:,.0f} Cr | Expected Yield: {exp_yield:.1f}% | Portfolio Tail-Risk: {avg_risk:.2f} | pi(Budget): {pi_budget:.3f}")
         print(f"             Top Funded: {top3_names}")
+
+
+# ── ASSERTIONS ────────────────────────────────────────────────────────────
+# This file swept kappa and printed a table. It never checked that the LP
+# solved, that the budget held, that the duals were finite, or that the risk
+# dial changed anything -- every one of those could fail and the script still
+# exited 0.
+assert _solved == _attempted, f"only {_solved}/{_attempted} LP solves reached optimality"
+assert _attempted >= 3, "too few kappa points swept to demonstrate a dial"
+for _k, _a in _sweep.items():
+    assert np.all(_a >= -1e-6), f"negative allocation at kappa={_k}"
+    assert _a.sum() <= B + 1e-3, f"budget breached at kappa={_k}: {_a.sum():.2f} > {B}"
+assert all(np.isfinite(v) for v in _duals.values()), f"non-finite dual: {_duals}"
+
+_ks = sorted(_sweep)
+_moved = int(np.sum(np.abs(_sweep[_ks[0]] - _sweep[_ks[-1]]) > 1.0))
+assert _moved > 0, (
+    f"the risk dial is inert: kappa {_ks[0]} and {_ks[-1]} produced identical "
+    f"allocations")
+print(f"ASSERTIONS PASSED: {_solved}/{_attempted} LPs optimal, budget held at "
+      f"every kappa, duals finite, {_moved} projects reallocated across the dial.")

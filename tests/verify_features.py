@@ -558,6 +558,86 @@ if s == 200:
               all("sanctioned_cr" in p and "revised_cr" in p for p in projs), "")
 
 # ─────────────────────────────────────────────────────────────────────────
+# 22. SETU-VARSHA CLIMATE CASCADE  (Section 6)
+# ─────────────────────────────────────────────────────────────────────────
+F = "SETU-VARSHA"
+s, d = call("/api/janhavi/setu-varsha/cascade?rainfall_anomaly_pct=30")
+check(F, "cascade endpoint responds 200", s == 200, f"status={s}")
+if s == 200:
+    for k in ("downstream_locked_capex_cr", "isolated_direct_exposure_cr",
+              "nodes_in_cascade", "nodes_directly_hit", "mean_climate_delay_months"):
+        check(F, f"{k} exposed", d.get(k) is not None, f"={d.get(k)}")
+    check(F, "contagion and direct exposure are separate figures",
+          "isolated_projects_hit" in d and "downstream_locked_capex_cr" in d, "")
+    check(F, "methodology stated in the payload", bool(d.get("methodology")), "")
+    check(F, "labelled a scenario projection, not a forecast",
+          "not a forecast" in str(d.get("caveat", "")).lower(), "")
+
+# The causal chain must actually respond to its input, and in the right direction.
+_curve = {}
+for _a in (-20, 0, 10, 30, 50):
+    _s, _r = call(f"/api/janhavi/setu-varsha/cascade?rainfall_anomaly_pct={_a}")
+    if _s == 200:
+        _curve[_a] = _r.get("downstream_locked_capex_cr", 0.0)
+check(F, "deficient monsoon locks no capital", _curve.get(-20, 1) == 0, f"={_curve.get(-20)}")
+check(F, "normal LPA (0%) is the zero baseline", _curve.get(0, 1) == 0, f"={_curve.get(0)}")
+check(F, "excess monsoon locks capital", _curve.get(30, 0) > 0, f"={_curve.get(30)}")
+_pos = [_curve[k] for k in sorted(_curve) if k > 0]
+check(F, "locked capex is non-decreasing in rainfall departure",
+      _pos == sorted(_pos), f"{_pos}")
+check(F, "slider is not saturated (50% exceeds 10%)",
+      len(_pos) >= 2 and _pos[-1] > _pos[0] * 1.5, f"{_pos}")
+
+# The float fix is the reason the above responds at all; assert it directly.
+from analytics_engine.setu_graph import get_setu_graph_engine as _sg
+_g = _sg()
+_tf = sorted(float(_d.get("total_float", 0) or 0) for _, _d in _g.dag.nodes(data=True))
+check(F, "total float is not a 200-year artefact",
+      _tf[len(_tf) // 2] < 240, f"median={_tf[len(_tf)//2]:.1f} months")
+
+# ─────────────────────────────────────────────────────────────────────────
+# 23. ANUMATI CLEARANCES  (Section 4)
+# ─────────────────────────────────────────────────────────────────────────
+F = "ANUMATI-CLEARANCES"
+s, d = call("/api/tanmay/anumati/clearances")
+check(F, "clearance endpoint responds 200", s == 200, f"status={s}")
+if s == 200 and d.get("available"):
+    check(F, "clearance records returned",
+          d.get("projects_with_clearance_records", 0) > 0, "")
+    check(F, "coverage is disclosed rather than implied",
+          "2,207" in str(d.get("coverage_note", "")), str(d.get("coverage_note"))[:70])
+    projs = d.get("projects") or []
+    check(F, "every project carries a Regulatory Stagnation Index",
+          all(p.get("regulatory_stagnation_index") is not None for p in projs), "")
+    check(F, "every project names a bottleneck department",
+          all(p.get("bottleneck_department") for p in projs), "")
+    check(F, "stage breakdown present per project",
+          all(len(p.get("stage_breakdown") or []) > 0 for p in projs), "")
+    check(F, "clearance status is a declared category",
+          all(p.get("overall_clearance_status") in ("APPROVED", "IN_PROGRESS", "STALLED")
+              for p in projs), "")
+    for p in projs:
+        for st in p.get("stage_breakdown") or []:
+            check(F, f"[{p['project_id'][:14]}] stagnation ratio consistent with days/benchmark",
+                  abs(st["stagnation_ratio"] - st["days_pending"] / max(st["benchmark_days"], 1)) < 0.02,
+                  f"{st['stage_code']}: {st['stagnation_ratio']} vs "
+                  f"{st['days_pending']}/{st['benchmark_days']}")
+        break   # one project's stages is enough to prove the arithmetic
+
+# ─────────────────────────────────────────────────────────────────────────
+# 24. AGENCY INDEX CONTRACT  (regression caught by the hardened legacy suite)
+# ─────────────────────────────────────────────────────────────────────────
+F = "AGENCY-INDEX-CONTRACT"
+s, d = call("/api/amey/agency-index")
+if s == 200:
+    check(F, "returned list length matches the reported count",
+          len(d.get("agencies") or []) == d.get("total_agencies_monitored"),
+          f"{len(d.get('agencies') or [])} rows vs "
+          f"{d.get('total_agencies_monitored')} claimed")
+    check(F, "agencies_returned states the list length",
+          d.get("agencies_returned") == len(d.get("agencies") or []), "")
+
+# ─────────────────────────────────────────────────────────────────────────
 # REPORT
 # ─────────────────────────────────────────────────────────────────────────
 print()
