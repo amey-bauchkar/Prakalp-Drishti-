@@ -96,4 +96,14 @@ class TestSatyaKavach(unittest.TestCase):
         self.assertGreater(sim["statutory_allowed_escalation_cr"], 0.0)
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main() exits the process, so the sentinel is printed from the
+    # result rather than after the call. This file always DID assert (via
+    # self.assertEqual); it simply never announced it, so the runner could not
+    # distinguish it from the print-only scripts.
+    _res = unittest.main(exit=False, verbosity=2).result
+    _n = _res.testsRun
+    if _res.wasSuccessful():
+        print(f"ASSERTIONS PASSED: {_n} unittest cases, "
+              f"0 failures, 0 errors.")
+    else:
+        raise SystemExit(1)

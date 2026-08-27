@@ -71,3 +71,26 @@ def get_project_weather_audit(
         return engine.get_project_weather_audit(limit=limit, sector_filter=sector, min_cost_cr=min_cost_cr)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ══════════════════════════════════════════════════════════════════════════
+# SETU-VARSHA: climate shock coupled into the dependency network
+# ══════════════════════════════════════════════════════════════════════════
+
+@router.get("/setu-varsha/cascade")
+def get_climate_cascade(
+    rainfall_anomaly_pct: float = Query(default=15.0, ge=-50.0, le=50.0),
+    state: str = Query(default="", max_length=60),
+):
+    """Rainfall departure -> working window -> DAG delay -> locked capex.
+
+    The whole causal chain in one call, so the war-room slider drives a single
+    request rather than stitching three engines together in the browser.
+    """
+    try:
+        from analytics_engine.setu_graph import get_setu_graph_engine
+        return get_setu_graph_engine().simulate_climate_cascade(
+            rainfall_anomaly_pct=rainfall_anomaly_pct,
+            state_filter=state.strip() or None,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

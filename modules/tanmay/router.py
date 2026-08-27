@@ -88,3 +88,94 @@ def simulate_clause_10cc(req: Clause10CCSimRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# ANUMATI: statutory clearance workflow, folded into the SATYA-KAVACH portal
+# ══════════════════════════════════════════════════════════════════════════
+
+@router.get("/anumati/clearances")
+def get_clearance_portfolio():
+    """PARIVESH Stage-I / Stage-II clearance pipeline with bottleneck analysis.
+
+    Reads the real PARIVESH proposal records and runs each project's stages
+    through the ANUMATI Regulatory Stagnation Index.
+
+    Coverage is reported rather than implied. There are clearance records for a
+    handful of projects, not for all 2,207, and a portal that showed a clearance
+    panel without saying how many projects it covers would invite the reader to
+    assume it covers the portfolio. It does not.
+    """
+    try:
+        import sqlite3
+        from collections import defaultdict
+
+        from modules.aditya.data.sqlite_loader import DB_PATH, DB_FOUND
+        from modules.aditya.modules.anumati import AnumatiEngine
+        from modules.aditya.schemas.anumati_schema import (
+            ClearanceStageDetail, ClearanceStatusRequest,
+        )
+
+        if not DB_FOUND:
+            return {"available": False,
+                    "reason": "PARIVESH clearance database not found.",
+                    "projects": []}
+
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        rows = [dict(r) for r in conn.execute("SELECT * FROM parivesh_clearances")]
+        conn.close()
+
+        by_project = defaultdict(list)
+        for r in rows:
+            by_project[r["project_id"]].append(r)
+
+        engine = AnumatiEngine()
+        projects = []
+        for pid, stages in by_project.items():
+            details = [ClearanceStageDetail(
+                stage_code=s.get("stage_code") or "ENVIRONMENT_CLEARANCE",
+                stage_name=s.get("stage_name") or "Clearance Stage",
+                department=s.get("department") or "MoEFCC",
+                status=s.get("status") or "SUBMITTED",
+                days_pending=int(s.get("days_pending") or 0),
+                benchmark_days=int(s.get("benchmark_days") or 90),
+                loopback_count=int(s.get("eds_ads_raised_count") or 0),
+                last_query_date=s.get("last_query"),
+            ) for s in stages]
+
+            assessment = engine.process_clearance_status(ClearanceStatusRequest(
+                project_id=pid,
+                project_name=stages[0].get("project_name") or pid,
+                estimated_daily_cost_overrun_cr=float(
+                    stages[0].get("estimated_daily_cost_overrun_cr") or 1.5),
+                stages=details,
+            ))
+            payload = (assessment.model_dump() if hasattr(assessment, "model_dump")
+                       else dict(assessment))
+            payload["state"] = stages[0].get("state")
+            payload["sector"] = stages[0].get("sector")
+            payload["proposal_numbers"] = [s.get("proposal_no") for s in stages]
+            payload["total_forest_diversion_ha"] = round(
+                sum(float(s.get("diversion_forest_ha") or 0) for s in stages), 2)
+            projects.append(payload)
+
+        stalled = [p for p in projects if p.get("overall_clearance_status") == "STALLED"]
+        return {
+            "available": True,
+            "module": "ANUMATI",
+            "projects_with_clearance_records": len(projects),
+            "clearance_stages_tracked": len(rows),
+            "projects_stalled": len(stalled),
+            "projects_flagged_for_pmo_escalation": sum(
+                1 for p in projects if p.get("pmo_escalation_flag")),
+            "coverage_note": (
+                f"PARIVESH records exist for {len(projects)} projects covering "
+                f"{len(rows)} clearance stages. The remainder of the 2,207-project "
+                f"portfolio has no clearance filing in this dataset and is not "
+                f"represented here."
+            ),
+            "projects": projects,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -18,6 +18,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engine/x.py`
     from state_resolution import resolve_state, clean_text
 import networkx as nx
+from typing import Any, Dict, Optional
 
 from analytics_engine.contracts import DependencyNode, DependencyEdge, DependencySubGraph
 
@@ -87,6 +88,10 @@ class SetuGraphEngine:
                 state=state,
                 cost_cr=cost,
                 delay_months=delay,
+                # SETU-VARSHA scales the climate delay by REMAINING work, so a
+                # project at 90% is barely exposed and one at 10% is fully exposed.
+                physical_progress=float(pd.to_numeric(row.get("PhysicalProgress"),
+                                                      errors="coerce") or 0.0),
                 canonical_entity=entity
             )
 
@@ -204,13 +209,30 @@ class SetuGraphEngine:
             ef[n] = es[n] + duration
 
         # Backward Pass: Late Finish (LF) and Late Start (LS)
-        max_project_finish = max(ef.values()) if ef else 100.0
+        #
+        # The finish milestone is per COMPONENT, not global. Standard CPM assumes a
+        # single project with one finish date; this graph is a forest of hundreds of
+        # weakly-connected programmes, and floating all of them against the longest
+        # chain anywhere in the corpus is what produced a median total float of 2,474
+        # months -- 206 years. At that scale float absorption is inert: every delay
+        # short of two centuries is "absorbed", only the 81 zero-float nodes could
+        # ever breach, and the climate cascade saturated at the same locked figure
+        # for a 10%, 25% and 50% rainfall anomaly.
+        #
+        # A project in a two-node chain is now floated against the finish of ITS OWN
+        # chain, which is what the slack actually means.
+        component_finish = {}
+        for comp in nx.weakly_connected_components(self.dag):
+            fin = max((ef.get(n, 0.0) for n in comp), default=100.0)
+            for n in comp:
+                component_finish[n] = fin
+
         lf = {}
         ls = {}
         for n in reversed(topo_order):
             succs = list(self.dag.successors(n))
             if not succs:
-                lf[n] = max_project_finish
+                lf[n] = component_finish.get(n, ef.get(n, 100.0))
             else:
                 lf[n] = min([ls[s] - self.dag[n][s].get("lead_time", 2.0) for s in succs])
             duration = max(self.dag.nodes[n].get("delay_months", 12.0), 6.0)
@@ -439,6 +461,183 @@ class SetuGraphEngine:
             total_cascade_locked_p95_cr=round(tot_p95, 2),
             acyclic_dag_verified=bool(nx.is_directed_acyclic_graph(sub_g) and nx.is_directed_acyclic_graph(self.dag))
         )
+
+    # ══════════════════════════════════════════════════════════════════════
+    # SETU-VARSHA: climate shock propagated through the dependency network
+    # ══════════════════════════════════════════════════════════════════════
+
+    def simulate_climate_cascade(
+        self,
+        rainfall_anomaly_pct: float = 15.0,
+        state_filter: Optional[str] = None,
+        max_nodes_returned: int = 40,
+    ) -> Dict[str, Any]:
+        """Couple IMD rainfall departure to the DAG and propagate the result.
+
+        The chain is:
+
+            rainfall departure  ->  working-window contraction (VARSHA-SPEED)
+                                ->  per-node schedule delay
+                                ->  max-plus float absorption (SETU-GRAPH)
+                                ->  downstream locked capex
+
+        How the delay is derived, stated because it is the load-bearing
+        assumption. VARSHA-SPEED gives each state an effective working window in
+        months. A project whose remaining work would have taken R months of
+        calendar time now needs R * (12 / effective_window), so the incremental
+        delay is R * (stretch - 1). R is estimated from the physical progress
+        already recorded rather than assumed uniform: a project at 90% has little
+        left to lose to the weather, one at 10% has almost all of it.
+
+        This is a scenario projection, not a forecast. It answers "if the monsoon
+        departs by X%, how much capital sits behind the resulting slippage", and
+        the elasticities behind it are calibrated constants, not fitted
+        coefficients. That is said plainly in the payload.
+        """
+        from modules.janhavi.service import get_varsha_speed_engine
+
+        varsha = get_varsha_speed_engine()
+        summary = varsha.get_monsoon_impact_summary(rainfall_anomaly_pct)
+        stretch = {r["state"]: r for r in summary.get("state_impact_records", [])}
+
+        # Baseline at zero departure, so the reported figure is the MARGINAL
+        # effect of the anomaly rather than the whole seasonal downtime that
+        # exists in every year including a normal one.
+        base = varsha.get_monsoon_impact_summary(0.0)
+        base_stretch = {r["state"]: r["schedule_stretch_multiplier"]
+                        for r in base.get("state_impact_records", [])}
+
+        shocks: Dict[str, float] = {}
+        for n, d in self.dag.nodes(data=True):
+            st = str(d.get("state") or "").strip()
+            if state_filter and st.lower() != state_filter.strip().lower():
+                continue
+            row = stretch.get(st)
+            if not row:
+                continue                     # state absent from the IMD matrix
+            m_now = float(row["schedule_stretch_multiplier"])
+            m_base = float(base_stretch.get(st, 1.0))
+            if m_now <= m_base:
+                continue
+
+            progress = float(d.get("physical_progress", 0.0) or 0.0)
+            remaining_months = max(0.0, (100.0 - progress) / 100.0) * 24.0
+            shocks[str(n)] = remaining_months * (m_now - m_base)
+
+        # Propagate. Free float absorbs first; only the excess reaches successors,
+        # attenuated per hop the same way the targeted-shock path does it.
+        propagated: Dict[str, float] = dict(shocks)
+        for n in nx.topological_sort(self.dag):
+            n = str(n)
+            inbound = propagated.get(n, 0.0)
+            if inbound <= 0.0:
+                continue
+            ff = float(self.dag.nodes[n].get("free_float", 0.0) or 0.0)
+            excess = max(0.0, inbound - ff)
+            if excess <= 0.0:
+                continue
+            for succ in self.dag.successors(n):
+                propagated[str(succ)] = propagated.get(str(succ), 0.0) + excess * 0.85
+
+        locked = 0.0
+        absorbed_nodes = 0
+        breached_nodes = 0
+        isolated_hit = 0
+        isolated_capex = 0.0
+        rows = []
+        for n, delay in propagated.items():
+            if delay <= 0.0 or n not in self.dag:
+                continue
+            d = self.dag.nodes[n]
+            ff = float(d.get("free_float", 0.0) or 0.0)
+            tf = float(d.get("total_float", 0.0) or 0.0)
+            cost = float(d.get("cost_cr", 0.0) or 0.0)
+
+            # 926 of 2,207 projects (42%) sit in the graph with no edges at all.
+            # A delay to one of those is a real problem for that project, but it is
+            # NOT contagion: there is no downstream for capital to be locked behind.
+            # Counting them under "downstream locked capex" inflated the figure to
+            # most of the portfolio and made the term meaningless, so they are
+            # tallied separately as direct exposure.
+            has_network = (self.dag.out_degree(n) > 0 or self.dag.in_degree(n) > 0)
+            if not has_network:
+                isolated_hit += 1
+                isolated_capex += cost * min(delay / 48.0, 1.0)
+                continue
+
+            if delay <= ff:
+                absorbed_nodes += 1
+                continue
+
+            # Locked capital is DELAY-WEIGHTED, not binary.
+            #
+            # Counting the full capex the moment a project breaches its float made
+            # the figure saturate: with zero float across the network every hit
+            # node breaches at once, so the count stopped growing at a 20% anomaly
+            # and the headline sat unchanged from 20% through 50% while the mean
+            # delay went on climbing 1.9 -> 5.2 months. A war-room slider whose
+            # headline stops responding is worse than no slider.
+            #
+            # cost x (excess delay / 48) is the same capital-months convention the
+            # engine already uses for locked_p50_cr, normalised to a 48-month
+            # programme and capped at the full capex.
+            excess = max(0.0, delay - tf)
+            if excess > 0.0:
+                breached_nodes += 1
+                locked += cost * min(excess / 48.0, 1.0)
+            rows.append({
+                "project_id": n,
+                "project_name": d.get("project_name"),
+                "state": d.get("state"),
+                "sector": d.get("sector"),
+                "climate_delay_months": round(delay, 1),
+                "free_float_months": round(ff, 1),
+                "total_float_months": round(tf, 1),
+                "float_breached": bool(delay > tf),
+                "capex_cr": round(cost, 2),
+                "directly_hit": n in shocks,
+            })
+
+        rows.sort(key=lambda r: -r["capex_cr"])
+        return {
+            "module": "SETU-VARSHA",
+            "rainfall_anomaly_pct": rainfall_anomaly_pct,
+            "state_filter": state_filter,
+            "scenario_interpretation": summary.get("scenario_interpretation"),
+            "nodes_directly_hit": len(shocks),
+            "nodes_in_cascade": len(rows),
+            "nodes_absorbed_by_float": absorbed_nodes,
+            "nodes_breaching_total_float": breached_nodes,
+            "downstream_locked_capex_cr": round(locked, 2),
+            # Reported alongside, never folded in. These projects are hit by the
+            # weather but have no dependants, so their capital is exposed rather
+            # than locked behind a cascade.
+            "isolated_projects_hit": isolated_hit,
+            "isolated_direct_exposure_cr": round(isolated_capex, 2),
+            "network_coverage_note": (
+                "926 of 2,207 projects carry no dependency edges, so contagion is "
+                "only defined for the 1,281 that do. Isolated projects are counted "
+                "as direct exposure, not as downstream lock-up."
+            ),
+            "mean_climate_delay_months": round(
+                sum(r["climate_delay_months"] for r in rows) / len(rows), 1) if rows else 0.0,
+            "affected": rows[:max_nodes_returned],
+            "methodology": (
+                "Rainfall departure sets a working-window contraction per state "
+                "(VARSHA-SPEED elasticities, IMD 2005-2025). Remaining project "
+                "duration is scaled by that contraction, the resulting delay is "
+                "absorbed by free float where available, and the excess propagates "
+                "to successors at 0.85 per hop. Capital is counted as locked only "
+                "once a project's delay exceeds its TOTAL float."
+            ),
+            "caveat": (
+                "Scenario projection, not a forecast. The elasticities are "
+                "calibrated constants rather than fitted coefficients, and the "
+                "figure answers 'how much capital sits behind this much slippage', "
+                "not 'how likely is this monsoon'."
+            ),
+        }
+
 
 # Module-level singleton
 _graph_instance = None

@@ -110,6 +110,15 @@ for fid, fact in briefing.audit_facts.items():
 print(f"  Verified: {verified_count}/{total_count} facts")
 print(f"  PASS: All proofs valid? {'YES' if verified_count == total_count else 'NO!'}")
 
+# ── ASSERTIONS ────────────────────────────────────────────────────────────
+# The script counted verified Merkle proofs and then printed "ALL ROUND 3 FIXES
+# VERIFIED" regardless of the count. A cryptographic check that cannot fail is
+# not a check.
+assert total_count > 0, "no facts were checked; the Merkle audit ran on nothing"
+assert verified_count == total_count, (
+    f"Merkle inclusion proofs failed: {verified_count}/{total_count} verified")
+
 print("\n" + "=" * 80)
-print("ALL ROUND 3 FIXES VERIFIED")
+print(f"ASSERTIONS PASSED: {verified_count}/{total_count} Merkle inclusion "
+      f"proofs verified against the document root.")
 print("=" * 80)
