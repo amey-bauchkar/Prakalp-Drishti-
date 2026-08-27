@@ -16,6 +16,7 @@ satellite_pipeline/batch_precision_change_detection.py. No CV runs here.
 """
 
 import os
+import re
 import json
 import hashlib
 import numpy as np
@@ -25,6 +26,7 @@ from typing import Dict, Any, Optional
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
+_SAFE_PID = re.compile(r"[^A-Za-z0-9_-]")
 IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
 
 class SatelliteFusionEngine:
@@ -51,6 +53,9 @@ class SatelliteFusionEngine:
         pid = str(project_id)
         cat_entry = self.catalog.get(pid, {})
         
+        # Defence in depth: the router sanitises too, but this engine is also
+        # reachable from batch scripts that pass ids straight through.
+        pid = _SAFE_PID.sub("", str(pid))[:64] or "invalid"
         before_file = os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg")
         after_file = os.path.join(IMAGERY_DIR, f"{pid}_AFTER.jpg")
         

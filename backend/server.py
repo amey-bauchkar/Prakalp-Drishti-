@@ -22,6 +22,10 @@ from analytics_engine.state_resolution import resolve_state
 
 from fastapi import FastAPI, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from backend import config
+from backend.security import (
+    security_headers_middleware, rate_limit_middleware, sanitize_id,
+)
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
@@ -36,19 +40,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for local React/Vite development
+# Middleware order matters: Starlette runs them in reverse registration order,
+# so registering rate-limit last means it executes FIRST and a flood is refused
+# before any handler work happens.
+app.middleware("http")(security_headers_middleware)
+app.middleware("http")(rate_limit_middleware)
+
+# Explicit origins. Wildcard + allow_credentials is rejected by browsers and
+# signals to a reviewer that CORS was pasted rather than reasoned about.
+# Configured via PRAKALP_ALLOWED_ORIGINS (comma-separated).
 app.add_middleware(
     CORSMiddleware,
-    # Explicit origins. Wildcard + allow_credentials is rejected by browsers and
-    # signals to a reviewer that CORS was pasted rather than reasoned about.
-    # Override in deployment via PRAKALP_ALLOWED_ORIGINS (comma-separated).
-    allow_origins=os.environ.get(
-        "PRAKALP_ALLOWED_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000"
-    ).split(","),
+    allow_origins=config.ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # In-Memory Cache on Startup
@@ -153,11 +159,14 @@ def list_roles():
 
 @app.get("/api/health")
 def health_check():
+    # offline_air_gapped_mode was hardcoded True. It now derives from whether a
+    # cloud LLM key is actually configured, so the claim can be checked against
+    # the running process rather than believed.
     return {
         "status": "healthy",
         "total_projects_cached": len(projects_cache),
         "total_portfolio_capex_cr": sum(p["revised_cost_cr"] for p in projects_cache) if projects_cache else 0.0,
-        "offline_air_gapped_mode": True
+        **config.posture(),
     }
 
 @app.get("/api/projects")
@@ -187,6 +196,9 @@ def get_project_by_id(project_id: str):
 @app.get("/api/satellite/{project_id}")
 def get_satellite_imagery(project_id: str):
     """Returns satellite before/after imagery paths for a project."""
+    # The id lands inside a filesystem path, so `../` here is a traversal
+    # primitive. Reduced to the identifier alphabet before any join.
+    project_id = sanitize_id(project_id, field="project_id")
     before_path = os.path.join(IMAGERY_DIR, f"{project_id}_BEFORE.jpg")
     after_path = os.path.join(IMAGERY_DIR, f"{project_id}_AFTER.jpg")
     return {
@@ -211,10 +223,27 @@ if os.path.exists(assets_dir):
 # SPA Fallback: Serve index.html for all frontend routes (Single Unified URL)
 @app.get("/{full_path:path}")
 async def serve_spa_catchall(full_path: str):
-    file_path = os.path.join(STATIC_DIR, full_path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        return FileResponse(file_path)
-    index_file = os.path.join(STATIC_DIR, "index.html")
+    # An unmatched /api/ path must answer as an API, not as the app shell.
+    # Previously every mistyped or retired endpoint returned 200 with
+    # index.html, so a client checking status codes saw success and a client
+    # parsing JSON got a page of HTML. Both are worse than a plain 404.
+    if full_path.startswith("api/") or full_path == "api":
+        raise HTTPException(status_code=404, detail=f"No such API route: /{full_path}")
+
+    # Containment check. `full_path` is attacker-controlled and was joined
+    # straight onto STATIC_DIR before being handed to FileResponse, which is an
+    # arbitrary-file-read primitive if any `..` survives routing. Starlette
+    # normalises most traversal before it reaches here, but "the framework
+    # probably strips it" is not a control. Resolve the candidate and serve it
+    # only if it is genuinely inside the build directory.
+    static_root = os.path.realpath(STATIC_DIR)
+    candidate = os.path.realpath(os.path.join(static_root, full_path))
+    inside = candidate == static_root or candidate.startswith(static_root + os.sep)
+
+    if inside and os.path.isfile(candidate):
+        return FileResponse(candidate)
+
+    index_file = os.path.join(static_root, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
     raise HTTPException(status_code=404, detail="Frontend build not found. Run 'npm run build' in frontend/.")

@@ -12,6 +12,7 @@ from analytics_engine.contracts import (
     AllocationResult, CabinetBriefing
 )
 from backend.auth import require
+from backend.security import sanitize_id
 
 # RBAC is enforced SERVER-SIDE on the endpoints that expose project-identifying or
 # decision-making capability. Hiding a control in React is presentation, not access
@@ -324,13 +325,19 @@ class CopilotQuestion(BaseModel):
 def ask_copilot(q: CopilotQuestion):
     """Outcome (h): grounded natural-language Q&A over the Fact layer.
 
-    No generative model participates -- see analytics_engine/copilot_qa.py for why that
-    is a deliberate strengthening of the zero-hallucination requirement rather than a
-    shortcut around the LLM one.
+    Retrieval is always deterministic: the answer is assembled from Fact objects
+    carrying SHA-256 lineage and Merkle inclusion proofs. When GROQ_API_KEY is set
+    a cloud model additionally PHRASES those facts, and its output is rejected if it
+    contains any number the retrieval layer did not vouch for. Without a key the
+    system stays fully air-gapped and serves the assembled answer directly.
     """
     try:
         from analytics_engine.copilot_qa import answer_question
-        return answer_question(q.question, q.project_id)
+        from analytics_engine.copilot_llm import phrase_answer
+        pid = sanitize_id(q.project_id, field="project_id")
+        return phrase_answer(q.question, answer_question(q.question, pid))
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
