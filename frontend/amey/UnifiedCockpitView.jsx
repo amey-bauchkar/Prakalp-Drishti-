@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SatelliteSwipeView from './SatelliteSwipeView';
+import CopilotChat from './CopilotChat';
 import {
   Sparkles, Sliders, ShieldCheck, AlertCircle, ArrowRight, Zap, RefreshCw,
   Layers, CheckCircle2, Eye, FileText, Satellite, TrendingUp, Clock,
@@ -156,7 +157,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
                 <span>Risk Tolerance Dial:</span>
               </span>
               <span className="tag shrink-0 ml-2">
-                {riskKappa < 0.35 ? 'Max Velocity (κ=0.1)' : riskKappa > 0.70 ? 'Delay-Shielded (κ=0.9)' : 'Risk-Neutral (κ=0.5)'}
+                {riskKappa < 0.35 ? 'Max Velocity' : riskKappa > 0.70 ? 'Delay-Shielded' : 'Risk-Neutral'}
+                <span className="notation ml-1">(κ={Number(riskKappa).toFixed(2)})</span>
               </span>
             </div>
             <input
@@ -396,13 +398,23 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               ))}
             </div>
 
-            {/* Merkle Cryptographic Badge */}
-            <div className="pt-3 border-t border-slate-700/80 flex items-center justify-between text-[11.5px] text-slate-300">
+            {/* Interactive Q&A over the same verified fact layer. */}
+            <div className="pt-4 border-t border-slate-700/80">
+              <CopilotChat projectId={projectId} />
+            </div>
+
+            {/* Provenance footer.
+                The wording is deliberately about the MECHANISM rather than a
+                blanket boast: figures are audit-verified because generated text
+                is rejected when it contains one that is not, which is a
+                checkable claim. */}
+            <div className="pt-3 border-t border-slate-700/80 flex items-center justify-between gap-3 flex-wrap text-[11px] text-slate-300">
               <div className="flex items-center gap-2 text-emerald-400 font-bold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>100% Audit-Verified Numbers • Zero Hallucinations</span>
+                <span>Every figure carries a SHA-256 Merkle inclusion proof</span>
               </div>
-              <span className="font-mono text-[10.5px] text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-700"> Offline Secure
+              <span className="font-mono text-[10px] text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded-sm border border-slate-700">
+                Generated prose is rejected if it cites an unverified number
               </span>
             </div>
           </div>

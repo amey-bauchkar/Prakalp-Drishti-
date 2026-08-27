@@ -334,6 +334,10 @@
   .tag-authority{ border-color: var(--gold-border, #E4D3A8); background: var(--gold-wash); color: #6B520F; }
   .tag-solid    { border-color: var(--ink-800); background: var(--ink-800); color: #FFF; }
 
+  /* Mathematical notation must survive the tag's uppercase transform. Wrap any
+     symbol (kappa, pi, sigma, quantile subscripts) in .notation. */
+  .notation { text-transform: none !important; font-style: normal; }
+
   /* ═════ 7. MICRO LABEL ═════════════════════════════════════════════ */
 
   .microlabel {
