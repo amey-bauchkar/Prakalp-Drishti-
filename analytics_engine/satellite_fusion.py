@@ -33,18 +33,92 @@ class SatelliteFusionEngine:
     def __init__(self):
         self.catalog = {}
         self.df = None
+        self.geo = {}
+        # Memoises the ~290 ms precision chain per project for this process.
+        self._precision_cache = {}
         self._load_data()
 
     def _load_data(self):
         if os.path.exists(DATA_PATH):
             self.df = pd.read_csv(DATA_PATH)
         
+        # Latitude drives ground-sample-distance, which drives the ROI radius in
+        # pixels. Without it the mask would be sized off the catalogue's
+        # hardcoded resolution_m = 0.8, which is wrong by roughly 3x.
+        geo_path = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
+                                "ALL_2207_PROJECTS_GEOREFERENCED.json")
+        if os.path.exists(geo_path):
+            try:
+                with open(geo_path, "r", encoding="utf-8") as f:
+                    rows = json.load(f)
+                rows = rows if isinstance(rows, list) else rows.get("projects", [])
+                self.geo = {str(r.get("ProjectId")): r for r in rows}
+            except Exception:
+                self.geo = {}
+
         if os.path.exists(CATALOG_PATH):
             with open(CATALOG_PATH, "r", encoding="utf-8") as f:
                 cat_list = json.load(f)
                 for item in cat_list:
                     pid = str(item.get("project_id", ""))
                     self.catalog[pid] = item
+
+    def _precision_metrics(self, pid: str) -> Dict[str, Any]:
+        """Run the pinpoint change detector for one project, memoised.
+
+        Computed on demand rather than baked into the catalogue: the chain takes
+        ~290 ms per pair, so a full 2,207-project bake is ~11 minutes single-core
+        and would go stale the moment the ROI radius or the vegetation thresholds
+        were retuned. On demand plus a cache keeps the served figure and the code
+        that produces it in step.
+        """
+        if pid in self._precision_cache:
+            return self._precision_cache[pid]
+
+        blank = {
+            "project_footprint_change_pct": None,
+            "ambient_terrain_change_pct": None,
+            "footprint_reliable": False,
+            "footprint_caveat": "Imagery pair unavailable for this project.",
+            "roi_radius_m": None, "gsd_m_per_px": None,
+            "vegetation_excluded_pct": None,
+            "roi_shape": None, "corridor_bearing_deg": None, "corridor_coherence": None,
+        }
+        try:
+            import cv2
+            from analytics_engine.satellite_precision_cv import (
+                detect_change, ground_sample_distance, zoom_for_sector,
+            )
+            b = cv2.imread(os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg"))
+            a = cv2.imread(os.path.join(IMAGERY_DIR, f"{pid}_AFTER.jpg"))
+            if b is None or a is None:
+                self._precision_cache[pid] = blank
+                return blank
+
+            cat = self.catalog.get(pid, {})
+            geo = self.geo.get(pid, {}) if hasattr(self, "geo") else {}
+            lat = geo.get("latitude") or cat.get("latitude") or 22.0
+            gsd = ground_sample_distance(float(lat), zoom_for_sector(cat.get("sector")))
+
+            r = detect_change(b, a, gsd_m_per_px=gsd,
+                              asset_geometry=cat.get("asset_geometry", "POINT"))
+            out = {
+                "project_footprint_change_pct": r.project_footprint_change_pct,
+                "ambient_terrain_change_pct": r.ambient_terrain_change_pct,
+                "footprint_reliable": r.footprint_reliable,
+                "footprint_caveat": r.footprint_caveat,
+                "roi_radius_m": r.roi_radius_m,
+                "gsd_m_per_px": r.gsd_m_per_px,
+                "vegetation_excluded_pct": r.vegetation_excluded_pct,
+                "roi_shape": r.roi_shape,
+                "corridor_bearing_deg": r.corridor_bearing_deg,
+                "corridor_coherence": r.corridor_coherence,
+            }
+        except Exception as e:
+            out = dict(blank, footprint_caveat=f"Precision CV unavailable: {type(e).__name__}")
+
+        self._precision_cache[pid] = out
+        return out
 
     def get_satellite_audit(self, project_id: str) -> Dict[str, Any]:
         """
@@ -97,6 +171,11 @@ class SatelliteFusionEngine:
             "statutory_recommendation": action,
             "audit_severity": severity,
             "structural_dissimilarity": dissimilarity,
+            # --- pinpoint precision CV: project vs landscape ------------------
+            # surface_change_pct below measures the WHOLE 800px frame, which spans
+            # 800-3,700 m of ground and is mostly farmland the sanction never
+            # touched. These two separate the asset from its surroundings.
+            **self._precision_metrics(pid),
             # --- independent measurement (no claim input anywhere upstream) ---
             "surface_change_pct": surface_change,
             "change_percentile_in_sector": cat_entry.get("change_percentile_in_sector"),

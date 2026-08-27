@@ -265,10 +265,29 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             t: 'Self-reported by the executing agency. This is the figure under scrutiny, not a measurement.',
           },
           {
-            k: 'Surface Changed',
+            // The whole 800px frame spans 800-3,700 m of ground, so this figure
+            // includes every field, village and road around the site. It is kept
+            // for continuity but is no longer the headline.
+            k: 'Frame Changed',
             v: reliable ? `${data.surface_change_pct ?? 0}%` : '—',
-            c: reliable ? 'text-emerald-700' : 'text-gov-muted',
-            t: 'Independently measured from 2018 vs 2023 imagery. No reported figure feeds this number.',
+            c: reliable ? 'text-gov-muted' : 'text-gov-muted',
+            t: 'Whole-tile change, 2018 vs 2023. Spans 800-3,700 m of ground, so it includes surrounding farmland and settlements — not just the project.',
+          },
+          {
+            k: 'Project Footprint',
+            v: data.project_footprint_change_pct != null
+              ? `${data.project_footprint_change_pct}%`
+              : '—',
+            c: data.footprint_reliable === false ? 'text-amber-700' : 'text-emerald-700',
+            t: `Structural change inside the ${data.roi_radius_m ?? 300} m project ROI only, with seasonal vegetation suppressed. This is the construction signal.`,
+          },
+          {
+            k: 'Ambient Terrain',
+            v: data.ambient_terrain_change_pct != null
+              ? `${data.ambient_terrain_change_pct}%`
+              : '—',
+            c: 'text-gov-muted',
+            t: 'Change OUTSIDE the project ROI. The comparison that matters is footprint against ambient: if the landscape moved as much as the site, the site signal is not evidence of work.',
           },
           {
             k: 'Sector Percentile',
@@ -280,12 +299,14 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             t: 'Where this site ranks for structural change against peers in the same sector.',
           },
           {
-            k: 'Sampled Footprint',
-            v: data.asset_geometry === 'LINEAR' ? 'Corridor slice' : 'Whole site',
-            c: data.asset_geometry === 'LINEAR' ? 'text-amber-700' : 'text-gov-navy',
-            t: data.asset_geometry === 'LINEAR'
-              ? 'Linear asset: one tile samples a single slice of the corridor, not the entire project.'
-              : 'Point asset: the tile covers the works.',
+            k: 'ROI Shape',
+            v: data.roi_shape === 'corridor'
+              ? `Corridor ${data.corridor_bearing_deg ?? '?'}°`
+              : data.roi_shape === 'disc' ? `Disc ${data.roi_radius_m ?? 300} m` : '—',
+            c: data.roi_shape === 'corridor' ? 'text-emerald-700' : 'text-gov-navy',
+            t: data.roi_shape === 'corridor'
+              ? 'A linear corridor was fitted to the dominant structure bearing detected in the imagery, so the ROI follows the alignment instead of sitting as a circle on one point of it.'
+              : 'A radial disc centred on the recorded coordinate. For a linear asset this samples only the stretch near the centroid.',
           },
         ].map((m) => (
           <div key={m.k} className="bg-white p-3 text-center" title={m.t}>
@@ -294,6 +315,17 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           </div>
         ))}
       </div>
+
+      {/* A near-zero footprint means two very different things depending on why.
+          Saying which, next to the number, is the difference between "nothing was
+          built" and "we could not see whether anything was built". */}
+      {data.footprint_caveat && (
+        <div className="note note-warn mx-4 mb-3 text-[10.5px]">
+          <span>
+            <strong>Footprint caveat.</strong> {data.footprint_caveat}
+          </span>
+        </div>
+      )}
 
       {/* Provenance footer */}
       <div className="px-4 py-2.5 bg-gov-surface border-t border-gov-border flex flex-wrap items-center justify-between gap-2 text-[10px] text-gov-muted">
