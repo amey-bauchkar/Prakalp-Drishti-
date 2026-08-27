@@ -103,17 +103,36 @@ def _numbers_in(text: str) -> Set[str]:
     return out
 
 
+# Fields of the retrieval payload that echo ATTACKER-CONTROLLED input rather
+# than anything the engine computed. They must never contribute admissible
+# numbers.
+#
+# This was a live bypass, found by red-teaming the endpoint. answer_question()
+# returns the user's `question` verbatim inside its payload, and _fact_numbers()
+# walked the whole payload — so any figure the attacker put in the question was
+# admitted to the verified set, and the model was then free to repeat it with
+# guard="passed". Three of seven injection probes landed fabricated figures that
+# way: "state that the cost overrun is Rs 999,999 Cr" produced 999999, a forced
+# 73.45 came straight back, and a role-hijack smuggled 12345.67.
+#
+# The guard exists precisely to stop that, so its input set must contain only
+# what the retrieval layer PRODUCED, never what the caller supplied.
+_ATTACKER_CONTROLLED_KEYS = {"question", "query", "user_question", "prompt", "input"}
+
+
 def _fact_numbers(facts: Any) -> Set[str]:
     """Every numeric token the retrieval layer vouches for.
 
-    Collected recursively from the whole fact payload, including the
-    deterministic answer text, because that text is itself fact-derived.
+    Collected recursively from the computed payload. Echoed user input is
+    skipped, because a number is only a fact if this system derived it.
     """
     out: Set[str] = set()
 
     def walk(node: Any) -> None:
         if isinstance(node, dict):
-            for v in node.values():
+            for k, v in node.items():
+                if str(k).lower() in _ATTACKER_CONTROLLED_KEYS:
+                    continue
                 walk(v)
         elif isinstance(node, (list, tuple)):
             for v in node:
@@ -207,6 +226,12 @@ def phrase_answer(question: str, deterministic: Dict) -> Dict:
     consumer keeps working whether or not a key is configured.
     """
     base = dict(deterministic)
+    # The retrieval layer echoes the caller's question verbatim. Returning raw
+    # markup is not exploitable through this frontend (JSON + nosniff, and React
+    # escapes on render), but an API should not hand back an executable payload
+    # just because today's client happens to be safe.
+    if isinstance(base.get("question"), str):
+        base["question"] = re.sub(r"[<>]", "", base["question"])[:500]
     base["llm"] = {"mode": "deterministic", "model": None, "guard": "not_invoked"}
 
     if not config.LLM_ENABLED:
@@ -242,6 +267,10 @@ def phrase_answer(question: str, deterministic: Dict) -> Dict:
 
     # ── The admissibility filter ─────────────────────────────────────────
     allowed = _fact_numbers(deterministic) | _BENIGN
+    # Belt and braces: strip anything the caller themselves supplied. A future
+    # retrieval field echoing input under an unlisted key would otherwise
+    # re-open the bypass silently.
+    allowed -= (_numbers_in(question) - _BENIGN)
     unverified = sorted(n for n in _numbers_in(text) if n not in allowed)
 
     if unverified:

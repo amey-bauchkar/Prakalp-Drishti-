@@ -3,6 +3,7 @@ import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles } from 'lucide-react';
 
 export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
+  const [tamperState, setTamperState] = useState({ kind: 'idle' });
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [lang, setLang] = useState('en');
   const [data, setData] = useState(null);
@@ -290,9 +291,19 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                   />
                   <button
                     onClick={async () => {
+                      // Result goes through React state, never innerHTML.
+                      //
+                      // This block used to build the outcome string with
+                      // `resEl.innerHTML = ...` and interpolate `inputVal`, which
+                      // is whatever the user typed into the field above. Entering
+                      // `<img src=x onerror=alert(1)>` executed it. That is DOM
+                      // XSS in the tamper-verification widget specifically — the
+                      // control whose whole purpose is proving a value was not
+                      // altered. React escapes interpolated text by default, so
+                      // rendering from state removes the injection point rather
+                      // than trying to filter it.
                       const inputVal = document.getElementById('tamperInput').value;
-                      const resEl = document.getElementById('tamperResult');
-                      resEl.innerHTML = '<span class="text-sky-400 font-bold animate-pulse">⏳ Checking proof against official database record...</span>';
+                      setTamperState({ kind: 'checking' });
                       try {
                         const docHash = data?.doc_hash || 'unknown';
                         const factId = activeFact.fact_id;
@@ -300,27 +311,45 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
                         const resp = await fetch(verifyUrl);
                         if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
                         const result = await resp.json();
-                        
+
                         const serverValue = result.value;
                         const proofValid = result.proof_valid;
                         const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
-                        
+
                         if (proofValid && valuesMatch) {
-                          resEl.innerHTML = `<span class="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>`;
+                          setTamperState({ kind: 'authentic' });
                         } else if (proofValid && !valuesMatch) {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">FAKE DATA DETECTED: Entered "${inputVal}" does not match audited value "${serverValue}". Edit rejected immediately!</span>`;
+                          setTamperState({ kind: 'tampered', entered: inputVal, audited: serverValue });
                         } else {
-                          resEl.innerHTML = `<span class="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>`;
+                          setTamperState({ kind: 'proof_failed' });
                         }
                       } catch (err) {
-                        resEl.innerHTML = `<span class="text-amber-400 font-bold">Verification check error: ${err.message}. Ensure backend is running.</span>`;
+                        setTamperState({ kind: 'error', message: err.message });
                       }
                     }}
                     className="btn-saffron-pill px-3.5 py-2 text-xs font-bold uppercase transition-all shrink-0"
                   > Validate Lineage Hash
                   </button>
                 </div>
-                <div id="tamperResult" className="text-[11px] font-mono min-h-6 pt-1"></div>
+                <div className="mt-2 text-[11.5px] leading-snug">
+                  {tamperState.kind === 'checking' && (
+                    <span className="text-sky-400 font-bold animate-pulse">Checking proof against official database record...</span>
+                  )}
+                  {tamperState.kind === 'authentic' && (
+                    <span className="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>
+                  )}
+                  {tamperState.kind === 'tampered' && (
+                    <span className="text-rose-400 font-bold">
+                      FAKE DATA DETECTED: Entered "{tamperState.entered}" does not match audited value "{tamperState.audited}". Edit rejected immediately!
+                    </span>
+                  )}
+                  {tamperState.kind === 'proof_failed' && (
+                    <span className="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>
+                  )}
+                  {tamperState.kind === 'error' && (
+                    <span className="text-amber-400 font-bold">Verification check error: {tamperState.message}. Ensure backend is running.</span>
+                  )}
+                </div>
               </div>
             </div>
 
