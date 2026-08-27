@@ -447,6 +447,117 @@ if s == 200:
           str(d.get("outbound_destinations")))
 
 # ─────────────────────────────────────────────────────────────────────────
+# 20. PRATIBIMB PINPOINT CV  (Section 7)
+# ─────────────────────────────────────────────────────────────────────────
+F = "PINPOINT-CV"
+s, d = call(f"/api/amey/satellite/{PID}")
+check(F, "endpoint responds 200", s == 200, f"status={s}")
+if s == 200:
+    fp, amb = d.get("project_footprint_change_pct"), d.get("ambient_terrain_change_pct")
+    check(F, "project_footprint_change_pct exposed", fp is not None, f"={fp}")
+    check(F, "ambient_terrain_change_pct exposed", amb is not None, f"={amb}")
+    check(F, "footprint is a percentage in [0,100]",
+          fp is None or 0 <= fp <= 100, f"={fp}")
+    check(F, "footprint and frame-wide figure are DIFFERENT metrics",
+          fp is None or d.get("surface_change_pct") is None or fp != d.get("surface_change_pct"),
+          f"footprint={fp} frame={d.get('surface_change_pct')}")
+    check(F, "reliability flag accompanies the footprint",
+          isinstance(d.get("footprint_reliable"), bool), str(d.get("footprint_reliable")))
+    check(F, "ROI shape declared", d.get("roi_shape") in ("disc", "corridor", None),
+          str(d.get("roi_shape")))
+    gsd = d.get("gsd_m_per_px")
+    check(F, "GSD computed, not the catalogue's hardcoded 0.8",
+          gsd is None or abs(gsd - 0.8) > 0.05, f"gsd={gsd}")
+
+# The masking maths is asserted directly, offline.
+import numpy as _np
+from analytics_engine.satellite_precision_cv import (
+    build_roi_weight, ground_sample_distance, vegetation_masks, structural_gain,
+)
+_gsd = ground_sample_distance(22.0, 16)
+check(F, "GSD at z16/lat22 is ~2.2 m/px, not 0.8", 2.0 < _gsd < 2.4, f"{_gsd:.3f}")
+_w, _core = build_roi_weight((800, 800), _gsd, core_radius_m=300.0)
+check(F, "ROI centre weight is 1.0", abs(float(_w[400, 400]) - 1.0) < 0.02, f"{_w[400,400]:.3f}")
+check(F, "ROI corner attenuated to ~15% (85% suppression)",
+      float(_w[0, 0]) < 0.20, f"{_w[0,0]:.3f}")
+check(F, "300 m core is ~135 px at this GSD, not 375",
+      120 < _core < 150, f"{_core:.1f}px")
+_wc, _ = build_roi_weight((800, 800), _gsd, core_radius_m=300.0,
+                          orientation_rad=0.0, elongation=4.0)
+check(F, "corridor mask extends along its bearing, not across it",
+      float(_wc[400, 700]) > float(_wc[700, 400]),
+      f"along={_wc[400,700]:.2f} across={_wc[700,400]:.2f}")
+
+# Vegetation logic: persistent green suppressed, green->structure preserved.
+_green = _np.zeros((64, 64, 3), _np.uint8); _green[:, :] = (60, 160, 60)
+_grey = _np.zeros((64, 64, 3), _np.uint8); _grey[:, :] = (150, 150, 150)
+_pers, _swing = vegetation_masks(_green, _green)
+check(F, "green in BOTH epochs marked persistent vegetation", bool(_pers.all()), "")
+_pers2, _swing2 = vegetation_masks(_green, _grey)
+check(F, "green -> non-green marked as swing, not persistent",
+      bool(_swing2.all()) and not bool(_pers2.any()), "")
+
+# ─────────────────────────────────────────────────────────────────────────
+# 21. ARTHA-NIVARAN CONTRACTOR 360  (Section 5)
+# ─────────────────────────────────────────────────────────────────────────
+F = "ARTHA-NIVARAN"
+s, d = call("/api/parth/portfolio")
+check(F, "portfolio endpoint responds 200", s == 200, f"status={s}")
+if s == 200 and d.get("available"):
+    check(F, "ingests all 2,207 projects", d.get("total_projects") == 2207,
+          str(d.get("total_projects")))
+    check(F, "reports 225 raw COMPANYNAME strings",
+          d.get("raw_company_name_strings") == 225, str(d.get("raw_company_name_strings")))
+    check(F, "resolves them to fewer distinct bodies (dedup works)",
+          0 < d.get("distinct_agencies", 0) < 225, str(d.get("distinct_agencies")))
+    dist = d.get("portfolio_solvency_distribution") or {}
+    for t in ("PRIME_CASH_RICH", "STABLE_INVESTMENT_GRADE", "HIGH_LEVERAGE_STRESS",
+              "SOVEREIGN_DIRECT_BUDGET_LINE"):
+        check(F, f"tier present: {t}", t in dist, "")
+    shares = sum(v.get("capex_share_pct", 0) for v in dist.values())
+    check(F, "tier capex shares sum to 100%", abs(shares - 100.0) < 1.5, f"{shares:.1f}%")
+    check(F, "total_capex_at_high_leverage_stress_cr exposed",
+          d.get("total_capex_at_high_leverage_stress_cr") is not None, "")
+    cov = d.get("solvency_coverage") or {}
+    check(F, "balance-sheet coverage is disclosed, not implied",
+          cov.get("capex_covered_pct") is not None, str(cov.get("capex_covered_pct")))
+    check(F, "unrated agencies are counted rather than tiered",
+          cov.get("agencies_unrated", 0) > 0, str(cov.get("agencies_unrated")))
+    dd = d.get("financial_delay_differential") or {}
+    check(F, "delay differential reported with sample sizes",
+          (not dd.get("available")) or dd.get("n_high_leverage_projects", 0) > 0,
+          f"n={dd.get('n_high_leverage_projects')}")
+    check(F, "differential is labelled association, not causation",
+          (not dd.get("available")) or "causation" in str(dd.get("interpretation", "")).lower(), "")
+
+s, d = call("/api/parth/agencies?limit=500")
+check(F, "agency directory responds 200", s == 200, f"status={s}")
+if s == 200:
+    rows = d.get("agencies") or []
+    check(F, "directory returns agencies", len(rows) > 20, f"{len(rows)}")
+    check(F, "every agency carries measured project metrics",
+          all("total_capex_cr" in a and "project_count" in a for a in rows), "")
+    check(F, "unrated agencies expose null ratios, never a placeholder number",
+          all(a.get("debt_to_equity") is None
+              for a in rows if a.get("solvency_tier") == "UNRATED"), "")
+    check(F, "rated agencies declare their data basis",
+          all(a.get("data_basis") == "indicative_reference"
+              for a in rows if a.get("debt_to_equity") is not None), "")
+    check(F, "acronyms not title-case mangled in the directory",
+          not any(a["agency_name"] in ("Nhai", "Ntpc", "Morth") for a in rows), "")
+
+    top = max(rows, key=lambda a: a.get("total_capex_cr", 0))
+    s2, d2 = call(f"/api/parth/agency/{top['agency_key']}/projects")
+    check(F, "drilldown responds for the largest agency", s2 == 200, f"status={s2}")
+    if s2 == 200:
+        projs = d2.get("projects") or []
+        check(F, "drilldown lists that agency's projects",
+              len(projs) == top["project_count"],
+              f"{len(projs)} vs {top['project_count']} expected")
+        check(F, "drilldown projects carry budget and overrun",
+              all("sanctioned_cr" in p and "revised_cr" in p for p in projs), "")
+
+# ─────────────────────────────────────────────────────────────────────────
 # REPORT
 # ─────────────────────────────────────────────────────────────────────────
 print()
