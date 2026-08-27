@@ -5,10 +5,7 @@ from typing import Dict, Any, List
 try:
     from .mock_projects import MOCK_PROJECTS_DATABASE, CONTRACTORS_DATABASE
 except (ImportError, ValueError):
-    try:
-        from modules.aditya.data.mock_projects import MOCK_PROJECTS_DATABASE, CONTRACTORS_DATABASE
-    except ImportError:
-        from app.data.mock_projects import MOCK_PROJECTS_DATABASE, CONTRACTORS_DATABASE
+    from modules.aditya.data.mock_projects import MOCK_PROJECTS_DATABASE, CONTRACTORS_DATABASE
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_ROOT = os.path.dirname(os.path.dirname(BASE_DIR))
