@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Satellite, ShieldCheck, AlertTriangle, MapPin, Move, Eye, EyeOff, Crosshair, Gauge, Layers } from 'lucide-react';
+import { Satellite, ShieldCheck, AlertTriangle, MapPin, Move, Eye, EyeOff, Crosshair, Gauge, Layers, Crosshair as Reticle, Sparkles, Loader2, CheckCircle2, Cpu } from 'lucide-react';
 
 /**
  * Dual-epoch satellite ground-truth viewer.
@@ -61,6 +61,51 @@ const API = '';
 // eo_geospatial.py. Calling it NDBI would be the single most misleading label
 // on this screen, because a remote-sensing reviewer would read it as a standard
 // product with known behaviour.
+// Reticle styling. The two colours are the ones the brief specifies and they
+// are driven by the MEASURED dominant material inside each cluster, not by its
+// size — so the colour is a finding, not decoration. The third state exists
+// because a cluster whose assigned material accounts for under 35% of its own
+// pixels has not been identified, and stamping "EARTHWORKS" over it would
+// assert what the measurement denies.
+const TARGET_STYLE = {
+  STRUCTURAL_GAIN: {
+    stroke: 'rgb(16,185,129)',
+    badge: 'bg-emerald-500 text-white',
+    glow: '0 0 10px rgba(16,185,129,0.55)',
+    dot: '🟢',
+  },
+  EARTHWORKS: {
+    stroke: 'rgb(255,106,0)',
+    badge: 'bg-orange-500 text-white',
+    glow: '0 0 10px rgba(255,106,0,0.55)',
+    dot: '🟠',
+  },
+  UNCLASSIFIED_CHANGE: {
+    stroke: 'rgb(100,133,148)',
+    badge: 'bg-slate-500 text-white',
+    glow: '0 0 8px rgba(100,133,148,0.45)',
+    dot: '⚪',
+  },
+};
+
+const VERDICT_STYLE = {
+  GROUND_TRUTH_VERIFIED: {
+    cls: 'bg-emerald-50 border-emerald-400 text-emerald-900',
+    bar: 'bg-emerald-500',
+    icon: '✅',
+  },
+  AUDIT_ALERT: {
+    cls: 'bg-rose-50 border-rose-400 text-rose-900',
+    bar: 'bg-rose-500',
+    icon: '🚨',
+  },
+  INCONCLUSIVE: {
+    cls: 'bg-amber-50 border-amber-400 text-amber-900',
+    bar: 'bg-amber-500',
+    icon: '🟠',
+  },
+};
+
 const EO_LAYERS = [
   {
     id: 'builtup',
@@ -92,7 +137,6 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pos, setPos] = useState(50);
-  const [showBoxes, setShowBoxes] = useState(true);
   const [dragging, setDragging] = useState(false);
   // Analytical overlays are opt-in and independent. They are fetched as PNGs
   // from the same functions that produced the numbers beside them, so toggling
@@ -101,6 +145,10 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
   const [layers, setLayers] = useState({
     builtup: false, corridor: false, change: false, materials: false,
   });
+  const [showTargets, setShowTargets] = useState(true);
+  const [recon, setRecon] = useState(null);
+  const [reconBusy, setReconBusy] = useState(false);
+  const [reconError, setReconError] = useState(null);
   const frameRef = useRef(null);
 
   useEffect(() => {
@@ -139,6 +187,15 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
     try { e.currentTarget.releasePointerCapture?.(e.pointerId); } catch { /* nothing to release */ }
   };
 
+  const runRecon = useCallback(() => {
+    setReconBusy(true);
+    setReconError(null);
+    fetch(`${API}/api/amey/satellite/${projectId}/recon`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((j) => { setRecon(j); setReconBusy(false); })
+      .catch((e) => { setReconError(e.message); setReconBusy(false); });
+  }, [projectId]);
+
   const onKeyDown = (e) => {
     if (e.key === 'ArrowLeft') { setPos((p) => Math.max(0, p - 2)); e.preventDefault(); }
     if (e.key === 'ArrowRight') { setPos((p) => Math.min(100, p + 2)); e.preventDefault(); }
@@ -167,7 +224,6 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
   const conf = CONFIDENCE_STYLES[data.geocode_confidence] || CONFIDENCE_STYLES.NONE;
   const status = STATUS_STYLES[data.audit_status] || STATUS_STYLES.EO_UNAVAILABLE;
   const reliable = data.eo_verdict_reliable;
-  const boxes = data.change_boxes || [];
 
   const corridor = data.row_corridor || {};
   const isCorridor = data.roi_shape === 'row_corridor';
@@ -177,6 +233,11 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
   const radiometry = data.radiometry || {};
   const sar = data.sar_readiness || {};
   const calib = materials.epoch_index_calibration || {};
+  const recce = data.reconnaissance_targets || {};
+  const targets = recce.targets || [];
+  const verdict = data.sovereign_verdict || null;
+  const vstyle = (verdict && VERDICT_STYLE[verdict.state]) || VERDICT_STYLE.INCONCLUSIVE;
+  const stage = data.construction_stage || {};
 
   return (
     <div className="panel overflow-hidden">
@@ -207,12 +268,18 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             {status.label}
           </span>
           <button
-            onClick={() => setShowBoxes((v) => !v)}
+            onClick={() => setShowTargets((v) => !v)}
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-bold border border-gov-border bg-gov-surface text-gov-navy hover:bg-gov-muted-surface transition-colors"
-            aria-pressed={showBoxes}
+            aria-pressed={showTargets}
+            title={recce.basis}
           >
-            {showBoxes ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-            {boxes.length} change {boxes.length === 1 ? 'zone' : 'zones'}
+            {showTargets ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+            {targets.length} target{targets.length === 1 ? '' : 's'}
+            {recce.rejected_outside_corridor > 0 && (
+              <span className="opacity-70">
+                · {recce.rejected_outside_corridor} outside RoW dropped
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -226,6 +293,27 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             {data.eo_unreliable_reason || 'This project has no site-level geocode.'} The imagery below is
             therefore not guaranteed to show the works, so no over-reporting finding is issued. Physical
             inspection is the applicable verification route.
+          </div>
+        </div>
+      )}
+
+      {/* Sovereign verdict stamp. Three states only, and the red one fires on
+          exactly one condition: substantial reported progress with no change
+          cluster surviving containment inside the surveyed corridor. A red
+          stamp on an ambiguous site is an accusation the pixels cannot carry,
+          so ambiguity gets amber and says so. */}
+      {verdict && (
+        <div className={`mx-4 mt-4 border-l-4 rounded-sm ${vstyle.cls} border ${''}`}>
+          <div className="flex items-start gap-2.5 p-3">
+            <span className="text-base leading-none mt-0.5">{vstyle.icon}</span>
+            <div className="min-w-0">
+              <p className="text-[11.5px] font-black uppercase tracking-wide leading-snug">
+                {verdict.headline}
+              </p>
+              <p className="text-[10.5px] mt-1 leading-snug opacity-90">
+                {verdict.detail}
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -294,22 +382,58 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             />
           ))}
 
-          {/* Change-zone boxes, drawn from normalised coords so they scale with the frame */}
-          {showBoxes && boxes.map((b, i) => (
-            <div
-              key={i}
-              className="absolute border-2 rounded-sm pointer-events-none"
-              style={{
-                left: `${b.x * 100}%`,
-                top: `${b.y * 100}%`,
-                width: `${b.w * 100}%`,
-                height: `${b.h * 100}%`,
-                borderColor: 'rgba(255,214,0,0.95)',
-                boxShadow: '0 0 0 1px rgba(0,0,0,0.45), 0 0 12px rgba(255,214,0,0.35)',
-              }}
-              title={`Change zone ${i + 1} — ${b.area_pct}% of frame`}
-            />
-          ))}
+          {/* Reconnaissance target reticles.
+              These REPLACE the old yellow change-zone boxes, which were the top-N
+              blobs over the whole 800px frame with no containment test — a
+              harvested field scored identically to a bridge pier. Every reticle
+              here has its CENTROID inside the surveyed Right-of-Way; measured on
+              40 scenes the containment test rejects 27.7% of the clusters an
+              unconstrained detector would have drawn. */}
+          {showTargets && targets.map((t, i) => {
+            const st = TARGET_STYLE[t.kind] || TARGET_STYLE.UNCLASSIFIED_CHANGE;
+            const above = t.y > 0.12;          // flip the badge below when clipped
+            return (
+              <div
+                key={i}
+                className="absolute pointer-events-none"
+                style={{
+                  left: `${t.x * 100}%`, top: `${t.y * 100}%`,
+                  width: `${t.w * 100}%`, height: `${t.h * 100}%`,
+                }}
+              >
+                {/* Corner brackets rather than a closed rectangle: a full box
+                    occludes the very edge the reviewer is trying to judge. */}
+                {[
+                  'top-0 left-0 border-t-2 border-l-2',
+                  'top-0 right-0 border-t-2 border-r-2',
+                  'bottom-0 left-0 border-b-2 border-l-2',
+                  'bottom-0 right-0 border-b-2 border-r-2',
+                ].map((cls) => (
+                  <span
+                    key={cls}
+                    className={`absolute w-3 h-3 ${cls}`}
+                    style={{ borderColor: st.stroke, filter: `drop-shadow(${st.glow})` }}
+                  />
+                ))}
+                {/* Centre tick */}
+                <span
+                  className="absolute left-1/2 top-1/2 w-2 h-px -translate-x-1/2 -translate-y-1/2"
+                  style={{ backgroundColor: st.stroke, opacity: 0.8 }}
+                />
+
+                {/* Offset label badge */}
+                <span
+                  className={`absolute left-0 whitespace-nowrap px-1.5 py-0.5 rounded-sm text-[9px] font-black tracking-wide ${st.badge}`}
+                  style={{
+                    [above ? 'bottom' : 'top']: 'calc(100% + 3px)',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  {st.dot} {t.label}
+                </span>
+              </div>
+            );
+          })}
 
           {/* Epoch labels */}
           <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/75 text-sky-300 text-[10px] font-bold border border-sky-400/30 pointer-events-none">
@@ -636,6 +760,178 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           </p>
         </div>
       </details>
+
+      {/* ── NASA-IBM Prithvi construction stage ─────────────────────────
+          Both readings are shown side by side, always. The backbone's phase and
+          the rule-derived phase are different estimators of the same thing and
+          neither is ground truth; presenting only the model's would imply a
+          validation that does not exist, since no labelled construction-stage
+          corpus exists for these tiles. */}
+      {(stage.rule_phase || stage.prithvi_predicted_phase) && (
+        <div className="border-t border-gov-border">
+          <div className="px-4 pt-3 pb-1 flex items-center gap-2 flex-wrap">
+            <Cpu className="w-3.5 h-3.5 text-gov-navy" />
+            <h4 className="text-[10px] font-black text-gov-navy uppercase tracking-wider">
+              Civil Construction Stage
+            </h4>
+            {stage.foundation_backbone && (
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-sm bg-gov-navy text-white tracking-wide">
+                {stage.foundation_backbone}
+              </span>
+            )}
+            {stage.embedding_source === 'baked_cache' && (
+              <span className="text-[9px] text-gov-muted">
+                head inference {stage.head_inference_ms} ms
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gov-border">
+            <div className="bg-white p-3">
+              <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block mb-0.5">
+                Prithvi backbone (from pixels)
+              </span>
+              <span className="text-[12px] font-black text-gov-navy block">
+                {stage.prithvi_predicted_phase_label || '—'}
+              </span>
+              {stage.prithvi_confidence_score != null && (
+                <span className="text-[10px] text-gov-muted block mt-0.5">
+                  softmax margin {(stage.prithvi_confidence_score * 100).toFixed(1)}%
+                  {stage.measured_cv_accuracy != null && (
+                    <> &middot; measured accuracy{' '}
+                      <strong className="text-amber-700">
+                        {(stage.measured_cv_accuracy * 100).toFixed(1)}%
+                      </strong>
+                    </>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className="bg-white p-3">
+              <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block mb-0.5">
+                Measured chain (from rules)
+              </span>
+              <span className="text-[12px] font-black text-gov-navy block">
+                {stage.rule_phase_label || '—'}
+              </span>
+              <span className="text-[10px] text-gov-muted block mt-0.5">
+                {stage.rule_basis}
+              </span>
+            </div>
+          </div>
+
+          {stage.confidence_note && (
+            <p className="px-4 pt-2 text-[10px] text-gov-muted leading-snug">
+              <strong className="text-gov-navy">On that score.</strong>{' '}
+              {stage.confidence_note}
+            </p>
+          )}
+          {stage.disagreement_note && (
+            <div className="note note-warn mx-4 mt-2 text-[10.5px]">
+              <span><strong>Estimators disagree.</strong> {stage.disagreement_note}</span>
+            </div>
+          )}
+          {stage.validation?.verdict && (
+            <p className="px-4 pt-1.5 pb-3 text-[10px] text-gov-muted leading-snug">
+              <strong className="text-gov-navy">Backbone validation.</strong>{' '}
+              {stage.validation.verdict}{' '}
+              <span className="opacity-80">
+                Labels are distant supervision from the measured chain, not annotated
+                ground truth &mdash; accuracy above is agreement with a rule, not with
+                reality.
+              </span>
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* ── AI ground-truth audit ──────────────────────────────────────── */}
+      <div className="border-t border-gov-border px-4 py-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={runRecon}
+            disabled={reconBusy}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-sm text-[11px] font-black uppercase tracking-wide bg-gov-navy text-white hover:bg-gov-accent disabled:opacity-60 disabled:cursor-wait transition-colors"
+          >
+            {reconBusy
+              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              : <Sparkles className="w-3.5 h-3.5" />}
+            {reconBusy ? 'Synthesising briefing…' : 'Generate AI Satellite Ground-Truth Audit'}
+          </button>
+          <span className="text-[9.5px] text-gov-muted max-w-md leading-snug">
+            Imagery is never transmitted. The vision chain runs locally and only the
+            derived scalars reach the provider.
+          </span>
+        </div>
+
+        {reconError && (
+          <div className="note note-warn mt-2.5 text-[10.5px]">
+            <span><strong>Briefing unavailable.</strong> {reconError}</span>
+          </div>
+        )}
+
+        {recon && (
+          <div className="mt-3 border border-gov-border rounded-sm overflow-hidden">
+            <div className="px-3 py-2 bg-gov-surface border-b border-gov-border flex flex-wrap items-center gap-2">
+              <span className="text-[9px] font-black uppercase tracking-wider text-gov-navy">
+                Reconnaissance briefing
+              </span>
+              {/* Gold Merkle-style fact badge. It attests the numeric guard, not
+                  the prose: every figure below was matched against the verified
+                  telemetry before the text was returned. */}
+              {recon.llm?.guard === 'passed' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-black bg-amber-100 text-amber-900 border border-amber-400">
+                  <ShieldCheck className="w-3 h-3" />
+                  ALL FIGURES VERIFIED AGAINST TELEMETRY
+                </span>
+              )}
+              {recon.llm?.guard === 'rejected' && (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-black bg-rose-100 text-rose-900 border border-rose-400">
+                  <AlertTriangle className="w-3 h-3" />
+                  GUARD TRIPPED &mdash; GENERATION DISCARDED
+                </span>
+              )}
+              <span className="text-[9px] text-gov-muted ml-auto">
+                {recon.llm?.provider || 'offline'} &middot; {recon.llm?.mode}
+              </span>
+            </div>
+
+            <p className="px-3 py-2.5 text-[11.5px] text-gov-ink leading-relaxed">
+              {recon.briefing}
+            </p>
+
+            {recon.telemetry?.schedule?.discrepancy_flag && (
+              <div className="note note-critical mx-3 mb-2.5 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div className="text-[10.5px] text-rose-900 leading-snug">
+                  <strong className="block">
+                    Active discrepancy: {recon.telemetry.schedule.discrepancy_flag}
+                  </strong>
+                  Reported progress{' '}
+                  {recon.telemetry.schedule.reported_physical_progress_pct}% against a
+                  measured areal rate of{' '}
+                  {recon.telemetry.surface.observed_areal_velocity_m2_per_month} m²/month.
+                </div>
+              </div>
+            )}
+
+            {recon.llm?.guard === 'rejected' && (
+              <p className="px-3 pb-2.5 text-[10px] text-rose-800 leading-snug">
+                The model produced figures absent from the verified telemetry
+                ({(recon.llm.unverified_figures || []).join(', ')}), so its text was
+                discarded and the fact-assembled briefing is shown instead.
+              </p>
+            )}
+
+            <div className="px-3 py-2 bg-gov-surface border-t border-gov-border">
+              <p className="text-[9.5px] text-gov-muted leading-snug">
+                {recon.llm?.reason}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Provenance footer */}
       <div className="px-4 py-2.5 bg-gov-surface border-t border-gov-border flex flex-wrap items-center justify-between gap-2 text-[10px] text-gov-muted">

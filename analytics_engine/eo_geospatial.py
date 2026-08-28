@@ -853,6 +853,17 @@ def analyze_project_eo(
     velocity = construction_velocity(change.change_mask, corridor, gsd, use_bearing)
     pace = pace_against_dpr(velocity, planned_months, physical_progress_pct)
 
+    # Reconnaissance targets are computed against change.roi_weight -- the SAME
+    # field the detector used -- so the boxes drawn on screen and the footprint
+    # percentage beside them are constrained by one geometry. Deriving them from
+    # a separately-built mask is what produced the 0 m2/month corridor defect.
+    bias = materials.get("epoch_index_calibration")
+    roi_w = change.roi_weight if change.roi_weight is not None else \
+        np.where(corridor.mask, 1.0, 0.15).astype(np.float32)
+    targets = detect_targets(change.change_mask, roi_w, rrn.normalised_after,
+                             gsd, bias=bias)
+    verdict = sovereign_verdict(targets, velocity, physical_progress_pct)
+
     return {
         "gsd_m_per_px": round(gsd, 3),
         "epochs": {"before": EPOCH_BEFORE, "after": EPOCH_AFTER,
@@ -893,5 +904,228 @@ def analyze_project_eo(
         "materials": materials,
         "velocity": velocity,
         "pace_vs_dpr": pace,
+        "targets": targets,
+        "verdict": verdict,
         "sar": sar_readiness(bool(change.footprint_reliable), month),
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 8. RECONNAISSANCE TARGETS
+# ══════════════════════════════════════════════════════════════════════════
+
+# Centroid containment threshold against the ROI weight field. Inside the
+# statutory buffer the field is 1.0; outside it is 0.15. A cut at 0.55 sits
+# between them, so a blob is admitted only when its CENTRE OF MASS lies within
+# the surveyed Right-of-Way.
+#
+# Centroid rather than overlap is the deliberate choice. An overlap test admits
+# a two-hectare field that happens to graze the corridor edge, which is exactly
+# the farmland false positive this exists to eliminate; the centroid test admits
+# it only if the bulk of the object is actually on the alignment.
+TARGET_ROI_MIN = 0.55
+
+# Colours are BGR for OpenCV, and are the two the interface specifies.
+TARGET_COLOURS = {
+    "STRUCTURAL_GAIN": (129, 185, 16),      # emerald  RGB(16,185,129)
+    "EARTHWORKS": (0, 106, 255),            # saffron  RGB(255,106,0)
+    "UNCLASSIFIED_CHANGE": (148, 133, 100), # slate    RGB(100,133,148)
+}
+
+MIN_TARGET_AREA_PX = 40      # below this a blob is JPEG speckle, not a work front
+MAX_TARGETS = 12
+
+# Minimum share of a cluster that must actually BE the material assigned before
+# the label asserts it. Without this floor a blob whose pixels are 10% soil and
+# 90% something else was still stamped "EARTHWORKS GRADING - 10% CONF", which
+# reads as a finding while the measurement says the opposite. Below the floor
+# the cluster is reported as detected-but-unclassified, in neutral slate, and
+# is excluded from the structural-gain total that drives the green verdict.
+MIN_MATERIAL_PURITY = 0.35
+
+
+@dataclass
+class Target:
+    x: float
+    y: float
+    w: float
+    h: float                                        # normalised 0..1
+    area_px: int
+    area_m2: float
+    kind: str                                       # STRUCTURAL_GAIN | EARTHWORKS
+    confidence: float
+    label: str
+    dominant_class: str
+    centroid_roi_weight: float
+
+
+def detect_targets(
+    change_mask: np.ndarray,
+    roi_weight: np.ndarray,
+    after_bgr: np.ndarray,
+    gsd_m_per_px: float,
+    bias: Optional[Dict[str, float]] = None,
+) -> Dict[str, Any]:
+    """Corridor-contained change clusters, classified by what they are made of.
+
+    Two filters, and the count rejected by each is reported so "zero farmland
+    boxes" is a measured outcome rather than a claim:
+
+      1. CONTAINMENT. The blob centroid must sit at ROI weight >= 0.55, i.e.
+         inside the surveyed RoW. Crop harvesting, village rooftops and the
+         road running past the site are outside the buffer and are dropped
+         whole, however large or however much they changed.
+
+      2. SUBSTANCE. Below MIN_TARGET_AREA_PX the cluster is JPEG ringing on a
+         field boundary rather than a work front.
+
+    Surviving clusters are typed by the material actually present in the AFTER
+    epoch inside the blob -- concrete or asphalt is a structural gain, exposed
+    soil is earthworks. The type drives the colour, so the colour is a
+    measurement rather than a decoration.
+    """
+    h, w = change_mask.shape[:2]
+    gsd = max(float(gsd_m_per_px), 1e-6)
+    n, labels, stats, centroids = cv2.connectedComponentsWithStats(
+        (change_mask > 0).astype(np.uint8), connectivity=8)
+
+    cls = classify_materials(after_bgr, roi_weight >= TARGET_ROI_MIN, bias=bias)
+    lab = cls["labels"]
+    idx = {c: i for i, c in enumerate(MATERIAL_CLASSES)}
+
+    targets: List[Target] = []
+    rejected_outside = 0
+    rejected_small = 0
+
+    order = sorted(range(1, n), key=lambda i: -stats[i, cv2.CC_STAT_AREA])
+    for i in order:
+        x, y, bw, bh, area = stats[i]
+        cx, cy = centroids[i]
+        yy, xx = int(round(cy)), int(round(cx))
+        yy = min(max(yy, 0), h - 1)
+        xx = min(max(xx, 0), w - 1)
+
+        # -- the containment test --------------------------------------------
+        if roi_weight[yy, xx] < TARGET_ROI_MIN:
+            rejected_outside += 1
+            continue
+        if area < MIN_TARGET_AREA_PX:
+            rejected_small += 1
+            continue
+        if len(targets) >= MAX_TARGETS:
+            continue
+
+        blob = (labels == i)
+        engineered = int(((lab == idx["concrete_structure"]) & blob).sum()) + \
+                     int(((lab == idx["asphalt_bitumen"]) & blob).sum())
+        soil = int(((lab == idx["bare_soil_earthwork"]) & blob).sum())
+        total = max(int(blob.sum()), 1)
+
+        if engineered >= soil:
+            kind, dom, share = "STRUCTURAL_GAIN", "concrete/asphalt", engineered / total
+        else:
+            kind, dom, share = "EARTHWORKS", "exposed soil", soil / total
+
+        # The purity floor. A cluster whose assigned material accounts for less
+        # than MIN_MATERIAL_PURITY of its own pixels has not been identified,
+        # and saying "EARTHWORKS" over it would assert what the measurement
+        # denies. It is still a real detected change and is still drawn -- just
+        # not typed.
+        if share < MIN_MATERIAL_PURITY:
+            kind, dom = "UNCLASSIFIED_CHANGE", "no dominant material"
+
+        area_m2 = float(area) * gsd * gsd
+        # Confidence is the share of the cluster whose material agrees with the
+        # type assigned. It is a purity figure, not a calibrated probability,
+        # and is named as such wherever it is displayed.
+        conf = round(min(max(share, 0.0), 1.0) * 100.0, 1)
+        if kind == "STRUCTURAL_GAIN":
+            label = "VERIFIED STRUCTURAL GAIN - +{:,.0f} m2".format(area_m2)
+        elif kind == "EARTHWORKS":
+            label = "EARTHWORKS GRADING - {:.0f}% CONF".format(conf)
+        else:
+            label = "CHANGE DETECTED - MATERIAL UNRESOLVED ({:,.0f} m2)".format(area_m2)
+
+        targets.append(Target(
+            x=round(float(x) / w, 4), y=round(float(y) / h, 4),
+            w=round(float(bw) / w, 4), h=round(float(bh) / h, 4),
+            area_px=int(area), area_m2=round(area_m2, 1),
+            kind=kind, confidence=conf, label=label, dominant_class=dom,
+            centroid_roi_weight=round(float(roi_weight[yy, xx]), 3),
+        ))
+
+    return {
+        "targets": [t.__dict__ for t in targets],
+        "target_count": len(targets),
+        "rejected_outside_corridor": rejected_outside,
+        "rejected_below_area_floor": rejected_small,
+        "containment_threshold": TARGET_ROI_MIN,
+        "min_area_px": MIN_TARGET_AREA_PX,
+        "min_material_purity": MIN_MATERIAL_PURITY,
+        "unclassified_count": sum(1 for t in targets if t.kind == "UNCLASSIFIED_CHANGE"),
+        "total_structural_gain_m2": round(
+            sum(t.area_m2 for t in targets if t.kind == "STRUCTURAL_GAIN"), 1),
+        "total_earthworks_m2": round(
+            sum(t.area_m2 for t in targets if t.kind == "EARTHWORKS"), 1),
+        "basis": (
+            "Connected-component clusters of the structural-change mask whose "
+            "CENTROID lies at ROI weight >= {} (inside the surveyed Right-of-Way) "
+            "and whose area exceeds {} px. {} cluster(s) were rejected for falling "
+            "outside the corridor and {} for being below the area floor. Type and "
+            "colour follow the material measured inside each cluster in the AFTER "
+            "epoch, not the size of the change.".format(
+                TARGET_ROI_MIN, MIN_TARGET_AREA_PX, rejected_outside, rejected_small)),
+    }
+
+
+def sovereign_verdict(
+    targets: Dict[str, Any],
+    velocity: Dict[str, Any],
+    claimed_progress_pct: Optional[float],
+) -> Dict[str, Any]:
+    """The traffic-light stamp shown above the imagery.
+
+    Deliberately only three states, and the red one is reserved for the single
+    condition that is actually a finding: substantial reported progress with no
+    measurable structural change inside the surveyed corridor. Everything else
+    is green (corroborated) or amber (nothing conclusive either way), because a
+    red stamp on an ambiguous site is an accusation the pixels cannot support.
+    """
+    gain = float(targets.get("total_structural_gain_m2") or 0.0)
+    n = int(targets.get("target_count") or 0)
+    areal = float(velocity.get("areal_velocity_m2_per_month") or 0.0)
+    prog = float(claimed_progress_pct or 0.0)
+
+    if n == 0 and areal <= 0.0 and prog >= 20.0:
+        return {
+            "state": "AUDIT_ALERT",
+            "icon": "ALERT",
+            "headline": ("AUDIT ALERT: 0.0 m2 surface change found "
+                         "(Contractor claimed {:.0f}%).".format(prog)),
+            "detail": ("No change cluster survives containment inside the surveyed "
+                       "Right-of-Way across the epoch window, while the executing "
+                       "agency reports substantial physical progress. Resolve by "
+                       "inspection: verify the geocode, the epoch dates and the "
+                       "works schedule before treating this as over-reporting."),
+        }
+    if gain > 0.0 and n > 0:
+        return {
+            "state": "GROUND_TRUTH_VERIFIED",
+            "icon": "VERIFIED",
+            "headline": ("GROUND TRUTH VERIFIED: Physical pavement corroborates "
+                         "progress."),
+            "detail": ("{} change cluster(s) inside the corridor, {:,.0f} m2 of them "
+                       "carrying concrete or asphalt in the 2023 epoch. Corroboration "
+                       "of activity, not a measurement of percentage "
+                       "completion.".format(n, gain)),
+        }
+    return {
+        "state": "INCONCLUSIVE",
+        "icon": "PARTIAL",
+        "headline": ("EARTHWORKS ONLY: activity present, no paved surface "
+                     "confirmed."),
+        "detail": ("{} cluster(s) inside the corridor, none dominated by concrete "
+                   "or asphalt. Consistent with an early construction phase, and "
+                   "equally consistent with grading that did not progress. Not a "
+                   "finding either way.".format(n)),
     }

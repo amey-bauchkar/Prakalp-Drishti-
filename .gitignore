@@ -58,3 +58,13 @@ paimana_extracted/satellite_data/imagery_test/
 # PragatiSaarthiEngine.archive_briefing(). Content-addressed and regenerable;
 # the deployment host keeps the durable copy, not the repo.
 artifacts/briefings/
+
+# NASA-IBM Prithvi foundation weights (433 MB, Apache-2.0).
+# Fetched from https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-1.0-100M
+# rather than vendored: a third-party binary of this size does not belong in a
+# government audit repository's history, where it would be re-downloaded on
+# every clone and could never be removed. The derived artifacts ARE committed
+# (stage_head.json, prithvi_embeddings.npz), so a fresh clone serves cached
+# stage predictions without the weights; only live re-encoding of new imagery
+# needs them.
+analytics_engine/models/prithvi/*.pt
