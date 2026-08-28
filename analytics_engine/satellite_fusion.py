@@ -18,6 +18,7 @@ satellite_pipeline/batch_precision_change_detection.py. No CV runs here.
 import os
 import re
 import json
+from datetime import datetime
 import hashlib
 import numpy as np
 import pandas as pd
@@ -28,6 +29,72 @@ DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS
 CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
 _SAFE_PID = re.compile(r"[^A-Za-z0-9_-]")
 IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
+
+MASTER_DB_PATH = os.path.join(BASE_DIR, "paimana_extracted",
+                              "PAIMANA_MASTER_PROJECTS_DATABASE.json")
+
+_SCHEDULE_INDEX: Optional[Dict[str, float]] = None
+
+
+def _parse_dmy(value: Any) -> Optional[datetime]:
+    if not value:
+        return None
+    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
+        try:
+            return datetime.strptime(str(value).strip()[:10], fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def _schedule_index() -> Dict[str, float]:
+    """project_id -> sanctioned duration in months, from the master record.
+
+    SanctionDate to OriginalEndDate, which is the duration the sanction actually
+    committed to. StartDate is null on all 2,207 rows so it cannot be used, and
+    RevisedDate is the slipped date -- measuring pace against a revised target
+    would grade every project against the deadline it already missed its way to.
+    2,153 of 2,207 rows carry both dates; the remaining 54 get no pace verdict.
+    """
+    global _SCHEDULE_INDEX
+    if _SCHEDULE_INDEX is not None:
+        return _SCHEDULE_INDEX
+    idx: Dict[str, float] = {}
+    try:
+        with open(MASTER_DB_PATH, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        rows = payload if isinstance(payload, list) else payload.get("projects", [])
+        for r in rows:
+            pid = str(r.get("ProjectId") or r.get("project_id") or "").strip()
+            a, b = _parse_dmy(r.get("SanctionDate")), _parse_dmy(r.get("OriginalEndDate"))
+            if pid and a and b and b > a:
+                idx[pid] = round((b - a).days / 30.4375, 1)
+    except Exception:
+        idx = {}
+    _SCHEDULE_INDEX = idx
+    return idx
+
+
+def _planned_months(cat: Dict[str, Any]) -> Optional[float]:
+    """Sanctioned duration in months for this project, or None.
+
+    Returns None rather than a default when the schedule is unknown:
+    pace_against_dpr declines to compute on a missing duration, and a
+    fabricated 48-month fallback would have produced a confident pace verdict
+    for every project whose schedule is simply not recorded.
+    """
+    for k in ("planned_duration_months", "sanctioned_duration_months",
+              "original_duration_months", "planned_months"):
+        v = cat.get(k)
+        if v not in (None, "", 0):
+            try:
+                f = float(v)
+                if f > 0:
+                    return f
+            except (TypeError, ValueError):
+                continue
+    return _schedule_index().get(str(cat.get("project_id", "")))
+
 
 class SatelliteFusionEngine:
     def __init__(self):
@@ -83,6 +150,9 @@ class SatelliteFusionEngine:
             "roi_radius_m": None, "gsd_m_per_px": None,
             "vegetation_excluded_pct": None,
             "roi_shape": None, "corridor_bearing_deg": None, "corridor_coherence": None,
+            "row_corridor": None, "radiometry": None, "material_transition": None,
+            "construction_velocity": None, "pace_vs_dpr": None,
+            "sar_readiness": None,
         }
         try:
             import cv2
@@ -98,21 +168,33 @@ class SatelliteFusionEngine:
             cat = self.catalog.get(pid, {})
             geo = self.geo.get(pid, {}) if hasattr(self, "geo") else {}
             lat = geo.get("latitude") or cat.get("latitude") or 22.0
-            gsd = ground_sample_distance(float(lat), zoom_for_sector(cat.get("sector")))
 
-            r = detect_change(b, a, gsd_m_per_px=gsd,
-                              asset_geometry=cat.get("asset_geometry", "POINT"))
+            from analytics_engine.eo_geospatial import analyze_project_eo
+            eo = analyze_project_eo(
+                b, a, latitude=float(lat), sector=cat.get("sector"),
+                asset_geometry=cat.get("asset_geometry", "POINT"),
+                planned_months=_planned_months(cat),
+                physical_progress_pct=cat.get("claimed_progress_pct"),
+            )
+            co, fp = eo["corridor"], eo["footprint"]
             out = {
-                "project_footprint_change_pct": r.project_footprint_change_pct,
-                "ambient_terrain_change_pct": r.ambient_terrain_change_pct,
-                "footprint_reliable": r.footprint_reliable,
-                "footprint_caveat": r.footprint_caveat,
-                "roi_radius_m": r.roi_radius_m,
-                "gsd_m_per_px": r.gsd_m_per_px,
-                "vegetation_excluded_pct": r.vegetation_excluded_pct,
-                "roi_shape": r.roi_shape,
-                "corridor_bearing_deg": r.corridor_bearing_deg,
-                "corridor_coherence": r.corridor_coherence,
+                "project_footprint_change_pct": fp["project_footprint_change_pct"],
+                "ambient_terrain_change_pct": fp["ambient_terrain_change_pct"],
+                "footprint_reliable": fp["reliable"],
+                "footprint_caveat": fp["caveat"],
+                "roi_radius_m": co["half_width_m"],
+                "gsd_m_per_px": eo["gsd_m_per_px"],
+                "vegetation_excluded_pct": fp["vegetation_excluded_pct"],
+                "roi_shape": co["geometry"],
+                "corridor_bearing_deg": co["bearing_deg"],
+                "corridor_coherence": co["orientation_coherence"],
+                # ── industry-grade EO layer ──────────────────────────────
+                "row_corridor": co,
+                "radiometry": eo["radiometry"],
+                "material_transition": eo["materials"],
+                "construction_velocity": eo["velocity"],
+                "pace_vs_dpr": eo["pace_vs_dpr"],
+                "sar_readiness": eo["sar"],
             }
         except Exception as e:
             out = dict(blank, footprint_caveat=f"Precision CV unavailable: {type(e).__name__}")
@@ -195,7 +277,11 @@ class SatelliteFusionEngine:
             "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg" if has_before else None,
             "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg" if has_after else None,
             "has_dual_epoch_coverage": has_before and has_after,
-            "resolution_m": 0.8,
+            # Was hardcoded to 0.8 m, which is wrong by roughly 3x and made every
+            # metre-denominated figure downstream wrong with it. The true value is
+            # the Web Mercator ground sample distance at this project's own
+            # latitude and zoom, so it is read back from the chain that used it.
+            "resolution_m": self._precision_metrics(pid).get("gsd_m_per_px"),
             "baseline_vintage": "2018-02",
             "current_vintage": "2023-01",
             "audit_hash": hashlib.sha256(

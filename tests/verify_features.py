@@ -28,6 +28,21 @@ def call(path, tok=None, method="GET", body=None, timeout=180):
         return 0, str(e)
 
 
+def call_binary(path, timeout=180):
+    """Status + byte length for endpoints that do not return JSON.
+
+    call() decodes every response as JSON, so a perfectly good image/png came
+    back as status 0 and four passing layer endpoints were reported as broken.
+    """
+    try:
+        with urllib.request.urlopen(B + path, timeout=timeout) as resp:
+            return resp.status, resp.headers.get("Content-Type", ""), len(resp.read())
+    except urllib.error.HTTPError as e:
+        return e.code, e.headers.get("Content-Type", ""), 0
+    except Exception:
+        return 0, "", 0
+
+
 def check(feature, name, cond, detail=""):
     RESULTS.append((feature, name, bool(cond), detail))
 
@@ -463,7 +478,8 @@ if s == 200:
           f"footprint={fp} frame={d.get('surface_change_pct')}")
     check(F, "reliability flag accompanies the footprint",
           isinstance(d.get("footprint_reliable"), bool), str(d.get("footprint_reliable")))
-    check(F, "ROI shape declared", d.get("roi_shape") in ("disc", "corridor", None),
+    check(F, "ROI shape declared",
+          d.get("roi_shape") in ("row_corridor", "site_envelope", None),
           str(d.get("roi_shape")))
     gsd = d.get("gsd_m_per_px")
     check(F, "GSD computed, not the catalogue's hardcoded 0.8",
@@ -722,6 +738,280 @@ if s == 200:
                  body={"agency_name": "No Such Agency Ltd",
                        "base_cost_cr": 100.0, "base_time_days": 100.0})
     check(F, "unknown agency rejected with 404, not a guess", s3 == 404, f"status={s3}")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# PRATIBIMB EO — corridor geometry, radiometry, materials, velocity, SAR
+#
+# These assert on physics and on internal consistency, not on the presence of
+# a key. Several of them exist because the same defect was actually shipped:
+#   * a corridor that captured nothing and reported 0 m2/month, because the
+#     detector fitted its own ellipse while velocity intersected a hard buffer;
+#   * resolution_m hardcoded to 0.8 when the true GSD is ~2.2, which made every
+#     metre-denominated figure wrong by 3x;
+#   * a reverse-transition mask that could never fire, hidden by & binding
+#     tighter than |;
+#   * pace suppressed on exactly the projects where reported progress had no
+#     measurable surface change -- the finding, deleted by its own gate.
+# ─────────────────────────────────────────────────────────────────────────
+F = "PRATIBIMB-EO"
+s, d = call(f"/api/amey/satellite/{PID}")
+check(F, "satellite audit responds 200", s == 200, f"status={s}")
+if s == 200 and isinstance(d, dict):
+    gsd = d.get("gsd_m_per_px") or d.get("resolution_m")
+    check(F, "GSD is measured, not the old hardcoded 0.8",
+          isinstance(gsd, (int, float)) and gsd != 0.8, f"gsd={gsd}")
+    check(F, "GSD physically plausible for the tile zoom (0.3-10 m/px)",
+          isinstance(gsd, (int, float)) and 0.3 <= gsd <= 10.0, f"gsd={gsd}")
+
+    co = d.get("row_corridor") or {}
+    check(F, "corridor block present", bool(co), "")
+    check(F, "corridor geometry is one of the two declared shapes",
+          co.get("geometry") in ("row_corridor", "site_envelope"),
+          f"geometry={co.get('geometry')}")
+    check(F, "roi_shape agrees with the corridor block",
+          d.get("roi_shape") == co.get("geometry"),
+          f"{d.get('roi_shape')} vs {co.get('geometry')}")
+    check(F, "half-width positive and within statutory range",
+          isinstance(co.get("half_width_m"), (int, float)) and 0 < co["half_width_m"] <= 400,
+          f"half={co.get('half_width_m')}")
+    if gsd:
+        expect_px = co.get("half_width_m", 0) / gsd
+        check(F, "half-width in px consistent with half-width in m at this GSD",
+              abs(co.get("half_width_px", 0) - expect_px) <= 0.2,
+              f"{co.get('half_width_px')} vs {expect_px:.2f}")
+    check(F, "corridor covers a real fraction of the frame",
+          0.0 < (co.get("frame_coverage_frac") or 0) <= 1.0,
+          f"cov={co.get('frame_coverage_frac')}")
+    check(F, "coherence gate is disclosed with the geometry it selected",
+          isinstance(co.get("coherence_gate"), (int, float))
+          and isinstance(co.get("orientation_coherence"), (int, float)),
+          "")
+    check(F, "a corridor is only fitted above the coherence gate",
+          co.get("geometry") != "row_corridor"
+          or co.get("orientation_coherence", 0) >= co.get("coherence_gate", 1),
+          f"coh={co.get('orientation_coherence')} gate={co.get('coherence_gate')}")
+    check(F, "centreline provenance states the alignment is estimated",
+          "estimated" in str(co.get("basis", "")).lower()
+          or "site envelope" in str(co.get("basis", "")).lower(), "")
+
+    ra = d.get("radiometry") or {}
+    check(F, "radiometry reports the method actually applied", bool(ra.get("method")), "")
+    check(F, "RRN is monotone: residual never increased",
+          ra.get("residual_after", 0) <= ra.get("residual_before", 0) + 1e-6,
+          f"{ra.get('residual_before')} -> {ra.get('residual_after')}")
+    check(F, "PIF selection percentile reported as a parameter, not an outcome",
+          ra.get("pif_selection_percentile") is not None
+          and "pif_fraction" not in ra, "")
+    check(F, "PIF scene-quality residual is a real DN figure",
+          isinstance(ra.get("pif_residual_dn"), (int, float))
+          and ra["pif_residual_dn"] >= 0, f"={ra.get('pif_residual_dn')}")
+    check(F, "per-channel gains bounded away from a degenerate fit",
+          all(0.2 <= g <= 5.0 for g in (ra.get("channel_gains_bgr") or [1, 1, 1])),
+          f"gains={ra.get('channel_gains_bgr')}")
+
+    mt = d.get("material_transition") or {}
+    check(F, "material transition present", bool(mt), "")
+    for k in ("natural_to_engineered_pct", "engineered_to_natural_pct",
+              "net_engineered_gain_pct"):
+        check(F, f"{k} is a real percentage",
+              isinstance(mt.get(k), (int, float)) and -100.0 <= mt[k] <= 100.0,
+              f"{k}={mt.get(k)}")
+    check(F, "net equals forward minus reverse",
+          abs((mt.get("net_engineered_gain_pct", 0))
+              - (mt.get("natural_to_engineered_pct", 0)
+                 - mt.get("engineered_to_natural_pct", 0))) < 0.01,
+          f"net={mt.get('net_engineered_gain_pct')}")
+    check(F, "reverse transition can actually fire (the & / | precedence bug)",
+          mt.get("engineered_to_natural_pct") is not None, "")
+    check(F, "class shares sum to <= 100% in both epochs",
+          sum((mt.get("before_class_share_pct") or {}).values()) <= 100.5
+          and sum((mt.get("after_class_share_pct") or {}).values()) <= 100.5, "")
+    st_ = mt.get("stability") or {}
+    check(F, "null test recorded: identical frames yield zero transition",
+          st_.get("identical_frame_transition_pct") == 0.0,
+          f"={st_.get('identical_frame_transition_pct')}")
+    check(F, "resolution artefact is bounded by measurement, not asserted",
+          isinstance(st_.get("resolution_artefact_bound_pct"), (int, float))
+          and st_["resolution_artefact_bound_pct"] > 0, "")
+    check(F, "thresholds declared as rules, not claimed as trained accuracy",
+          "not a trained model" in str(mt.get("caveat", "")).lower()
+          or "declared decision rules" in str(mt.get("caveat", "")).lower(), "")
+    cal = mt.get("epoch_index_calibration") or {}
+    check(F, "epoch calibration names its reference set",
+          bool(cal.get("reference")), f"={cal.get('reference')}")
+
+    ve = d.get("construction_velocity") or {}
+    check(F, "velocity present", bool(ve), "")
+    check(F, "areal velocity non-negative",
+          (ve.get("areal_velocity_m2_per_month") or 0) >= 0,
+          f"={ve.get('areal_velocity_m2_per_month')}")
+    check(F, "areal velocity reconciles with changed area over the span",
+          abs((ve.get("changed_area_m2", 0) / max(ve.get("epoch_span_months", 1), 1e-6))
+              - (ve.get("areal_velocity_m2_per_month") or 0)) < 1.0, "")
+    check(F, "corridor utilisation is a percentage",
+          0.0 <= (ve.get("corridor_utilisation_pct") or 0) <= 100.0,
+          f"={ve.get('corridor_utilisation_pct')}")
+    check(F, "linear velocity only defined for a fitted corridor",
+          ve.get("linear_velocity_km_per_month") is None
+          or co.get("geometry") == "row_corridor", "")
+    if ve.get("linear_velocity_km_per_month") is not None:
+        check(F, "linear pace publishes the tile-footprint ceiling that bounds it",
+              isinstance(ve.get("max_observable_km_per_month"), (int, float))
+              and ve["max_observable_km_per_month"] > 0,
+              f"={ve.get('max_observable_km_per_month')}")
+        check(F, "linear pace never exceeds its own observation ceiling",
+              ve["linear_velocity_km_per_month"] <= ve["max_observable_km_per_month"] + 1e-6,
+              f"{ve['linear_velocity_km_per_month']} > {ve.get('max_observable_km_per_month')}")
+        check(F, "scope states the figure covers the imaged segment, not the route",
+              "imaged segment" in str(ve.get("scope", "")).lower(),
+              f"scope={str(ve.get('scope'))[:60]}")
+        check(F, "saturation against the frame edge is flagged, not hidden",
+              isinstance(ve.get("extent_saturated"), bool), "")
+    check(F, "changed area cannot exceed the corridor it was measured in",
+          (ve.get("changed_area_m2") or 0) <= (co.get("area_m2") or 0) + 1.0,
+          f"{ve.get('changed_area_m2')} vs {co.get('area_m2')}")
+
+    pa = d.get("pace_vs_dpr") or {}
+    check(F, "pace block present", bool(pa), "")
+    if pa.get("available"):
+        check(F, "pace ratio equals observed over required",
+              abs(pa["pace_ratio"] - pa["observed_progress_pct_per_month"]
+                  / max(pa["required_progress_pct_per_month"], 1e-9)) < 0.01, "")
+        check(F, "pace verdict consistent with the ratio",
+              (pa["pace_ratio"] >= 1.0) == (pa["pace_verdict"] == "ON_OR_AHEAD_OF_PACE"),
+              f"{pa['pace_ratio']} / {pa['pace_verdict']}")
+        check(F, "pace not suppressed by a zero areal velocity it never uses",
+              "imagery_corroborates" in pa, "")
+        check(F, "zero measured change with reported progress raises the flag",
+              pa.get("imagery_corroborates") is not False
+              or float(d.get("claimed_progress_pct") or 0) < 20.0
+              or pa.get("discrepancy_flag") is not None,
+              f"corroborated={pa.get('imagery_corroborates')} flag={pa.get('discrepancy_flag')}")
+    else:
+        check(F, "unavailable pace states which input is missing",
+              "duration" in str(pa.get("reason", "")).lower()
+              or "progress" in str(pa.get("reason", "")).lower(),
+              f"reason={pa.get('reason')}")
+
+    sr = d.get("sar_readiness") or {}
+    check(F, "SAR contract present", bool(sr), "")
+    check(F, "SAR reports unavailable rather than fabricating coherence",
+          sr.get("sar_available") is False, f"={sr.get('sar_available')}")
+    check(F, "no coherence value is emitted with no scene behind it",
+          not any(isinstance(v, (int, float)) and k.lower().startswith("coherence")
+                  for k, v in sr.items()), "")
+    check(F, "SAR names the source it would ingest",
+          "sentinel-1" in str(sr.get("planned_source", "")).lower(), "")
+
+# ── analytical raster layers ─────────────────────────────────────────────
+for _layer in ("builtup", "corridor", "change", "materials"):
+    _st, _ct, _n = call_binary(f"/api/amey/satellite/{PID}/layer/{_layer}")
+    check(F, f"layer '{_layer}' renders as PNG",
+          _st == 200 and _ct == "image/png" and _n > 500,
+          f"status={_st} type={_ct} bytes={_n}")
+_st, _ = call(f"/api/amey/satellite/{PID}/layer/ndbi")
+check(F, "NDBI is refused, not faked on a sensor with no SWIR", _st == 404, f"status={_st}")
+_st, _ = call(f"/api/amey/satellite/{PID}/layer/../../etc/passwd")
+check(F, "layer path traversal refused", _st in (400, 404), f"status={_st}")
+_st, _ = call("/api/amey/satellite/000000/layer/builtup")
+check(F, "layer for a project with no imagery is 404, not a blank frame",
+      _st == 404, f"status={_st}")
+
+# ── EO invariants asserted directly against the engine ───────────────────
+try:
+    import numpy as _np
+    sys.path.insert(0, ".")
+    from analytics_engine import eo_geospatial as _eo
+    from analytics_engine.satellite_precision_cv import ground_sample_distance as _gsd
+
+    # Web Mercator GSD must shrink with latitude and halve per zoom level.
+    check(F, "GSD falls with |latitude| (Web Mercator cos term)",
+          _gsd(8.0, 17) > _gsd(34.0, 17), "")
+    check(F, "GSD halves for each zoom level",
+          abs(_gsd(22.0, 17) / _gsd(22.0, 18) - 2.0) < 1e-6, "")
+
+    # A corridor buffer must contain strictly less of the frame than the
+    # envelope it replaces, or it is not constraining anything.
+    _shape = (800, 800)
+    _corr = _eo.build_row_corridor(_shape, 2.2, "Roads & Highways", "LINEAR", 0.5)
+    _env = _eo.build_row_corridor(_shape, 2.2, "Roads & Highways", "POINT", None)
+    check(F, "RoW corridor is tighter than the site envelope it replaces",
+          _corr.mask.sum() < _env.mask.sum(),
+          f"{int(_corr.mask.sum())} vs {int(_env.mask.sum())}")
+    check(F, "corridor containment is binary, not a weighted taper",
+          _corr.mask.dtype == bool, f"dtype={_corr.mask.dtype}")
+    check(F, "sector half-widths differ where statute differs",
+          _eo.ROW_HALF_WIDTH_M["Roads & Highways"] != _eo.ROW_HALF_WIDTH_M["Oil & Gas"], "")
+    check(F, "a linear asset with no bearing falls back to the envelope",
+          _eo.build_row_corridor(_shape, 2.2, "Railways", "LINEAR", None).geometry
+          == "site_envelope", "")
+
+    # Velocity must be zero when nothing changed, and scale linearly with area.
+    _empty = _np.zeros(_shape, _np.uint8)
+    _v0 = _eo.construction_velocity(_empty, _corr, 2.2, 0.5)
+    check(F, "no change gives zero velocity and no linear pace",
+          _v0["areal_velocity_m2_per_month"] == 0.0
+          and _v0["linear_velocity_km_per_month"] is None, "")
+    _half = _np.zeros(_shape, _np.uint8); _half[_corr.mask] = 255
+    _v1 = _eo.construction_velocity(_half, _corr, 2.2, 0.5)
+    check(F, "a fully changed corridor reports 100% utilisation",
+          abs(_v1["corridor_utilisation_pct"] - 100.0) < 0.01,
+          f"={_v1['corridor_utilisation_pct']}")
+    check(F, "a fully changed corridor yields a positive linear velocity",
+          (_v1["linear_velocity_km_per_month"] or 0) > 0,
+          f"={_v1['linear_velocity_km_per_month']}")
+    check(F, "a fully changed corridor stays under the tile ceiling",
+          _v1["linear_velocity_km_per_month"] <= _v1["max_observable_km_per_month"],
+          f"{_v1['linear_velocity_km_per_month']} vs {_v1['max_observable_km_per_month']}")
+    check(F, "the ceiling scales with GSD, because it is a ground distance",
+          _eo.construction_velocity(_half, _corr, 4.4, 0.5)["max_observable_km_per_month"]
+          > _v1["max_observable_km_per_month"], "")
+
+    # RRN must be an identity on an identical pair, and monotone always.
+    _img = (_np.random.RandomState(0).rand(200, 200, 3) * 200 + 20).astype(_np.uint8)
+    _r = _eo.relative_radiometric_normalization(_img, _img.copy())
+    check(F, "RRN on an identical pair leaves the frame unchanged",
+          int(_np.abs(_r.normalised_after.astype(int) - _img.astype(int)).max()) <= 1, "")
+    check(F, "RRN never increases the residual it exists to reduce",
+          _r.residual_after <= _r.residual_before + 1e-6, "")
+
+    # The bias detector must recover a cast that was deliberately injected.
+    _cast = _img.astype(_np.int16).copy(); _cast[..., 1] = _np.clip(_cast[..., 1] + 18, 0, 255)
+    _b = _eo.index_bias_over_invariants(_img, _cast.astype(_np.uint8),
+                                        _np.ones(_img.shape[:2], bool))
+    check(F, "epoch calibration detects an injected +18 DN green cast",
+          _b["applied"] and _b["exg_offset"] > 0.02, f"exg={_b.get('exg_offset')}")
+    _b0 = _eo.index_bias_over_invariants(_img, _img.copy(),
+                                         _np.ones(_img.shape[:2], bool))
+    check(F, "epoch calibration reports no cast when there is none",
+          abs(_b0["exg_offset"]) < 1e-6, f"exg={_b0.get('exg_offset')}")
+
+    # Material classification must be deterministic across identical inputs.
+    _c1 = _eo.classify_materials(_img)["class_share_pct"]
+    _c2 = _eo.classify_materials(_img)["class_share_pct"]
+    check(F, "material classification is deterministic", _c1 == _c2, "")
+    _mt = _eo.material_transition(_img, _img.copy(), None,
+                                  pif_mask=_np.ones(_img.shape[:2], bool))
+    check(F, "identical frames yield zero transition in BOTH directions",
+          _mt["natural_to_engineered_pct"] == 0.0
+          and _mt["engineered_to_natural_pct"] == 0.0,
+          f"{_mt['natural_to_engineered_pct']} / {_mt['engineered_to_natural_pct']}")
+
+    # Indices must stay in their published ranges.
+    check(F, "ExG bounded to [-1, 1]",
+          -1.0 <= float(_eo.excess_green(_img).min())
+          and float(_eo.excess_green(_img).max()) <= 1.0, "")
+    check(F, "RBL bounded to [0, 1]",
+          0.0 <= float(_eo.rgb_builtup_likelihood(_img).min())
+          and float(_eo.rgb_builtup_likelihood(_img).max()) <= 1.0, "")
+
+    # SAR must never emit a number it did not measure.
+    _sar = _eo.sar_readiness(True, 7)
+    check(F, "SAR contract is empty by construction, in every month",
+          _sar["sar_available"] is False, "")
+except Exception as _e:
+    check(F, "EO engine invariants executable", False, f"{type(_e).__name__}: {_e}")
 
 # ─────────────────────────────────────────────────────────────────────────
 # REPORT

@@ -4,6 +4,7 @@ Exposes KAAL-CHAKRA, SETU-GRAPH, VITTA-VYUHA, and PRAGATI-SAARTHI endpoints.
 """
 
 import json
+import os
 from fastapi import APIRouter, Query, HTTPException, Depends
 from typing import Optional
 
@@ -376,3 +377,122 @@ def get_lead_time_validation(threshold_pct: float = Query(default=15.0, ge=1.0, 
         return evaluate_lead_time(threshold_pct)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# EO ANALYTICAL LAYERS
+# ══════════════════════════════════════════════════════════════════════════
+#
+# Served as rendered PNG rather than as a pixel array in JSON. An 800x800 mask
+# is 640k values; shipping that as JSON is ~4 MB per layer per project and the
+# browser then has to rasterise it. A PNG is ~30 kB and the <img> tag is the
+# renderer. The layers are computed from the same functions the numeric audit
+# uses, so what the reviewer sees is what was measured -- not a second
+# visualisation path that could drift from it.
+
+_EO_LAYERS = ("builtup", "corridor", "change", "materials")
+
+
+@router.get("/satellite/{project_id}/layer/{layer}")
+def get_eo_layer(project_id: str, layer: str):
+    """Render one analytical layer as a transparent PNG overlay."""
+    import io as _io
+    import numpy as _np
+    import cv2 as _cv2
+    from fastapi.responses import Response
+
+    from analytics_engine.satellite_fusion import IMAGERY_DIR
+
+    if layer not in _EO_LAYERS:
+        raise HTTPException(status_code=404,
+                            detail=f"Unknown layer '{layer}'. Available: {list(_EO_LAYERS)}")
+    pid = sanitize_id(project_id, field="project_id")
+
+    b = _cv2.imread(os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg"))
+    a = _cv2.imread(os.path.join(IMAGERY_DIR, f"{pid}_AFTER.jpg"))
+    if b is None or a is None:
+        raise HTTPException(status_code=404,
+                            detail=f"No dual-epoch imagery on file for project {pid}.")
+    if b.shape != a.shape:
+        a = _cv2.resize(a, (b.shape[1], b.shape[0]))
+
+    from analytics_engine import eo_geospatial as _eo
+    from analytics_engine.satellite_precision_cv import (
+        CORRIDOR_MIN_COHERENCE, build_annotation_mask, detect_change,
+        dominant_orientation, ground_sample_distance, zoom_for_sector,
+    )
+    from analytics_engine.satellite_fusion import get_satellite_fusion_engine
+
+    eng = get_satellite_fusion_engine()
+    cat = eng.catalog.get(pid, {})
+    geo = getattr(eng, "geo", {}).get(pid, {})
+    lat = float(geo.get("latitude") or cat.get("latitude") or 22.0)
+    sector = cat.get("sector")
+    geom = cat.get("asset_geometry", "POINT")
+
+    gsd = ground_sample_distance(lat, zoom_for_sector(sector))
+    bearing, coh = dominant_orientation(_cv2.cvtColor(b, _cv2.COLOR_BGR2GRAY))
+    use_bearing = (bearing if str(geom).upper() == "LINEAR"
+                   and coh >= CORRIDOR_MIN_COHERENCE else None)
+    corridor = _eo.build_row_corridor(b.shape, gsd, sector, geom, use_bearing)
+
+    h, w = b.shape[:2]
+    rgba = _np.zeros((h, w, 4), _np.uint8)
+
+    if layer == "builtup":
+        # RBL is a composite defined in eo_geospatial, NOT the NDBI a reviewer
+        # might assume from the colour ramp -- this imagery has no SWIR band, so
+        # NDBI is not computable. The legend in the UI says so in those words.
+        rbl = _np.clip(_eo.rgb_builtup_likelihood(a), 0.0, 1.0)
+        # Quantised to 8 levels and transparent below 0.35. A continuous
+        # per-pixel ramp encoded to 1.96 MB -- too heavy to toggle smoothly --
+        # and painted the whole frame, including every value too low to mean
+        # anything. Banding the ramp makes the legend readable AND drops the
+        # layer to a few tens of kB, because a PNG compresses flat regions.
+        q = _np.floor(rbl * 8.0) / 8.0
+        ramp = _cv2.applyColorMap((q * 255).astype(_np.uint8), _cv2.COLORMAP_INFERNO)
+        vis = rbl >= 0.35
+        # Zero the colour under transparent pixels too. Leaving the ramp there
+        # costs nothing visually and everything in filesize: PNG compresses the
+        # RGB planes whether or not alpha hides them, so a fully-painted frame
+        # under a mostly-transparent alpha was still ~830 kB.
+        rgba[..., :3] = ramp * vis[..., None]
+        rgba[..., 3] = _np.where(vis, (q * 200).astype(_np.uint8), 0)
+
+    elif layer == "corridor":
+        edge = corridor.mask.astype(_np.uint8) * 255
+        band = _cv2.morphologyEx(edge, _cv2.MORPH_GRADIENT, _np.ones((5, 5), _np.uint8))
+        rgba[..., 0], rgba[..., 1], rgba[..., 2] = 64, 220, 255      # BGR amber-cyan
+        rgba[..., 3] = _np.maximum(band, (edge // 12).astype(_np.uint8))
+        if corridor.centreline:
+            _cv2.line(rgba, corridor.centreline[0], corridor.centreline[1],
+                      (64, 220, 255, 255), 1, _cv2.LINE_AA)
+
+    elif layer == "change":
+        r = detect_change(b, a, gsd_m_per_px=gsd, asset_geometry=geom,
+                          roi_override=corridor.mask)
+        m = (r.change_mask > 0)
+        heat = _cv2.applyColorMap(
+            _cv2.GaussianBlur(m.astype(_np.uint8) * 255, (0, 0), 3), _cv2.COLORMAP_TURBO)
+        rgba[..., :3] = heat
+        rgba[..., 3] = (m.astype(_np.uint8) * 200)
+
+    else:  # materials
+        rrn = _eo.relative_radiometric_normalization(b, a, build_annotation_mask(b.shape))
+        bias = _eo.index_bias_over_invariants(b, rrn.normalised_after, rrn.pif_mask)
+        cls = _eo.classify_materials(rrn.normalised_after, corridor.mask, bias=bias)
+        palette = {                                   # BGR
+            "water_or_shadow": (140, 80, 20), "vegetation": (60, 170, 60),
+            "bare_soil_earthwork": (90, 150, 200), "asphalt_bitumen": (90, 90, 90),
+            "concrete_structure": (230, 230, 240), "unclassified": (0, 0, 0),
+        }
+        for i, name in enumerate(_eo.MATERIAL_CLASSES):
+            sel = (cls["labels"] == i) & corridor.mask
+            rgba[sel, 0], rgba[sel, 1], rgba[sel, 2] = palette[name]
+            rgba[sel, 3] = 0 if name == "unclassified" else 190
+
+    ok, buf = _cv2.imencode(".png", rgba, [_cv2.IMWRITE_PNG_COMPRESSION, 9])
+    if not ok:
+        raise HTTPException(status_code=500, detail="Layer encoding failed.")
+    return Response(content=buf.tobytes(), media_type="image/png",
+                    headers={"Cache-Control": "public, max-age=3600"})
