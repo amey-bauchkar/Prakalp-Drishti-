@@ -118,6 +118,21 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   const [showOverlay, setShowOverlay] = useState(true);
   const [now, setNow] = useState(() => Date.now());
 
+  // Low-density overlays, defaulted from the Network Information API where the
+  // browser exposes it and from Save-Data where the user has asked for it.
+  // Chosen automatically rather than buried in a settings panel: the people
+  // this matters most for are the least likely to go looking for a toggle. It
+  // stays user-overridable because the detection is a hint, not a measurement,
+  // and an auditor on a good link who lands on 'low' must be able to say so.
+  const [lowDensity, setLowDensity] = useState(() => {
+    try {
+      const c = navigator.connection || {};
+      return !!c.saveData || ['slow-2g', '2g', '3g'].includes(c.effectiveType);
+    } catch {
+      return false;
+    }
+  });
+
   const frameRef = useRef(null);
   const objectUrls = useRef([]);
 
@@ -189,16 +204,30 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   const secondsLeft = signed?.expires_at
     ? Math.max(0, Math.floor(signed.expires_at - now / 1000)) : null;
 
-  // ── layer toggling ───────────────────────────────────────────────────
+  // ── layer selection ──────────────────────────────────────────────────
+  //
+  // The click handler only records WHICH layer is wanted; an effect below does
+  // the fetching. Doing it the other way round -- fetching inside the handler
+  // -- meant the request closed over whatever `lowDensity` was at click time,
+  // so toggling low-bandwidth and selecting a layer in the same tick sent
+  // density=standard while the button already read ON. Deriving the request
+  // from state instead of from a closure removes that whole class of bug, and
+  // it gives the density toggle its correct behaviour for free: flipping it
+  // re-fetches the layer already on screen rather than clearing it and making
+  // the user find it again.
   const selectLayer = useCallback((id) => {
-    if (activeLayer === id) {
-      setActiveLayer(null);
-      if (layerUrl) { try { URL.revokeObjectURL(layerUrl); } catch { /* gone */ } }
-      setLayerUrl(null);
-      return;
-    }
-    setActiveLayer(id); setLayerBusy(true);
-    fetchBlobUrl(`${API}/api/amey/satellite/${projectId}/layer/${id}`).then((r) => {
+    setActiveLayer((cur) => (cur === id ? null : id));
+  }, []);
+
+  useEffect(() => {
+    if (!activeLayer || !isOfficial) { setLayerUrl(null); return undefined; }
+    let dead = false;
+    setLayerBusy(true);
+    const density = lowDensity ? 'low' : 'standard';
+    fetchBlobUrl(
+      `${API}/api/amey/satellite/${projectId}/layer/${activeLayer}?density=${density}`
+    ).then((r) => {
+      if (dead) { if (r.objectUrl) URL.revokeObjectURL(r.objectUrl); return; }
       setLayerBusy(false);
       if (!r.ok) {
         setActiveLayer(null);
@@ -207,7 +236,7 @@ export default function SatelliteViewer({ projectId = '619092' }) {
         // the next render. The toast explains the transition rather than
         // leaving the reader wondering why the panel changed shape.
         setToast({
-          tone: r.status === 429 ? 'warn' : r.status === 401 ? 'warn' : 'error',
+          tone: r.status === 403 ? 'error' : 'warn',
           message: r.status === 429
             ? 'Layer rendering quota reached — each layer costs ~300 ms of CPU. Retry shortly.'
             : r.status === 403
@@ -220,7 +249,8 @@ export default function SatelliteViewer({ projectId = '619092' }) {
       }
       setLayerUrl(track(r.objectUrl));
     });
-  }, [activeLayer, layerUrl, projectId]);
+    return () => { dead = true; };
+  }, [activeLayer, lowDensity, projectId, isOfficial]);
 
   // ── swipe ────────────────────────────────────────────────────────────
   const updateFromClientX = useCallback((clientX) => {
@@ -465,6 +495,18 @@ non-performance — see the imagery-currency note above.</div>
                   {showOverlay ? <Eye className="w-3 h-3 inline" /> : <EyeOff className="w-3 h-3 inline" />}
                 </button>
               )}
+              <button
+                type="button"
+                onClick={() => setLowDensity((v) => !v)}
+                aria-pressed={lowDensity}
+                title={lowDensity
+                  ? 'Overlays at half resolution and 6 colour bands. Toggle off for full detail.'
+                  : 'Overlays at full resolution and 8 colour bands. Toggle on to cut about 91% of the bytes (623 kB to 55 kB across all five layers).'}
+                className={`px-2 py-1 rounded-sm text-[10px] font-bold border transition-colors ${
+                  lowDensity ? 'border-amber-400 bg-amber-50 text-amber-900'
+                             : 'border-gov-border bg-gov-surface text-gov-navy'}`}>
+                {lowDensity ? 'Low-bandwidth ON' : 'Low-bandwidth OFF'}
+              </button>
             </div>
             {activeLayer && (
               <p className="text-[10px] text-gov-muted mt-2 max-w-[560px] mx-auto leading-snug">

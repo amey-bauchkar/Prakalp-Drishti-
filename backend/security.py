@@ -104,7 +104,12 @@ NESTED_RATE_LIMITS: Dict[str, Tuple[int, int]] = {
     # minute. 20 still bounds the paid-call exposure to something a
     # person can plausibly consume and a script cannot exploit.
     "/recon": (20, 60),     # paid outbound LLM call
-    "/layer": (30, 60),     # ~300 ms of CV per request
+    # 60/min/IP. At 30 this was too tight for the workflow the feature
+    # itself creates: five layers at two densities is ten requests to view
+    # one project both ways, so three projects in a sitting hit the wall.
+    # 60 still bounds the cost at roughly 18 s of CPU per minute per IP,
+    # about a third of one core, which a script cannot escalate past.
+    "/layer": (60, 60),     # ~300 ms of CV per request
 }
 
 # Paths where only FAILED requests consume budget.

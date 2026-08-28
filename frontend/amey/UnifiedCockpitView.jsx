@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SatelliteSwipeView from './SatelliteSwipeView';
+import SatelliteViewer from './SatelliteViewer';
 import CopilotChat from './CopilotChat';
 import {
   Sparkles, Sliders, ShieldCheck, AlertCircle, ArrowRight, Zap, RefreshCw,
@@ -277,10 +277,14 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
             </div>
           </div>
 
-          {/* Card 2: PRATIBIMB Satellite Dual-Epoch Swipe */}
-          <div className="panel p-4">
-            <SatelliteSwipeView projectId={projectId} />
-          </div>
+          {/* Card 2: PRATIBIMB dual-epoch ground truth.
+              No wrapping .panel here: SatelliteViewer renders its own panel
+              root, and nesting one inside another produced a double border and
+              doubled padding. No auth props either -- the viewer subscribes to
+              authClient directly, so a sign-in or an expiry anywhere in the app
+              re-renders it into the matching persona without the cockpit
+              having to know a session exists. */}
+          <SatelliteViewer projectId={projectId} />
         </div>
 
         {/* Right Column: VITTA-VYUHA & PMO COPILOT */}
