@@ -390,7 +390,7 @@ def get_lead_time_validation(threshold_pct: float = Query(default=15.0, ge=1.0, 
 # uses, so what the reviewer sees is what was measured -- not a second
 # visualisation path that could drift from it.
 
-_EO_LAYERS = ("builtup", "corridor", "change", "materials")
+_EO_LAYERS = ("builtup", "corridor", "change", "materials", "sam")
 
 
 @router.get("/satellite/{project_id}/layer/{layer}",
@@ -477,6 +477,31 @@ def get_eo_layer(project_id: str, layer: str):
             _cv2.GaussianBlur(m.astype(_np.uint8) * 255, (0, 0), 3), _cv2.COLORMAP_TURBO)
         rgba[..., :3] = heat
         rgba[..., 3] = (m.astype(_np.uint8) * 200)
+
+    elif layer == "sam":
+        # Spectral Angle Mapper delta between epochs. Included as its own layer
+        # because it answers a question the change heatmap cannot: SSIM fires on
+        # any structural difference including a sharpness change, whereas the
+        # spectral angle is invariant to illumination scaling by construction --
+        # a pixel that merely got brighter has near-zero angle, a pixel whose
+        # MATERIAL changed rotates. On this corpus a x1.35 gain plus 18 DN
+        # offset over an unchanged scene yields a mean angle of 0.018 rad, so
+        # what this layer paints is material change, not sun angle.
+        from analytics_engine.satellite_precision_engine import spectral_angle
+        import math as _math
+        ang = spectral_angle(b, a)
+        # pi/4 is a very large rotation in a 3-band space; used as the ceiling
+        # rather than pi so the ramp spends its range where the data lives.
+        norm = _np.clip(ang / (_math.pi / 4.0), 0.0, 1.0)
+        # Quantised to 8 bands and suppressed below 0.12, for the same reason
+        # the built-up layer is: a continuous per-pixel ramp encoded to 1.32 MB
+        # here, which is too heavy to toggle interactively, and painted the
+        # whole frame including every angle too small to mean anything.
+        q = _np.floor(norm * 8.0) / 8.0
+        vis = norm >= 0.12
+        ramp = _cv2.applyColorMap((q * 255).astype(_np.uint8), _cv2.COLORMAP_VIRIDIS)
+        rgba[..., :3] = ramp * vis[..., None]
+        rgba[..., 3] = _np.where(vis, (q * 205).astype(_np.uint8), 0)
 
     else:  # materials
         rrn = _eo.relative_radiometric_normalization(b, a, build_annotation_mask(b.shape))

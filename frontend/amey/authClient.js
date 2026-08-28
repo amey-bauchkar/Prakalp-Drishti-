@@ -112,3 +112,108 @@ export async function apiFetch(path, options = {}) {
 }
 
 export { API_BASE };
+
+
+/* ════════════════════════════════════════════════════════════════════════
+ * EO TIER RESOLUTION
+ * ════════════════════════════════════════════════════════════════════════
+ *
+ * The satellite subsystem serves two tiers and the server decides which one a
+ * caller gets from their token. These helpers let the UI render the matching
+ * shape WITHOUT ever being the thing that grants access: if this function is
+ * wrong, or is tampered with in a browser console, the user still receives
+ * exactly what the server decided. Presentation only.
+ */
+
+export const EO_OFFICIAL_PERMISSION = 'read_risk';
+
+export function getEoTier() {
+  return hasPermission(EO_OFFICIAL_PERMISSION) ? 'official' : 'public';
+}
+
+export function isOfficialTier() {
+  return getEoTier() === 'official';
+}
+
+/**
+ * Fetch a binary resource with the session token attached.
+ *
+ * An <img src> cannot carry an Authorization header, which is why the official
+ * layers and full-resolution tiles are fetched as blobs and handed to the DOM
+ * as object URLs. The alternative — putting the token in a query string —
+ * would write the credential into browser history, referrer headers and every
+ * proxy log between here and the server.
+ *
+ * Returns { ok, status, objectUrl, error }. The caller MUST revoke the object
+ * URL when it is finished, or a session spent browsing projects leaks a few
+ * hundred kilobytes per tile.
+ */
+export async function fetchBlobUrl(path, options = {}) {
+  const session = getSession();
+  const headers = { ...(options.headers || {}) };
+  if (session?.token) headers.Authorization = `Bearer ${session.token}`;
+
+  let res;
+  try {
+    res = await fetch(path.startsWith('http') ? path : `${API_BASE}${path}`,
+                      { ...options, headers });
+  } catch {
+    return { ok: false, status: 0, objectUrl: null, networkError: true,
+             error: 'Cannot reach the API.' };
+  }
+  if (res.status === 401) {
+    // Clear and notify, exactly as apiFetch does. Without this a dead session
+    // leaves the UI showing an AUDITOR badge — read from cached sessionStorage
+    // permissions — while every image request 401s behind it. The server is
+    // right and the cached claim is stale, so the cache must yield. Restarting
+    // the API invalidates every in-memory session and reproduces this in one
+    // step.
+    clearSession();
+    return { ok: false, status: 401, objectUrl: null, unauthorized: true,
+             error: 'Your session has expired. Showing the public view.' };
+  }
+  if (!res.ok) {
+    return { ok: false, status: res.status, objectUrl: null,
+             retryAfter: Number(res.headers.get('retry-after')) || null,
+             error: res.status === 429
+               ? 'Rate limit reached.'
+               : `Imagery request failed (${res.status})` };
+  }
+  const blob = await res.blob();
+  return { ok: true, status: res.status, objectUrl: URL.createObjectURL(blob),
+           tier: res.headers.get('x-imagery-tier'),
+           redacted: res.headers.get('x-imagery-redacted') === 'true',
+           redactionLevel: res.headers.get('x-imagery-redaction-level'),
+           error: null };
+}
+
+/**
+ * apiFetch with exponential backoff on 429 only.
+ *
+ * Deliberately narrow. Retrying a 500 can duplicate a side effect and retrying
+ * a 403 will never succeed, so only the throttle response is retried — that is
+ * the one case where waiting is genuinely the correct remedy. Backoff is
+ * 500ms, 1s, 2s with jitter; the jitter matters because several panels mount
+ * together and un-jittered clients would retry in lockstep and re-trip the
+ * same limit they are backing off from.
+ *
+ * `Retry-After` from the server wins over the local schedule when present.
+ */
+export async function apiFetchRetry(path, options = {}, maxRetries = 3) {
+  let attempt = 0;
+  for (;;) {
+    const result = await apiFetch(path, options);
+    if (result.status !== 429 || attempt >= maxRetries) {
+      if (result.status === 429) {
+        result.throttled = true;
+        result.error = 'Request quota reached. Please wait a moment and retry.';
+      }
+      return result;
+    }
+    const serverWait = Number(result.data?.retry_after) * 1000;
+    const backoff = 500 * Math.pow(2, attempt);
+    const jitter = Math.random() * 250;
+    await new Promise((r) => setTimeout(r, (serverWait || backoff) + jitter));
+    attempt += 1;
+  }
+}
