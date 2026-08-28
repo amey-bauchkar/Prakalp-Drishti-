@@ -75,9 +75,6 @@ export default function ProjectSearchBar() {
     window.dispatchEvent(new CustomEvent('prakalp:selectProject', { detail: projectId }));
     setIsOpen(false);
     setQuery('');
-    if (location.pathname !== '/' && location.pathname !== '/decision-hub') {
-      navigate('/decision-hub');
-    }
   };
 
   return (

@@ -57,6 +57,33 @@ export default function VarshaSpeedView() {
       .catch((err) => console.error('Failed to load project audit:', err));
   };
 
+  const [selectedProjectId, setSelectedProjectId] = useState(() => localStorage.getItem('prakalp:selectedProjectId') || '619092');
+
+  // Global project sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetch(`/api/projects/${selectedProjectId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((p) => {
+          if (p && p.state) {
+            handleStateSelect(p.state);
+            setSearchTerm(p.project_name || p.project_id);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [selectedProjectId]);
+
   useEffect(() => {
     fetchMonsoonImpact(anomaly);
     fetchHistoricalProfiles();

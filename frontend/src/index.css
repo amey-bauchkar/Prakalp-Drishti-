@@ -68,6 +68,98 @@
   --hair: 1px solid var(--line);
 }
 
+[data-theme="contrast"] {
+  --page-bg: #000000;
+  --surface: #0a0a0a;
+  --surface-2: #141414;
+  --surface-3: #1f1f1f;
+  --line: #ffff00;
+  --line-strong: #ffffff;
+  --ink: #ffffff;
+  --ink-soft: #f0f0f0;
+  --ink-mute: #ffff00;
+  --ink-dim: #e0e0e0;
+  --saffron: #ffb700;
+  --saffron-wash: #2a2000;
+  --emerald: #00ff66;
+  --emerald-wash: #002b11;
+  --amber: #ffff00;
+  --amber-wash: #333300;
+  --crimson: #ff3344;
+  --crimson-wash: #3b0008;
+  filter: contrast(1.1);
+}
+
+[data-theme="contrast"] .bg-white,
+[data-theme="contrast"] .panel,
+[data-theme="contrast"] .card-parchment-gold,
+[data-theme="contrast"] .bulletin-paper-card {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffff00 !important;
+}
+
+[data-theme="contrast"] .text-gov-navy,
+[data-theme="contrast"] .text-text-primary,
+[data-theme="contrast"] .text-text-secondary {
+  color: #ffffff !important;
+}
+
+[data-theme="contrast"] .text-text-muted {
+  color: #ffff00 !important;
+}
+
+[data-theme="dark"] {
+  --page-bg: #0B111E;
+  --surface: #111B2E;
+  --surface-2: #16243D;
+  --surface-3: #1D2E4D;
+  --line: #223554;
+  --line-strong: #324D78;
+  --ink: #F1F5F9;
+  --ink-soft: #CBD5E1;
+  --ink-mute: #94A3B8;
+  --ink-dim: #64748B;
+  --saffron: #FF9933;
+  --saffron-wash: #2D1A08;
+  --emerald: #10B981;
+  --emerald-wash: #064E3B;
+  --amber: #F59E0B;
+  --amber-wash: #451A03;
+  --crimson: #EF4444;
+  --crimson-wash: #450A0A;
+}
+
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .card-parchment-gold,
+[data-theme="dark"] .bulletin-paper-card {
+  background-color: #111B2E !important;
+  color: #F1F5F9 !important;
+  border-color: #223554 !important;
+}
+
+[data-theme="dark"] .text-gov-navy,
+[data-theme="dark"] .text-text-primary {
+  color: #F1F5F9 !important;
+}
+
+[data-theme="dark"] .text-text-secondary {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .text-text-muted {
+  color: #94A3B8 !important;
+}
+
+html[data-font-size="large"] {
+  font-size: 110%;
+}
+
+html[data-font-size="larger"] {
+  font-size: 120%;
+}
+
 /* ── Base ──────────────────────────────────────────────────────────── */
 
 @layer base {
