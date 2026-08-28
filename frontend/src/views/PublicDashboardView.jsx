@@ -343,7 +343,7 @@ function PublicMetadataTab({
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {projects.slice(0, 180).map((p) => {
+              {filteredProjects.slice(0, 180).map((p) => {
                 if (!p.latitude || !p.longitude) return null;
                 const pStat = getProjectStatus(p);
                 const isSelected = String(p.project_id) === String(activeProject?.project_id);
@@ -425,7 +425,7 @@ function PublicMetadataTab({
 
           {/* Scrollable list */}
           <div className="flex-1 overflow-y-auto divide-y divide-gov-border">
-            {projects.slice(0, 60).map((p) => {
+            {filteredProjects.slice(0, 60).map((p) => {
               const isSelected = String(p.project_id) === String(activeProject?.project_id);
               const pStat = getProjectStatus(p);
               return (
