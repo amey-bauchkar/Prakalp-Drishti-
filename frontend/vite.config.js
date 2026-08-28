@@ -60,6 +60,31 @@ export default defineConfig({
       '@aditya': path.resolve(__dirname, './aditya'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the vendor libraries out of the application bundle.
+        //
+        // A single 1,017 kB chunk was tripping Vite's size advisory, and the
+        // fix is the one the advisory recommends rather than raising the
+        // threshold to silence it. Splitting is a genuine improvement: these
+        // four groups change on entirely different cadences from the app code,
+        // so a deploy that touches a view no longer invalidates the cached
+        // copy of React or the charting library, and the browser fetches them
+        // in parallel instead of serially behind one file.
+        //
+        // Grouped by cadence and by who needs them, not one chunk per package:
+        // hundreds of tiny chunks cost more in requests than they save in
+        // bytes, especially on the high-latency links this platform targets.
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-charts': ['recharts'],
+          'vendor-maps': ['leaflet', 'react-leaflet'],
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: {

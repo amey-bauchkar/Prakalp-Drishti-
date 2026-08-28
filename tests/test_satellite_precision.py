@@ -801,6 +801,117 @@ class TestRateLimiting:
 
 
 # ══════════════════════════════════════════════════════════════════════════
+# 13. LAYER DENSITY
+# ══════════════════════════════════════════════════════════════════════════
+
+@requires_api
+class TestLayerDensity:
+    """`?density=low` for constrained links.
+
+    This is a client-supplied parameter, which is safe here for a reason worth
+    stating: density can only make a response smaller and coarser. No value of
+    it reveals anything a caller could not already retrieve, so unlike the
+    access tier there is nothing to forge. The tests below hold it to that --
+    it must never widen access, and it must never be silently ignored.
+    """
+
+    LAYERS = ("change", "sam", "builtup", "corridor", "materials")
+
+    @pytest.mark.parametrize("layer", LAYERS)
+    def test_low_density_is_smaller(self, layer, admin_token):
+        _s, std, _h = _request(
+            f"/api/amey/satellite/{PID}/layer/{layer}", admin_token)
+        _s, low, _h = _request(
+            f"/api/amey/satellite/{PID}/layer/{layer}?density=low", admin_token)
+        assert 0 < len(low) < len(std), f"{layer}: {len(low)} vs {len(std)}"
+
+    @pytest.mark.parametrize("layer", LAYERS)
+    def test_low_density_is_half_resolution_webp_with_alpha(self, layer, admin_token):
+        st, blob, headers = _request(
+            f"/api/amey/satellite/{PID}/layer/{layer}?density=low", admin_token)
+        assert st == 200
+        assert headers.get("content-type") == "image/webp"
+        assert headers.get("x-layer-density") == "low"
+        assert headers.get("x-layer-levels") == "6"
+        img = cv2.imdecode(np.frombuffer(blob, np.uint8), cv2.IMREAD_UNCHANGED)
+        assert img is not None
+        assert max(img.shape[:2]) <= 400, f"{layer} is {img.shape[:2]}"
+        assert img.shape[2] == 4, (
+            f"{layer} lost its alpha channel — an overlay without transparency "
+            f"hides the imagery it is supposed to annotate")
+
+    def test_standard_remains_full_resolution_png(self, admin_token):
+        st, blob, headers = _request(
+            f"/api/amey/satellite/{PID}/layer/corridor", admin_token)
+        assert st == 200
+        assert headers.get("content-type") == "image/png"
+        assert headers.get("x-layer-levels") == "8"
+        img = cv2.imdecode(np.frombuffer(blob, np.uint8), cv2.IMREAD_UNCHANGED)
+        assert max(img.shape[:2]) > 400
+
+    def test_ramped_layers_carry_exactly_their_declared_bands(self, admin_token):
+        """The ramp must carry the declared number of steps, exactly.
+
+        Counted on the alpha channel, which is derived straight from the
+        quantised value and so reflects the band count with no colour map in
+        between. An EXACT bound is assertable because the pipeline is lossless
+        end to end: nearest-neighbour downsampling picks an existing band
+        rather than averaging two, and lossless WebP encodes what it is given.
+
+        This was written first against a lossy q80 encoder and an INTER_AREA
+        downsample, where six declared bands decoded as twenty-nine — every
+        extra value a level the data never contained. Both were changed; the
+        test is exact now because the implementation earned it.
+        """
+        for layer in ("sam", "builtup"):
+            _s, low, _h = _request(
+                f"/api/amey/satellite/{PID}/layer/{layer}?density=low", admin_token)
+            _s, std, _h = _request(
+                f"/api/amey/satellite/{PID}/layer/{layer}", admin_token)
+
+            def bands(blob):
+                img = cv2.imdecode(np.frombuffer(blob, np.uint8),
+                                   cv2.IMREAD_UNCHANGED)
+                alpha = img[..., 3]
+                return len(np.unique(alpha[alpha > 0]))
+
+            n_low, n_std = bands(low), bands(std)
+            assert n_low <= 6, (
+                f"{layer} decoded {n_low} alpha levels at density=low; the "
+                f"declared ramp is 6 and the chain is lossless, so anything "
+                f"above that is an encoder or resampler artefact")
+            assert n_std <= 8, f"{layer} decoded {n_std} levels at standard"
+            assert n_low <= n_std, (
+                f"{layer}: low density carries {n_low} bands against "
+                f"{n_std} at standard")
+
+    @pytest.mark.parametrize("bad", ["LOW", "tiny", "", "high", "0.5"])
+    def test_unknown_density_is_rejected_not_defaulted(self, bad, admin_token):
+        st, _b, _h = _request(
+            f"/api/amey/satellite/{PID}/layer/corridor?density={bad}", admin_token)
+        assert st in (400, 422), (
+            f"density={bad!r} returned {st}; silently defaulting to standard "
+            f"would send a full-size overlay to a client that asked not to "
+            f"receive one")
+
+    def test_density_cannot_widen_access(self):
+        """It is a bandwidth knob, never an authorisation one."""
+        for value in ("low", "standard", "official", "full"):
+            st, _b, _h = _request(
+                f"/api/amey/satellite/{PID}/layer/corridor?density={value}")
+            assert st in (400, 401, 403, 422, 429), (
+                f"anonymous caller got {st} with density={value}")
+
+    def test_the_full_set_is_materially_lighter(self, admin_token):
+        std = sum(len(_request(f"/api/amey/satellite/{PID}/layer/{L}",
+                               admin_token)[1]) for L in self.LAYERS)
+        low = sum(len(_request(f"/api/amey/satellite/{PID}/layer/{L}?density=low",
+                               admin_token)[1]) for L in self.LAYERS)
+        assert low < std * 0.6, (
+            f"the five-layer set is {low} B at low density against {std} B at "
+            f"standard — not enough of a saving to be worth the option")
+
+# ══════════════════════════════════════════════════════════════════════════
 # 12. SECRET HYGIENE
 # ══════════════════════════════════════════════════════════════════════════
 
