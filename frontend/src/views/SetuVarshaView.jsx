@@ -39,6 +39,12 @@ const TABS = [
 ];
 
 export default function SetuVarshaView({ selectedProjectId = '619092' }) {
+  // The ground-truth panel used to be pinned to one hardcoded project while the
+  // table above it ranked the most exposed nodes in the cascade. A reviewer
+  // clicking the worst-affected project got imagery of an unrelated site with
+  // no indication the two were disconnected. Selecting a row now drives the
+  // panel, which is what the layout already implied it did.
+  const [focusId, setFocusId] = useState(selectedProjectId);
   const [tab, setTab] = useState('warroom');
   const [anomaly, setAnomaly] = useState(15);
   const [data, setData] = useState(null);
@@ -191,7 +197,16 @@ export default function SetuVarshaView({ selectedProjectId = '619092' }) {
             </thead>
             <tbody>
               {(data?.affected || []).map((n) => (
-                <tr key={n.project_id}>
+                <tr
+                  key={n.project_id}
+                  onClick={() => setFocusId(String(n.project_id))}
+                  className={`cursor-pointer transition-colors ${
+                    String(n.project_id) === String(focusId)
+                      ? 'bg-gov-accent/10'
+                      : 'hover:bg-gov-muted-surface'
+                  }`}
+                  title="Show ground-truth imagery for this project"
+                >
                   <td>
                     <span className="font-semibold text-gov-navy">
                       {String(n.project_name || '').slice(0, 54)}
@@ -222,10 +237,12 @@ export default function SetuVarshaView({ selectedProjectId = '619092' }) {
       <div className="panel">
         <div className="panel-head">
           <span className="panel-title"><Satellite className="w-3.5 h-3.5" />Pinpoint Ground-Truth Verification</span>
-          <span className="panel-meta">project #{selectedProjectId}</span>
+          <span className="panel-meta">
+            project #{focusId} &middot; select a row above to change
+          </span>
         </div>
         <div className="panel-flush">
-          <SatelliteSwipeView projectId={selectedProjectId} />
+          <SatelliteSwipeView projectId={focusId} />
         </div>
       </div>
       </>)}
