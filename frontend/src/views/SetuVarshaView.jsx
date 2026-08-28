@@ -3,7 +3,7 @@ import {
   CloudRain, GitBranch, Info, Satellite, TrendingDown, Waves, Layers,
 } from 'lucide-react';
 
-import SatelliteSwipeView from '../../amey/SatelliteSwipeView.jsx';
+import SatelliteViewer from '../../amey/SatelliteViewer.jsx';
 import VarshaStateProfiles from '../../janhavi/index.jsx';
 
 const API = 'http://127.0.0.1:8000';
@@ -242,7 +242,7 @@ export default function SetuVarshaView({ selectedProjectId = '619092' }) {
           </span>
         </div>
         <div className="panel-flush">
-          <SatelliteSwipeView projectId={focusId} />
+          <SatelliteViewer projectId={focusId} />
         </div>
       </div>
       </>)}
