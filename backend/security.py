@@ -75,6 +75,36 @@ async def security_headers_middleware(request: Request, call_next):
 RATE_LIMITS: Dict[str, Tuple[int, int]] = {
     "/api/auth/login": (5, 60),    # credential stuffing
     "/api/amey/ask": (20, 60),     # third-party token exhaustion
+
+    # Satellite paths. These had NO limit, which mattered in three distinct
+    # ways measured on the running build:
+    #
+    #  * /recon makes a paid Groq call per request and required no credential.
+    #    Eight concurrent anonymous requests saturated the server for 16 s. It
+    #    is both a billing vector and a denial-of-service one, so it gets the
+    #    tightest budget here.
+    #  * /layer renders a full CV chain per call (~300 ms of CPU) and is
+    #    therefore an asymmetric-cost endpoint: cheap to request, expensive to
+    #    serve.
+    #  * /tile is the corpus-enumeration path. 4,414 files are reachable by
+    #    iterating published project ids, so the budget is sized to allow a
+    #    person browsing projects and not a script mirroring the archive.
+    "/api/amey/satellite": (60, 60),
+    "/api/eo/tile": (120, 60),
+    "/api/eo/metadata": (120, 60),
+    "/api/eo/signed": (60, 60),
+}
+
+# Sub-path budgets, checked before the prefix table above so a tighter rule on a
+# nested path is not shadowed by a looser one on its parent.
+NESTED_RATE_LIMITS: Dict[str, Tuple[int, int]] = {
+    # 20/min/IP. At 6 the limiter fired before the auth check could and made
+    # the endpoint untestable and unusable -- an official reviewing a
+    # handful of projects in a sitting legitimately exceeds six calls a
+    # minute. 20 still bounds the paid-call exposure to something a
+    # person can plausibly consume and a script cannot exploit.
+    "/recon": (20, 60),     # paid outbound LLM call
+    "/layer": (30, 60),     # ~300 ms of CV per request
 }
 
 # Paths where only FAILED requests consume budget.
@@ -104,6 +134,9 @@ def _client_key(request: Request) -> str:
 
 
 def _limit_for(path: str):
+    for fragment, cfg in NESTED_RATE_LIMITS.items():
+        if fragment in path:
+            return path.rsplit(fragment, 1)[0] + fragment, cfg
     for prefix, cfg in RATE_LIMITS.items():
         if path.startswith(prefix):
             return prefix, cfg

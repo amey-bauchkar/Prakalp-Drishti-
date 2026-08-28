@@ -393,7 +393,8 @@ def get_lead_time_validation(threshold_pct: float = Query(default=15.0, ge=1.0, 
 _EO_LAYERS = ("builtup", "corridor", "change", "materials")
 
 
-@router.get("/satellite/{project_id}/layer/{layer}")
+@router.get("/satellite/{project_id}/layer/{layer}",
+            dependencies=[Depends(require("read_risk"))])
 def get_eo_layer(project_id: str, layer: str):
     """Render one analytical layer as a transparent PNG overlay."""
     import io as _io
@@ -507,7 +508,10 @@ class ReconRequest(BaseModel):
     analyst_note: str = Field("", max_length=300)
 
 
-@router.get("/satellite/{project_id}/recon")
+# Paid outbound call. Anonymous access here was a billing and DoS vector:
+# eight concurrent unauthenticated requests saturated the server for 16 s.
+@router.get("/satellite/{project_id}/recon",
+            dependencies=[Depends(require("read_risk"))])
 def get_recon_briefing(project_id: str):
     """Two-sentence photographic reconnaissance briefing over the EO telemetry.
 
@@ -527,7 +531,8 @@ def get_recon_briefing(project_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/satellite/{project_id}/recon")
+@router.post("/satellite/{project_id}/recon",
+             dependencies=[Depends(require("read_risk"))])
 def post_recon_briefing(project_id: str, req: ReconRequest):
     """Same briefing with an analyst note steering what to describe.
 
