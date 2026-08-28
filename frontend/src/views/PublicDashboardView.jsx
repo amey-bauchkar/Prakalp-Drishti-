@@ -343,20 +343,39 @@ function PublicMetadataTab({
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {filteredProjects.slice(0, 180).map((p) => {
-                if (!p.latitude || !p.longitude) return null;
+              {/* `projects`, not `filteredProjects`. The latter is declared in
+                  PublicDashboardView and is NOT in scope inside this component --
+                  it arrives here as the `projects` prop, already filtered. Both
+                  this map and the directory list below referenced the outer name,
+                  so the entire Nagrik public portal threw
+                  "ReferenceError: filteredProjects is not defined" on every render:
+                  no markers, no directory, and the search/sector/state controls
+                  had nothing left to update. */}
+              {projects.slice(0, 180).map((p) => {
+                // Number(), not a truthiness test: `!p.latitude` treats a
+                // genuine 0.0 as missing and silently drops the marker.
+                const lat = Number(p.latitude);
+                const lon = Number(p.longitude);
+                if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
                 const pStat = getProjectStatus(p);
                 const isSelected = String(p.project_id) === String(activeProject?.project_id);
+                // 596 of 2,207 projects are placed at a national or state
+                // centroid rather than at the works. Drawing them as solid pins
+                // told the reader the site was known when it is not, so an
+                // approximate location is drawn hollow and dashed and says so
+                // in the popup.
+                const approx = p.location_is_approximate === true;
                 return (
                   <CircleMarker
                     key={p.project_id}
-                    center={[p.latitude, p.longitude]}
+                    center={[lat, lon]}
                     radius={isSelected ? 8 : 4.5}
                     pathOptions={{
                       fillColor: pStat.color,
-                      fillOpacity: isSelected ? 0.95 : 0.7,
-                      color: isSelected ? '#071320' : '#ffffff',
+                      fillOpacity: approx ? 0.12 : (isSelected ? 0.95 : 0.7),
+                      color: approx ? pStat.color : (isSelected ? '#071320' : '#ffffff'),
                       weight: isSelected ? 2.5 : 1,
+                      dashArray: approx ? '2 3' : undefined,
                     }}
                     eventHandlers={{
                       click: () => selectProject(p.project_id),
@@ -368,6 +387,14 @@ function PublicMetadataTab({
                         <div className="text-slate-600 font-mono text-[10px]">ID: #{p.project_id} · {p.sector}</div>
                         <div className="text-slate-700 font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
                         <div className="text-slate-700">Progress: {p.progress_perc}% ({pStat.label})</div>
+                        {approx && (
+                          <div className="text-amber-800 bg-amber-50 border border-amber-300 rounded-xs px-1 py-0.5 text-[10px] leading-snug">
+                            <strong>Approximate location.</strong> Plotted at a
+                            {' '}{String(p.geocode_precision || '').toLowerCase().includes('state')
+                              ? 'state' : 'national'}{' '}centroid, not a surveyed
+                            site coordinate.
+                          </div>
+                        )}
                         <button
                           onClick={() => selectProject(p.project_id)}
                           className="mt-1 w-full text-center py-1 bg-[#0060B6] text-white rounded-xs font-bold text-[10px]"
@@ -425,7 +452,7 @@ function PublicMetadataTab({
 
           {/* Scrollable list */}
           <div className="flex-1 overflow-y-auto divide-y divide-gov-border">
-            {filteredProjects.slice(0, 60).map((p) => {
+            {projects.slice(0, 60).map((p) => {
               const isSelected = String(p.project_id) === String(activeProject?.project_id);
               const pStat = getProjectStatus(p);
               return (
@@ -790,7 +817,16 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
               <span>Optical sub-meter resolution imagery corroborated against project coordinates.</span>
             </div>
             <span className="font-mono text-[11px]">
-              Site Coordinates: {Number(activeProject.latitude || 22.5).toFixed(4)}°N, {Number(activeProject.longitude || 78.5).toFixed(4)}°E
+              {activeProject.location_is_approximate
+                ? <>Approximate area: {Number(activeProject.latitude).toFixed(1)}°N,{' '}
+                    {Number(activeProject.longitude).toFixed(1)}°E{' '}
+                    <span className="text-amber-700">
+                      — {activeProject.geocode_precision || 'low-confidence geocode'};
+                      not a surveyed site coordinate
+                    </span>
+                  </>
+                : <>Site Coordinates: {Number(activeProject.latitude).toFixed(4)}°N,{' '}
+                    {Number(activeProject.longitude).toFixed(4)}°E</>}
             </span>
           </div>
         </div>

@@ -1599,6 +1599,186 @@ try:
 except Exception as _e:
     check(F, "GEOINT engine invariants executable", False, f"{type(_e).__name__}: {_e}")
 
+
+# ─────────────────────────────────────────────────────────────────────────
+# SYSTEM AUDIT — defects found by the end-to-end sweep
+#
+# Five distinct classes, all measured open on a running build:
+#   * a satellite verdict computed from the claim the satellite audits
+#   * a Merkle verification endpoint that accepted ANY document hash
+#   * a PMO document hash derived from id + wall-clock date and no content
+#   * a Cabinet briefing printing a composite index as a completion percentage
+#   * a negative capital pool accepted and optimised
+# ─────────────────────────────────────────────────────────────────────────
+F = "SYSTEM-AUDIT"
+
+# ── the circular satellite verdict ───────────────────────────────────────
+s_, projects = call("/api/projects?limit=400")
+check(F, "public project list responds", s_ == 200, f"status={s_}")
+_rows = projects if isinstance(projects, list) else (projects or {}).get("projects") or []
+if _rows:
+    _statuses = {r.get("satellite_status") for r in _rows}
+    check(F, "satellite verdicts come from the EO catalogue, not a threshold",
+          _statuses - {"CORROBORATED", "DISCREPANCY_FLAGGED"} != set(),
+          f"statuses={sorted(x for x in _statuses if x)}")
+    _hi = {r.get("satellite_status") for r in _rows if float(r.get("progress_perc") or 0) > 40}
+    _lo = {r.get("satellite_status") for r in _rows if float(r.get("progress_perc") or 0) <= 40}
+    check(F, "verdict is NOT a pure function of reported progress",
+          bool(_hi & _lo),
+          "a status that partitions exactly on progress>40 is the claim restated")
+    check(F, "EO_UNAVAILABLE is served where no verdict is supportable",
+          "EO_UNAVAILABLE" in _statuses, "")
+
+    # geolocation honesty on the public map
+    check(F, "geocode confidence is exposed to the public map",
+          all("geocode_confidence" in r for r in _rows[:20]), "")
+    check(F, "approximate locations are flagged as such",
+          any(r.get("location_is_approximate") for r in _rows),
+          "596 of 2,207 projects sit at a national or state centroid")
+    _mismatch = [r.get("project_id") for r in _rows
+                 if bool(r.get("location_is_approximate"))
+                 != (r.get("geocode_confidence") in (None, "NONE", "LOW"))]
+    check(F, "the approximate flag agrees with the confidence field",
+          not _mismatch, f"{_mismatch[:3]}")
+
+    # delay banding inputs must be clean for the Leaflet markers
+    _dm = [r.get("delayed_months") for r in _rows]
+    check(F, "delayed_months numeric and non-negative on every row",
+          all(isinstance(v, (int, float)) and v >= 0 for v in _dm if v is not None), "")
+    check(F, "no NaN reaches the map layer",
+          "NaN" not in json.dumps(_rows[:200]), "")
+    _money = [(r.get("original_cost_cr"), r.get("revised_cost_cr")) for r in _rows]
+    check(F, "capex values numeric and non-negative",
+          all(v is None or (isinstance(v, (int, float)) and v >= 0)
+              for pair in _money for v in pair), "")
+
+# ── Merkle verification must be falsifiable ──────────────────────────────
+s_, _brief = call("/api/amey/briefing/400188", tok=ADMIN)
+if s_ == 200 and isinstance(_brief, dict):
+    _dh = _brief.get("doc_hash")
+    _facts = list((_brief.get("audit_facts") or {}).keys())
+    check(F, "briefing carries a SHA-256 doc_hash",
+          isinstance(_dh, str) and len(_dh) == 64, f"={_dh}")
+    check(F, "briefing carries a Merkle root", bool(_brief.get("merkle_root")), "")
+    if _dh and _facts:
+        _f0 = _facts[0]
+        s_, _ok = call(f"/api/amey/verify/{_dh}/{_f0}?project_id=400188", tok=ADMIN)
+        check(F, "the genuine hash verifies", s_ == 200 and _ok.get("proof_valid") is True,
+              f"status={s_}")
+
+        # The defect: 64 zeros returned proof_valid=true and reported
+        # "PASS — SHA-256 Merkle inclusion proof verified against immutable root".
+        # A proof that cannot fail proves nothing.
+        s_, _bad = call(f"/api/amey/verify/{'0' * 64}/{_f0}?project_id=400188", tok=ADMIN)
+        check(F, "a FABRICATED doc_hash is refused",
+              s_ != 200 or (_bad or {}).get("proof_valid") is not True,
+              f"status={s_} proof_valid={(_bad or {}).get('proof_valid')}")
+
+        s_, _gh = call(f"/api/amey/verify/{_dh}/fact_does_not_exist?project_id=400188",
+                       tok=ADMIN)
+        check(F, "a fact outside the tree is refused",
+              s_ != 200 or (_gh or {}).get("proof_valid") is not True, f"status={s_}")
+
+        s_, _tam = call(f"/api/amey/verify/{_dh[:-4]}beef/{_f0}?project_id=400188",
+                        tok=ADMIN)
+        check(F, "a single-character-altered hash is refused",
+              s_ != 200 or (_tam or {}).get("proof_valid") is not True, f"status={s_}")
+
+# ── the PMO copilot hash must cover content ──────────────────────────────
+s_, _c1 = call("/api/amey/copilot/400188", tok=ADMIN)
+if s_ == 200 and isinstance(_c1, dict):
+    import hashlib as _hl
+    from datetime import date as _date
+    _served = _c1.get("document_hash")
+    check(F, "copilot serves a SHA-256 document hash",
+          isinstance(_served, str) and len(_served) == 64, f"={_served}")
+    # The defect: sha256(f"PMO_COPILOT:{pid}:{today}") reproduced it exactly,
+    # so the hash covered no content and was forgeable from the id alone.
+    _guess = _hl.sha256(
+        f"PMO_COPILOT:400188:{_date.today().strftime('%Y-%m-%d')}".encode()).hexdigest()
+    check(F, "the hash is NOT reproducible from id and date alone",
+          _served != _guess,
+          "a document hash guessable without seeing the document is not provenance")
+    s_, _c2 = call("/api/amey/copilot/619092", tok=ADMIN)
+    if s_ == 200:
+        check(F, "different projects hash differently",
+              _c2.get("document_hash") != _served, "")
+
+# ── the allocation index is not a percentage ─────────────────────────────
+s_, _al = call("/api/amey/allocate", tok=ADMIN, method="POST",
+               body={"budget_pool_cr": 15000.0, "risk_dial_kappa": 0.75,
+                     "enforce_ner_floor": True})
+check(F, "allocation responds", s_ == 200, f"status={s_}")
+if s_ == 200 and isinstance(_al, dict):
+    _pp = _al.get("portfolio_completion_propensity_perc")
+    check(F, "a genuinely bounded completion percentage is published",
+          _pp is not None and 0.0 <= float(_pp) <= 100.0, f"={_pp}")
+    check(F, "the composite index is still available for the LP consumers",
+          _al.get("expected_completion_yield") is not None, "")
+    check(F, "allocation never exceeds the pool",
+          float(_al.get("total_allocated_cr") or 0) <= 15000.0 * 1.0001,
+          f"={_al.get('total_allocated_cr')}")
+    check(F, "the 10% statutory NER floor holds",
+          float(_al.get("ner_share_perc") or 0) >= 9.9,
+          f"={_al.get('ner_share_perc')}")
+    check(F, "LP closure error is small",
+          abs(float(_al.get("closure_error_perc") or 0)) < 5.0,
+          f"={_al.get('closure_error_perc')}")
+
+for _bad_pool in (-5000.0, 0.0):
+    s_, _ = call("/api/amey/allocate", tok=ADMIN, method="POST",
+                 body={"budget_pool_cr": _bad_pool})
+    check(F, f"a non-positive capital pool ({_bad_pool:.0f}) is refused",
+          s_ in (400, 422),
+          f"status={s_}; a pool at or below zero has no meaning and the LP "
+          f"returned an all-zero plan as though it were a result")
+
+# ── the risk dial must not be inverted or inert ──────────────────────────
+_cv = {}
+for _k in (0.0, 1.0):
+    s_, _r = call("/api/amey/allocate", tok=ADMIN, method="POST",
+                  body={"budget_pool_cr": 12000.0, "risk_dial_kappa": _k})
+    if s_ == 200:
+        _cv[_k] = (_r.get("cvar90_tail_loss"), _r.get("total_allocated_cr"))
+if len(_cv) == 2:
+    check(F, "raising kappa does not increase CVaR90 tail loss",
+          float(_cv[1.0][0]) <= float(_cv[0.0][0]) + 1e-6,
+          f"kappa=1 -> {_cv[1.0][0]}, kappa=0 -> {_cv[0.0][0]}")
+    check(F, "the risk dial is connected to the LP", _cv[0.0] != _cv[1.0],
+          "kappa changed nothing at all")
+
+# ── every module answers, and none 500s on a bad id ──────────────────────
+for _ep in ("/api/tanmay/gaming-analysis", "/api/tanmay/bunching-histogram",
+            "/api/tanmay/clause-10cc-audit", "/api/tanmay/anumati/clearances",
+            "/api/parth/psu-risk", "/api/parth/portfolio", "/api/parth/agencies",
+            "/api/soham/election-rush", "/api/aditya/contractors",
+            "/api/aditya/projects", "/api/janhavi/status"):
+    s_, _d = call(_ep, tok=ADMIN)
+    check(F, f"{_ep} responds", s_ == 200, f"status={s_}")
+    if s_ == 200:
+        check(F, f"{_ep} carries no NaN or Infinity",
+              "NaN" not in json.dumps(_d) and "Infinity" not in json.dumps(_d), "")
+
+for _ep in ("/api/parth/agency/__nope__/projects",
+            "/api/aditya/contractors/__nope__",
+            "/api/aditya/governance/combined-risk-profile/000000",
+            "/api/amey/forecast/000000",
+            "/api/amey/satellite/000000"):
+    s_, _ = call(_ep, tok=ADMIN)
+    check(F, f"unknown id on {_ep.rsplit('/', 2)[-2]} fails closed, not 500",
+          s_ != 500, f"status={s_}")
+
+# ── the test runner cannot silently skip a test file ─────────────────────
+try:
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
+    import run_all_tests as _rat
+    _unlisted = _rat._warn_on_unlisted()
+    check(F, "no test file in tests/ is omitted from the runner",
+          not _unlisted,
+          f"{_unlisted} would never execute; three files had rotted this way")
+except Exception as _e:
+    check(F, "runner coverage check executable", False, f"{type(_e).__name__}: {_e}")
+
 # ─────────────────────────────────────────────────────────────────────────
 # REPORT
 # ─────────────────────────────────────────────────────────────────────────

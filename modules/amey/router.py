@@ -92,7 +92,37 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
             target_pid = parts[-1] if (len(parts) >= 3 and parts[-1].isdigit()) else "400188"
 
         if briefing is None:
+            # Regenerate — but then CHECK that the regenerated document is the one
+            # the caller named. Without this the endpoint verified a Merkle proof
+            # against a document it had just built, so the supplied doc_hash was
+            # never examined at all:
+            #
+            #     GET /api/amey/verify/000...000/fact_cost?project_id=400188
+            #       -> {"proof_valid": true,
+            #           "cag_cvc_compliance": "PASS — SHA-256 Merkle inclusion
+            #                                  proof verified against immutable root"}
+            #
+            # 64 zeros passed. Every hash passed. The QR code printed on a Cabinet
+            # note was therefore unfalsifiable in the useless direction: it could
+            # not fail, so it proved nothing, while reporting CAG/CVC compliance.
+            #
+            # doc_hash is content-addressed (sha256 of merkle_root:project_id), so
+            # a regeneration whose own hash differs is a different document by
+            # definition — either the hash was fabricated, or the underlying facts
+            # have moved since issue. Both must fail closed, and the two cases are
+            # distinguished in the message because they mean very different things
+            # to an auditor.
             briefing = engine.generate_cabinet_briefing(target_pid)
+            if briefing.doc_hash != doc_hash:
+                raise HTTPException(
+                    status_code=404,
+                    detail=(
+                        f"No document with hash {doc_hash[:16]}... was issued for "
+                        f"project {target_pid}. The current facts for this project "
+                        f"hash to {briefing.doc_hash[:16]}..., so either the hash is "
+                        f"not one this system produced, or the underlying figures "
+                        f"have changed since the document was issued. Verification "
+                        f"fails closed in both cases."))
         
         target_fact = None
         for fid, f in briefing.audit_facts.items():

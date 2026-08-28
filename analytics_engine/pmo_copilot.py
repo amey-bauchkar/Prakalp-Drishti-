@@ -137,8 +137,33 @@ class PMOCopilotEngine:
                 "citing_fact_id": sat_fact_id
             })
 
-        # Merkle Document Hash for Air-Gapped Provenance
-        doc_hash = hashlib.sha256(f"PMO_COPILOT:{pid}:{datetime.now().strftime('%Y-%m-%d')}".encode("utf-8")).hexdigest()
+        # Content-addressed document hash.
+        #
+        # This previously hashed f"PMO_COPILOT:{pid}:{today}" -- the project id and
+        # the wall-clock date, and NOTHING ELSE. Measured against the running
+        # build, the served hash was reproducible by anyone holding only the
+        # project id:
+        #
+        #     sha256("PMO_COPILOT:400188:2026-08-28") == the served document_hash
+        #
+        # Three separate failures in one line. It covered none of the content, so
+        # every figure in the briefing could change and the hash would not move.
+        # It was forgeable by anyone who could guess a date. And it rotated at
+        # midnight, so a QR code printed on a Cabinet note failed verification the
+        # next morning. It was nonetheless embedded in `qr_verification_url` and
+        # served beside "offline_air_gapped": True, which is exactly the kind of
+        # claim a reviewer would take at face value.
+        #
+        # Hashing the ordered facts binds the identifier to what the document
+        # actually says, and drops the clock so the hash stays valid as long as
+        # the underlying facts do. pragati_saarthi.py already did this correctly;
+        # the two now agree.
+        _fact_leaves = json.dumps(
+            [{"id": f.get("fact_id"), "val": f.get("value"), "unit": f.get("unit")}
+             for f in facts_list],
+            sort_keys=True, default=str)
+        doc_hash = hashlib.sha256(
+            f"PMO_COPILOT:{pid}:{_fact_leaves}".encode("utf-8")).hexdigest()
 
         return {
             "project_id": pid,

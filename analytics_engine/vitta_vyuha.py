@@ -139,7 +139,19 @@ class VittaVyuhaEngine:
 
         # Shapley systemic multiplier gamma_i
         pids = self.candidate_df["ProjectId"].astype(str).values
-        gammas = np.array([self.shapley_scores.get(p, 100.0) for p in pids])
+        # Default for a project absent from the Shapley table: the MEDIAN of the
+        # scores actually present, not a hardcoded 100.
+        #
+        # Raw scores span 10.85 to 15,516 with a median of 369, so a literal 100
+        # silently placed any unscored project in the bottom decile -- penalising
+        # it for a gap in the input data rather than for anything about the
+        # project. No candidate is currently missing, so this changes no output
+        # today; it removes a trap that only fires when the Shapley bake and the
+        # candidate pool drift apart, which is exactly when nobody is looking.
+        _known = [v for v in self.shapley_scores.values()
+                  if isinstance(v, (int, float)) and v > 0]
+        _default_gamma = float(np.median(_known)) if _known else 1.0
+        gammas = np.array([self.shapley_scores.get(p, _default_gamma) for p in pids])
         gammas = (gammas / np.mean(gammas)) if np.mean(gammas) > 0 else np.ones(N)
 
         # Project Risk Metric derived from empirical milestone delays and physical progress
@@ -325,6 +337,16 @@ class VittaVyuhaEngine:
         ner_share = (ner_allocated / total_allocated * 100.0) if total_allocated > 0 else 0.0
 
         expected_yield = float(np.sum(allocations_raw * base_yield) / max(total_allocated, 1.0) * 100.0)
+
+        # The figure above is a composite index and exceeds 100 routinely,
+        # because base_yield multiplies a completion propensity by a network
+        # vitality term normalised to mean 1 rather than capped at 1. Compute
+        # the quantity that IS a percentage alongside it: the allocation-weighted
+        # mean completion propensity on its own, clipped to [0, 1].
+        _propensity = np.clip(0.5 + (progress / 100.0) - (delays / 200.0), 0.0, 1.0)
+        completion_propensity_perc = float(np.clip(
+            np.sum(allocations_raw * _propensity) / max(total_allocated, 1.0) * 100.0,
+            0.0, 100.0))
         portfolio_risk = float(np.sum(allocations_raw * risk_normalized) / max(total_allocated, 1.0))
         cvar_loss = float(round(portfolio_risk * 100.0, 1))
 
@@ -377,6 +399,7 @@ class VittaVyuhaEngine:
             total_budget_pool_cr=B,
             total_allocated_cr=round(total_allocated, 2),
             expected_completion_yield=round(expected_yield, 2),
+            portfolio_completion_propensity_perc=round(completion_propensity_perc, 2),
             cvar90_tail_loss=round(cvar_loss, 2),
             ner_allocated_cr=round(ner_allocated, 2),
             ner_share_perc=round(ner_share, 2),
@@ -411,7 +434,8 @@ if __name__ == "__main__":
     print(f"  Budget Pool: ₹{res.total_budget_pool_cr:,.2f} Cr")
     print(f"  Total Allocated: ₹{res.total_allocated_cr:,.2f} Cr")
     print(f"  NER Allocated: ₹{res.ner_allocated_cr:,.2f} Cr ({res.ner_share_perc:.1f}% vs 10% statutory floor)")
-    print(f"  Expected Completion Yield: {res.expected_completion_yield:.2f}%")
+    print(f"  Priority Index (not a %): {res.expected_completion_yield:.2f}")
+    print(f"  Completion Propensity:    {res.portfolio_completion_propensity_perc:.2f}%")
     print(f"  CVaR90 Tail Loss: ₹{res.cvar90_tail_loss:,.2f} Cr")
     print(f"  Dual Shadow Price π(Budget): {res.shadow_price_budget_pi:.3f} (₹ return per ₹1 Cr capex)")
     print(f"  Linearization Closure Error: {res.closure_error_perc}%")

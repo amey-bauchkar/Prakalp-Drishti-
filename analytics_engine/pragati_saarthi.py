@@ -243,13 +243,17 @@ class PragatiSaarthiEngine:
                 "heading_hi": "३. वित्त-व्यूह पूंजी आवंटन एवं छाया मूल्य (Duals)",
                 "content_en": (
                     f"Allocated Capex: ₹{alloc_res.total_allocated_cr:,.2f} Cr out of ₹{alloc_res.total_budget_pool_cr:,.2f} Cr pool. "
-                    f"Expected Completion Yield: {alloc_res.expected_completion_yield:.1f}%. "
+                    f"Portfolio completion propensity: "
+                    f"{alloc_res.portfolio_completion_propensity_perc:.1f}% "
+                    f"(priority index {alloc_res.expected_completion_yield:.1f}). "
                     f"Marginal Value of Budget Relaxation π(Budget): {alloc_res.shadow_price_budget_pi:.3f}. "
                     f"Linearization Closure Diagnostic: {alloc_res.closure_error_perc}% (Well within <5% research threshold)."
                 ),
                 "content_hi": (
                     f"आवंटित पूंजीगत व्यय: ₹{alloc_res.total_budget_pool_cr:,.2f} करोड़ में से ₹{alloc_res.total_allocated_cr:,.2f} करोड़। "
-                    f"प्रत्याशित पूर्णता प्रतिफल: {alloc_res.expected_completion_yield:.1f}%। "
+                    f"पोर्टफोलियो पूर्णता प्रवृत्ति: "
+                    f"{alloc_res.portfolio_completion_propensity_perc:.1f}% "
+                    f"(प्राथमिकता सूचकांक {alloc_res.expected_completion_yield:.1f})। "
                     f"अतिरिक्त बजट आवंटन का सीमांत प्रतिफल π(Budget): {alloc_res.shadow_price_budget_pi:.3f}। "
                     f"रैखिक संवृत त्रुटि (Closure Error): {alloc_res.closure_error_perc}% (<५% शोध सीमा के अंतर्गत)।"
                 )
