@@ -46,6 +46,13 @@ from skimage.metrics import structural_similarity
 CAPTION_BAR_PX = 32      # add_overlay_annotation() draws a bar of this height at the bottom
 CROSSHAIR_RADIUS_PX = 26  # add_crosshair() draws within +/-15px of centre; padded for the JPEG ringing
 
+# Minimum orientation coherence before a linear asset is granted a corridor ROI
+# instead of a disc. Measured discrimination is real but modest --
+# P(LINEAR coherence > POINT coherence) = 0.648 against 0.5 for chance -- so this
+# is a useful prior, not a detector, and it fails back to the disc rather than
+# forcing a corridor onto a scene that has no alignment in it.
+CORRIDOR_MIN_COHERENCE = 0.50
+
 
 @dataclass
 class ChangeResult:
@@ -443,6 +450,7 @@ def detect_change(
     structural_weight: float = 0.55,
     asset_geometry: str = "POINT",
     corridor_elongation: float = 4.0,
+    roi_override: Optional[np.ndarray] = None,
 ) -> ChangeResult:
     """
     Full precision chain. `sensitivity` is the threshold in standard deviations above the
@@ -455,7 +463,17 @@ def detect_change(
     mask = build_annotation_mask(before_bgr.shape)
 
     aligned_after, shift_px, method = coregister(before_bgr, after_bgr, mask)
-    normalised_after = match_histograms(aligned_after, before_bgr, mask)
+    # Relative Radiometric Normalization replaces histogram matching here.
+    # Matching forces the whole distribution to agree, which erases the very
+    # change being looked for: a new concrete apron shifts the histogram and
+    # matching removes that shift along with the illumination difference. RRN
+    # fits only on pseudo-invariant pixels, so genuine change survives it.
+    try:
+        from analytics_engine.eo_geospatial import relative_radiometric_normalization
+        _rrn = relative_radiometric_normalization(before_bgr, aligned_after, mask)
+        normalised_after = _rrn.normalised_after
+    except Exception:
+        normalised_after = match_histograms(aligned_after, before_bgr, mask)
 
     g_before = cv2.GaussianBlur(cv2.cvtColor(before_bgr, cv2.COLOR_BGR2GRAY), (5, 5), 0)
     g_after = cv2.GaussianBlur(cv2.cvtColor(normalised_after, cv2.COLOR_BGR2GRAY), (5, 5), 0)
@@ -487,7 +505,6 @@ def detect_change(
     # plant or a station. Discrimination is real but modest -- P(LINEAR coherence >
     # POINT coherence) = 0.648 against 0.5 for chance -- so this is a useful prior,
     # not a classifier, and the shape it chose is always reported alongside.
-    CORRIDOR_MIN_COHERENCE = 0.50
     orient, coherence = (None, 0.0)
     elong = 1.0
     is_linear = str(asset_geometry).upper() == "LINEAR"
@@ -498,10 +515,19 @@ def detect_change(
         else:
             orient = None
 
-    roi_w, core_px = build_roi_weight(
-        before_bgr.shape, gsd, core_radius_m=core_radius_m,
-        orientation_rad=orient, elongation=elong,
-    )
+    if roi_override is not None:
+        # A hard statutory buffer supplied by the geospatial layer. Using it here
+        # rather than re-deriving an ellipse is what keeps the footprint figure
+        # and the velocity figure measured over the SAME ground -- they disagreed
+        # before, and a 60 m corridor scored 0 m2/month against a change mask
+        # built for a 300 m ellipse.
+        roi_w = np.where(roi_override, 1.0, 0.15).astype(np.float32)
+        core_px = float(np.sqrt(max(float(roi_override.sum()), 1.0) / math.pi))
+    else:
+        roi_w, core_px = build_roi_weight(
+            before_bgr.shape, gsd, core_radius_m=core_radius_m,
+            orientation_rad=orient, elongation=elong,
+        )
 
     persistent_veg, veg_swing = vegetation_masks(before_bgr, normalised_after)
     edge_gain = structural_gain(g_before, g_after)
@@ -512,7 +538,8 @@ def detect_change(
     crop_cycle = veg_swing & (edge_gain < 0.12)
     suppress = persistent_veg | crop_cycle
 
-    roi_core = roi_w > (0.15 + 0.5 * (1.0 - 0.15))     # inside the taper midpoint
+    roi_core = (roi_override.astype(bool) if roi_override is not None
+                else roi_w > (0.15 + 0.5 * (1.0 - 0.15)))   # inside the taper midpoint
     veg_dropped = float((suppress & roi_core & valid).sum()) / max(int((roi_core & valid).sum()), 1)
 
     # Structural emphasis: blend the raw dissimilarity with the edge-gain field so
