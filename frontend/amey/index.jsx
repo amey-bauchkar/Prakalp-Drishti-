@@ -79,24 +79,23 @@ export default function AmeyMasterView() {
   ];
 
   return (
-    <LoginGate>
-      <div className="font-sans space-y-8 sm:space-y-12">
+    <div className="font-sans space-y-8 sm:space-y-12">
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 1: FRAMED SOVEREIGN BLUE HERO BOX (PAGE 1)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-1" className="py-4 sm:py-8 flex flex-col justify-center">
-          <div className="hero-saffron-banner text-white relative overflow-hidden max-w-6xl w-full mx-auto py-5 sm:py-6 px-6 sm:px-12 rounded-2xl shadow-xl border border-[#163B5D]">
+        <section id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
+          <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
             {/* Subtle India Gate Vector Silhouette Watermark */}
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-xl pointer-events-none opacity-10 flex items-end justify-center">
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-2xl pointer-events-none opacity-10 flex items-end justify-center">
               <svg viewBox="0 0 500 400" className="w-full h-full fill-current text-white">
                 <path d="M100,380 L100,180 L140,160 L140,120 L360,120 L360,160 L400,180 L400,380 L320,380 L320,240 C320,200 180,200 180,240 L180,380 Z" />
               </svg>
             </div>
 
             {/* Top Emblem & Sovereign Tag */}
-            <div className="relative z-10 text-center space-y-2 pt-0.5">
+            <div className="relative z-10 text-center space-y-2.5 pt-1">
               <div className="flex items-center justify-center">
-                <div className="w-14 h-14 sm:w-15 sm:h-15 bg-white rounded-2xl p-1 shadow-lg border border-white/80 flex items-center justify-center">
+                <div className="w-16 h-16 sm:w-18 sm:h-18 bg-white rounded-2xl p-1.5 shadow-lg border border-white/80 flex items-center justify-center">
                   <img
                     src="/logos/prakalp_drishti_emblem.png"
                     alt="PRAKALP-DRISHTI Official Emblem"
@@ -105,51 +104,51 @@ export default function AmeyMasterView() {
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-2 bg-white/[0.1] backdrop-blur-xs px-3.5 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-extrabold tracking-institutional uppercase text-white border border-white/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2 bg-white/[0.1] backdrop-blur-xs px-4 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-institutional uppercase text-white border border-white/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>Ministry of Statistics &amp; Programme Implementation · Govt. of India</span>
               </div>
             </div>
 
             {/* Centered Main Narrative & Action Buttons */}
-            <div className="relative z-10 max-w-3xl mx-auto text-center space-y-3.5 my-2.5">
-              <h1 className="font-heading font-extrabold text-[24px] sm:text-[30px] lg:text-[34px] leading-[1.12] text-white tracking-[-0.025em]">
+            <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4 my-4">
+              <h1 className="font-heading font-extrabold text-[28px] sm:text-[36px] lg:text-[42px] leading-[1.12] text-white tracking-[-0.025em]">
                 National Decision Intelligence for India's 2,207 Mega-Projects
               </h1>
 
-              <p className="text-ink-200 text-[12.5px] sm:text-[13.5px] leading-relaxed max-w-2xl mx-auto font-sans">
+              <p className="text-ink-200 text-[13.5px] sm:text-[15px] leading-relaxed max-w-3xl mx-auto font-sans">
                 Real-time oversight platform monitoring ₹31.4 Lakh Crore in sovereign capital investments. 
                 Equipped with mathematical de-biasing, financial stress testing, and delay contagion modeling.
               </p>
 
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-0.5">
-                <Link to="/decision-hub" className="btn-saffron-pill text-[12px] py-2 px-5.5 group shadow-md">
+              <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+                <Link to="/decision-hub" className="btn-saffron-pill text-[12.5px] py-2.5 px-6 group shadow-md">
                   <span>Enter Decision Hub</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
 
                 <button
                   onClick={() => scrollToSection('slide-3')}
-                  className="inline-flex items-center gap-1.5 text-white text-[12px] font-extrabold uppercase tracking-institutional py-2 px-5 rounded-sm bg-white/5 hover:bg-white/15 border border-white/30 transition-colors whitespace-nowrap cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-white text-[12.5px] font-extrabold uppercase tracking-institutional py-2.5 px-5.5 rounded-sm bg-white/5 hover:bg-white/15 border border-white/30 transition-colors whitespace-nowrap cursor-pointer"
                 >
                   <span>Explore Engines</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
             {/* Bottom Centered Metric Pill Strip */}
-            <div className="relative z-10 pt-3 mt-1.5 border-t border-white/15 max-w-xl w-full mx-auto grid grid-cols-3 divide-x divide-white/12 pb-0.5">
+            <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-2xl w-full mx-auto grid grid-cols-3 divide-x divide-white/12 pb-1">
               {[
                 { v: '2,207', k: 'Monitored Works' },
                 { v: '₹31.4L Cr', k: 'Capital Portfolio' },
                 { v: '100%', k: 'Air-Gapped Sovereign' },
               ].map((m) => (
-                <div key={m.k} className="px-2.5 text-center">
-                  <div className="font-mono text-[18px] sm:text-[21px] font-bold text-white leading-none tracking-tight">
+                <div key={m.k} className="px-4 text-center">
+                  <div className="font-mono text-[20px] sm:text-[24px] font-bold text-white leading-none tracking-tight">
                     {m.v}
                   </div>
-                  <div className="text-[8.5px] sm:text-[9px] uppercase tracking-institutional text-ink-200 mt-1 font-bold">
+                  <div className="text-[9.5px] sm:text-[10.5px] uppercase tracking-institutional text-ink-200 mt-1.5 font-bold">
                     {m.k}
                   </div>
                 </div>
@@ -501,6 +500,5 @@ export default function AmeyMasterView() {
           </div>
         </section>
       </div>
-    </LoginGate>
   );
 }

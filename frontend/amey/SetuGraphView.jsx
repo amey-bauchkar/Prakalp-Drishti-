@@ -27,75 +27,75 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
   }, [projectId, kHops]);
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-6 font-sans">
       {/* Top Banner */}
-      <section className="panel p-4 sm:p-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <GitBranch className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>Module 2 · Project Dependencies</span>
+      <div className="command-header p-5 sm:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent font-mono">
+              <GitBranch className="w-3.5 h-3.5" />
+              <span>MODULE 2 · PROJECT DEPENDENCY CONTAGION</span>
             </div>
-            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
+            <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
               SETU-GRAPH: Connected Projects &amp; Delay Ripple
             </h2>
-            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
+            <p className="text-[12.5px] text-ink-200 leading-relaxed max-w-2xl">
               Discover which projects depend on this one, and calculate how much capital gets stuck if delays ripple downstream.
             </p>
           </div>
 
           {/* K-Hop Selector */}
-          <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
-            <span className="text-xs text-text-muted font-bold px-2 font-mono">Supply Chain Contagion Depth (K-Hops):</span>
+          <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-sm bg-black/30 border border-white/15 shrink-0 self-start lg:self-center">
+            <span className="text-[10px] text-ink-200 font-bold px-2 font-mono uppercase tracking-wider">Contagion Depth:</span>
             {[1, 2, 3].map((k) => (
               <button
                 key={k}
                 onClick={() => setKHops(k)}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
+                className={`px-3 py-1 text-[11px] font-bold rounded-xs transition-all cursor-pointer ${
                   kHops === k
-                    ? 'bg-gov-navy text-white shadow-sm'
-                    : 'text-text-secondary hover:text-gov-navy hover:bg-slate-200/60'
+                    ? 'bg-gov-accent text-slate-900 font-black shadow-xs'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
-                {k === 1 ? 'Level 1: Direct Dependencies' : k === 2 ? 'Level 2: Secondary Ripple' : 'Level 3: Systemic Cascade'}
+                {k === 1 ? 'Level 1: Direct' : k === 2 ? 'Level 2: Ripple' : 'Level 3: Cascade'}
               </button>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
       {loading && (
-        <div className="p-12 text-center text-text-muted font-bold text-sm panel">
-          <Activity className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" />
+        <div className="panel p-8 text-center text-gov-muted font-bold text-xs">
+          <Activity className="w-6 h-6 text-gov-accent animate-spin mx-auto mb-2" />
           Analyzing Project Connections &amp; Delay Buffers...
         </div>
       )}
 
       {data && !loading && (
-        <div className="space-y-8">
-          {/* Top KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="panel p-4">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Connected Projects</span>
-              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.nodes.length} Projects</p>
-              <span className="text-[11.5px] text-emerald-800 font-bold flex items-center gap-1 mt-1 font-sans">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Clean Dependency Flow
+        <div className="space-y-6">
+          {/* Top KPI Cards in Standard Hairgrid */}
+          <div className="hairgrid hairgrid-4">
+            <div className="metric-cell">
+              <span className="metric-label">Connected Projects</span>
+              <span className="metric-value">{data.nodes.length} <span className="text-xs font-normal text-gov-muted">Projects</span></span>
+              <span className="metric-sub metric-pos font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Clean Dependency Flow
               </span>
             </div>
-            <div className="panel p-4">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Supply Chain Links</span>
-              <p className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{data.edges.length} Connections</p>
-              <span className="text-[11.5px] text-text-muted font-medium mt-1 block font-sans">Physical &amp; Strategic Links</span>
+            <div className="metric-cell">
+              <span className="metric-label">Supply Chain Links</span>
+              <span className="metric-value">{data.edges.length} <span className="text-xs font-normal text-gov-muted">Links</span></span>
+              <span className="metric-sub">Physical &amp; Strategic Nodes</span>
             </div>
-            <div className="panel p-4">
-              <span className="text-[11.5px] font-bold text-text-muted uppercase tracking-wider font-mono">Likely Contagion Capital Exposure (P50)</span>
-              <p className="text-[30px] font-black text-amber-600 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p50_cr.toLocaleString()} Cr</p>
-              <span className="text-[11.5px] text-amber-800 font-bold mt-1 block font-sans">Likely Contagion Capital at Risk</span>
+            <div className="metric-cell">
+              <span className="metric-label">Contagion Capital (P50)</span>
+              <span className="metric-value metric-warn">₹{data.total_cascade_locked_p50_cr.toLocaleString()} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+              <span className="metric-sub">Likely Capital Exposure</span>
             </div>
-            <div className="note note-critical">
-              <span className="text-[11.5px] font-black text-rose-700 uppercase tracking-wider font-mono">Stress-Tested Tail Capital Exposure (P95)</span>
-              <p className="text-[30px] font-black text-rose-700 mt-1 tracking-tight font-mono">₹{data.total_cascade_locked_p95_cr.toLocaleString()} Cr</p>
-              <span className="text-[11.5px] text-rose-700 font-bold mt-1 block font-sans">Severe Contagion Exposure Bound</span>
+            <div className="metric-cell panel-critical">
+              <span className="metric-label">Tail Capital Exposure (P95)</span>
+              <span className="metric-value metric-neg">₹{data.total_cascade_locked_p95_cr.toLocaleString()} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+              <span className="metric-sub">Severe Contagion Bound</span>
             </div>
           </div>
 

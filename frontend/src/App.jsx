@@ -7,6 +7,7 @@ import DecisionHubView from '../amey/DecisionHubView.jsx';
 import SatyaKavachView from './views/SatyaKavachView.jsx';
 import ArthaNivaranView from './views/ArthaNivaranView.jsx';
 import SetuVarshaView from './views/SetuVarshaView.jsx';
+import PublicDashboardView from './views/PublicDashboardView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -168,16 +169,11 @@ function InstitutionalHeader() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Four pillars, not eight modules. The engines did not change; the eight
-  // per-developer routes were an org chart on a navbar, which asked an officer
-  // to know who built what before they could find anything.
+  // Top-level Navigation: Sovereign Home, Government Decision Hub, Nagrik Portal
   const navItems = [
     { to: '/', label: 'HOME' },
-    { to: '/decision-hub', label: '1 · DECISION HUB' },
-    { to: '/satya-kavach', label: '2 · SATYA-KAVACH' },
-    { to: '/artha-nivaran', label: '3 · ARTHA-NIVARAN' },
-    { to: '/setu-varsha', label: '4 · SETU-VARSHA' },
-    { to: '/karya-dakshata', label: 'KARYA-DAKSHATA' },
+    { to: '/decision-hub', label: 'DECISION HUB' },
+    { to: '/nagrik', label: 'NAGRIK PORTAL' },
   ];
 
   return (
@@ -209,13 +205,13 @@ function InstitutionalHeader() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Menu (data.gov.in layout) */}
-        <div className="hidden lg:flex items-center gap-6">
-          <nav className="flex items-center gap-5 xl:gap-7">
+        {/* Center-aligned Desktop Navigation Menu */}
+        <div className="hidden lg:flex flex-1 items-center justify-center px-4">
+          <nav className="flex items-center gap-8 xl:gap-12">
             {navItems.map((item) => {
               const isActive = item.to === '/'
                 ? location.pathname === '/'
-                : location.pathname === item.to;
+                : location.pathname.startsWith(item.to);
               return (
                 <NavLink
                   key={item.to}
@@ -224,7 +220,7 @@ function InstitutionalHeader() {
                   className="flex flex-col items-center group py-1"
                 >
                   <span
-                    className={`text-[12px] font-heading font-extrabold tracking-wider transition-colors ${
+                    className={`text-[12.5px] font-heading font-extrabold tracking-wider transition-colors ${
                       isActive
                         ? 'text-[#0060B6]'
                         : 'text-[#1E2A45] group-hover:text-[#0060B6]'
@@ -242,7 +238,10 @@ function InstitutionalHeader() {
               );
             })}
           </nav>
+        </div>
 
+        {/* Right side utility / login controls */}
+        <div className="hidden lg:flex items-center gap-4 shrink-0">
           {/* Search Popover Trigger */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
@@ -262,9 +261,12 @@ function InstitutionalHeader() {
               <span>{session.username}</span>
             </div>
           ) : (
-            <span className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer">
+            <Link
+              to="/decision-hub"
+              className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer"
+            >
               LOGIN | REGISTER
-            </span>
+            </Link>
           )}
         </div>
 
@@ -303,7 +305,7 @@ function InstitutionalHeader() {
             {navItems.map((item) => {
               const isActive = item.to === '/'
                 ? location.pathname === '/'
-                : location.pathname === item.to;
+                : location.pathname.startsWith(item.to);
               return (
                 <NavLink
                   key={item.to}
@@ -331,8 +333,6 @@ function InstitutionalFooter() {
   return (
     <footer className="mt-auto">
       {/* Main Footer Content */}
-
-      {/* Main Footer Content */}
       <div className="bg-gov-navy-dark text-white py-12">
         <div className="gov-content grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
@@ -347,14 +347,14 @@ function InstitutionalFooter() {
           </div>
 
           <div>
-            <h5 className="text-xs font-bold text-gov-saffron-light uppercase tracking-wider mb-3 font-heading">Analytical Modules</h5>
+            <h5 className="text-xs font-bold text-gov-saffron-light uppercase tracking-wider mb-3 font-heading">Public &amp; Analytical Portals</h5>
             <ul className="space-y-2 text-xs">
-              <li><Link to="/tanmay" className="text-slate-300 hover:text-gov-saffron transition-colors">SATYA-KAVACH — Contract Compliance</Link></li>
-              <li><Link to="/parth" className="text-slate-300 hover:text-gov-saffron transition-colors">ARTHA-NETRA — Financial Health</Link></li>
-              <li><Link to="/janhavi" className="text-slate-300 hover:text-gov-saffron transition-colors">VARSHA-SPEED — Climate Exposure</Link></li>
-              <li><Link to="/nivaran" className="text-slate-300 hover:text-gov-saffron transition-colors">NIVARAN — Contract &amp; Dispute Risk</Link></li>
-              <li><Link to="/anumati" className="text-slate-300 hover:text-gov-saffron transition-colors">ANUMATI — Statutory Clearances</Link></li>
-              <li><Link to="/decision-hub" className="text-slate-300 hover:text-gov-saffron transition-colors">DECISION INTELLIGENCE HUB</Link></li>
+              <li><Link to="/nagrik" className="text-slate-300 hover:text-gov-saffron transition-colors">NAGRIK PORTAL — Public Transparency</Link></li>
+              <li><Link to="/decision-hub" className="text-slate-300 hover:text-gov-saffron transition-colors">DECISION INTELLIGENCE HUB (11 Engines)</Link></li>
+              <li><Link to="/satya-kavach" className="text-slate-300 hover:text-gov-saffron transition-colors">SATYA-KAVACH — Contract Compliance</Link></li>
+              <li><Link to="/artha-nivaran" className="text-slate-300 hover:text-gov-saffron transition-colors">ARTHA-NETRA — Financial Health</Link></li>
+              <li><Link to="/setu-varsha" className="text-slate-300 hover:text-gov-saffron transition-colors">SETU-VARSHA — Climate Exposure</Link></li>
+              <li><Link to="/karya-dakshata" className="text-slate-300 hover:text-gov-saffron transition-colors">KARYA-DAKSHATA — Agency Efficiency</Link></li>
             </ul>
           </div>
 
@@ -432,17 +432,19 @@ export default function App() {
           <Routes>
             <Route path="/" element={<AmeyMasterView />} />
             <Route path="/decision-hub" element={<DecisionHubView />} />
-            {/* ── The four consolidated pillars ── */}
+            
+            {/* ── Nagrik Portal (Public Transparency) ── */}
+            <Route path="/nagrik" element={<PublicDashboardView />} />
+            <Route path="/public" element={<Navigate to="/nagrik" replace />} />
+            <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
+
+            {/* ── The underlying engine routes (direct links preserved for zero regression) ── */}
             <Route path="/satya-kavach" element={<SatyaKavachView />} />
             <Route path="/artha-nivaran" element={<ArthaNivaranView />} />
             <Route path="/setu-varsha" element={<SetuVarshaView />} />
             <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
 
-            {/* ── Legacy per-developer paths ──
-                Kept as redirects rather than deleted. These URLs are in the
-                team's bookmarks, in the presentation deck and in the README, and
-                a 404 on a demo link is a worse outcome than a redirect. `replace`
-                keeps the back button from bouncing between old and new. */}
+            {/* ── Legacy per-developer paths ── */}
             <Route path="/tanmay" element={<Navigate to="/satya-kavach" replace />} />
             <Route path="/parth" element={<Navigate to="/artha-nivaran" replace />} />
             <Route path="/janhavi" element={<Navigate to="/setu-varsha" replace />} />
@@ -452,11 +454,7 @@ export default function App() {
             <Route path="/soham" element={<Navigate to="/decision-hub" replace />} />
             <Route path="/eo-auditor" element={<Navigate to="/setu-varsha" replace />} />
 
-            {/* Catch-all. Without it an unmatched path rendered the header and
-                footer around a completely empty <main> — a blank screen with no
-                explanation. That is reachable today through a stale bookmark:
-                /soham and /eo-auditor were routes until recently and now match
-                nothing. */}
+            {/* Catch-all */}
             <Route path="*" element={<NotFoundView />} />
           </Routes>
         </main>
