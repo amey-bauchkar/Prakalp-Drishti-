@@ -13,9 +13,23 @@ import { useSession, clearSession } from '../amey/LoginGate.jsx';
 
 /* ─── Sovereign Government Utility Bar (data.gov.in Style) ───────── */
 function UtilityBar() {
-  const [theme, setTheme] = useState('default');
-  const [lang, setLang] = useState('en');
+  const [theme, setTheme] = useState(() => localStorage.getItem('prakalp:theme') || 'default');
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('prakalp:fontSize') || 'normal');
   const session = useSession();
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('prakalp:theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    if (fontSize === 'normal') {
+      document.documentElement.removeAttribute('data-font-size');
+    } else {
+      document.documentElement.setAttribute('data-font-size', fontSize);
+    }
+    localStorage.setItem('prakalp:fontSize', fontSize);
+  }, [fontSize]);
 
   return (
     <div className="bg-[#0060B6] text-white text-[11.5px] font-sans border-b border-[#00509E] select-none">
@@ -29,52 +43,96 @@ function UtilityBar() {
 
         {/* Right: Theme Selector & Social / Utility Badges */}
         <div className="flex items-center gap-3.5">
-          {/* Theme Selector */}
-          <div className="flex items-center gap-1.5 cursor-pointer hover:opacity-90">
-            <span className="text-[11px] font-medium hidden sm:inline text-white/95">Choose your theme:</span>
-            <button
-              onClick={() => setTheme(t => t === 'default' ? 'contrast' : 'default')}
-              className="w-4 h-4 rounded-full border border-white/80 p-0 shadow-xs relative overflow-hidden bg-gradient-to-r from-[#FF9933] to-[#0060B6] shrink-0"
-              title="Toggle Theme"
-            />
+          {/* Theme Selector (Standard / High-Contrast / Dark) */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium hidden sm:inline text-white/95">Theme:</span>
+            <div className="flex items-center gap-1 bg-white/10 p-0.5 rounded border border-white/20">
+              <button
+                onClick={() => setTheme('default')}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
+                  theme === 'default' ? 'bg-white text-[#0060B6] shadow-xs' : 'text-white/80 hover:text-white'
+                }`}
+                title="Standard Institutional Theme"
+              >
+                Standard
+              </button>
+              <button
+                onClick={() => setTheme('contrast')}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
+                  theme === 'contrast' ? 'bg-yellow-400 text-black shadow-xs font-black' : 'text-white/80 hover:text-white'
+                }`}
+                title="GIGW High Contrast Mode"
+              >
+                High Contrast
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
+                  theme === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-white/80 hover:text-white'
+                }`}
+                title="Dark Console Mode"
+              >
+                Dark
+              </button>
+            </div>
           </div>
 
-          {/* Social / GIGW Icons (Circular white with icons) */}
+          {/* Text Size Accessibility Controls (GIGW standard: A- A A+) */}
+          <div className="hidden sm:flex items-center gap-0.5 bg-white/10 p-0.5 rounded border border-white/20 font-mono text-[10px]">
+            <button
+              onClick={() => setFontSize('normal')}
+              className={`px-1.5 py-0.5 rounded ${fontSize === 'normal' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
+              title="Standard text size"
+            >
+              A
+            </button>
+            <button
+              onClick={() => setFontSize('large')}
+              className={`px-1.5 py-0.5 rounded ${fontSize === 'large' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
+              title="Large text size (+10%)"
+            >
+              A+
+            </button>
+            <button
+              onClick={() => setFontSize('larger')}
+              className={`px-1.5 py-0.5 rounded ${fontSize === 'larger' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
+              title="Extra large text size (+20%)"
+            >
+              A++
+            </button>
+          </div>
+
+          {/* Social / GIGW Official Links */}
           <div className="flex items-center gap-1.5">
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/MoSPI.GoI"
               target="_blank"
               rel="noopener noreferrer"
               className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors"
-              title="Facebook"
+              title="Official MoSPI Facebook"
             >
               <Facebook className="w-3 h-3 fill-current" />
             </a>
 
             <a
-              href="https://twitter.com"
+              href="https://twitter.com/GoI_MoSPI"
               target="_blank"
               rel="noopener noreferrer"
               className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors font-bold text-[10px]"
-              title="X (Twitter)"
+              title="Official MoSPI X (Twitter)"
             >
               <span className="font-sans font-black text-[10px] leading-none">𝕏</span>
             </a>
 
             <a
-              href="/rss"
+              href="https://data.gov.in"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-5 h-5 rounded-full bg-white text-[#FF9933] flex items-center justify-center hover:bg-slate-100 transition-colors"
-              title="RSS Feed"
+              title="Open Government Data Portal"
             >
               <Rss className="w-2.5 h-2.5" />
             </a>
-
-            <button
-              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors"
-              title="Accessibility Options"
-            >
-              <Accessibility className="w-3 h-3" />
-            </button>
           </div>
 
           {/* Active Session / Sign Out if authenticated */}
@@ -306,7 +364,7 @@ function InstitutionalFooter() {
               <li><a href="https://mospi.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">Ministry Website (MoSPI)</a></li>
               <li><a href="https://data.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">Open Government Data (OGD)</a></li>
               <li><a href="https://niti.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">NITI Aayog Portal</a></li>
-              <li><a href="https://pmgatishekhti.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">PM GatiShakti NMP</a></li>
+              <li><a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">PM GatiShakti NMP</a></li>
             </ul>
           </div>
 

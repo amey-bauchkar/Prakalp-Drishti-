@@ -45,6 +45,28 @@ export default function ArthaNetraView() {
   const [tierFilter, setTierFilter] = useState('');
   const [drill, setDrill] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedProjectId, setSelectedProjectId] = useState(() => localStorage.getItem('prakalp:selectedProjectId') || '619092');
+  const [activeProject, setActiveProject] = useState(null);
+
+  // Global project sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetch(`/api/projects/${selectedProjectId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((p) => setActiveProject(p))
+        .catch(() => {});
+    }
+  }, [selectedProjectId]);
 
   useEffect(() => {
     let dead = false;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlaskConical, AlertTriangle, TrendingUp, Layers, ShieldAlert, Info } from 'lucide-react';
 import { apiFetch } from './authClient';
 
-const API = 'http://127.0.0.1:8000';
+const API = '';
 
 /**
  * MoSPI Outcomes (e) and (f), Dimensions (b) and (c), plus the Outcome (d) queue.

@@ -16,7 +16,7 @@
  *    correct default for a government console on a shared machine.
  */
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 const TOKEN_KEY = 'prakalp:auth';
 
 const listeners = new Set();
@@ -92,7 +92,7 @@ export async function apiFetch(path, options = {}) {
     res = await fetch(path.startsWith('http') ? path : `${API_BASE}${path}`, { ...options, headers });
   } catch (networkError) {
     return { ok: false, status: 0, data: null, networkError: true,
-             error: 'Cannot reach the API. Is the backend running on port 8000?' };
+             error: 'Cannot reach the API. Please ensure the backend server is running.' };
   }
 
   if (res.status === 401) {

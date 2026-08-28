@@ -7,10 +7,23 @@ import LoginGate from '../amey/LoginGate.jsx';
 
 export default function AnumatiView() {
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState('PRJ-NH-2026-089');
+  const [selectedProjectId, setSelectedProjectId] = useState(() => {
+    return localStorage.getItem('prakalp:selectedProjectId') || 'PRJ-NH-2026-089';
+  });
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [memoCopied, setMemoCopied] = useState(false);
+
+  // Global project selection sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
 
   // Fetch project list
   useEffect(() => {
@@ -20,7 +33,10 @@ export default function AnumatiView() {
         if (res.ok) {
           const list = await res.json();
           setProjects(list);
-          if (list.length > 0 && !selectedProjectId) {
+          const savedId = localStorage.getItem('prakalp:selectedProjectId');
+          if (savedId) {
+            setSelectedProjectId(savedId);
+          } else if (list.length > 0 && !selectedProjectId) {
             setSelectedProjectId(list[0].project_id);
           }
         }

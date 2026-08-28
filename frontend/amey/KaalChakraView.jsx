@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertTriangle, ShieldCheck, TrendingDown, Layers, CheckCircle2, Search, ArrowRight, Sparkles } from 'lucide-react';
+import { Clock, AlertTriangle, ShieldCheck, TrendingDown, Layers, CheckCircle2, Search, ArrowRight, Sparkles, Satellite } from 'lucide-react';
 
 export default function KaalChakraView({ selectedProjectId = "618402", onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
@@ -223,37 +223,43 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group">
+                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group flex items-center justify-center">
                     <img
                       key={`kc_before_${data.project_id}`}
                       src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`}
                       alt="T0 Baseline 2018"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 relative z-10"
                       onError={(e) => {
-                        if (!e.target.dataset.triedRelative) {
-                          e.target.dataset.triedRelative = 'true';
-                          e.target.src = `/satellite-imagery/${data.project_id}_BEFORE.jpg`;
-                        }
+                        e.target.style.display = 'none';
+                        const fb = e.target.nextElementSibling;
+                        if (fb) fb.style.display = 'flex';
                       }}
                     />
-                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-sky-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
+                    <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-900 text-slate-400 z-0">
+                      <Satellite className="w-5 h-5 text-slate-500 mb-1 opacity-70" />
+                      <span className="text-[9.5px] font-bold uppercase text-slate-300">2018 Baseline Pending</span>
+                    </div>
+                    <div className="absolute top-1.5 left-1.5 z-20 bg-black/80 text-sky-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
                       2018 Start
                     </div>
                   </div>
-                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group">
+                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group flex items-center justify-center">
                     <img
                       key={`kc_after_${data.project_id}`}
                       src={`/satellite-imagery/${data.project_id}_AFTER.jpg`}
                       alt="T1 Current 2023"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 relative z-10"
                       onError={(e) => {
-                        if (!e.target.dataset.triedRelative) {
-                          e.target.dataset.triedRelative = 'true';
-                          e.target.src = `/satellite-imagery/${data.project_id}_AFTER.jpg`;
-                        }
+                        e.target.style.display = 'none';
+                        const fb = e.target.nextElementSibling;
+                        if (fb) fb.style.display = 'flex';
                       }}
                     />
-                    <div className="absolute top-1.5 left-1.5 bg-black/80 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
+                    <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-900 text-slate-400 z-0">
+                      <Satellite className="w-5 h-5 text-slate-500 mb-1 opacity-70" />
+                      <span className="text-[9.5px] font-bold uppercase text-slate-300">2023 Imagery Pending</span>
+                    </div>
+                    <div className="absolute top-1.5 left-1.5 z-20 bg-black/80 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
                       2023 Recent
                     </div>
                   </div>

@@ -17,6 +17,18 @@ export default function NivaranView() {
   );
   const [customResult, setCustomResult] = useState(null);
   const [evaluating, setEvaluating] = useState(false);
+  const [evalError, setEvalError] = useState(null);
+
+  // Global project selection sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        setSelectedProjectId(String(e.detail));
+      }
+    };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
 
   // Fetch project list & initial risk profile
   useEffect(() => {
@@ -26,7 +38,10 @@ export default function NivaranView() {
         if (pRes.ok) {
           const pList = await pRes.json();
           setProjects(pList);
-          if (pList.length > 0 && !selectedProjectId) {
+          const savedId = localStorage.getItem('prakalp:selectedProjectId');
+          if (savedId) {
+            setSelectedProjectId(savedId);
+          } else if (pList.length > 0 && !selectedProjectId) {
             setSelectedProjectId(pList[0].project_id);
           }
         }
@@ -58,23 +73,28 @@ export default function NivaranView() {
 
   const handleEvaluateCustom = async () => {
     setEvaluating(true);
+    setEvalError(null);
     try {
+      const metaInfo = profileData?.project_metadata;
+      const opInfo = profileData?.operational_metrics || {};
+
       const payload = {
-        project_id: selectedProjectId || 'PRJ-CUSTOM',
-        raw_contract_text: customText,
-        contractor_profile: {
-          contractor_id: 'CTR-CUSTOM',
+        project_id: selectedProjectId || 'PRJ-NH-2026-089',
+        project_name: metaInfo?.project_name || 'Central Sector Highway Corridor',
+        contract_text_or_summary: customText || '',
+        contractor_data: {
+          agency_name: metaInfo?.executing_agency || 'L1 Infra Developers Pvt Ltd',
           past_arbitration_count: 3,
-          disputed_claims_value_cr: 140.0,
-          historical_stays: 1,
-          blacklisted: false,
-          financial_solvency_rating: 'BBB'
+          disputed_variation_value_cr: 140.0,
+          historical_legal_stays: 1,
+          total_active_contract_value_cr: Number(metaInfo?.total_sanctioned_cost_cr) || 1200.0
         },
         operational_metrics: {
-          physical_progress_pct: 35.0,
-          financial_progress_pct: 58.0,
-          right_of_way_available_pct: 62.0,
-          pending_variation_orders_cr: 85.0
+          pending_variation_orders_gt_90d: 5,
+          pending_variation_value_cr: Number(opInfo?.pending_variation_orders_cr) || 68.4,
+          unpaid_milestone_invoices_count: 3,
+          max_invoice_delay_days: 115,
+          pending_time_extension_requests: 2
         }
       };
 
@@ -86,9 +106,14 @@ export default function NivaranView() {
       if (res.ok) {
         const json = await res.json();
         setCustomResult(json);
+      } else {
+        const errJson = await res.json().catch(() => ({ detail: 'API Error ' + res.status }));
+        const msg = typeof errJson.detail === 'string' ? errJson.detail : JSON.stringify(errJson.detail);
+        setEvalError(msg || 'Failed to evaluate contract clause.');
       }
     } catch (err) {
       console.error('Evaluation failed:', err);
+      setEvalError(err.message || 'Network connection failed.');
     } finally {
       setEvaluating(false);
     }
@@ -382,7 +407,15 @@ export default function NivaranView() {
                   <div className="text-[11px] font-bold text-slate-400 uppercase border-b border-slate-800/80 pb-2">
                     Live Audit Output
                   </div>
-                  {customResult ? (
+                  {evalError ? (
+                    <div className="p-3 bg-red-950/60 border border-red-800 rounded-lg text-xs text-red-300 space-y-1">
+                      <div className="font-bold flex items-center gap-1.5 text-red-400">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        <span>Evaluation Error</span>
+                      </div>
+                      <p className="text-[11px] leading-relaxed">{evalError}</p>
+                    </div>
+                  ) : customResult ? (
                     <div className="space-y-2.5 text-xs">
                       <div className="flex items-center justify-between">
                         <span className="text-slate-300">Predicted Litigation Risk:</span>
