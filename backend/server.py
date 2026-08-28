@@ -72,6 +72,16 @@ def load_in_memory_cache():
         projects_df["DELAYED_TIME"] = pd.to_numeric(projects_df["DELAYED_TIME"], errors="coerce").fillna(0.0)
         projects_df["PhysicalProgress"] = pd.to_numeric(projects_df["PhysicalProgress"], errors="coerce").fillna(25.0)
         
+        # Compute real schedule delay from official milestone dates
+        def _calc_delay(row):
+            orig_dt = pd.to_datetime(row.get("OriginalEndDate"), errors="coerce", dayfirst=True)
+            rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
+            if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
+                return round(max(0.0, (rev_dt - orig_dt).days / 30.4375), 1)
+            onboard = float(row.get("OnboardingDelay", 0.0) or 0.0)
+            raw_delay = float(row.get("DELAYED_TIME", 0.0) or 0.0)
+            return round(max(onboard, raw_delay), 1)
+
         # Load Geocodes
         geo_dict = {}
         if os.path.exists(GEO_PATH):
@@ -94,10 +104,11 @@ def load_in_memory_cache():
                 "company": str(row["COMPANYNAME"]),
                 "original_cost_cr": float(row["OriginalCost"]),
                 "revised_cost_cr": float(row["RevisedCost"]),
-                "delayed_months": float(row["DELAYED_TIME"]),
+                "delayed_months": _calc_delay(row),
                 "progress_perc": float(row["PhysicalProgress"]),
                 "sanction_date": str(row["SanctionDate"]),
                 "target_date": str(row["RevisedDate"]),
+                "original_end_date": str(row.get("OriginalEndDate", "")),
                 "latitude": geo.get("lat") or geo.get("latitude") or 22.5,
                 "longitude": geo.get("lng") or geo.get("longitude") or 78.5,
                 "satellite_status": "CORROBORATED" if float(row["PhysicalProgress"]) > 40 else "DISCREPANCY_FLAGGED",
