@@ -101,8 +101,8 @@ def load_in_memory_cache():
                 "latitude": geo.get("lat") or geo.get("latitude") or 22.5,
                 "longitude": geo.get("lng") or geo.get("longitude") or 78.5,
                 "satellite_status": "CORROBORATED" if float(row["PhysicalProgress"]) > 40 else "DISCREPANCY_FLAGGED",
-                "satellite_before_img": f"/satellite-imagery/{pid}_BEFORE.jpg",
-                "satellite_after_img": f"/satellite-imagery/{pid}_AFTER.jpg"
+                "satellite_before_img": f"/api/eo/tile/{pid}/BEFORE",
+                "satellite_after_img": f"/api/eo/tile/{pid}/AFTER"
             })
         projects_cache = records
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
@@ -123,6 +123,18 @@ for member in MEMBERS:
             continue
     if not mounted:
         print(f"Member router for '{member}' pending implementation")
+
+# Auxiliary routers that do not follow the one-router-per-member convention.
+# The tiered satellite router lives beside amey's but owns its own prefix
+# (/api/eo) because it is a cross-cutting access-control surface rather than a
+# member module -- it serves the public Nagrik tier as well as the audit tier.
+for aux in ("modules.amey.satellite_router",):
+    try:
+        _m = __import__(aux, fromlist=["router"])
+        app.include_router(_m.router)
+        print(f"Mounted auxiliary router: {aux}")
+    except Exception as _e:
+        print(f"Auxiliary router '{aux}' failed to mount: {type(_e).__name__}: {_e}")
 
 # ── Authentication & RBAC (SIH26103 specifies role-based access) ─────────────
 # Declared BEFORE the SPA catch-all route below: FastAPI matches in declaration order,
@@ -214,12 +226,44 @@ def get_satellite_imagery(project_id: str):
         "before_url": f"/satellite-imagery/{project_id}_BEFORE.jpg" if os.path.exists(before_path) else None,
         "after_url": f"/satellite-imagery/{project_id}_AFTER.jpg" if os.path.exists(after_path) else None,
         "source": "ESRI ArcGIS World Imagery + Wayback Living Atlas",
-        "resolution": "Sub-meter (~0.5-1.2m/pixel)"
+        # Was "Sub-meter (~0.5-1.2m/pixel)". Measured Web Mercator ground sample
+        # distance across this corpus is 2.08-2.35 m/px, so that claim
+        # overstated the sensor by roughly 3x. /api/eo/metadata/{id} returns the
+        # per-project computed value; this legacy shape reports the range.
+        "resolution": "2.08-2.35 m/pixel (measured; latitude and zoom dependent)",
+        "resolution_note": ("Detection below one pixel is not supported at this "
+                            "GSD. The smallest defensible unit is a connected "
+                            "cluster of several pixels."),
     }
 
-# Mount satellite imagery as static files
+# The satellite imagery static mount has been REMOVED.
+#
+# It served 4,414 files totalling 986 MB with no authentication, no rate limit
+# and no redaction, under predictable `{project_id}_{EPOCH}.jpg` names whose ids
+# are published in the open project list. That made the entire corpus — 2 m
+# imagery of every airport, oil terminal and generating station in it —
+# enumerable by anyone who could reach the port.
+#
+# Imagery now goes through /api/eo/tile/{project_id}/{epoch}, which resolves the
+# caller's tier from their token, applies the redaction policy on the public
+# path, downsamples to WebP for low-bandwidth clients, and rate-limits by IP.
+# The full-resolution path additionally requires read_risk or a signed,
+# time-limited, subject-bound URL.
+#
+# A legacy redirect is kept so existing links do not silently 404 — they land on
+# the tiered endpoint and are subject to its policy.
 if os.path.exists(IMAGERY_DIR):
-    app.mount("/satellite-imagery", StaticFiles(directory=IMAGERY_DIR), name="satellite-imagery")
+    from fastapi.responses import RedirectResponse
+
+    @app.get("/satellite-imagery/{filename}", include_in_schema=False)
+    def _legacy_imagery_redirect(filename: str):
+        stem = os.path.basename(filename).rsplit(".", 1)[0]
+        pid, _, epoch = stem.rpartition("_")
+        if not pid or epoch.upper() not in ("BEFORE", "AFTER"):
+            raise HTTPException(status_code=404, detail="Unknown imagery path.")
+        return RedirectResponse(
+            url=f"/api/eo/tile/{sanitize_id(pid, field='project_id')}/{epoch.upper()}",
+            status_code=307)
 
 # Serve assets (js/css) if present
 assets_dir = os.path.join(STATIC_DIR, "assets")

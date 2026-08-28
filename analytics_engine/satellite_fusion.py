@@ -303,7 +303,11 @@ class SatelliteFusionEngine:
             "geocode_confidence_note": cat_entry.get("geocode_confidence_note", ""),
             "eo_verdict_reliable": eo_reliable,
             "eo_unreliable_reason": cat_entry.get("eo_unreliable_reason"),
-            "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter)",
+            # "(Sub-meter)" removed: measured GSD is 2.08-2.35 m/px, so the
+            # parenthetical overstated the sensor by about 3x on every record
+            # this engine has ever served.
+            "sensor": ("ESRI ArcGIS World Imagery + Wayback Living Atlas "
+                       "(2.08-2.35 m/px measured)"),
             "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg" if has_before else None,
             "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg" if has_after else None,
             "has_dual_epoch_coverage": has_before and has_after,

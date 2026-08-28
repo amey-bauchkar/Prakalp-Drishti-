@@ -176,3 +176,27 @@ def demo_credentials() -> List[dict]:
     """Shown on the login screen. Prototype affordance, not a deployment feature."""
     return [{"username": u.username, "role": u.role, "ministry": u.ministry}
             for u in _USERS.values()]
+
+
+def resolve_token(token: str) -> Optional[dict]:
+    """Non-raising session lookup for endpoints with a legitimate anonymous tier.
+
+    `current_user` is the right dependency wherever a credential is required: it
+    raises 401 and the route never runs. But the public satellite tier is
+    genuinely anonymous, so it needs to ask "who is this, if anyone?" without
+    turning an absent token into an error. Returning None for absent, unknown or
+    expired keeps that decision at the call site instead of forcing every
+    caller to catch HTTPException to discover the answer.
+
+    An expired session is evicted here exactly as current_user evicts it, so
+    the two paths cannot disagree about whether a token is still live.
+    """
+    if not token:
+        return None
+    sess = _SESSIONS.get(token)
+    if not sess:
+        return None
+    if sess["expires_at"] < time.time():
+        _SESSIONS.pop(token, None)
+        return None
+    return sess
