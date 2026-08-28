@@ -282,6 +282,9 @@ def phrase_answer(question: str, deterministic: Dict) -> Dict:
     # retrieval field echoing input under an unlisted key would otherwise
     # re-open the bypass silently.
     allowed -= (_numbers_in(question) - _BENIGN)
+    # The authenticated/verified project_id itself is a factual identifier and valid to quote
+    if deterministic.get("project_id"):
+        allowed.update(_numbers_in(str(deterministic["project_id"])))
     unverified = sorted(n for n in _numbers_in(text) if n not in allowed)
 
     if unverified:
