@@ -109,7 +109,14 @@ class AllocationRequest(BaseModel):
     # that distributes public capital that has to be an error, not a default.
     model_config = ConfigDict(extra="forbid")
 
-    budget_pool_cr: float = Field(default=10000.0, description="Available capex pool in Crore INR")
+    # gt=0. A negative pool was accepted with HTTP 200 and fed straight into
+    # the LP, whose budget constraint then read "allocate at most minus five
+    # thousand crore" -- satisfiable only by the all-zero plan, which the
+    # engine returned as though it were an optimisation result. A capital
+    # pool below zero has no meaning, so it is refused at the boundary
+    # rather than silently producing an empty allocation.
+    budget_pool_cr: float = Field(default=10000.0, gt=0, le=10_000_000,
+                                  description="Available capex pool in Crore INR")
     risk_dial_kappa: float = Field(default=0.70, ge=0.0, le=1.0, description="Weight on CVaR90 tail loss vs expected loss")
     enforce_ner_floor: bool = Field(default=True, description="Enforce statutory 10% capex floor for North-Eastern Region")
     agency_absorption_multiplier: float = Field(default=1.25, description="Agency historical burn rate multiplier ceiling")
@@ -130,7 +137,26 @@ class ProjectAllocation(BaseModel):
 class AllocationResult(BaseModel):
     total_budget_pool_cr: float
     total_allocated_cr: float
-    expected_completion_yield: float
+
+    # This is a composite INDEX, not a percentage, and the name is kept only
+    # because existing consumers read it. It is the allocation-weighted mean of
+    # (completion propensity x normalised Shapley network vitality), scaled by
+    # 100 -- so it routinely exceeds 100 and was observed at 180.67, 162.44 and
+    # 111.37 on live pools. It was being printed into the Cabinet briefing as
+    # "Expected Completion Yield: 180.7%", which reads as a claim that a
+    # portfolio will complete to 180% of itself.
+    #
+    # The LP is unaffected: it maximises a weighted sum, and scaling every
+    # weight by a constant does not move the argmax. Only the reported figure
+    # was wrong, and `portfolio_completion_propensity_perc` below is the
+    # quantity that is genuinely a percentage.
+    expected_completion_yield: float = Field(
+        description="Composite priority INDEX (propensity x network vitality x 100). "
+                    "Not bounded by 100 and not a completion percentage.")
+    portfolio_completion_propensity_perc: float = Field(
+        default=0.0, ge=0.0, le=100.0,
+        description="Allocation-weighted mean completion propensity, clipped to "
+                    "[0,100]. This is the figure that is a real percentage.")
     cvar90_tail_loss: float
     ner_allocated_cr: float
     ner_share_perc: float

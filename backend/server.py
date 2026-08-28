@@ -73,6 +73,18 @@ def load_in_memory_cache():
         projects_df["PhysicalProgress"] = pd.to_numeric(projects_df["PhysicalProgress"], errors="coerce").fillna(25.0)
         
         # Compute real schedule delay from official milestone dates
+        def _first_coord(*vals):
+            """First value that is a real number, treating 0.0 as valid."""
+            for v in vals:
+                if isinstance(v, (int, float)) and not isinstance(v, bool):
+                    return float(v)
+                if isinstance(v, str):
+                    try:
+                        return float(v)
+                    except ValueError:
+                        continue
+            return 0.0
+
         def _calc_delay(row):
             orig_dt = pd.to_datetime(row.get("OriginalEndDate"), errors="coerce", dayfirst=True)
             rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
@@ -81,6 +93,20 @@ def load_in_memory_cache():
             onboard = float(row.get("OnboardingDelay", 0.0) or 0.0)
             raw_delay = float(row.get("DELAYED_TIME", 0.0) or 0.0)
             return round(max(onboard, raw_delay), 1)
+
+        # Load the EO catalogue. `satellite_status` below was being derived from
+        # the agency's own reported progress, which is circular -- see the note
+        # at its assignment. The real audit verdict lives here.
+        eo_dict = {}
+        _eo_cat = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
+                               "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
+        if os.path.exists(_eo_cat):
+            try:
+                with open(_eo_cat, "r", encoding="utf-8") as f:
+                    for item in json.load(f):
+                        eo_dict[str(item.get("project_id", ""))] = item
+            except Exception:
+                eo_dict = {}
 
         # Load Geocodes
         geo_dict = {}
@@ -96,6 +122,7 @@ def load_in_memory_cache():
         for _, row in projects_df.iterrows():
             pid = str(row["ProjectId"])
             geo = geo_dict.get(pid, {})
+            eo = eo_dict.get(pid, {})
             records.append({
                 "project_id": pid,
                 "project_name": str(row["ProjectName"]),
@@ -109,9 +136,46 @@ def load_in_memory_cache():
                 "sanction_date": str(row["SanctionDate"]),
                 "target_date": str(row["RevisedDate"]),
                 "original_end_date": str(row.get("OriginalEndDate", "")),
-                "latitude": geo.get("lat") or geo.get("latitude") or 22.5,
-                "longitude": geo.get("lng") or geo.get("longitude") or 78.5,
-                "satellite_status": "CORROBORATED" if float(row["PhysicalProgress"]) > 40 else "DISCREPANCY_FLAGGED",
+                # `or` chains treat 0.0 as absent. A project genuinely on the
+                # equator or the prime meridian would have been relocated to the
+                # fallback; none currently are, but the guard costs nothing and
+                # the failure would be silent.
+                "latitude": _first_coord(geo.get("lat"), geo.get("latitude"), 22.5),
+                "longitude": _first_coord(geo.get("lng"), geo.get("longitude"), 78.5),
+
+                # Geolocation trust, exposed so the Pan-India map can show an
+                # approximate pin as approximate.
+                #
+                # 596 of 2,207 projects (27%) carry geocode_confidence NONE --
+                # they are placed at a NATIONAL_CENTROID_MATCH or
+                # STATE_CENTROID_MATCH, which is to say not at the project at
+                # all. The EO subsystem already WITHHOLDS its verdict for
+                # exactly these, so the platform knew the coordinate was
+                # untrustworthy while the public map was still drawing a
+                # confident pin on it.
+                "geocode_precision": eo.get("geocode_precision", "UNKNOWN"),
+                "geocode_confidence": eo.get("geocode_confidence", "NONE"),
+                "location_is_approximate": eo.get("geocode_confidence") in
+                                           (None, "NONE", "LOW"),
+
+                # Satellite verdict from the EO catalogue, NOT from the claim.
+                #
+                # This read:
+                #     "CORROBORATED" if PhysicalProgress > 40 else "DISCREPANCY_FLAGGED"
+                #
+                # which labelled a project satellite-corroborated on the strength
+                # of the very figure the satellite exists to check, with no
+                # imagery involved at any point. Surface change and reported
+                # progress correlate at 0.007 across this corpus, so the two are
+                # very nearly independent and the substitution was not even a
+                # rough approximation -- it was a restatement of the claim
+                # wearing the authority of an independent measurement.
+                #
+                # EO_UNAVAILABLE is served where the catalogue has no supportable
+                # verdict, which is the honest answer for a project whose
+                # geocode cannot place it.
+                "satellite_status": (eo.get("audit_status") or "EO_UNAVAILABLE"),
+                "satellite_verdict_reliable": bool(eo.get("eo_verdict_reliable", False)),
                 "satellite_before_img": f"/api/eo/tile/{pid}/BEFORE",
                 "satellite_after_img": f"/api/eo/tile/{pid}/AFTER"
             })
