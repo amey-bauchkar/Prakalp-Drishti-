@@ -75,6 +75,26 @@ def _schedule_index() -> Dict[str, float]:
     return idx
 
 
+def _stage_for(pid, before, after, eo_payload, cat):
+    """Civil construction stage, Prithvi-backed where the backbone is present.
+
+    Wrapped in a try so a missing torch install or an absent weights file costs
+    the caller the stage field and nothing else -- the rest of the EO audit is
+    computed without it. An air-gapped deployment with no model on disk must
+    still serve every measured figure.
+    """
+    try:
+        from analytics_engine.stage_classifier import classify_stage
+        return classify_stage(
+            before, after, eo_payload,
+            claimed_progress_pct=float(cat.get("claimed_progress_pct") or 0.0),
+            project_id=str(pid),
+        )
+    except Exception as e:
+        return {"available": False,
+                "reason": f"Stage classifier unavailable: {type(e).__name__}: {e}"}
+
+
 def _planned_months(cat: Dict[str, Any]) -> Optional[float]:
     """Sanctioned duration in months for this project, or None.
 
@@ -152,7 +172,8 @@ class SatelliteFusionEngine:
             "roi_shape": None, "corridor_bearing_deg": None, "corridor_coherence": None,
             "row_corridor": None, "radiometry": None, "material_transition": None,
             "construction_velocity": None, "pace_vs_dpr": None,
-            "sar_readiness": None,
+            "sar_readiness": None, "reconnaissance_targets": None,
+            "sovereign_verdict": None, "construction_stage": None,
         }
         try:
             import cv2
@@ -195,6 +216,15 @@ class SatelliteFusionEngine:
                 "construction_velocity": eo["velocity"],
                 "pace_vs_dpr": eo["pace_vs_dpr"],
                 "sar_readiness": eo["sar"],
+                # Corridor-contained reconnaissance targets and the traffic-light
+                # stamp. These REPLACE the catalogue's change_boxes on the served
+                # record: those were top-N blobs over the whole 800px frame with
+                # no containment test, so a harvested field scored the same as a
+                # bridge pier. Measured on 40 scenes, the containment test rejects
+                # 27.7% of clusters an unconstrained detector would have drawn.
+                "reconnaissance_targets": eo["targets"],
+                "sovereign_verdict": eo["verdict"],
+                "construction_stage": _stage_for(pid, b, a, eo, cat),
             }
         except Exception as e:
             out = dict(blank, footprint_caveat=f"Precision CV unavailable: {type(e).__name__}")

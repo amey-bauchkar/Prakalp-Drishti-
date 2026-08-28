@@ -89,8 +89,19 @@ def _norm(tok: str) -> str:
     return t
 
 
+# Typographic thousands separators, stripped only when they sit BETWEEN digits.
+# Language models group large figures with a narrow no-break space or a thin
+# space, so "12 643.5" reached the tokeniser as the two tokens '12' and '643.5'
+# and a CORRECT briefing quoting a verified 12643.5 was rejected as fabricated.
+# Only the non-ASCII separators are removed: stripping an ordinary space between
+# digits would silently join "8 500" into 8500 and ADMIT a figure nobody
+# computed, which is the failure this guard exists to prevent.
+_THOUSANDS_SEP = re.compile(r"(?<=\d)[    ](?=\d{3}(?:\D|$))")
+
+
 def _numbers_in(text: str) -> Set[str]:
-    folded = _fold(text)
+    folded = _THOUSANDS_SEP.sub("", text or "")
+    folded = _fold(folded)
     # P10/P50/P80/P95 and CVaR90 are statistical NOTATION, not claims about the
     # project. Removed before tokenising so quoting the name of a quantile does
     # not read as inventing the number 50.

@@ -150,7 +150,7 @@ def verify_fact_lineage(doc_hash: str, fact_id: str, project_id: Optional[str] =
 from analytics_engine.satellite_fusion import get_satellite_fusion_engine
 from analytics_engine.agency_index import get_agency_index_engine
 from analytics_engine.pmo_copilot import get_pmo_copilot_engine
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 class SimulationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")  # see AllocationRequest
@@ -496,3 +496,79 @@ def get_eo_layer(project_id: str, layer: str):
         raise HTTPException(status_code=500, detail="Layer encoding failed.")
     return Response(content=buf.tobytes(), media_type="image/png",
                     headers={"Cache-Control": "public, max-age=3600"})
+
+# ══════════════════════════════════════════════════════════════════════════
+# RECONNAISSANCE COPILOT
+# ══════════════════════════════════════════════════════════════════════════
+
+class ReconRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    analyst_note: str = Field("", max_length=300)
+
+
+@router.get("/satellite/{project_id}/recon")
+def get_recon_briefing(project_id: str):
+    """Two-sentence photographic reconnaissance briefing over the EO telemetry.
+
+    GET rather than POST for the no-note case so the button is cacheable and
+    idempotent. Only derived scalars reach the provider; the imagery is
+    processed locally and never transmitted.
+    """
+    try:
+        from analytics_engine.recon_copilot import reconnaissance_briefing
+        from analytics_engine.satellite_fusion import get_satellite_fusion_engine
+        pid = sanitize_id(project_id, field="project_id")
+        audit = get_satellite_fusion_engine().get_satellite_audit(pid)
+        return reconnaissance_briefing(audit)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/satellite/{project_id}/recon")
+def post_recon_briefing(project_id: str, req: ReconRequest):
+    """Same briefing with an analyst note steering what to describe.
+
+    The note is sanitised and delimited, and every figure it contains is
+    SUBTRACTED from the admissible set before the guard runs -- so a number
+    smuggled in through the note cannot come back out of the model wearing
+    guard="passed".
+    """
+    try:
+        from analytics_engine.recon_copilot import reconnaissance_briefing
+        from analytics_engine.satellite_fusion import get_satellite_fusion_engine
+        pid = sanitize_id(project_id, field="project_id")
+        audit = get_satellite_fusion_engine().get_satellite_audit(pid)
+        return reconnaissance_briefing(audit, analyst_note=req.analyst_note)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/eo/backbone")
+def get_backbone_status():
+    """Provenance of the Prithvi foundation backbone and the trained head.
+
+    Served as its own endpoint so a reviewer can interrogate what was loaded,
+    which bands were supplied, and what the head's measured accuracy is,
+    without having to infer any of it from a prediction.
+    """
+    try:
+        from analytics_engine.stage_classifier import (
+            encoder_status, get_head, get_embedding_cache,
+        )
+        head = get_head()
+        return {
+            "encoder": encoder_status(),
+            "head": ({"trained": True, "trained_at": head.trained_at,
+                      "n_train": head.n_train, "classes": head.classes,
+                      "validation": head.validation}
+                     if head else {"trained": False,
+                                   "reason": "No stage_head.json artifact on disk."}),
+            "embedding_cache_entries": len(get_embedding_cache()),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
