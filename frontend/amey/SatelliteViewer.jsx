@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AlertTriangle, Crosshair, Download, Eye, EyeOff, FileText, Fingerprint,
   Loader2, Lock, Maximize2, Move, Satellite, ShieldCheck, Clock, Layers,
+  MapPin, Ruler, Route, Building2, ScanLine,
 } from 'lucide-react';
+import { Circle, MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
 import {
   apiFetchRetry, fetchBlobUrl, getEoTier, getSession, subscribe,
 } from './authClient';
@@ -40,6 +42,34 @@ import {
 const API = '';
 const SENSITIVE_HINT = ['Oil & Gas', 'Aviation', 'Electricity Generation',
   'Energy Storage', 'Telecommunication', 'Shipping'];
+
+// The three framings, and what each one is allowed to assert.
+//
+// The mode comes from /api/eo/viewport, which derives it from GEOCODE
+// PROVENANCE rather than from sector. Across the corpus: 285 compound, 1,326
+// corridor, 596 locator_only. The last of those is the important one — a state
+// or national centroid locates an administrative unit, not a project, so no
+// imagery is served for it at any zoom and no change score is computed.
+const RENDER_MODE = {
+  compound: {
+    icon: Building2,
+    label: 'Compound Plot',
+    blurb: 'Tight framing on a discrete facility, with a dual-epoch swipe comparison.',
+    chip: 'bg-emerald-50 text-emerald-900 border-emerald-300',
+  },
+  corridor: {
+    icon: Route,
+    label: 'Linear Corridor',
+    blurb: 'Alignment strip. One frame covers a fraction of the route; chainage packages index the rest.',
+    chip: 'bg-sky-50 text-sky-900 border-sky-300',
+  },
+  locator_only: {
+    icon: MapPin,
+    label: 'Administrative Locator',
+    blurb: 'No site coordinate on record. Imagery withheld; district locator shown instead.',
+    chip: 'bg-amber-50 text-amber-900 border-amber-400',
+  },
+};
 
 const OFFICIAL_LAYERS = [
   { id: 'change', label: 'Structural Change',
@@ -101,6 +131,7 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   const localTier = useTier();
 
   const [meta, setMeta] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
@@ -139,6 +170,26 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   const tier = meta?.tier || localTier;
   const isOfficial = tier === 'official';
 
+  // Fail closed on the mode. If the plan did not load we do NOT fall back to
+  // the swipe comparator: 596 projects must never receive one, and defaulting
+  // to the richest view would hand exactly those projects an imagery panel
+  // over ground that was never located.
+  const mode = plan?.render_mode || (plan === null && !loading ? 'locator_only' : null);
+  const isCompound = mode === 'compound';
+  const isCorridor = mode === 'corridor';
+  const isLocatorOnly = mode === 'locator_only';
+  const modeMeta = RENDER_MODE[mode] || RENDER_MODE.locator_only;
+
+  // Resolution badge, driven by the MEASURED GSD rather than by the mode.
+  //
+  // A fixed "Sub-metre GSD" badge on compound view would be false on 285 of
+  // 285 compound projects: the tightest is 1.18 m/px and most sit at 2-9 m/px,
+  // because zoom is capped so the frame contains the geocode error radius. The
+  // badge therefore states the number it measured, and only claims sub-metre
+  // when the number is actually below 1 m/px.
+  const gsd = plan?.gsd_m_per_px ?? meta?.resolution_m_per_px ?? null;
+  const isSubMetre = typeof gsd === 'number' && gsd > 0 && gsd < 1.0;
+
   const track = (u) => { if (u) objectUrls.current.push(u); return u; };
   const revokeAll = useCallback(() => {
     objectUrls.current.forEach((u) => { try { URL.revokeObjectURL(u); } catch { /* already gone */ } });
@@ -149,8 +200,15 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   useEffect(() => {
     let dead = false;
     setLoading(true); setError(null);
-    apiFetchRetry(`${API}/api/eo/metadata/${projectId}`).then((r) => {
+    // Both in one round trip. The plan decides the SHAPE of this component and
+    // the metadata fills it in, so rendering before the plan arrives would
+    // briefly show a swipe comparator for a project that must never have one.
+    Promise.all([
+      apiFetchRetry(`${API}/api/eo/metadata/${projectId}`),
+      apiFetchRetry(`${API}/api/eo/viewport/${projectId}`),
+    ]).then(([r, v]) => {
       if (dead) return;
+      setPlan(v.ok ? v.data : null);
       if (r.throttled) setToast({ tone: 'warn', message: r.error });
       if (!r.ok) { setError(r.error); setMeta(null); }
       else {
@@ -171,9 +229,14 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   // ── tiles ────────────────────────────────────────────────────────────
   useEffect(() => {
     let dead = false;
-    setTilesLoading(true);
     revokeAll(); setBeforeUrl(null); setAfterUrl(null);
     setActiveLayer(null); setLayerUrl(null);
+
+    // No imagery request at all for a locator-only project. Not fetched and
+    // discarded — never requested, so there is no tile in the cache, no entry
+    // in the access log, and nothing for a later change to accidentally render.
+    if (mode === null || isLocatorOnly) { setTilesLoading(false); return undefined; }
+    setTilesLoading(true);
 
     Promise.all([
       fetchBlobUrl(`${API}/api/eo/tile/${projectId}/BEFORE`),
@@ -188,7 +251,7 @@ export default function SatelliteViewer({ projectId = '619092' }) {
       setTilesLoading(false);
     });
     return () => { dead = true; };
-  }, [projectId, localTier, revokeAll]);
+  }, [projectId, localTier, revokeAll, mode, isLocatorOnly]);
 
   useEffect(() => revokeAll, [revokeAll]);
 
@@ -220,7 +283,11 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   }, []);
 
   useEffect(() => {
-    if (!activeLayer || !isOfficial) { setLayerUrl(null); return undefined; }
+    // Change scoring is disabled outside compound framing. On a corridor the
+    // frame is a fraction of the route, and on a locator there is no site — a
+    // change percentage computed over either would be an audit verdict about
+    // ground the platform cannot claim is the project.
+    if (!activeLayer || !isOfficial || !isCompound) { setLayerUrl(null); return undefined; }
     let dead = false;
     setLayerBusy(true);
     const density = lowDensity ? 'low' : 'standard';
@@ -250,7 +317,7 @@ export default function SatelliteViewer({ projectId = '619092' }) {
       setLayerUrl(track(r.objectUrl));
     });
     return () => { dead = true; };
-  }, [activeLayer, lowDensity, projectId, isOfficial]);
+  }, [activeLayer, lowDensity, projectId, isOfficial, isCompound]);
 
   // ── swipe ────────────────────────────────────────────────────────────
   const updateFromClientX = useCallback((clientX) => {
@@ -369,12 +436,37 @@ non-performance — see the imagery-currency note above.</div>
             </span>
           </div>
         </div>
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-black border ${
-          isOfficial ? 'bg-gov-navy text-white border-gov-navy'
-                     : 'bg-sky-50 text-sky-900 border-sky-300'}`}>
-          {isOfficial ? <ShieldCheck className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-          {isOfficial ? 'AUDITOR TIER' : 'NAGRIK / PUBLIC TIER'}
-        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Framing mode. Stated on the surface because it changes what the
+              panel below is able to claim, not merely how it looks. */}
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-black border font-heading tracking-wide ${modeMeta.chip}`}
+                title={modeMeta.blurb}>
+            <modeMeta.icon className="w-3 h-3" aria-hidden="true" />
+            {modeMeta.label.toUpperCase()}
+          </span>
+
+          {/* Resolution, measured. Reads sub-metre only when it is. */}
+          {gsd != null && !isLocatorOnly && (
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-black border font-heading tracking-wide ${
+              isSubMetre ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
+                         : 'bg-gov-surface text-gov-navy border-gov-border'}`}
+                  title={isSubMetre
+                    ? `Ground sample distance ${gsd} m/px — below one metre, so individual structural elements are resolvable.`
+                    : `Ground sample distance ${gsd} m/px. Not sub-metre: zoom is capped so the frame contains this project's ${plan?.geocode_error_radius_m ?? '—'} m geocode error radius. A tighter frame could exclude the site.`}>
+              <Ruler className="w-3 h-3" aria-hidden="true" />
+              {isSubMetre
+                ? `SUB-METRE GSD · ${gsd} m/px`
+                : `GSD ${gsd} m/px`}
+            </span>
+          )}
+
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-black border font-heading tracking-wide ${
+            isOfficial ? 'bg-gov-navy text-white border-gov-navy'
+                       : 'bg-sky-50 text-sky-900 border-sky-300'}`}>
+            {isOfficial ? <ShieldCheck className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+            {isOfficial ? 'AUDITOR TIER' : 'NAGRIK / PUBLIC TIER'}
+          </span>
+        </div>
       </div>
 
       {/* Staleness — shown to BOTH personas. A citizen reading a progress claim
@@ -408,7 +500,95 @@ non-performance — see the imagery-currency note above.</div>
         </div>
       )}
 
+      {/* ── LOCATOR ONLY ──────────────────────────────────────────────────
+          596 of 2,207 projects. The recorded coordinate is a state or national
+          centroid: it locates an administrative unit, not the works. Rendering
+          satellite imagery on it would show unrelated ground and — because the
+          imagery is genuine and well-registered — would look exactly as
+          authoritative as a real site view. So none is requested, and change
+          scoring is off. */}
+      {isLocatorOnly && (
+        <div className="p-4">
+          <div className="note note-warn flex items-start gap-2 mb-3" role="status">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="text-[11px] leading-snug">
+              <strong className="block mb-0.5 font-heading tracking-wide">
+                ADMINISTRATIVE CENTROID · SURVEYED SITE PLOT AWAITED
+              </strong>
+              {plan?.caveat || ('This project has no site-level coordinate on record. '
+                + 'Satellite verification is withheld rather than performed against '
+                + 'an administrative centroid.')}
+            </div>
+          </div>
+
+          {plan?.centre?.[0] != null && plan?.centre?.[1] != null ? (
+            <div className="rounded-xl overflow-hidden border border-gov-border">
+              <MapContainer
+                center={[plan.centre[0], plan.centre[1]]}
+                zoom={7}
+                scrollWheelZoom={false}
+                style={{ height: 340, width: '100%' }}
+                aria-label="Administrative locator map showing the recorded centroid and its uncertainty"
+              >
+                <TileLayer
+                  attribution='&copy; OpenStreetMap contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {/* The uncertainty circle is the point of this map. It is drawn
+                    to the SAME radius the planner used to refuse imagery, so a
+                    reviewer sees the scale of what is unknown rather than a
+                    pin implying precision. */}
+                <Circle
+                  center={[plan.centre[0], plan.centre[1]]}
+                  radius={plan.geocode_error_radius_m || 100000}
+                  pathOptions={{ color: '#B45309', fillColor: '#F59E0B',
+                                 fillOpacity: 0.10, weight: 1.5, dashArray: '4 4' }}
+                />
+                <Marker position={[plan.centre[0], plan.centre[1]]}>
+                  <Tooltip permanent direction="top" offset={[0, -8]}>
+                    <span className="font-sans text-[10px]">
+                      Recorded centroid — not the site
+                    </span>
+                  </Tooltip>
+                </Marker>
+              </MapContainer>
+              <div className="px-3 py-2 bg-gov-surface border-t border-gov-border">
+                <p className="text-[10px] text-gov-muted leading-snug font-sans">
+                  The shaded circle is the estimated uncertainty of this coordinate
+                  (<span className="font-num font-bold">
+                    {Number(plan.geocode_error_radius_m || 0).toLocaleString('en-IN')} m
+                  </span> radius, provenance{' '}
+                  <span className="font-num">{plan.geocode_precision || 'unknown'}</span>).
+                  The works lie somewhere within it. Site verification requires a
+                  surveyed coordinate or a physical inspection.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="note note-warn text-[11px]">
+              No coordinate of any kind is recorded for this project, so even an
+              administrative locator cannot be drawn.
+            </div>
+          )}
+
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-px bg-gov-border border border-gov-border rounded-sm overflow-hidden">
+            {[
+              ['Geocode provenance', plan?.geocode_precision || '—'],
+              ['Uncertainty radius', plan?.geocode_error_radius_m != null
+                ? `${Number(plan.geocode_error_radius_m).toLocaleString('en-IN')} m` : '—'],
+              ['Change scoring', 'Disabled'],
+            ].map(([k, v]) => (
+              <div key={k} className="bg-white p-3">
+                <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block font-heading">{k}</span>
+                <span className="text-[12px] font-black text-gov-navy font-num">{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Comparator */}
+      {!isLocatorOnly && (
       <div className="p-4">
         <div
           ref={frameRef}
@@ -471,8 +651,70 @@ non-performance — see the imagery-currency note above.</div>
           Drag the handle — or focus the frame and use ← / → — to sweep between epochs.
         </p>
 
-        {/* Official layer rail */}
-        {isOfficial && (
+        {/* ── CORRIDOR: chainage packages ───────────────────────────────
+            The frame above is one strip of a route that runs for tens of
+            kilometres. Saying which fraction is visible, and enumerating the
+            packages that index the rest, stops the strip being read as the
+            whole project. Package centres are deliberately absent: PAIMANA
+            carries a point and a bbox but never an alignment polyline, so a
+            per-package location would have to be invented. */}
+        {isCorridor && (
+          <div className="mt-3 border-t border-gov-border pt-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Route className="w-3.5 h-3.5 text-gov-navy" aria-hidden="true" />
+              <h4 className="text-[10px] font-black text-gov-navy uppercase tracking-wider font-heading">
+                Chainage packages
+              </h4>
+              {plan?.frame_covers_m != null && (
+                <span className="text-[9.5px] text-gov-muted font-sans">
+                  this frame covers{' '}
+                  <span className="font-num font-bold">
+                    {(plan.frame_covers_m / 1000).toFixed(2)} km
+                  </span>{' '}of alignment
+                </span>
+              )}
+            </div>
+
+            {plan?.packages?.length ? (
+              <>
+                <div className="flex flex-wrap gap-1.5" role="list">
+                  {plan.packages.map((pk) => (
+                    <span
+                      key={pk.package}
+                      role="listitem"
+                      title={`${pk.label}. No imagery is fetched for this package: ${pk.requires} is required to position it.`}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm text-[10px] font-bold border border-gov-border bg-gov-surface text-gov-navy font-num"
+                    >
+                      <ScanLine className="w-3 h-3 opacity-60" aria-hidden="true" />
+                      Package {pk.package}: Km {pk.chainage_km[0]}–{pk.chainage_km[1]}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10px] text-gov-muted mt-2 leading-snug font-sans">
+                  <strong className="text-gov-navy">Packages are indexed, not imaged.</strong>{' '}
+                  Positioning each one needs the surveyed alignment
+                  (GatiShakti or the DPR shapefile), which this corpus does not
+                  carry — so no package centre is shown rather than a midpoint
+                  interpolation that would place works where none were surveyed.
+                </p>
+              </>
+            ) : (
+              <p className="text-[10px] text-gov-muted leading-snug font-sans">
+                Route length is not recorded for this project, so chainage
+                packaging is unavailable. Only 324 of 2,207 project titles state
+                a length; the rest carry none, and packaging an invented length
+                would produce authoritative-looking boundaries for a route whose
+                extent nobody recorded.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Official layer rail — compound framing only.
+            On a corridor the frame is a fraction of the route and on a locator
+            there is no site, so a change percentage over either would be an
+            audit verdict about ground the platform cannot claim is the project. */}
+        {isOfficial && isCompound && (
           <div className="mt-3">
             <div className="flex flex-wrap items-center justify-center gap-1.5">
               <span className="text-[9px] font-black uppercase tracking-wider text-gov-muted mr-1">
@@ -518,10 +760,20 @@ non-performance — see the imagery-currency note above.</div>
             )}
           </div>
         )}
+
+        {isOfficial && isCorridor && (
+          <p className="text-[10px] text-gov-muted mt-3 leading-snug text-center max-w-[560px] mx-auto font-sans">
+            <strong className="text-gov-navy">Change scoring is off for corridor framing.</strong>{' '}
+            A percentage computed over one strip would be read as a figure for
+            the whole route. Corridor-contained measurement runs in the audit
+            record against the statutory Right-of-Way, not against this view.
+          </p>
+        )}
       </div>
+      )}
 
       {/* ── OFFICIAL: forensic provenance ─────────────────────────────── */}
-      {isOfficial && meta.provenance && (
+      {isOfficial && !isLocatorOnly && meta.provenance && (
         <div className="border-t border-gov-border">
           <div className="px-4 pt-3 pb-1 flex items-center gap-2">
             <Fingerprint className="w-3.5 h-3.5 text-gov-navy" />
@@ -572,9 +824,9 @@ non-performance — see the imagery-currency note above.</div>
       )}
 
       {/* ── PUBLIC: plain-language summary ───────────────────────────── */}
-      {!isOfficial && (
+      {!isOfficial && !isLocatorOnly && (
         <div className="border-t border-gov-border px-4 py-3">
-          <h4 className="text-[10px] font-black text-gov-navy uppercase tracking-wider mb-1.5">
+          <h4 className="text-[10px] font-black text-gov-navy uppercase tracking-wider mb-1.5 font-heading">
             What you are looking at
           </h4>
           <p className="text-[11px] text-gov-muted leading-relaxed">

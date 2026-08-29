@@ -5,7 +5,7 @@ import {
   Clock, ArrowRight, ExternalLink, HelpCircle, Layers, Info, Check,
   TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3
 } from 'lucide-react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { Circle, CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
 
 const API = '';
 
@@ -111,7 +111,7 @@ export default function PublicDashboardView() {
     {
       id: 'pratibimb',
       label: 'Satellite Verification (PRATIBIMB)',
-      desc: 'Sentinel-2 dual-epoch optical before/after ground inspection',
+      desc: 'Dual-epoch optical before/after ground inspection (ESRI World Imagery)',
       icon: Eye
     },
     {
@@ -690,25 +690,49 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 function PublicPratibimbTab({ projects, activeProject, selectProject }) {
   const [sliderPos, setSliderPos] = useState(50);
   const [imagery, setImagery] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (activeProject?.project_id) {
-      setLoading(true);
+    if (!activeProject?.project_id) return undefined;
+    let dead = false;
+    setLoading(true);
+    setPlan(null);
+    setSliderPos(50);
+    // The plan decides which of three panels this tab becomes. Fetched
+    // alongside the imagery record so the tab never renders a swipe comparator
+    // for a project that must not have one.
+    Promise.all([
       fetch(`/api/satellite/${activeProject.project_id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setImagery(data);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`/api/eo/viewport/${activeProject.project_id}`)
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([img, vp]) => {
+      if (dead) return;
+      setImagery(img);
+      setPlan(vp);
+      setLoading(false);
+    });
+    return () => { dead = true; };
   }, [activeProject]);
 
   if (!activeProject) return null;
 
-  const beforeImg = imagery?.before_url || `/satellite-imagery/${activeProject.project_id}_BEFORE.jpg`;
-  const afterImg = imagery?.after_url || `/satellite-imagery/${activeProject.project_id}_AFTER.jpg`;
+  // Fail closed. Until the plan arrives — or if it never does — this tab
+  // behaves as locator_only. 596 of 2,207 projects must never be shown a
+  // satellite comparison, and defaulting to the richest panel would hand it to
+  // exactly those.
+  const mode = plan?.render_mode || (loading ? null : 'locator_only');
+  const isCompound = mode === 'compound';
+  const isCorridor = mode === 'corridor';
+  const isLocatorOnly = mode === 'locator_only';
+
+  // Served through the tiered endpoint. The old /satellite-imagery/ static
+  // path was removed: it exposed 4,414 files anonymously with no redaction.
+  const beforeImg = `/api/eo/tile/${activeProject.project_id}/BEFORE`;
+  const afterImg = `/api/eo/tile/${activeProject.project_id}/AFTER`;
+  const gsd = plan?.gsd_m_per_px ?? null;
+  const isSubMetre = typeof gsd === 'number' && gsd > 0 && gsd < 1.0;
   const status = getProjectStatus(activeProject);
 
   return (
@@ -727,14 +751,35 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="tag tag-solid font-heading font-bold">#{activeProject.project_id}</span>
-              <span className="tag tag-ok font-heading font-bold">SENTINEL-2 OPTICAL PASS</span>
+              {/* Was "SENTINEL-2 OPTICAL PASS". This imagery is ESRI ArcGIS
+                  World Imagery and its Wayback archive, not Sentinel-2 — a
+                  different sensor, a different resolution and a different
+                  revisit cadence. Naming the wrong satellite on a public
+                  transparency page is a provenance error, not a label choice. */}
+              <span className="tag tag-info font-heading font-bold">
+                ESRI WORLD IMAGERY · WAYBACK ARCHIVE
+              </span>
+              {!isLocatorOnly && gsd != null && (
+                <span className={`tag font-heading font-bold ${isSubMetre ? 'tag-ok' : 'tag-info'}`}>
+                  {isSubMetre ? `SUB-METRE · ${gsd} m/px` : `${gsd} m/px`}
+                </span>
+              )}
+              {isLocatorOnly && (
+                <span className="tag tag-warn font-heading font-bold">
+                  ADMINISTRATIVE CENTROID
+                </span>
+              )}
               <span className={`tag ${status.tagClass} font-heading font-bold`}>{status.label}</span>
             </div>
             <h3 className="font-heading font-extrabold text-base text-gov-navy leading-tight">
               {activeProject.project_name}
             </h3>
-            <p className="text-xs text-gov-muted mt-1">
-              Dual-epoch Sentinel-2 optical imagery showing physical ground transformation from baseline sanction to current epoch.
+            <p className="text-xs text-gov-muted mt-1 font-sans">
+              {isLocatorOnly
+                ? 'No site-level coordinate is on record for this project, so no satellite comparison is published. An administrative locator is shown below with the reason.'
+                : isCorridor
+                  ? 'Dual-epoch optical imagery of one strip of a linear alignment. One frame covers a fraction of the route; chainage packages index the remainder.'
+                  : 'Dual-epoch optical imagery showing physical ground change between the baseline and the most recent pass held for this site.'}
             </p>
           </div>
 
@@ -745,7 +790,134 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
         </div>
       </div>
 
+      {/* ── LOCATOR ONLY: RTI §4 disclosure, no imagery ──────────────────── */}
+      {isLocatorOnly && (
+        <div className="panel overflow-hidden">
+          <div className="panel-head">
+            <span className="panel-title">Administrative Locator</span>
+            <span className="panel-meta">RTI §4(1)(b) proactive disclosure</span>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <div className="note note-warn flex items-start gap-2.5 mb-4" role="status">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="text-[11.5px] leading-relaxed font-sans">
+                <strong className="block mb-1 font-heading tracking-wide text-[11px]">
+                  ADMINISTRATIVE CENTROID · SURVEYED SITE PLOT AWAITED
+                </strong>
+                The coordinate held for this project locates its{' '}
+                {String(plan?.geocode_precision || '').includes('STATE') ? 'State' : 'administrative region'}
+                {' '}rather than the works. Publishing satellite imagery framed on
+                it would show unrelated ground — and because that imagery would be
+                genuine and correctly dated, it would appear exactly as
+                authoritative as a true site view. This Ministry therefore
+                withholds the comparison rather than publish a picture of the
+                wrong place.
+                <span className="block mt-1.5">
+                  Cadastral site boundaries for legacy sanctions are being
+                  digitised progressively. Satellite verification for this project
+                  will be published once a surveyed plot boundary is on record.
+                </span>
+              </div>
+            </div>
+
+            {plan?.centre?.[0] != null && plan?.centre?.[1] != null && (
+              <div className="rounded-xs overflow-hidden border border-gov-border">
+                <MapContainer
+                  center={[plan.centre[0], plan.centre[1]]}
+                  zoom={6}
+                  scrollWheelZoom={false}
+                  style={{ height: 360, width: '100%' }}
+                  aria-label="Administrative locator showing the recorded centroid and the area within which the works lie"
+                >
+                  <TileLayer
+                    attribution='&copy; OpenStreetMap contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Circle
+                    center={[plan.centre[0], plan.centre[1]]}
+                    radius={plan.geocode_error_radius_m || 100000}
+                    pathOptions={{ color: '#B45309', fillColor: '#F59E0B',
+                                   fillOpacity: 0.10, weight: 1.5, dashArray: '4 4' }}
+                  />
+                </MapContainer>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gov-border border border-gov-border rounded-xs overflow-hidden mt-4">
+              {[
+                ['Coordinate provenance', plan?.geocode_precision || 'Not recorded'],
+                ['Area of uncertainty', plan?.geocode_error_radius_m != null
+                  ? `${Number(plan.geocode_error_radius_m).toLocaleString('en-IN')} m radius` : '—'],
+                ['Satellite verdict', 'Withheld'],
+              ].map(([k, v]) => (
+                <div key={k} className="bg-white p-3">
+                  <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block font-heading">{k}</span>
+                  <span className="text-[12px] font-extrabold text-gov-navy font-heading">{v}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
+              The reported progress figure above is unaffected by this and is
+              disclosed in full. What is withheld is the imagery, not the numbers:
+              a citizen is entitled to the finding, and to know when the Ministry
+              cannot support one from pixels.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── CORRIDOR: chainage overview above the strip ──────────────────── */}
+      {isCorridor && (
+        <div className="panel overflow-hidden">
+          <div className="panel-head">
+            <span className="panel-title">Corridor Alignment · Chainage Overview</span>
+            <span className="panel-meta">
+              {plan?.frame_covers_m != null
+                ? `strip below covers ${(plan.frame_covers_m / 1000).toFixed(2)} km`
+                : 'linear alignment'}
+            </span>
+          </div>
+          <div className="p-4 sm:p-5">
+            {plan?.packages?.length ? (
+              <>
+                <div className="flex flex-wrap gap-1.5" role="list">
+                  {plan.packages.map((pk) => (
+                    <span key={pk.package} role="listitem"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xs text-[10.5px] font-bold border border-gov-border bg-gov-surface text-gov-navy font-heading">
+                      Package {pk.package}: Km {pk.chainage_km[0]}–{pk.chainage_km[1]}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
+                  This alignment is divided into {plan.packages.length} chainage
+                  packages. The comparison below shows one strip near the recorded
+                  point — roughly{' '}
+                  <strong className="font-heading text-gov-navy">
+                    {plan.frame_covers_m != null && plan.packages.length
+                      ? ((plan.frame_covers_m / 1000) /
+                         (plan.packages[plan.packages.length - 1].chainage_km[1] || 1) * 100).toFixed(1)
+                      : '—'}%
+                  </strong>{' '}
+                  of the route. Per-package imagery requires the surveyed
+                  alignment, which is not yet published for this project.
+                </p>
+              </>
+            ) : (
+              <p className="text-[10.5px] text-gov-muted leading-relaxed font-sans">
+                The sanctioned route length is not recorded for this project, so
+                chainage packages cannot be listed. The comparison below shows the
+                alignment near the recorded point only, and should not be read as
+                representing the whole route.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Clean Dual-Epoch Before / After Swipe */}
+      {!isLocatorOnly && (
       <div className="panel space-y-0 overflow-hidden">
         <div className="panel-head">
           <span className="panel-title">Interactive Epoch Comparison</span>
@@ -813,8 +985,26 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gov-muted pt-1">
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Optical sub-meter resolution imagery corroborated against project coordinates.</span>
+              {/* Was "Optical sub-meter resolution imagery corroborated against
+                  project coordinates" — untrue twice over. Measured, the finest
+                  framing across all 285 compound projects is 1.18 m/px and most
+                  sit at 2-9 m/px, because zoom is capped so the frame contains
+                  the geocode error. And "corroborated against project
+                  coordinates" asserts a verification that the coordinate's own
+                  provenance does not support. Both now state what was measured. */}
+              {isSubMetre
+                ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                : <Eye className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />}
+              <span className="font-sans">
+                {gsd != null
+                  ? <>Optical imagery at <strong className="font-heading text-gov-navy">{gsd} m/px</strong>
+                      {isSubMetre ? ' (sub-metre).' : '.'}{' '}
+                      {plan?.zoom_limited_by === 'geocode'
+                        ? 'Framed wide enough to contain this coordinate’s uncertainty.'
+                        : 'Framed to this facility class.'}
+                    </>
+                  : 'Optical imagery at the resolution held for this site.'}
+              </span>
             </div>
             <span className="font-heading font-semibold text-[11.5px]">
               {activeProject.location_is_approximate
@@ -831,6 +1021,7 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
