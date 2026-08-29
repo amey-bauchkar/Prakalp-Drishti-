@@ -465,3 +465,91 @@ def get_redaction_policy():
 @router.get("/cache-stats", dependencies=[Depends(require("read_analytics"))])
 def get_cache_stats():
     return cache_stats()
+
+
+@router.get("/viewport/{project_id}")
+def get_viewport_plan(project_id: str, request: Request,
+                      frame_px: int = Query(1024, ge=256, le=2048)):
+    """How this project should be framed, and why.
+
+    Returned to the client instead of a hardcoded zoom so the viewer never has
+    to guess. `render_mode` drives the whole component shape:
+
+        compound     -> square frame, swipe lens, zoom locked to `zoom`
+        corridor     -> strip + chainage package selector
+        locator_only -> district locator, NO imagery (596 projects)
+
+    The public tier gets the plan for a redacted project with its zoom already
+    clamped by the redaction policy, so a coarsened site cannot be re-tightened
+    by asking for a different frame_px.
+    """
+    from analytics_engine.eo_viewport import plan_digest, plan_viewport
+
+    pid = sanitize_id(project_id, field="project_id")
+    resolved = resolve_tier(request)
+    ctx = _project_context(pid)
+
+    from analytics_engine.satellite_fusion import get_satellite_fusion_engine
+    cat = get_satellite_fusion_engine().catalog.get(pid, {})
+
+    plan = plan_viewport(
+        project_id=pid, sector=ctx.get("sector"),
+        lat=ctx.get("latitude"), lon=ctx.get("longitude"),
+        geocode_precision=cat.get("geocode_precision"),
+        is_approximate=cat.get("geocode_confidence") in (None, "NONE", "LOW"),
+        linear_length_km=_parse_length_km(ctx.get("project_name")),
+        frame_px=frame_px,
+        asset_geometry=cat.get("asset_geometry"),
+    )
+
+    out = {
+        "project_id": pid, "tier": resolved["tier"],
+        "render_mode": plan.render_mode, "zoom": plan.zoom,
+        "frame_px": plan.frame_px, "gsd_m_per_px": plan.gsd_m_per_px,
+        "bbox": plan.bbox, "centre": plan.centre,
+        "half_extent_m": plan.half_extent_m,
+        "frame_covers_m": plan.frame_covers_m,
+        "geocode_tier": plan.geocode_tier,
+        "geocode_precision": cat.get("geocode_precision"),
+        "geocode_error_radius_m": plan.geocode_error_radius_m,
+        "zoom_limited_by": plan.zoom_limited_by,
+        "error_fits_in_frame": plan.error_fits_in_frame,
+        "packages": plan.packages,
+        "caveat": plan.caveat, "basis": plan.basis,
+        "plan_digest": plan_digest(plan),
+    }
+
+    # Provider URLs are official-tier only: they are direct upstream endpoints
+    # that bypass this platform's redaction, rate limiting and provenance
+    # entirely, so handing them to an anonymous caller would undo the tier.
+    if resolved["tier"] == "official":
+        out["tile_url_template"] = plan.tile_url_template
+        out["export_url"] = plan.export_url
+        out["provider"] = plan.provider
+    else:
+        out["provider_urls_withheld"] = (
+            "Upstream provider URLs bypass this platform's redaction and rate "
+            "limiting. Public callers fetch imagery through /api/eo/tile.")
+    return out
+
+
+def _parse_length_km(name: Optional[str]) -> Optional[float]:
+    """Route length from the project name, where it is stated.
+
+    PAIMANA has no length column: 324 of 2,207 project names carry an explicit
+    km figure ("... New Rail [BG] Line [49 km] ...") and the rest carry none.
+    Parsed where present and left None otherwise, because chainage packaging
+    over an invented length would produce authoritative-looking package
+    boundaries for a route whose extent nobody recorded.
+    """
+    import re as _re
+    if not name:
+        return None
+    m = _re.search(r"\[?\s*(\d+(?:\.\d+)?)\s*[kK][mM]\s*\]?", str(name))
+    if not m:
+        return None
+    try:
+        v = float(m.group(1))
+        return v if 0.5 <= v <= 2000.0 else None
+    except ValueError:
+        return None

@@ -279,8 +279,9 @@ html[data-font-size="larger"] {
   }
 
   .panel-meta {
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
-    font-size: 10px;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
     color: var(--ink-mute);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -352,9 +353,9 @@ html[data-font-size="larger"] {
 
   .metric-value {
     display: block;
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-size: 21px;
-    font-weight: 650;
+    font-weight: 750;
     line-height: 1.06;
     letter-spacing: -0.02em;
     color: var(--ink-800);
@@ -417,11 +418,11 @@ html[data-font-size="larger"] {
     border: var(--hair);
     border-radius: 2px;
     background: var(--surface-2);
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-size: 9.5px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     color: var(--ink-soft);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -489,8 +490,9 @@ html[data-font-size="larger"] {
 
   .ledger .num, .data-table .num,
   .ledger td.num, .ledger th.num {
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-variant-numeric: tabular-nums;
+    font-weight: 700;
     text-align: right;
   }
 
@@ -574,8 +576,8 @@ html[data-font-size="larger"] {
     padding: 6px 14px;
     background: var(--ink-900);
     border-radius: 3px;
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
-    font-size: 10px;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 11px;
     color: var(--ink-dim);
     font-variant-numeric: tabular-nums;
   }
@@ -630,7 +632,7 @@ html[data-font-size="larger"] {
     background: var(--surface);
     border: 1px solid var(--line-strong);
     border-radius: 3px;
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-size: 12px;
     color: var(--ink);
     transition: border-color 130ms ease;
@@ -764,9 +766,10 @@ html[data-font-size="larger"] {
     padding: 1.5px 6px;
     border: var(--hair);
     border-radius: 2px;
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
-    font-size: 9.5px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.06em;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
   }
 
   .card-gov-programme,
@@ -845,18 +848,20 @@ html[data-font-size="larger"] {
     border: 1px solid var(--gov-gold-border, #E4D3A8);
     border-radius: 2px;
     background: var(--gold-wash);
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
-    font-size: 9.5px; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
     color: var(--gold-deep);
+    font-variant-numeric: tabular-nums;
   }
 
   .hashline {
-    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-size: 10px;
     color: var(--ink-mute);
     word-break: break-all;
     letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -873,7 +878,7 @@ html[data-font-size="larger"] {
   .panel { min-width: 0; }
   .flex > .overflow-x-auto, .grid > .overflow-x-auto { min-width: 0; }
 
-  .num { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; }
+  .num { font-variant-numeric: tabular-nums; font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; }
   .hairline-t { border-top: 1px solid var(--line); }
   .hairline-b { border-bottom: 1px solid var(--line); }
   .hairline-l { border-left: 1px solid var(--line); }

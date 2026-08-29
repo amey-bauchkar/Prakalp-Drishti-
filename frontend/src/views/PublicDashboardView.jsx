@@ -157,9 +157,9 @@ export default function PublicDashboardView() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="panel p-3 bg-white/[0.05] border-white/15 text-right font-mono">
+            <div className="panel p-3 bg-white/[0.05] border-white/15 text-right">
               <div className="text-[9.5px] uppercase tracking-wider text-ink-300 font-bold">Monitored Portfolio</div>
-              <div className="text-[18px] font-bold text-white leading-tight">₹31.4L Cr Capex</div>
+              <div className="text-[19px] font-heading font-extrabold text-white leading-tight">₹31.4L Cr Capex</div>
             </div>
           </div>
         </div>
@@ -267,35 +267,35 @@ function PublicMetadataTab({
         <div className="panel panel-accent">
           <div className="panel-head">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="tag tag-solid font-mono">ID #{activeProject.project_id}</span>
+              <span className="tag tag-solid font-heading font-bold text-[10px]">ID #{activeProject.project_id}</span>
               <span className="tag tag-info">{activeProject.sector || 'Central Sector'}</span>
               <span className={`tag ${status.tagClass}`}>{status.label}</span>
               <span className="panel-title truncate ml-1">{activeProject.project_name}</span>
             </div>
             <span className="panel-meta shrink-0">
-              Physical Progress: <strong className="text-gov-navy">{progressPct.toFixed(1)}%</strong>
+              Physical Progress: <strong className="text-gov-navy font-heading font-bold text-[12.5px]">{progressPct.toFixed(1)}%</strong>
             </span>
           </div>
 
           <div className="hairgrid hairgrid-4">
             <div className="metric-cell">
               <span className="metric-label">Executing Agency</span>
-              <span className="metric-value metric-value-sm truncate">{activeProject.company || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold truncate">{activeProject.company || '—'}</span>
               <span className="metric-sub truncate">{activeProject.state || 'Pan-India'}</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Original Sanction Date</span>
-              <span className="metric-value metric-value-sm font-mono">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
               <span className="metric-sub">CCEA baseline approval</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Target Completion</span>
-              <span className="metric-value metric-value-sm font-mono">{activeProject.target_date?.slice(0, 10) || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold">{activeProject.target_date?.slice(0, 10) || '—'}</span>
               <span className="metric-sub">Revised deadline</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Schedule Deviation</span>
-              <span className={`metric-value metric-value-sm ${Number(activeProject.delayed_months) > 0 ? 'metric-neg' : 'metric-pos'}`}>
+              <span className={`metric-value metric-value-sm font-heading font-bold ${Number(activeProject.delayed_months) > 0 ? 'metric-neg' : 'metric-pos'}`}>
                 {Number(activeProject.delayed_months) > 0 ? `+${activeProject.delayed_months} Months` : 'Nil Delay'}
               </span>
               <span className="metric-sub">Against original target</span>
@@ -311,7 +311,7 @@ function PublicMetadataTab({
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="font-mono text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Completed</span>
+            <span className="font-heading text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Completed</span>
           </div>
         </div>
       )}
@@ -384,9 +384,9 @@ function PublicMetadataTab({
                     <Popup>
                       <div className="p-1 font-sans text-xs space-y-1">
                         <div className="font-bold text-slate-900">{p.project_name}</div>
-                        <div className="text-slate-600 font-mono text-[10px]">ID: #{p.project_id} · {p.sector}</div>
-                        <div className="text-slate-700 font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
-                        <div className="text-slate-700">Progress: {p.progress_perc}% ({pStat.label})</div>
+                        <div className="text-slate-600 font-heading font-semibold text-[10px]">ID: #{p.project_id} · {p.sector}</div>
+                        <div className="text-slate-700 font-heading font-bold">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
+                        <div className="text-slate-700 font-heading font-semibold">Progress: {p.progress_perc}% ({pStat.label})</div>
                         {approx && (
                           <div className="text-amber-800 bg-amber-50 border border-amber-300 rounded-xs px-1 py-0.5 text-[10px] leading-snug">
                             <strong>Approximate location.</strong> Plotted at a
@@ -466,15 +466,15 @@ function PublicMetadataTab({
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="font-mono text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
+                        <span className="font-heading text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
                         <span className="text-[9.5px] font-bold text-[#0060B6] truncate">{p.sector}</span>
                       </div>
                       <h4 className="text-xs font-bold text-gov-navy truncate">{p.project_name}</h4>
                       <p className="text-[11px] text-gov-muted truncate mt-0.5">{p.company} · {p.state}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className={`tag ${pStat.tagClass}`}>{p.progress_perc}%</span>
-                      <div className="font-mono text-[10.5px] text-gov-muted mt-1">
+                      <span className={`tag ${pStat.tagClass} font-heading font-bold`}>{p.progress_perc}%</span>
+                      <div className="font-heading font-bold text-[11px] text-gov-navy mt-1">
                         ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
                       </div>
                     </div>
@@ -529,13 +529,13 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
       <div className="hairgrid hairgrid-4">
         <div className="metric-cell">
           <span className="metric-label">Sanctioned Baseline</span>
-          <span className="metric-value font-mono">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">CCEA Approved Initial Outlay</span>
         </div>
 
         <div className="metric-cell">
           <span className="metric-label">Revised Sanctioned Cost</span>
-          <span className="metric-value font-mono text-[#0060B6]">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold text-[#0060B6]">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className={`metric-sub font-medium ${costVariance > 0 ? 'metric-warn' : 'metric-pos'}`}>
             {costVariance > 0 ? `+₹${costVariance.toLocaleString('en-IN')} Cr (+${costVariancePct.toFixed(1)}%)` : 'Within Initial Outlay'}
           </span>
@@ -543,13 +543,13 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 
         <div className="metric-cell">
           <span className="metric-label">Cumulative Disbursal (Est.)</span>
-          <span className="metric-value font-mono metric-pos">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold metric-pos">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">Tied to {progressPerc}% physical milestone</span>
         </div>
 
         <div className="metric-cell">
           <span className="metric-label">CPWD WPI Escalation</span>
-          <span className="metric-value font-mono">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">Statutory Clause 10CC buffer</span>
         </div>
       </div>
@@ -561,7 +561,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
             <BarChart3 className="w-3.5 h-3.5 text-gov-accent" />
             Visual Capex Comparison · {activeProject.project_name}
           </span>
-          <span className="panel-meta font-mono">#{activeProject.project_id}</span>
+          <span className="panel-meta font-heading font-bold">#{activeProject.project_id}</span>
         </div>
 
         <div className="space-y-4">
@@ -569,7 +569,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">1. Initial Approved Budget (CCEA Baseline)</span>
-              <span className="font-mono font-bold text-gov-navy">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
+              <span className="font-heading font-bold text-gov-navy">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
             </div>
             <div className="w-full bg-gov-border h-3 rounded-xs overflow-hidden">
               <div
@@ -583,7 +583,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">2. Revised Sanctioned Budget (MoSPI RCE)</span>
-              <span className="font-mono font-bold text-[#0060B6]">
+              <span className="font-heading font-bold text-[#0060B6]">
                 ₹{revCost.toLocaleString('en-IN')} Cr ({costVariancePct >= 0 ? `+${costVariancePct.toFixed(1)}%` : '0%'})
               </span>
             </div>
@@ -599,7 +599,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">3. Cumulative Disbursed Amount (Milestone Realized)</span>
-              <span className="font-mono font-bold metric-pos">
+              <span className="font-heading font-bold metric-pos">
                 ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr ({progressPerc}% of Revised)
               </span>
             </div>
@@ -621,7 +621,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
             <span className="w-2.5 h-2.5 rounded-xs bg-emerald-600 shrink-0 ml-2" />
             <span>Disbursed Funds</span>
           </div>
-          <span className="font-mono">RTI §4(1)(b)(xi) Standardized Realization</span>
+          <span className="font-heading font-semibold">RTI §4(1)(b)(xi) Standardized Realization</span>
         </div>
       </div>
 
@@ -645,17 +645,17 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
               <tr>
                 <td className="font-semibold text-gov-navy">Initial Approved Baseline</td>
                 <td className="text-gov-muted">Cabinet Committee on Economic Affairs (CCEA)</td>
-                <td className="num font-mono font-bold">₹{origCost.toLocaleString('en-IN')}</td>
-                <td><span className="tag tag-ok">APPROVED</span></td>
+                <td className="num font-heading font-bold">₹{origCost.toLocaleString('en-IN')}</td>
+                <td><span className="tag tag-ok font-heading font-bold">APPROVED</span></td>
               </tr>
               <tr>
                 <td className="font-semibold text-gov-navy">Cumulative Cost Variation / Revised Scope</td>
                 <td className="text-gov-muted">MoSPI Revised Cost Estimates (RCE)</td>
-                <td className={`num font-mono font-bold ${costVariance > 0 ? 'text-amber-700' : ''}`}>
+                <td className={`num font-heading font-bold ${costVariance > 0 ? 'text-amber-700' : ''}`}>
                   ₹{costVariance.toLocaleString('en-IN')}
                 </td>
                 <td>
-                  <span className={costVariancePct >= 20 ? 'tag tag-critical' : 'tag tag-warn'}>
+                  <span className={costVariancePct >= 20 ? 'tag tag-critical font-heading font-bold' : 'tag tag-warn font-heading font-bold'}>
                     {costVariancePct >= 20 ? 'CCEA REAPPRAISAL TRIGGERED' : 'WITHIN DELEGATED POWERS'}
                   </span>
                 </td>
@@ -663,18 +663,18 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
               <tr>
                 <td className="font-semibold text-gov-navy">Contractor Cumulative Realization</td>
                 <td className="text-gov-muted">Physical Milestone Verification</td>
-                <td className="num font-mono font-bold metric-pos">
+                <td className="num font-heading font-bold metric-pos">
                   ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td><span className="tag tag-ok">DISBURSED</span></td>
+                <td><span className="tag tag-ok font-heading font-bold">DISBURSED</span></td>
               </tr>
               <tr>
                 <td className="font-semibold text-gov-navy">CPWD Clause 10CC Escalation Allocation</td>
                 <td className="text-gov-muted">Wholesale Price Index (WPI) Formula</td>
-                <td className="num font-mono font-bold text-azure">
+                <td className="num font-heading font-bold text-azure">
                   ₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td><span className="tag tag-info">INDEX-TIED</span></td>
+                <td><span className="tag tag-info font-heading font-bold">INDEX-TIED</span></td>
               </tr>
             </tbody>
           </table>
@@ -726,9 +726,9 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
         <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="tag tag-solid font-mono">#{activeProject.project_id}</span>
-              <span className="tag tag-ok">SENTINEL-2 OPTICAL PASS</span>
-              <span className={`tag ${status.tagClass}`}>{status.label}</span>
+              <span className="tag tag-solid font-heading font-bold">#{activeProject.project_id}</span>
+              <span className="tag tag-ok font-heading font-bold">SENTINEL-2 OPTICAL PASS</span>
+              <span className={`tag ${status.tagClass} font-heading font-bold`}>{status.label}</span>
             </div>
             <h3 className="font-heading font-extrabold text-base text-gov-navy leading-tight">
               {activeProject.project_name}
@@ -738,9 +738,9 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
             </p>
           </div>
 
-          <div className="panel p-3 bg-gov-surface-2 shrink-0 text-right font-mono">
+          <div className="panel p-3 bg-gov-surface-2 shrink-0 text-right">
             <span className="text-[9.5px] uppercase tracking-wider text-gov-muted block font-bold">Reported Progress</span>
-            <span className="text-xl font-black text-gov-navy">{activeProject.progress_perc}%</span>
+            <span className="text-2xl font-heading font-extrabold text-gov-navy">{activeProject.progress_perc}%</span>
           </div>
         </div>
       </div>
@@ -803,10 +803,10 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
             />
 
             {/* Corner Watermarks */}
-            <div className="absolute bottom-3 left-3 z-10 bg-black/75 text-white text-[10.5px] font-mono px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
+            <div className="absolute bottom-3 left-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
               EPOCH 1: Baseline Sanction
             </div>
-            <div className="absolute bottom-3 right-3 z-10 bg-black/75 text-white text-[10.5px] font-mono px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
+            <div className="absolute bottom-3 right-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
               EPOCH 2: Latest Pass
             </div>
           </div>
@@ -816,7 +816,7 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Optical sub-meter resolution imagery corroborated against project coordinates.</span>
             </div>
-            <span className="font-mono text-[11px]">
+            <span className="font-heading font-semibold text-[11.5px]">
               {activeProject.location_is_approximate
                 ? <>Approximate area: {Number(activeProject.latitude).toFixed(1)}°N,{' '}
                     {Number(activeProject.longitude).toFixed(1)}°E{' '}
@@ -897,24 +897,24 @@ function PublicClearancesTab() {
                 <div className="flex items-start justify-between gap-2 border-b border-gov-border pb-2.5">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <span className="tag tag-solid font-mono text-[9px]">#{p.project_id}</span>
-                      <span className="tag tag-info text-[9px]">{p.state || 'Pan-India'}</span>
+                      <span className="tag tag-solid font-heading font-bold text-[9.5px]">#{p.project_id}</span>
+                      <span className="tag tag-info text-[9.5px]">{p.state || 'Pan-India'}</span>
                     </div>
                     <h4 className="text-xs font-bold text-gov-navy leading-snug truncate">{p.project_name}</h4>
                   </div>
-                  <span className={`${tagCls} text-[10px] shrink-0`}>{status}</span>
+                  <span className={`${tagCls} font-heading font-bold text-[10px] shrink-0`}>{status}</span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Forest Diversion</span>
-                    <span className="font-mono font-bold text-gov-navy text-[11px]">
+                    <span className="font-heading font-bold text-gov-navy text-[12px]">
                       {p.total_forest_diversion_ha ? `${p.total_forest_diversion_ha} ha` : '—'}
                     </span>
                   </div>
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Review Period</span>
-                    <span className="font-mono font-bold text-gov-navy text-[11px]">{p.days_overdue || 0}d</span>
+                    <span className="font-heading font-bold text-gov-navy text-[12px]">{p.days_overdue || 0}d</span>
                   </div>
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Bottleneck</span>

@@ -957,3 +957,146 @@ class TestSecretHygiene:
             ["git", "grep", "-lE", r"gsk_[A-Za-z0-9]{30,}"],
             cwd=self.ROOT, capture_output=True, text=True).stdout.strip()
         assert hits == "", f"live-looking Groq key committed in: {hits}"
+
+# ══════════════════════════════════════════════════════════════════════════
+# 14. VIEWPORT PLANNING — geocode-gated framing
+# ══════════════════════════════════════════════════════════════════════════
+
+class TestViewportPlanner:
+    """Zoom is gated on geocode provenance, not on sector.
+
+    Only 8 of 2,207 project coordinates are exact matches; 831 are OSM landmark
+    matches, 506 are CITY centroids and 596 are state or national centroids.
+    Framing tightly on those magnifies the error into a total miss, and the
+    sharper the frame the more authoritative the wrong ground looks.
+    """
+
+    def test_state_and_national_centroids_serve_no_imagery(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        for prec in ("STATE_CENTROID_MATCH", "NATIONAL_CENTROID_MATCH"):
+            p = plan_viewport("X", "Healthcare", 22.5, 78.5, geocode_precision=prec)
+            assert p.render_mode == "locator_only", f"{prec} -> {p.render_mode}"
+            assert p.bbox is None
+            assert "centroid" in p.caveat
+
+    def test_unknown_provenance_fails_closed(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Healthcare", 22.5, 78.5, geocode_precision=None)
+        assert p.render_mode == "locator_only"
+
+    def test_a_weak_geocode_is_framed_wider_than_a_strong_one(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        strong = plan_viewport("A", "Healthcare", 22.5, 78.5,
+                               geocode_precision="GEONAMES_EXACT_MATCH")
+        weak = plan_viewport("B", "Healthcare", 22.5, 78.5,
+                             geocode_precision="GAZETTEER_CITY_MATCH")
+        assert weak.zoom < strong.zoom, (
+            f"a city-centroid hospital was framed at z{weak.zoom}, as tight as "
+            f"the exact-match one at z{strong.zoom}")
+        assert weak.frame_covers_m > strong.frame_covers_m
+
+    def test_frame_always_contains_the_declared_error_radius(self):
+        """The invariant the first version of the table violated on 80% of rows."""
+        from analytics_engine.eo_viewport import GEOCODE_CLASS, plan_viewport
+        for prec, cfg in GEOCODE_CLASS.items():
+            if not cfg["serve"]:
+                continue
+            for lat in (8.0, 22.5, 34.0):
+                p = plan_viewport("X", "Healthcare", lat, 78.0,
+                                  geocode_precision=prec)
+                assert p.error_fits_in_frame, (
+                    f"{prec} at lat {lat}: {p.frame_covers_m} m frame cannot hold "
+                    f"a {p.geocode_error_radius_m} m error radius")
+
+    def test_zoom_never_exceeds_the_measured_provider_ceiling(self):
+        from analytics_engine.eo_viewport import MAX_PROVIDER_ZOOM, plan_viewport
+        p = plan_viewport("X", "Telecommunication", 28.57, 77.21,
+                          geocode_precision="GEONAMES_EXACT_MATCH")
+        assert p.zoom <= MAX_PROVIDER_ZOOM, (
+            "z19+ returns a blank placeholder outside dense urban areas")
+
+    def test_linear_assets_get_chainage_packages(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Roads & Highways", 22.5, 78.5,
+                          geocode_precision="OSM_LANDMARK_MATCH",
+                          linear_length_km=95.0, asset_geometry="LINEAR")
+        assert p.render_mode == "corridor"
+        assert len(p.packages) == 5, f"95 km / 20 km -> {len(p.packages)}"
+        assert p.packages[0]["chainage_km"] == [0.0, 20.0]
+        assert p.packages[-1]["chainage_km"][1] == 95.0
+
+    def test_package_centres_are_null_not_interpolated(self):
+        """No alignment polyline exists, so a per-package centre would be invented."""
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Railways", 22.5, 78.5,
+                          geocode_precision="OSM_CORRIDOR_MIDPOINT",
+                          linear_length_km=60.0, asset_geometry="LINEAR")
+        assert all(pk["centre"] is None for pk in p.packages)
+        assert all("alignment polyline" in pk["requires"] for pk in p.packages)
+
+    def test_corridor_states_what_fraction_of_the_route_is_visible(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Roads & Highways", 22.5, 78.5,
+                          geocode_precision="OSM_LANDMARK_MATCH",
+                          linear_length_km=200.0, asset_geometry="LINEAR")
+        assert "% of the route" in p.caveat
+
+    def test_bbox_is_not_square_in_degrees(self):
+        """Longitude degrees shrink with latitude; one delta for both is wrong."""
+        from analytics_engine.eo_viewport import bbox_from_centre
+        for lat in (8.0, 34.0):
+            mn_lon, mn_lat, mx_lon, mx_lat = bbox_from_centre(lat, 78.0, 500.0)
+            assert (mx_lon - mn_lon) > (mx_lat - mn_lat), \
+                f"at lat {lat} the longitude span must exceed the latitude span"
+
+    def test_gsd_matches_web_mercator(self):
+        from analytics_engine.eo_viewport import ground_sample_distance as g
+        assert abs(g(0.0, 18) - 40075016.686 / (256 * 2 ** 18)) < 1e-6
+        assert g(60.0, 18) < g(0.0, 18)
+        assert abs(g(22.0, 17) / g(22.0, 18) - 2.0) < 1e-9
+
+    def test_placeholder_tile_is_detected(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, is_blank_placeholder)
+        blank, why = is_blank_placeholder(b"x" * PLACEHOLDER_BYTES, None)
+        assert blank and "placeholder" in why
+        flat = np.full((256, 256, 3), 128, np.uint8)
+        blank, why = is_blank_placeholder(b"x" * 9999, flat)
+        assert blank, "a featureless raster must be rejected as ground truth"
+        rng = np.random.RandomState(3)
+        real = cv2.GaussianBlur((rng.rand(256, 256, 3) * 255).astype(np.uint8),
+                                (0, 0), 0.8)
+        blank, _ = is_blank_placeholder(b"x" * 40000, real)
+        assert not blank, "real imagery must not be discarded as a placeholder"
+
+    def test_zoom_fallback_walks_down_to_real_imagery(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, fetch_with_zoom_fallback)
+        rng = np.random.RandomState(4)
+        real = cv2.GaussianBlur((rng.rand(64, 64, 3) * 255).astype(np.uint8),
+                                (0, 0), 0.7)
+
+        def fake(z):
+            return ((b"x" * 40000, real) if z <= 16
+                    else (b"x" * PLACEHOLDER_BYTES, None))
+
+        out = fetch_with_zoom_fallback(22.5, 78.5, 18, fake)
+        assert out["ok"] and out["zoom"] == 16 and out["downgraded"]
+        assert "no imagery above" in out["note"]
+
+    def test_fallback_reports_failure_rather_than_returning_a_blank(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, fetch_with_zoom_fallback)
+        out = fetch_with_zoom_fallback(
+            22.5, 78.5, 18, lambda z: (b"x" * PLACEHOLDER_BYTES, None))
+        assert out["ok"] is False and out["raw"] is None
+        assert "outside its coverage" in out["note"]
+
+    def test_plan_digest_separates_different_framings(self):
+        from analytics_engine.eo_viewport import plan_digest, plan_viewport
+        a = plan_viewport("P", "Healthcare", 22.5, 78.5,
+                          geocode_precision="GEONAMES_EXACT_MATCH")
+        b = plan_viewport("P", "Healthcare", 22.5, 78.5,
+                          geocode_precision="GAZETTEER_CITY_MATCH")
+        assert plan_digest(a) != plan_digest(b), (
+            "two framings of one project must not share a cache key")
