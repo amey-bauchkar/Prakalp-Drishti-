@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   ShieldCheck, AlertTriangle, TrendingUp, Cpu, Database, Award, ArrowRight,
   Sparkles, Layers, FileText, CheckCircle2, ChevronRight, Activity, Clock,
-  DollarSign, GitBranch, CloudRain, Scale, Compass, ChevronLeft
+  DollarSign, GitBranch, CloudRain, Scale, Compass, ChevronLeft, Lock
 } from 'lucide-react';
 import LoginGate from './LoginGate';
 
@@ -18,7 +18,7 @@ export default function AmeyMasterView() {
   const modules = [
     {
       name: 'SATYA-KAVACH',
-      to: '/tanmay',
+      to: '/decision-hub?engine=satya_kavach',
       title: 'Contract Compliance Forensics',
       desc: 'McCrary density test detecting artificial cost clustering at the 20% CCEA boundary. Enforces CPWD Clause 10CC statutory escalation caps.',
       finding: '1.65× density spike',
@@ -28,7 +28,7 @@ export default function AmeyMasterView() {
     },
     {
       name: 'ARTHA-NETRA',
-      to: '/parth',
+      to: '/decision-hub?engine=artha_nivaran',
       title: 'PSU Financial Solvency',
       desc: 'Correlates executing PSU debt leverage ratios, Altman Z-scores, and equity market drawdowns to predict contractor distress 4–6 quarters ahead.',
       finding: 'Granger-causal',
@@ -38,7 +38,7 @@ export default function AmeyMasterView() {
     },
     {
       name: 'VARSHA-SPEED',
-      to: '/janhavi',
+      to: '/decision-hub?engine=setu_varsha',
       title: 'Monsoon Weather Impact',
       desc: 'IMD rainfall anomaly regression model estimating construction slowdown across 36 states. 20-year historical profiling with scenario simulation.',
       finding: '±15% anomaly',
@@ -48,7 +48,7 @@ export default function AmeyMasterView() {
     },
     {
       name: 'NIVARAN',
-      to: '/nivaran',
+      to: '/decision-hub?engine=artha_nivaran',
       title: 'Contract & Legal Risk',
       desc: 'NLP scrutiny of CPWD GCC clauses, contractor litigation track records, and predictive arbitration modeling to preempt contractor site abandonment.',
       finding: '78.5 Exposure',
@@ -58,7 +58,7 @@ export default function AmeyMasterView() {
     },
     {
       name: 'ANUMATI',
-      to: '/anumati',
+      to: '/decision-hub?engine=satya_kavach',
       title: 'Statutory Clearances (PARIVESH)',
       desc: '5-stage clearance pipeline tracking, Regulatory Stagnation Index (RSI), and central-state paperwork loopback anomaly detection.',
       finding: '1.72× RSI',
@@ -85,15 +85,17 @@ export default function AmeyMasterView() {
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
-            {/* Subtle India Gate Vector Silhouette Watermark */}
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-2xl pointer-events-none opacity-10 flex items-end justify-center">
-              <svg viewBox="0 0 500 400" className="w-full h-full fill-current text-white">
-                <path d="M100,380 L100,180 L140,160 L140,120 L360,120 L360,160 L400,180 L400,380 L320,380 L320,240 C320,200 180,200 180,240 L180,380 Z" />
-              </svg>
+            {/* High-Fidelity Transparent 3D Isometric Extruded Model of India (Right-Aligned) */}
+            <div className="absolute -right-16 sm:-right-10 lg:-right-4 xl:right-2 top-1/2 -translate-y-1/2 w-[420px] sm:w-[560px] lg:w-[700px] xl:w-[760px] h-[130%] sm:h-[145%] lg:h-[155%] pointer-events-none flex items-center justify-end overflow-hidden z-0 select-none">
+              <img
+                src="/india_3d_graphic_v2.png"
+                alt="3D Sovereign Model of India"
+                className="w-full h-full object-contain object-right opacity-35 sm:opacity-45 lg:opacity-50 brightness-115 contrast-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+              />
             </div>
 
-            {/* Top Emblem & Sovereign Tag */}
-            <div className="relative z-10 text-center space-y-2.5 pt-1">
+            {/* Top Emblem & Sovereign Institutional Masthead */}
+            <div className="relative z-10 text-center space-y-3 pt-1">
               <div className="flex items-center justify-center">
                 <div className="w-16 h-16 sm:w-18 sm:h-18 bg-white rounded-2xl p-1.5 shadow-lg border border-white/80 flex items-center justify-center">
                   <img
@@ -104,9 +106,13 @@ export default function AmeyMasterView() {
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-2 bg-white/[0.1] backdrop-blur-xs px-4 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-institutional uppercase text-white border border-white/20">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Ministry of Statistics &amp; Programme Implementation · Govt. of India</span>
+              <div className="flex flex-col items-center justify-center space-y-0.5">
+                <span className="text-[11px] sm:text-[12px] font-semibold text-white/90 tracking-wider uppercase font-sans">
+                  भारत सरकार · Government of India
+                </span>
+                <span className="text-[12.5px] sm:text-[14px] font-bold text-amber-300/95 tracking-wide uppercase font-heading">
+                  Ministry of Statistics &amp; Programme Implementation (MoSPI)
+                </span>
               </div>
             </div>
 
@@ -129,23 +135,23 @@ export default function AmeyMasterView() {
 
                 <button
                   onClick={() => scrollToSection('slide-3')}
-                  className="inline-flex items-center gap-1.5 text-white text-[12.5px] font-extrabold uppercase tracking-institutional py-2.5 px-5.5 rounded-sm bg-white/5 hover:bg-white/15 border border-white/30 transition-colors whitespace-nowrap cursor-pointer"
+                  className="inline-flex items-center gap-2 text-white/95 hover:text-white text-[12.5px] font-bold py-2.5 px-6 rounded-full bg-white/[0.12] hover:bg-white/[0.22] border border-white/30 hover:border-white/50 backdrop-blur-md shadow-sm transition-all duration-200 cursor-pointer group"
                 >
-                  <span>Explore Engines</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <span>Explore Analytical Engines</span>
+                  <ChevronRight className="w-4 h-4 text-white/80 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
                 </button>
               </div>
             </div>
 
-            {/* Bottom Centered Metric Pill Strip */}
+            {/* Bottom Centered Metric Strip */}
             <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-2xl w-full mx-auto grid grid-cols-3 divide-x divide-white/12 pb-1">
               {[
-                { v: '2,207', k: 'Monitored Works' },
-                { v: '₹31.4L Cr', k: 'Capital Portfolio' },
-                { v: '100%', k: 'Air-Gapped Sovereign' },
+                { v: '2,207', k: 'Central Sector Works' },
+                { v: '₹41.8L Cr', k: 'Revised Capital Outlay' },
+                { v: '22 Sectors', k: 'Union Line Ministries' },
               ].map((m) => (
                 <div key={m.k} className="px-4 text-center">
-                  <div className="font-mono text-[20px] sm:text-[24px] font-bold text-white leading-none tracking-tight">
+                  <div className="font-heading text-[22px] sm:text-[25px] font-extrabold text-white leading-none tracking-tight">
                     {m.v}
                   </div>
                   <div className="text-[9.5px] sm:text-[10.5px] uppercase tracking-institutional text-ink-200 mt-1.5 font-bold">
@@ -191,11 +197,15 @@ export default function AmeyMasterView() {
               </div>
 
               <div className="lg:col-span-3 flex flex-col items-center lg:items-end justify-center text-center lg:text-right">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-gov-green-light text-gov-green-map border border-gov-green-map/40 text-[11.5px] font-bold mb-1.5">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>100% Verified Catalog</span>
+                <div className="text-[12.5px] font-bold text-gov-navy uppercase tracking-wider font-heading">
+                  Statutory PAIMANA Repository
                 </div>
-                <div className="text-[11px] text-text-muted font-mono font-semibold">PAIMANA Master DB (2005–2026)</div>
+                <div className="text-[11.5px] text-text-secondary mt-1 font-sans">
+                  Central Sector Projects (&ge; ₹150 Cr) · 2005–2026
+                </div>
+                <div className="text-[10px] text-gov-saffron-dark font-bold uppercase tracking-widest mt-1">
+                  DIID / IPMD Division · MoSPI
+                </div>
               </div>
             </div>
           </div>
@@ -296,8 +306,14 @@ export default function AmeyMasterView() {
                   className={`panel ${mod.accent} p-4.5 sm:p-5 flex flex-col justify-between group rounded-2xl min-h-[320px] sm:min-h-[340px] shadow-xs hover:shadow-md transition-all`}
                 >
                   <div className="space-y-2.5">
-                    <div className="w-8.5 h-8.5 rounded-xl bg-gov-surface border border-gov-border flex items-center justify-center group-hover:border-gov-saffron transition-colors">
-                      <Icon className="w-4 h-4 text-gov-navy" strokeWidth={2} />
+                    <div className="flex items-center justify-between">
+                      <div className="w-8.5 h-8.5 rounded-xl bg-gov-surface border border-gov-border flex items-center justify-center group-hover:border-gov-saffron transition-colors">
+                        <Icon className="w-4 h-4 text-gov-navy" strokeWidth={2} />
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-full border border-slate-200/80">
+                        <Lock className="w-2.5 h-2.5 text-slate-400" />
+                        <span>Govt Gate</span>
+                      </span>
                     </div>
 
                     <div>
@@ -316,8 +332,8 @@ export default function AmeyMasterView() {
 
                   <div className="pt-3 mt-3 border-t border-slate-200/80 flex items-center justify-between">
                     <div>
-                      <div className="text-[13.5px] font-mono font-black text-gov-navy">{mod.finding}</div>
-                      <div className="text-[9.5px] text-text-muted font-medium">{mod.findingLabel}</div>
+                      <div className="text-[14px] font-heading font-extrabold text-gov-navy tracking-tight">{mod.finding}</div>
+                      <div className="text-[10px] text-text-muted font-medium font-sans mt-0.5">{mod.findingLabel}</div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-gov-saffron group-hover:translate-x-1 transition-all" />
                   </div>
@@ -348,7 +364,7 @@ export default function AmeyMasterView() {
                 </p>
                 <div className="pt-1.5">
                   <Link
-                    to="/tanmay"
+                    to="/decision-hub?engine=satya_kavach"
                     className="inline-flex items-center gap-2 text-[13.5px] font-bold text-gov-saffron-light hover:text-white transition-colors"
                   >
                     <span>Inspect Full SATYA-KAVACH Compliance Report</span>
@@ -359,9 +375,9 @@ export default function AmeyMasterView() {
 
               <div className="lg:col-span-4 flex justify-center lg:justify-end">
                 <div className="border border-white/15 bg-white/[0.04] rounded-2xl p-5 text-center w-full max-w-xs">
-                  <div className="text-[44px] sm:text-[50px] font-black text-white font-heading leading-none font-mono">1.65×</div>
-                  <div className="text-[13px] font-bold text-slate-200 mt-1.5">McCrary Discontinuity Ratio</div>
-                  <div className="text-[11px] text-gov-saffron-light mt-0.5 font-mono">p &lt; 0.001 · Highly Significant</div>
+                  <div className="text-[44px] sm:text-[50px] font-extrabold text-white font-heading leading-none tracking-tight">1.65×</div>
+                  <div className="text-[13px] font-bold text-slate-200 mt-1.5 font-sans">McCrary Discontinuity Ratio</div>
+                  <div className="text-[11.5px] text-amber-300 mt-1 font-sans font-medium">p &lt; 0.001 · Statistically Significant</div>
                 </div>
               </div>
             </div>
@@ -465,35 +481,28 @@ export default function AmeyMasterView() {
           </div>
 
           {/* National Infrastructure Partners */}
-          <div className="space-y-4 pt-2">
+          <div className="pt-8 sm:pt-12 space-y-6 sm:space-y-8 pb-4">
             <div className="text-center">
-              <h3 className="font-heading font-bold text-[13px] sm:text-[14px] text-text-muted uppercase tracking-widest">
+              <h3 className="font-heading font-bold text-[12px] sm:text-[13px] text-text-muted uppercase tracking-widest opacity-80">
                 National Infrastructure &amp; Government Partners
               </h3>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5 py-1">
+            <div className="grid grid-cols-7 items-center justify-items-center gap-3 sm:gap-6 lg:gap-8 py-2 px-2 max-w-6xl mx-auto">
               {circularPartners.map((partner) => (
                 <a
                   key={partner.name}
                   href={partner.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-between p-3.5 bg-white rounded-2xl border border-slate-200 hover:border-gov-saffron hover:shadow-md transition-all group text-center h-full min-h-[125px] sm:min-h-[135px]"
+                  title={partner.name}
+                  className="flex items-center justify-center w-full transition-all duration-300 group opacity-85 hover:opacity-100 hover:scale-108"
                 >
-                  <div className="h-11 w-full flex items-center justify-center px-1">
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="max-h-full max-w-full object-contain filter group-hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <div className="text-[11.5px] font-bold text-gov-navy group-hover:text-gov-saffron transition-colors leading-tight">
-                      {partner.name}
-                    </div>
-                    <div className="text-[9.5px] text-gov-muted font-mono mt-0.5">{partner.sub}</div>
-                  </div>
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className="h-10 sm:h-11 lg:h-12 w-auto max-w-[100px] sm:max-w-[125px] lg:max-w-[135px] object-contain transition-transform"
+                  />
                 </a>
               ))}
             </div>

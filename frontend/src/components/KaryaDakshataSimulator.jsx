@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Building2, AlertTriangle, TrendingUp, Clock, Calculator, ShieldCheck, Activity, BarChart3, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
+import LoginGate from '../../amey/LoginGate.jsx';
 
 const KaryaDakshataSimulator = () => {
     const [agencies, setAgencies] = useState([]);
@@ -83,7 +84,8 @@ const KaryaDakshataSimulator = () => {
     };
 
     return (
-        <div className="space-y-8 font-sans max-w-6xl mx-auto">
+        <LoginGate>
+            <div className="space-y-8 font-sans max-w-6xl mx-auto">
             {/* Header */}
             <div className="panel p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="space-y-3">
@@ -342,6 +344,7 @@ const KaryaDakshataSimulator = () => {
                 </div>
             </div>
         </div>
+      </LoginGate>
     );
 };
 
