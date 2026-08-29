@@ -18,7 +18,7 @@ const TABS = [
   {
     id: 'financial',
     label: 'Financial Integrity',
-    desc: 'Boundary Bin-Mass Ratio · CPWD Clause 10CC 85% Cap',
+    desc: 'CCEA Boundary Analysis · Project Revision Inspection',
     icon: Scale,
   },
   {

@@ -1,6 +1,7 @@
 """
-PRAKALP-DRISHTI: Tanmay's Router
-Exposes SATYA-KAVACH forensic layer, CCEA approval rule resolution, Clause 10CC price variation forensics, and Audit Pack generation.
+PRAKALP-DRISHTI: Satya-Kavach Router (Simplified & Focused)
+Exposes deterministic CCEA boundary analysis, flagged proximity projects,
+project revision inspector dossier, and preserved statutory clearances.
 """
 
 from typing import Optional
@@ -8,14 +9,14 @@ from fastapi import APIRouter, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from modules.tanmay.service import get_satya_kavach_engine
 
-router = APIRouter(prefix="/api/tanmay", tags=["Tanmay - SATYA-KAVACH Statutory Audit & Forensic Layer"])
+router = APIRouter(prefix="/api/tanmay", tags=["Tanmay - SATYA-KAVACH Statutory CCEA Boundary Analysis"])
 
 
 class Clause10CCSimRequest(BaseModel):
     original_cost_cr: float = Field(default=1000.0, ge=1.0, description="Original sanctioned cost in ₹ Crore")
     sanction_year: int = Field(default=2018, ge=2005, le=2026, description="Sanction / Bid submission base year")
     revised_cost_cr: float = Field(default=1195.0, ge=1.0, description="Revised cost demanded in ₹ Crore")
-    claimed_escalation_cr: Optional[float] = Field(default=None, ge=0.0, description="Operator hypothetical claimed escalation in ₹ Crore")
+    claimed_escalation_cr: Optional[float] = Field(default=None, ge=0.0, description="Operator claimed escalation in ₹ Crore")
     p_steel: float = Field(default=0.20, ge=0.0, le=1.0, description="Steel weight fraction")
     p_cement: float = Field(default=0.15, ge=0.0, le=1.0, description="Cement weight fraction")
     p_fuel: float = Field(default=0.15, ge=0.0, le=1.0, description="Fuel/Bitumen weight fraction")
@@ -29,15 +30,13 @@ def get_status():
         "status": "online",
         "module": "SATYA-KAVACH",
         "lead": "Tanmay",
-        "focus": "Deterministic Statutory Audit, Boundary Bin-Mass Analysis & CPWD Clause 10CC Forensics",
+        "focus": "Deterministic CCEA Boundary Screening & Project Revision Inspection",
         "endpoints": [
             "/api/tanmay/pattern-analysis",
             "/api/tanmay/bunching-histogram",
             "/api/tanmay/clause-10cc-audit",
-            "/api/tanmay/agency-patterns",
             "/api/tanmay/simulate-clause-10cc",
             "/api/tanmay/project-dossier/{project_id}",
-            "/api/tanmay/audit-pack/{project_id}",
             "/api/tanmay/anumati/clearances",
         ],
     }
@@ -46,10 +45,10 @@ def get_status():
 @router.get("/gaming-analysis")
 @router.get("/pattern-analysis")
 def get_pattern_analysis():
-    """Returns statutory audit summary, Boundary Bin-Mass Ratio, and triage cohorts."""
+    """Returns boundary analysis summary, [18%, 20%) vs [20%, 22%) bin ratio, and flagged projects."""
     try:
         engine = get_satya_kavach_engine()
-        return engine.get_anti_gaming_summary()
+        return engine.get_boundary_analysis()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -69,7 +68,7 @@ def get_clause_10cc_audit(
     limit: int = Query(default=50, ge=1, le=500),
     sector: Optional[str] = Query(default=None),
 ):
-    """Returns Clause 10CC price variation forensic audit across all projects."""
+    """Returns Clause 10CC price variation forensic audit across projects."""
     try:
         engine = get_satya_kavach_engine()
         return engine.get_clause_10cc_audit_report(limit=limit, sector_filter=sector)
@@ -77,23 +76,9 @@ def get_clause_10cc_audit(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/agency-rankings")
-@router.get("/agency-patterns")
-def get_agency_patterns(
-    mode: str = Query(default="composite", description="Ranking mode: 'composite', 'proximity_queue', or 'overrun_queue'"),
-    min_projects: int = Query(default=5, ge=1, le=100, description="Minimum projects gate"),
-):
-    """Agency Pattern Overview: Ranks agencies by transparent Audit Priority Score or dual queues."""
-    try:
-        engine = get_satya_kavach_engine()
-        return engine.get_agency_gaming_rankings(mode=mode, min_projects=min_projects)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.post("/simulate-clause-10cc")
 def simulate_clause_10cc(req: Clause10CCSimRequest):
-    """Operator what-if simulator for testing hypothetical claims against statutory 85% caps."""
+    """Operator what-if calculation for Clause 10CC statutory 85% caps."""
     try:
         engine = get_satya_kavach_engine()
         return engine.simulate_clause_10cc(
@@ -113,27 +98,12 @@ def simulate_clause_10cc(req: Clause10CCSimRequest):
 
 @router.get("/project-dossier/{project_id}")
 def get_project_dossier(project_id: str = Path(..., description="Project ID")):
-    """Returns the comprehensive forensic dossier for a project (rule match, timeline, peers, explanations)."""
+    """Returns the project inspector dossier (costs, boundary distance, deduplicated revision history, Clause 10CC)."""
     try:
         engine = get_satya_kavach_engine()
         res = engine.get_project_dossier(project_id)
         if res.get("status") == "not_found":
             raise HTTPException(status_code=404, detail=f"Project #{project_id} not found in master database.")
-        return res
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/audit-pack/{project_id}")
-def get_audit_pack(project_id: str = Path(..., description="Project ID")):
-    """Generates the cryptographically signed Audit Pack for human review."""
-    try:
-        engine = get_satya_kavach_engine()
-        res = engine.generate_project_audit_pack(project_id)
-        if res.get("status") == "not_found":
-            raise HTTPException(status_code=404, detail=f"Project #{project_id} not found.")
         return res
     except HTTPException:
         raise
@@ -207,7 +177,6 @@ def get_clearance_portfolio():
             "projects": projects,
         }
     except Exception as e:
-        logger.error(f"Failed to load clearance portfolio: {e}")
         return {
             "available": False,
             "reason": str(e),
