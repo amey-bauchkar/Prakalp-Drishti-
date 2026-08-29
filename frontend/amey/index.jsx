@@ -85,11 +85,13 @@ export default function AmeyMasterView() {
             ═══════════════════════════════════════════════════════════════ */}
         <section id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
-            {/* Subtle India Gate Vector Silhouette Watermark */}
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 top-0 w-3/4 max-w-2xl pointer-events-none opacity-10 flex items-end justify-center">
-              <svg viewBox="0 0 500 400" className="w-full h-full fill-current text-white">
-                <path d="M100,380 L100,180 L140,160 L140,120 L360,120 L360,160 L400,180 L400,380 L320,380 L320,240 C320,200 180,200 180,240 L180,380 Z" />
-              </svg>
+            {/* High-Fidelity Transparent 3D Isometric Extruded Model of India (Right-Aligned) */}
+            <div className="absolute -right-16 sm:-right-10 lg:-right-4 xl:right-2 top-1/2 -translate-y-1/2 w-[420px] sm:w-[560px] lg:w-[700px] xl:w-[760px] h-[130%] sm:h-[145%] lg:h-[155%] pointer-events-none flex items-center justify-end overflow-hidden z-0 select-none">
+              <img
+                src="/india_3d_graphic_v2.png"
+                alt="3D Sovereign Model of India"
+                className="w-full h-full object-contain object-right opacity-35 sm:opacity-45 lg:opacity-50 brightness-115 contrast-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.7)]"
+              />
             </div>
 
             {/* Top Emblem & Sovereign Tag */}
