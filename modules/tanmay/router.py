@@ -1,24 +1,27 @@
 """
 PRAKALP-DRISHTI: Tanmay's Router
-Exposes SATYA-KAVACH anti-gaming, McCrary bunching, and CPWD Clause 10CC forensic audit endpoints.
+Exposes SATYA-KAVACH forensic layer, CCEA approval rule resolution, Clause 10CC price variation forensics, and Audit Pack generation.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from modules.tanmay.service import get_satya_kavach_engine
 
-router = APIRouter(prefix="/api/tanmay", tags=["Tanmay - SATYA-KAVACH Anti-Gaming & Claim Evasion"])
+router = APIRouter(prefix="/api/tanmay", tags=["Tanmay - SATYA-KAVACH Statutory Audit & Forensic Layer"])
+
 
 class Clause10CCSimRequest(BaseModel):
-    original_cost_cr: float = Field(default=1000.0, ge=10.0, description="Original sanctioned cost in ₹ Crore")
+    original_cost_cr: float = Field(default=1000.0, ge=1.0, description="Original sanctioned cost in ₹ Crore")
     sanction_year: int = Field(default=2018, ge=2005, le=2026, description="Sanction / Bid submission base year")
-    revised_cost_cr: float = Field(default=1195.0, ge=10.0, description="Revised cost demanded in ₹ Crore")
+    revised_cost_cr: float = Field(default=1195.0, ge=1.0, description="Revised cost demanded in ₹ Crore")
+    claimed_escalation_cr: Optional[float] = Field(default=None, ge=0.0, description="Operator hypothetical claimed escalation in ₹ Crore")
     p_steel: float = Field(default=0.20, ge=0.0, le=1.0, description="Steel weight fraction")
     p_cement: float = Field(default=0.15, ge=0.0, le=1.0, description="Cement weight fraction")
     p_fuel: float = Field(default=0.15, ge=0.0, le=1.0, description="Fuel/Bitumen weight fraction")
     p_labor: float = Field(default=0.25, ge=0.0, le=1.0, description="Labor weight fraction")
     p_other: float = Field(default=0.25, ge=0.0, le=1.0, description="Other materials weight fraction")
+
 
 @router.get("/status")
 def get_status():
@@ -26,86 +29,125 @@ def get_status():
         "status": "online",
         "module": "SATYA-KAVACH",
         "lead": "Tanmay",
-        "focus": "20% CCEA Cabinet Approval Threshold Anti-Gaming & CPWD Clause 10CC Forensic Audit",
+        "focus": "Deterministic Statutory Audit, Boundary Bin-Mass Analysis & CPWD Clause 10CC Forensics",
         "endpoints": [
-            "/api/tanmay/gaming-analysis",
+            "/api/tanmay/pattern-analysis",
             "/api/tanmay/bunching-histogram",
             "/api/tanmay/clause-10cc-audit",
-            "/api/tanmay/agency-rankings",
-            "/api/tanmay/simulate-clause-10cc"
-        ]
+            "/api/tanmay/agency-patterns",
+            "/api/tanmay/simulate-clause-10cc",
+            "/api/tanmay/project-dossier/{project_id}",
+            "/api/tanmay/audit-pack/{project_id}",
+            "/api/tanmay/anumati/clearances",
+        ],
     }
 
+
 @router.get("/gaming-analysis")
-def get_gaming_analysis():
+@router.get("/pattern-analysis")
+def get_pattern_analysis():
+    """Returns statutory audit summary, Boundary Bin-Mass Ratio, and triage cohorts."""
     try:
         engine = get_satya_kavach_engine()
         return engine.get_anti_gaming_summary()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/bunching-histogram")
 def get_bunching_histogram():
+    """Generates distribution bins around the 20% CCEA threshold."""
     try:
         engine = get_satya_kavach_engine()
         return engine.get_bunching_histogram_data()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/clause-10cc-audit")
 def get_clause_10cc_audit(
     limit: int = Query(default=50, ge=1, le=500),
-    sector: Optional[str] = Query(default=None)
+    sector: Optional[str] = Query(default=None),
 ):
+    """Returns Clause 10CC price variation forensic audit across all projects."""
     try:
         engine = get_satya_kavach_engine()
         return engine.get_clause_10cc_audit_report(limit=limit, sector_filter=sector)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/agency-rankings")
-def get_agency_rankings():
+@router.get("/agency-patterns")
+def get_agency_patterns(
+    mode: str = Query(default="composite", description="Ranking mode: 'composite', 'proximity_queue', or 'overrun_queue'"),
+    min_projects: int = Query(default=5, ge=1, le=100, description="Minimum projects gate"),
+):
+    """Agency Pattern Overview: Ranks agencies by transparent Audit Priority Score or dual queues."""
     try:
         engine = get_satya_kavach_engine()
-        return engine.get_agency_gaming_rankings()
+        return engine.get_agency_gaming_rankings(mode=mode, min_projects=min_projects)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/simulate-clause-10cc")
 def simulate_clause_10cc(req: Clause10CCSimRequest):
+    """Operator what-if simulator for testing hypothetical claims against statutory 85% caps."""
     try:
         engine = get_satya_kavach_engine()
         return engine.simulate_clause_10cc(
             original_cost_cr=req.original_cost_cr,
             sanction_year=req.sanction_year,
             revised_cost_cr=req.revised_cost_cr,
+            claimed_escalation_cr=req.claimed_escalation_cr,
             p_steel=req.p_steel,
             p_cement=req.p_cement,
             p_fuel=req.p_fuel,
             p_labor=req.p_labor,
-            p_other=req.p_other
+            p_other=req.p_other,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/project-dossier/{project_id}")
+def get_project_dossier(project_id: str = Path(..., description="Project ID")):
+    """Returns the comprehensive forensic dossier for a project (rule match, timeline, peers, explanations)."""
+    try:
+        engine = get_satya_kavach_engine()
+        res = engine.get_project_dossier(project_id)
+        if res.get("status") == "not_found":
+            raise HTTPException(status_code=404, detail=f"Project #{project_id} not found in master database.")
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/audit-pack/{project_id}")
+def get_audit_pack(project_id: str = Path(..., description="Project ID")):
+    """Generates the cryptographically signed Audit Pack for human review."""
+    try:
+        engine = get_satya_kavach_engine()
+        res = engine.generate_project_audit_pack(project_id)
+        if res.get("status") == "not_found":
+            raise HTTPException(status_code=404, detail=f"Project #{project_id} not found.")
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # ══════════════════════════════════════════════════════════════════════════
-# ANUMATI: statutory clearance workflow, folded into the SATYA-KAVACH portal
+# ANUMATI: statutory clearance workflow, preserved under SATYA-KAVACH
 # ══════════════════════════════════════════════════════════════════════════
 
 @router.get("/anumati/clearances")
 def get_clearance_portfolio():
-    """PARIVESH Stage-I / Stage-II clearance pipeline with bottleneck analysis.
-
-    Reads the real PARIVESH proposal records and runs each project's stages
-    through the ANUMATI Regulatory Stagnation Index.
-
-    Coverage is reported rather than implied. There are clearance records for a
-    handful of projects, not for all 2,207, and a portal that showed a clearance
-    panel without saying how many projects it covers would invite the reader to
-    assume it covers the portfolio. It does not.
-    """
+    """PARIVESH Stage-I / Stage-II clearance pipeline with bottleneck analysis."""
     try:
         import sqlite3
         from collections import defaultdict
@@ -147,35 +189,27 @@ def get_clearance_portfolio():
             assessment = engine.process_clearance_status(ClearanceStatusRequest(
                 project_id=pid,
                 project_name=stages[0].get("project_name") or pid,
-                estimated_daily_cost_overrun_cr=float(
-                    stages[0].get("estimated_daily_cost_overrun_cr") or 1.5),
+                estimated_daily_cost_overrun_cr=float(stages[0].get("estimated_daily_cost_overrun_cr") or 0.5),
                 stages=details,
             ))
-            payload = (assessment.model_dump() if hasattr(assessment, "model_dump")
-                       else dict(assessment))
-            payload["state"] = stages[0].get("state")
-            payload["sector"] = stages[0].get("sector")
-            payload["proposal_numbers"] = [s.get("proposal_no") for s in stages]
-            payload["total_forest_diversion_ha"] = round(
-                sum(float(s.get("diversion_forest_ha") or 0) for s in stages), 2)
-            projects.append(payload)
+            projects.append(assessment.dict())
 
-        stalled = [p for p in projects if p.get("overall_clearance_status") == "STALLED"]
+        stalled = [p for p in projects if p.get("risk_category") == "STALLED"]
+        escalate = [p for p in projects if p.get("escalation_recommended")]
+
         return {
             "available": True,
-            "module": "ANUMATI",
+            "coverage_note": "PARIVESH clearance filings exist for 3 projects, not the full 2,207-project portfolio.",
             "projects_with_clearance_records": len(projects),
-            "clearance_stages_tracked": len(rows),
+            "clearance_stages_tracked": sum(len(p.get("stages", [])) for p in projects),
             "projects_stalled": len(stalled),
-            "projects_flagged_for_pmo_escalation": sum(
-                1 for p in projects if p.get("pmo_escalation_flag")),
-            "coverage_note": (
-                f"PARIVESH records exist for {len(projects)} projects covering "
-                f"{len(rows)} clearance stages. The remainder of the 2,207-project "
-                f"portfolio has no clearance filing in this dataset and is not "
-                f"represented here."
-            ),
+            "projects_flagged_for_pmo_escalation": len(escalate),
             "projects": projects,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Failed to load clearance portfolio: {e}")
+        return {
+            "available": False,
+            "reason": str(e),
+            "projects": [],
+        }
