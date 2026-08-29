@@ -1,7 +1,7 @@
 """
 PRAKALP-DRISHTI: Test Suite for Tanmay's Module (SATYA-KAVACH)
-Tests McCrary density discontinuity calculations, 20% CCEA threshold bunching,
-CPWD Clause 10CC statutory formula verification, and agency risk profiling.
+Tests Boundary Bin-Mass Ratio calculations, 20% CCEA threshold proximity,
+CPWD Clause 10CC statutory formula verification, and agency pattern overview.
 """
 
 import os
@@ -29,10 +29,10 @@ class TestSatyaKavach(unittest.TestCase):
         self.assertEqual(summary["module"], "SATYA-KAVACH")
         self.assertEqual(summary["module_lead"], "Tanmay")
         
-        # Check McCrary bunching signal
-        mccrary = summary["mccrary_bunching_signal"]
-        self.assertGreater(mccrary["density_ratio"], 1.0)
-        self.assertLess(mccrary["p_value"], 0.05)
+        # Check Boundary Bin-Mass Ratio signal (replacing fake p-value)
+        signal = summary["mccrary_bunching_signal"]
+        self.assertGreater(signal["boundary_bin_mass_ratio"], 1.0)
+        self.assertIn("interpretation", signal)
         
         # Check KPIs
         kpis = summary["kpi_metrics"]
@@ -48,7 +48,7 @@ class TestSatyaKavach(unittest.TestCase):
             self.assertLess(p["overrun_pct"], 20.0)
             self.assertGreater(p["evasion_margin_pct"], 0.0)
             self.assertLessEqual(p["evasion_margin_pct"], 2.0)
-            self.assertEqual(p["risk_flag"], "HIGH_PROBABILITY_CCEA_EVASION")
+            self.assertEqual(p["classification"], "THRESHOLD_PROXIMITY")
 
     def test_bunching_histogram(self):
         hist = self.engine.get_bunching_histogram_data()
@@ -66,8 +66,8 @@ class TestSatyaKavach(unittest.TestCase):
         report = self.engine.get_clause_10cc_audit_report(limit=20)
         self.assertEqual(report["statutory_escalable_cap_pct"], 85.0)
         self.assertEqual(report["fixed_contractor_overhead_pct"], 15.0)
-        self.assertGreater(report["total_portfolio_excess_claimed_cr"], 0.0)
         self.assertGreater(len(report["audited_records"]), 0)
+        self.assertIn("statutory_10cc_allowed_cr", report["audited_records"][0])
 
     def test_agency_rankings(self):
         rankings = self.engine.get_agency_gaming_rankings()
@@ -76,8 +76,8 @@ class TestSatyaKavach(unittest.TestCase):
         
         top = agencies[0]
         self.assertIn("agency_name", top)
-        self.assertIn("institutional_gaming_score", top)
-        self.assertGreaterEqual(top["institutional_gaming_score"], 0.0)
+        self.assertIn("audit_priority_score", top)
+        self.assertGreaterEqual(top["audit_priority_score"], 0.0)
 
     def test_clause_10cc_simulation(self):
         sim = self.engine.simulate_clause_10cc(
@@ -96,14 +96,9 @@ class TestSatyaKavach(unittest.TestCase):
         self.assertGreater(sim["statutory_allowed_escalation_cr"], 0.0)
 
 if __name__ == "__main__":
-    # unittest.main() exits the process, so the sentinel is printed from the
-    # result rather than after the call. This file always DID assert (via
-    # self.assertEqual); it simply never announced it, so the runner could not
-    # distinguish it from the print-only scripts.
     _res = unittest.main(exit=False, verbosity=2).result
     _n = _res.testsRun
     if _res.wasSuccessful():
-        print(f"ASSERTIONS PASSED: {_n} unittest cases, "
-              f"0 failures, 0 errors.")
+        print(f"ASSERTIONS PASSED: {_n} unittest cases, 0 failures, 0 errors.")
     else:
         raise SystemExit(1)

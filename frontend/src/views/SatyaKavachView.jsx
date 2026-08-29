@@ -18,7 +18,7 @@ const TABS = [
   {
     id: 'financial',
     label: 'Financial Integrity',
-    desc: 'McCrary 20% CCEA bunching · CPWD Clause 10CC 85% cap',
+    desc: 'Boundary Bin-Mass Ratio · CPWD Clause 10CC 85% Cap',
     icon: Scale,
   },
   {
