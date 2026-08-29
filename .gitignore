@@ -76,3 +76,7 @@ _mosaic_*.jpg
 _single_*.jpg
 _demo_top.json
 _shortlist.json
+
+# z18 showcase mosaics — 14 MB of baked imagery, regenerable from
+# satellite_pipeline/fetch_showcase_z18.py against the verified release ids.
+paimana_extracted/satellite_data/showcase_z18/

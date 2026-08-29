@@ -53,9 +53,44 @@ import numpy as np
 # Both epochs are fixed for the whole corpus (verified: 2207/2207 rows carry the
 # same pair), so the velocity denominator is a constant rather than a per-project
 # lookup. If mixed vintages are ever ingested this must become per-project.
-EPOCH_BEFORE = "2018-02"
-EPOCH_AFTER = "2023-01"
-EPOCH_DELTA_MONTHS = 59.0
+# EPOCHS — corrected against ESRI's own Wayback release index, fetched live.
+#
+# These read 2018-02 / 2023-01 / 59.0 months and all three were wrong, because
+# the fetch pipeline's release constants were wrong:
+#
+#     WAYBACK_RELEASE_BEFORE = 10   # labelled "Feb 2018 imagery"
+#     WAYBACK_RELEASE_AFTER  = 93   # labelled "Jan 2023 imagery"
+#
+# Release 10 is "World Imagery (Wayback 2014-02-20)". Release 93 is not a
+# release at all -- every request against it fails, and the fetcher's
+# "fallback to current ESRI imagery" branch silently supplied the AFTER epoch
+# from the live basemap instead. File mtimes put that fetch at 2026-08-23/25.
+#
+# So the true baseline is FEBRUARY 2014, twelve and a half years before the
+# after-epoch, not fifty-nine months. Every areal velocity divided by 59 was
+# therefore overstated by 150.1 / 59.0 = 2.54x.
+#
+# The imagery itself is sound: 0 of 120 sampled pairs are byte-identical, so
+# the two epochs are genuinely different scenes. Only the labels and the
+# divisor were wrong, which is the more dangerous failure -- a broken image is
+# obvious, a mislabelled one is not.
+EPOCH_BEFORE = "2014-02"
+
+# The after-epoch has no single date. ESRI's World Imagery is a mosaic whose
+# per-tile capture date the provider does not expose, so what is known is the
+# FETCH date, which bounds the vintage from above. Stating the bound is honest;
+# stating "2023-01" was not.
+EPOCH_AFTER = "<=2026-08"
+EPOCH_AFTER_FETCHED = "2026-08-25"
+EPOCH_DELTA_MONTHS = 150.1
+
+EPOCH_BASIS = (
+    "Baseline is ESRI Wayback release 23448/10 (2014-02-20), verified against "
+    "the provider's release index. The after-epoch is the live World Imagery "
+    "mosaic as fetched on 2026-08-25; ESRI does not publish a per-tile capture "
+    "date, so its vintage is bounded by the fetch date rather than known. The "
+    "span is therefore an upper bound of 150.1 months, and any rate derived "
+    "from it is a lower bound.")
 
 # Statutory right-of-way half-widths, metres. Indian practice: NH 4-lane RoW is
 # typically 45-60 m, expressways 70-100 m, broad-gauge rail formation ~30-40 m,
@@ -653,6 +688,11 @@ def construction_velocity(
     out: Dict[str, Any] = {
         "epoch_span_months": round(months, 1),
         "epochs": f"{EPOCH_BEFORE} -> {EPOCH_AFTER}",
+        "epoch_basis": EPOCH_BASIS,
+        # The span is an upper bound (the after-epoch may be older than its
+        # fetch date), so dividing by it yields a LOWER bound on the rate.
+        # Naming that here stops the figure being read as a point estimate.
+        "rate_is_lower_bound": True,
         "changed_area_m2": round(area_m2, 1),
         "areal_velocity_m2_per_month": round(area_m2 / max(months, 1e-6), 1),
         "linear_velocity_km_per_month": None,

@@ -316,8 +316,12 @@ class SatelliteFusionEngine:
             # the Web Mercator ground sample distance at this project's own
             # latitude and zoom, so it is read back from the chain that used it.
             "resolution_m": self._precision_metrics(pid).get("gsd_m_per_px"),
-            "baseline_vintage": "2018-02",
-            "current_vintage": "2023-01",
+            # Corrected: the fetch pipeline's release ids were wrong, so both
+            # of these were. Release 10 is Wayback 2014-02-20, and release 93
+            # does not exist -- the after-epoch came from the live basemap via
+            # a silent fallback. See EPOCH_BASIS in eo_geospatial.py.
+            "baseline_vintage": "2014-02",
+            "current_vintage": "<=2026-08 (ESRI live mosaic, fetch-bounded)",
             "audit_hash": hashlib.sha256(
                 f"{pid}:{claimed}:{surface_change}:{status}".encode("utf-8")).hexdigest()
         }

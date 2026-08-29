@@ -742,7 +742,23 @@ def redact_coordinate(lat: Optional[float], lon: Optional[float],
 # 5. IMAGERY STALENESS
 # ══════════════════════════════════════════════════════════════════════════
 
-CURRENT_EPOCH_ISO = "2023-01-01"
+# The after-epoch, corrected. This read 2023-01-01, which produced a headline
+# warning that the imagery was 44 months old. That was wrong in BOTH
+# directions and the correction cuts one finding while creating a larger one:
+#
+#   * the after-epoch is not 2023-01. It is ESRI's live basemap as fetched on
+#     2026-08-25, so it is FRESHER than claimed and the 44-month staleness
+#     warning overstated the gap.
+#   * the BASELINE is not 2018-02 but 2014-02, so the blind window BEFORE the
+#     baseline is far longer than anyone was told, and the change being
+#     measured spans twelve and a half years rather than five.
+#
+# ESRI does not publish a per-tile capture date for the World Imagery mosaic,
+# so the after-vintage is bounded by the fetch date and not known exactly.
+# Staleness is measured against that bound, which is the conservative
+# direction: it can only understate how current the imagery is.
+CURRENT_EPOCH_ISO = "2026-08-25"
+BASELINE_EPOCH_ISO = "2014-02-20"
 
 # Beyond this an audit is comparing today's claim against a materially older
 # ground state. Chosen as two years because a typical central-sector project's
@@ -757,7 +773,7 @@ def imagery_staleness(as_of_iso: Optional[str] = None,
     """How old the imagery is relative to the claim being audited.
 
     This is a live defect in any deployment of this platform and it is not
-    small: the newest epoch on disk is 2023-01 while progress is reported
+    small: the baseline on disk is 2014-02 while progress is reported
     against the present day. Every "discrepancy" the audit raises is therefore
     measured across a window that ENDS years before the claim it contradicts,
     and a project that did all of its work after January 2023 is
@@ -775,8 +791,19 @@ def imagery_staleness(as_of_iso: Optional[str] = None,
     age_months = (now - cur).days / 30.4375
     stale = age_months > STALE_THRESHOLD_MONTHS
 
+    _base = datetime.fromisoformat(BASELINE_EPOCH_ISO).replace(tzinfo=timezone.utc)
+    baseline_age_months = (now - _base).days / 30.4375
+
     out: Dict[str, Any] = {
         "latest_imagery_epoch": CURRENT_EPOCH_ISO[:7],
+        "latest_epoch_is_bound": True,
+        "latest_epoch_note": (
+            "ESRI publishes no per-tile capture date for the World Imagery "
+            "mosaic, so this is the date the tiles were fetched and bounds the "
+            "vintage from above rather than stating it."),
+        "baseline_imagery_epoch": BASELINE_EPOCH_ISO[:7],
+        "baseline_age_months": round(baseline_age_months, 1),
+        "measurement_span_months": round(baseline_age_months - max(age_months, 0.0), 1),
         "evaluated_as_of": now.date().isoformat(),
         "imagery_age_months": round(age_months, 1),
         "stale_threshold_months": STALE_THRESHOLD_MONTHS,
@@ -802,9 +829,25 @@ def imagery_staleness(as_of_iso: Optional[str] = None,
                 f"a tasked acquisition or a physical inspection before treating "
                 f"the discrepancy as over-reporting.")
     else:
-        out["severity"] = "OK"
-        out["headline"] = (f"Imagery is {age_months:.0f} months old, within the "
-                           f"{STALE_THRESHOLD_MONTHS:.0f}-month currency window.")
+        # UNKNOWN, not OK. The after-epoch date is the FETCH date, which bounds
+        # the vintage from above and does not state it: ESRI's World Imagery
+        # mosaic routinely carries imagery one to three years old at a given
+        # location, and the provider publishes no per-tile capture date.
+        # Reporting "OK" here would replace an overstated staleness warning
+        # with an unearned freshness claim, which is the same error pointing
+        # the other way.
+        out["severity"] = "UNKNOWN"
+        out["headline"] = (
+            f"Imagery vintage is not published by the provider. The tiles were "
+            f"fetched {age_months:.0f} months ago, which bounds their age from "
+            f"below — the underlying capture may be materially older.")
+        out["detail"] = (
+            f"What IS known: the baseline is {BASELINE_EPOCH_ISO[:7]}, so the "
+            f"comparison spans up to {out['measurement_span_months']:.0f} months "
+            f"({out['measurement_span_months'] / 12:.1f} years). A change "
+            f"measured across that window cannot be attributed to any "
+            f"particular year within it, and an areal rate derived from it is a "
+            f"LOWER bound because the span is an upper one.")
     return out
 
 

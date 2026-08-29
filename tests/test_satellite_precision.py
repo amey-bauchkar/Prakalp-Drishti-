@@ -446,26 +446,59 @@ class TestRedaction:
 # ══════════════════════════════════════════════════════════════════════════
 
 class TestStaleness:
-    def test_fresh_imagery_is_not_flagged(self):
-        assert not imagery_staleness(as_of_iso="2023-03-01")["is_stale"]
+    def test_recent_fetch_is_not_flagged_stale(self):
+        assert not imagery_staleness(as_of_iso="2026-09-01")["is_stale"]
 
-    def test_44_month_old_imagery_is_flagged_high(self):
+    # These three previously asserted a 44-month staleness warning. That
+    # warning was built on a false label: the fetch pipeline recorded the
+    # after-epoch as 2023-01 via release id 93, which is not a Wayback release
+    # at all. The tiles actually came from the live basemap, fetched 2026-08.
+    # The tests now assert the corrected behaviour, which is materially
+    # different in both directions -- the imagery is FRESHER than claimed, and
+    # the baseline is far OLDER.
+
+    def test_vintage_is_reported_as_unknown_not_fresh(self):
+        """The fetch date bounds the vintage; it does not state it.
+
+        ESRI publishes no per-tile capture date for the World Imagery mosaic,
+        which routinely carries imagery one to three years old. Reporting "OK"
+        off the fetch date would swap an overstated staleness warning for an
+        unearned freshness claim.
+        """
         s = imagery_staleness(as_of_iso="2026-08-28")
+        assert s["severity"] == "UNKNOWN", f"severity={s['severity']}"
+        assert s["latest_epoch_is_bound"] is True
+        assert "not published by the provider" in s["headline"].lower()
+
+    def test_the_twelve_year_measurement_span_is_disclosed(self):
+        """The real finding the false label was hiding.
+
+        Baseline is Wayback 2014-02-20 (release 10), not the 2018-02 every
+        label claimed, so the comparison spans ~150 months rather than 59 and
+        every areal velocity divided by 59 was overstated 2.54x.
+        """
+        s = imagery_staleness(as_of_iso="2026-08-28")
+        assert s["baseline_imagery_epoch"] == "2014-02"
+        assert s["measurement_span_months"] > 140, s["measurement_span_months"]
+        assert "12.5 years" in s["detail"] or "years" in s["detail"]
+
+    def test_the_rate_is_declared_a_lower_bound(self):
+        """Span is an upper bound, so any rate from it is a lower bound."""
+        s = imagery_staleness(as_of_iso="2026-08-28")
+        assert "lower" in s["detail"].lower()
+
+    def test_a_genuinely_stale_pair_still_flags_high(self):
+        """The stale path must survive the correction, not be deleted with it."""
+        s = imagery_staleness(as_of_iso="2031-01-01")
         assert s["is_stale"] and s["severity"] == "HIGH"
-        assert s["imagery_age_months"] > 40
+        assert "non-performance" in s["detail"].lower()
 
-    def test_stale_finding_warns_against_citing_it_as_non_performance(self):
-        s = imagery_staleness(as_of_iso="2026-08-28")
-        assert "non-performance" in s["detail"].lower(), (
-            "a zero-change finding across a 44-month blind window is not "
-            "evidence of inaction and must not be cited as such")
-
-    def test_high_reported_progress_gets_an_escalation_caveat(self):
-        s = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=90.0)
+    def test_stale_plus_high_reported_progress_escalates(self):
+        s = imagery_staleness(as_of_iso="2031-01-01", reported_progress_pct=90.0)
         assert "discrepancy_caveat" in s
 
     def test_low_reported_progress_needs_no_escalation(self):
-        s = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=3.0)
+        s = imagery_staleness(as_of_iso="2031-01-01", reported_progress_pct=3.0)
         assert "discrepancy_caveat" not in s
 
 
