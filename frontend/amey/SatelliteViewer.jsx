@@ -4,7 +4,8 @@ import {
   Loader2, Lock, Maximize2, Move, Satellite, ShieldCheck, Clock, Layers,
   MapPin, Ruler, Route, Building2, ScanLine,
 } from 'lucide-react';
-import { Circle, MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
+import { Circle, MapContainer, Marker, Tooltip } from 'react-leaflet';
+import BaseMapLayer from '../src/components/BaseMapLayer';
 import {
   apiFetchRetry, fetchBlobUrl, getEoTier, getSession, subscribe,
 } from './authClient';
@@ -139,6 +140,12 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   const [beforeUrl, setBeforeUrl] = useState(null);
   const [afterUrl, setAfterUrl] = useState(null);
   const [tilesLoading, setTilesLoading] = useState(true);
+  // Why a distinct tile-failure state rather than reusing `error`: `error` is
+  // for metadata, and it replaces the whole panel. A tile failure must leave
+  // the plan, the badges and the verdict on screen -- they came from a
+  // different request that succeeded -- and say only that the pixels are
+  // missing.
+  const [tileError, setTileError] = useState(null);
 
   const [pos, setPos] = useState(50);
   const [dragging, setDragging] = useState(false);
@@ -230,7 +237,7 @@ export default function SatelliteViewer({ projectId = '619092' }) {
   useEffect(() => {
     let dead = false;
     revokeAll(); setBeforeUrl(null); setAfterUrl(null);
-    setActiveLayer(null); setLayerUrl(null);
+    setActiveLayer(null); setLayerUrl(null); setTileError(null);
 
     // No imagery request at all for a locator-only project. Not fetched and
     // discarded — never requested, so there is no tile in the cache, no entry
@@ -243,12 +250,40 @@ export default function SatelliteViewer({ projectId = '619092' }) {
       fetchBlobUrl(`${API}/api/eo/tile/${projectId}/AFTER`),
     ]).then(([b, a]) => {
       if (dead) { [b, a].forEach((r) => r.objectUrl && URL.revokeObjectURL(r.objectUrl)); return; }
-      if (b.status === 429 || a.status === 429) {
-        setToast({ tone: 'warn', message: 'Imagery quota reached. Please wait a moment.' });
+
+      // Every non-OK outcome used to land here as `objectUrl: null`, which the
+      // `{beforeUrl && <img>}` guards rendered as nothing at all. With the
+      // skeleton dismissed on the next line and no toast for anything except
+      // 429, a 401, 404, 500 or dropped connection produced a black square and
+      // no explanation -- the panel looked broken rather than unavailable.
+      const bad = [b, a].find((r) => !r.ok);
+      if (bad) {
+        setBeforeUrl(null); setAfterUrl(null); setTilesLoading(false);
+        setTileError({
+          status: bad.status,
+          message: bad.networkError
+            ? 'Cannot reach the imagery service. It may be offline.'
+            : bad.status === 429
+              ? 'Imagery quota reached — this endpoint allows 120 requests a minute. Retry shortly.'
+              : bad.status === 401
+                ? 'Session expired. Sign in again to load auditor-tier imagery.'
+                : bad.status === 404
+                  ? 'No baseline or current tile is on file for this project.'
+                  : bad.error || `Imagery request failed (${bad.status}).`,
+        });
+        return;
       }
+
+      setTileError(null);
       setBeforeUrl(track(b.objectUrl));
       setAfterUrl(track(a.objectUrl));
       setTilesLoading(false);
+    }).catch((e) => {
+      // Without this the skeleton spins for the rest of the session on any
+      // throw, because setTilesLoading(false) lived only on the success path.
+      if (dead) return;
+      setTilesLoading(false);
+      setTileError({ status: 0, message: `Imagery could not be loaded: ${e?.message || e}` });
     });
     return () => { dead = true; };
   }, [projectId, localTier, revokeAll, mode, isLocatorOnly]);
@@ -530,10 +565,7 @@ non-performance — see the imagery-currency note above.</div>
                 style={{ height: 340, width: '100%' }}
                 aria-label="Administrative locator map showing the recorded centroid and its uncertainty"
               >
-                <TileLayer
-                  attribution='&copy; OpenStreetMap contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+                <BaseMapLayer />
                 {/* The uncertainty circle is the point of this map. It is drawn
                     to the SAME radius the planner used to refuse imagery, so a
                     reviewer sees the scale of what is unknown rather than a
@@ -605,15 +637,44 @@ non-performance — see the imagery-currency note above.</div>
         >
           {tilesLoading && <Skeleton label="Streaming imagery" />}
 
-          {beforeUrl && (
+          {tileError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center bg-slate-950">
+              <AlertTriangle className="w-7 h-7 text-amber-400" aria-hidden="true" />
+              <p className="font-heading text-sm font-bold text-white">
+                Imagery unavailable
+              </p>
+              <p className="font-sans text-xs leading-relaxed text-slate-300 max-w-xs">
+                {tileError.message}
+              </p>
+              <p className="font-sans text-[10px] text-slate-500">
+                The measurements above come from a separate request and are unaffected.
+              </p>
+            </div>
+          )}
+
+          {/* onError matters because a blob URL can die while its <img> is still
+              mounted -- revokeAll() clears a shared list on any re-run of the
+              tile effect. A dead src paints the alt text across the frame, which
+              is how this surfaced: faint "Baseline 2018-02 imagery" over black.
+              Hiding the element and raising the same state the fetch path uses
+              keeps a broken tile from masquerading as imagery. */}
+          {beforeUrl && !tileError && (
             <img src={beforeUrl} alt={`Baseline ${meta.epoch_before} imagery`}
                  className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
-                 draggable={false} />
+                 draggable={false}
+                 onError={() => setTileError({
+                   status: 0,
+                   message: 'The baseline tile was dropped before it could be drawn. Reselect the project to refetch it.',
+                 })} />
           )}
-          {afterUrl && (
+          {afterUrl && !tileError && (
             <img src={afterUrl} alt={`Current ${meta.epoch_after} imagery`}
                  className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300"
-                 draggable={false} style={{ clipPath: `inset(0 0 0 ${pos}%)` }} />
+                 draggable={false} style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
+                 onError={() => setTileError({
+                   status: 0,
+                   message: 'The current tile was dropped before it could be drawn. Reselect the project to refetch it.',
+                 })} />
           )}
           {isOfficial && showOverlay && layerUrl && (
             <img src={layerUrl} alt={`${activeLayer} analytical overlay`}
