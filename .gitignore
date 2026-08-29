@@ -68,3 +68,11 @@ artifacts/briefings/
 # stage predictions without the weights; only live re-encoding of new imagery
 # needs them.
 analytics_engine/models/prithvi/*.pt
+
+# Scratch renders and shortlists from demo/analysis runs. Regenerable from
+# satellite_pipeline/ and not part of the deliverable.
+_demo_*.jpg
+_mosaic_*.jpg
+_single_*.jpg
+_demo_top.json
+_shortlist.json
