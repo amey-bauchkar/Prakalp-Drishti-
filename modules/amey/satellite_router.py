@@ -80,6 +80,9 @@ from backend.security import sanitize_id
 
 router = APIRouter(prefix="/api/eo", tags=["Satellite Imagery - Tiered Access"])
 
+BASE_DIR_EO = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+
 IMAGERY_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "paimana_extracted", "satellite_data", "project_imagery")
@@ -90,6 +93,12 @@ IMAGERY_DIR = os.path.join(
 # around 40 kB against 330 kB for the source JPEG, which is the difference
 # between a usable and an unusable page on a 3G handset.
 PUBLIC_MAX_DIM = 512
+
+# Public cap for a baked showcase project. 1536 px over a ~1,235 m mosaic is
+# 0.80 m/px, so the public tier keeps a genuinely sub-metre view instead of
+# having it downsampled away. WebP at q=72 puts that around 300-450 kB, which
+# is why it is reserved for the handful of baked projects and not the default.
+SHOWCASE_PUBLIC_MAX_DIM = 1536
 PUBLIC_WEBP_QUALITY = 72
 
 SIGNED_URL_TTL_S = 900          # 15 minutes
@@ -244,7 +253,19 @@ def _render(pid: str, epoch: str, tier: str) -> Tuple[bytes, str, Dict[str, Any]
         return cached, ("image/webp" if tier == "public" else "image/jpeg"), meta
     meta["cache"] = "miss"
 
-    path = os.path.join(IMAGERY_DIR, f"{pid}_{epoch}.jpg")
+    # A baked z18 mosaic replaces the corpus-wide 800 px frame for this
+    # project. Both epochs come from the same bake, so the swipe compares
+    # identical ground at identical resolution.
+    from analytics_engine.eo_viewport import showcase_bake
+    bake = showcase_bake(pid)
+    path = None
+    if bake:
+        rel = bake["before_path"] if epoch == "BEFORE" else bake["after_path"]
+        cand = os.path.normpath(os.path.join(BASE_DIR_EO, rel))
+        if os.path.exists(cand):
+            path = cand
+    if path is None:
+        path = os.path.join(IMAGERY_DIR, f"{pid}_{epoch}.jpg")
     if not os.path.exists(path):
         raise HTTPException(status_code=404,
                             detail=f"No {epoch} imagery on file for project {pid}.")
@@ -256,7 +277,19 @@ def _render(pid: str, epoch: str, tier: str) -> Tuple[bytes, str, Dict[str, Any]
     if tier == "public":
         img = apply_redaction(img, decision)
         h, w = img.shape[:2]
-        scale = min(1.0, PUBLIC_MAX_DIM / float(max(h, w)))
+        # A baked showcase gets a larger public cap, chosen so the public tile
+        # is STILL sub-metre rather than being downsampled out of the very
+        # property it was baked for. A 2304 px / 1235 m mosaic at the standard
+        # 512 px cap lands at 2.41 m/px; at 1536 px it lands at 0.80 m/px.
+        #
+        # This is not a redaction bypass. `apply_redaction` has already run
+        # above, so a sensitive-sector project — Guwahati Refinery among these
+        # five — is blurred and coordinate-coarsened before the cap is applied,
+        # and the larger frame carries the blur with it.
+        cap = PUBLIC_MAX_DIM
+        if bake and not decision.redact:
+            cap = SHOWCASE_PUBLIC_MAX_DIM
+        scale = min(1.0, cap / float(max(h, w)))
         if scale < 1.0:
             img = cv2.resize(img, (int(w * scale), int(h * scale)),
                              interpolation=cv2.INTER_AREA)
@@ -502,10 +535,34 @@ def get_viewport_plan(project_id: str, request: Request,
         asset_geometry=cat.get("asset_geometry"),
     )
 
+    # The plan describes the SOURCE imagery. What the caller actually receives
+    # depends on their tier, and the badge is rendered from this payload — so
+    # reporting the source figure to a public caller would put a "0.52 m/px
+    # sub-metre" badge over a 512 px tile at 2.41 m/px. The effective figure is
+    # computed here from the same caps /api/eo/tile applies.
+    from analytics_engine.eo_viewport import showcase_bake as _bake_of
+    from analytics_engine.satellite_precision_engine import evaluate_redaction as _ev
+    _bake = _bake_of(pid)
+    _eff_px = plan.frame_px
+    _eff_gsd = plan.gsd_m_per_px
+    if resolved["tier"] == "public" and plan.frame_px:
+        _dec = _ev(ctx.get("latitude"), ctx.get("longitude"), ctx.get("sector"),
+                   ctx.get("state"), audience="public")
+        _cap = SHOWCASE_PUBLIC_MAX_DIM if (_bake and not _dec.redact) else PUBLIC_MAX_DIM
+        _eff_px = min(plan.frame_px, _cap)
+        if plan.frame_covers_m and _eff_px:
+            _eff_gsd = round(plan.frame_covers_m / _eff_px, 3)
+
     out = {
         "project_id": pid, "tier": resolved["tier"],
         "render_mode": plan.render_mode, "zoom": plan.zoom,
-        "frame_px": plan.frame_px, "gsd_m_per_px": plan.gsd_m_per_px,
+        # Source values, for provenance.
+        "source_frame_px": plan.frame_px,
+        "source_gsd_m_per_px": plan.gsd_m_per_px,
+        # What this caller will actually be served. The badge reads these.
+        "frame_px": _eff_px, "gsd_m_per_px": _eff_gsd,
+        "resolution_reduced_for_tier": bool(_eff_px < plan.frame_px),
+        "showcase_bake": bool(_bake),
         "bbox": plan.bbox, "centre": plan.centre,
         "half_extent_m": plan.half_extent_m,
         "frame_covers_m": plan.frame_covers_m,

@@ -56,6 +56,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -144,6 +145,54 @@ CORRIDOR_PACKAGE_KM = 20.0
 CORRIDOR_VIEW_HALF_WIDTH_M = 400.0
 
 
+SHOWCASE_MANIFEST = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "paimana_extracted", "satellite_data", "showcase_z18_manifest.json")
+
+_SHOWCASE: Optional[Dict[str, Dict[str, Any]]] = None
+
+
+def showcase_bake(project_id: str) -> Optional[Dict[str, Any]]:
+    """The baked z18 mosaic for this project, if one exists.
+
+    A bake overrides the zoom cap, and it is allowed to for a reason that does
+    not generalise. The cap exists because a single fixed-size frame must
+    contain the geocode error radius, so tightening the zoom shrinks the frame
+    until the site can fall outside it. A mosaic buys the coverage with MORE
+    TILES instead: 9x9 at z18 spans 1.2 km at 0.52 m/px, where one 1024 px
+    frame over the same ground would have to drop to z14 and 8.4 m/px.
+
+    So the constraint the cap enforces is still satisfied -- the frame contains
+    the error radius -- it is simply satisfied at a higher resolution. This is
+    only true for projects that HAVE a bake, which is why the override is keyed
+    on the manifest rather than applied by rule.
+
+    An entry is admitted only if BOTH of its mosaics are actually on disk. The
+    manifest and the imagery it indexes travel separately -- the mosaics are
+    large enough to be excluded from some deployments -- and an entry whose
+    files are missing is worse than no entry at all: this function would return
+    a sub-metre plan, the renderer would fall back to the standard frame, and
+    the badge would advertise 0.52 m/px over pixels that resolve nearer 1.5.
+    Checking here means a deployment without the imagery degrades to the
+    ordinary path with an honest badge instead.
+    """
+    global _SHOWCASE
+    if _SHOWCASE is None:
+        _SHOWCASE = {}
+        try:
+            if os.path.exists(SHOWCASE_MANIFEST):
+                import json as _json
+                root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                with open(SHOWCASE_MANIFEST, "r", encoding="utf-8") as f:
+                    for e in _json.load(f).get("entries", []):
+                        if all(os.path.exists(os.path.join(root, e[k]))
+                               for k in ("before_path", "after_path")):
+                            _SHOWCASE[str(e["project_id"])] = e
+        except Exception:
+            _SHOWCASE = {}
+    return _SHOWCASE.get(str(project_id))
+
+
 def ground_sample_distance(lat: float, zoom: int, tile_px: int = 256) -> float:
     """Web Mercator GSD in metres per pixel."""
     return (EARTH_CIRCUMFERENCE_M * math.cos(math.radians(lat))
@@ -198,6 +247,7 @@ class ViewportPlan:
     export_url: str = ""
     caveat: str = ""
     basis: str = ""
+    showcase: Optional[Dict[str, Any]] = None
 
 
 def plan_viewport(
@@ -244,6 +294,56 @@ def plan_viewport(
                 f"of the district is shown instead, and site verification requires a "
                 f"surveyed coordinate or a physical inspection."),
             basis="geocode class 'unusable' — imagery withheld by design")
+
+    # ── a baked z18 mosaic short-circuits everything below ───────────────
+    #
+    # Checked BEFORE the linear/compound split, not inside the compound branch,
+    # because sector geometry and facility geometry disagree for exactly the
+    # cases that get baked. Guwahati Refinery sits in Oil & Gas, which is in
+    # LINEAR_SECTORS for pipelines, so it was being routed to corridor framing
+    # at 2.14 m/px while a 0.536 m/px compound mosaic of it sat unused on disk.
+    # A bake existing IS the evidence that the asset is a compound: it was only
+    # produced because a verified point coordinate resolved to a facility
+    # polygon.
+    #
+    # The override is safe against the zoom cap it bypasses. The cap exists so a
+    # single fixed frame still contains the geocode error radius; a mosaic meets
+    # that by covering the ground with more tiles instead of coarsening, and
+    # `error_fits_in_frame` below is asserted on the mosaic's real extent rather
+    # than assumed.
+    bake = showcase_bake(project_id)
+    if bake:
+        zoom = int(bake["zoom"])
+        gsd = float(bake["gsd_m_per_px"])
+        covers = float(bake["covers_m"])
+        frame_px = int(bake["mosaic_px"])
+        half = covers / 2.0
+        bbox = bbox_from_centre(lat, lon, half)
+        return ViewportPlan(
+            project_id=str(project_id), render_mode="compound",
+            zoom=zoom, frame_px=frame_px, gsd_m_per_px=round(gsd, 3),
+            bbox=bbox, centre=(lat, lon), half_extent_m=round(half, 1),
+            geocode_tier=tier, geocode_error_radius_m=err,
+            zoom_limited_by="showcase_bake", frame_covers_m=round(covers, 1),
+            error_fits_in_frame=bool(err <= covers / 2.0),
+            tile_url_template=_esri_tile_template(),
+            export_url=_esri_export_url(bbox, min(frame_px, 2048)),
+            showcase=bake,
+            caveat=(
+                f"Served from a baked {bake['grid']}x{bake['grid']} tile mosaic at "
+                f"z18: {frame_px} px over {covers:.0f} m at {gsd:.3f} m/px, which is "
+                f"genuinely sub-metre. Epochs are {bake['before_epoch']} and "
+                f"{bake['after_epoch']} from Wayback releases verified against the "
+                f"provider index — not the mislabelled ids the corpus-wide bake "
+                f"used."
+                + ("" if err <= covers / 2.0 else
+                   f" The {err:.0f} m radius exceeds this frame's {covers / 2.0:.0f} m "
+                   f"half-extent, but for a baked project that radius is the OSM "
+                   f"FACILITY FOOTPRINT rather than positional doubt: the mosaic is "
+                   f"centred on that polygon, so the facility centre is in frame and "
+                   f"only its outer edge is cropped. It is not a risk that the site "
+                   f"is elsewhere.")),
+            basis=bake["basis"])
 
     is_linear = (str(asset_geometry or "").upper() == "LINEAR"
                  or (sector in LINEAR_SECTORS and (linear_length_km or 0) > 5.0))

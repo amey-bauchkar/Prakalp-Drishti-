@@ -77,6 +77,9 @@ _single_*.jpg
 _demo_top.json
 _shortlist.json
 
-# z18 showcase mosaics — 14 MB of baked imagery, regenerable from
-# satellite_pipeline/fetch_showcase_z18.py against the verified release ids.
-paimana_extracted/satellite_data/showcase_z18/
+# z18 showcase mosaics are TRACKED, not ignored. They were excluded on the
+# grounds of being regenerable from satellite_pipeline/fetch_showcase_z18.py,
+# which holds only while there is a network path to ESRI Wayback and while
+# those release ids keep resolving. The deployment target is air-gapped, so
+# neither holds there, and 13 MB against a 1.5 GB history buys the five
+# projects' evidence travelling with the code that cites it.
