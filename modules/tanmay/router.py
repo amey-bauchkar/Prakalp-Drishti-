@@ -4,11 +4,13 @@ Exposes deterministic CCEA boundary analysis, flagged proximity projects,
 project revision inspector dossier, and preserved statutory clearances.
 """
 
+import logging
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 from modules.tanmay.service import get_satya_kavach_engine
 
+logger = logging.getLogger("prakalp.satya_kavach.router")
 router = APIRouter(prefix="/api/tanmay", tags=["Tanmay - SATYA-KAVACH Statutory CCEA Boundary Analysis"])
 
 
