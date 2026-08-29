@@ -68,6 +68,13 @@
   --hair: 1px solid var(--line);
 }
 
+.font-mono, [class*="font-mono"], .num {
+  font-family: "Plus Jakarta Sans", "Inter", -apple-system, sans-serif !important;
+  font-feature-settings: "tnum" 1, "cv05" 1, "cv11" 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+}
+
 [data-theme="contrast"] {
   --page-bg: #000000;
   --surface: #0a0a0a;
