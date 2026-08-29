@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ShieldCheck, LogIn, AlertTriangle, User, Lock, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShieldCheck, LogIn, AlertTriangle, User, Lock, ChevronRight, Building2, ArrowRight } from 'lucide-react';
 import { login, fetchRoles, getSession, clearSession, subscribe } from './authClient';
 
 export { clearSession };
@@ -227,6 +228,30 @@ export default function LoginGate({ children }) {
             expiry, append-only access log. A deployment would federate to the NIC /
             Ministry directory; the server-side enforcement points carry over unchanged.
           </p>
+        </div>
+
+        {/* Public Citizen Redirection Banner */}
+        <div className="md:col-span-2 p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <Building2 className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-[12px] font-bold text-emerald-950 font-heading">
+                Looking for Public Project Information?
+              </div>
+              <div className="text-[11px] text-emerald-800">
+                Civilians do not need to sign in — access the Open Public Citizen Dashboard directly.
+              </div>
+            </div>
+          </div>
+          <Link
+            to="/nagrik"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition-colors shrink-0 shadow-xs cursor-pointer"
+          >
+            <span>Open Nagrik Citizen Portal</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@ import SetuVarshaView from './views/SetuVarshaView.jsx';
 import PublicDashboardView from './views/PublicDashboardView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
-import { useSession, clearSession } from '../amey/LoginGate.jsx';
+import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
 
 /* ─── Sovereign Government Utility Bar (data.gov.in Style) ───────── */
 function UtilityBar() {
@@ -331,64 +331,181 @@ function InstitutionalHeader() {
 /* ─── Institutional Footer (GIGW 3.0 Standard) ───────────────── */
 function InstitutionalFooter() {
   return (
-    <footer className="mt-auto">
-      {/* Main Footer Content */}
-      <div className="bg-gov-navy-dark text-white py-12">
-        <div className="gov-content grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-3">
-            <div className="font-devanagari text-xs text-gov-saffron-light font-semibold">
-              सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
-            </div>
-            <h4 className="text-white font-bold text-base font-heading">PRAKALP-DRISHTI</h4>
-            <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              National Infrastructure Decision Intelligence Portal delivering causal econometrics,
-              satellite ground truth, and empirical risk mitigation for central sector infrastructure projects.
-            </p>
-          </div>
-
-          <div>
-            <h5 className="text-xs font-bold text-gov-saffron-light uppercase tracking-wider mb-3 font-heading">Public &amp; Analytical Portals</h5>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/nagrik" className="text-slate-300 hover:text-gov-saffron transition-colors">NAGRIK PORTAL — Public Transparency</Link></li>
-              <li><Link to="/decision-hub" className="text-slate-300 hover:text-gov-saffron transition-colors">DECISION INTELLIGENCE HUB (11 Engines)</Link></li>
-              <li><Link to="/satya-kavach" className="text-slate-300 hover:text-gov-saffron transition-colors">SATYA-KAVACH — Contract Compliance</Link></li>
-              <li><Link to="/artha-nivaran" className="text-slate-300 hover:text-gov-saffron transition-colors">ARTHA-NETRA — Financial Health</Link></li>
-              <li><Link to="/setu-varsha" className="text-slate-300 hover:text-gov-saffron transition-colors">SETU-VARSHA — Climate Exposure</Link></li>
-              <li><Link to="/karya-dakshata" className="text-slate-300 hover:text-gov-saffron transition-colors">KARYA-DAKSHATA — Agency Efficiency</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="text-xs font-bold text-gov-saffron-light uppercase tracking-wider mb-3 font-heading">Institutional Links</h5>
-            <ul className="space-y-2 text-xs">
-              <li><a href="https://mospi.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">Ministry Website (MoSPI)</a></li>
-              <li><a href="https://data.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">Open Government Data (OGD)</a></li>
-              <li><a href="https://niti.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">NITI Aayog Portal</a></li>
-              <li><a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-gov-saffron transition-colors">PM GatiShakti NMP</a></li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <h5 className="text-xs font-bold text-gov-saffron-light uppercase tracking-wider font-heading">Security &amp; Standards</h5>
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-              <div className="text-white font-bold flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Air-Gapped Sovereign Deployment</span>
+    <footer className="mt-auto select-none font-sans">
+      {/* Main Sovereign Footer Content */}
+      <div className="bg-[#071320] text-white pt-12 pb-10 border-t border-slate-800">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+            {/* Column 1: Official National Masthead (Span 4) */}
+            <div className="lg:col-span-4 space-y-3.5">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-white p-1 shadow-md border border-white/80 flex items-center justify-center shrink-0">
+                  <img
+                    src="/logos/prakalp_drishti_emblem.png"
+                    alt="PRAKALP-DRISHTI Emblem"
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                <div className="space-y-0.5">
+                  <div className="font-devanagari text-[12.5px] text-amber-400 font-bold leading-tight">
+                    सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय
+                  </div>
+                  <h4 className="text-white font-extrabold text-[17.5px] font-heading tracking-tight leading-snug">
+                    PRAKALP-DRISHTI
+                  </h4>
+                  <div className="text-[11px] text-slate-300 font-medium">
+                    Ministry of Statistics &amp; Programme Implementation · Govt. of India
+                  </div>
+                </div>
               </div>
-              <p className="font-sans">Zero external telemetry. Merkle cryptographic verification on every cabinet metric.</p>
+
+              <p className="text-[12px] text-slate-400 leading-relaxed pr-3">
+                National Infrastructure Monitoring &amp; Decision Intelligence System for Central Sector Projects (&ge; ₹150 Crore). 
+                Empowering statutory oversight, empirical risk analysis, and project performance tracking.
+              </p>
+
+              <div className="pt-2 text-[11.5px] text-slate-400 space-y-1.5 border-t border-slate-800/80">
+                <div><span className="text-slate-300 font-medium">Nodal Division:</span> Infrastructure &amp; Project Monitoring Division (IPMD)</div>
+                <div><span className="text-slate-300 font-medium">Headquarters:</span> Khurshid Lal Bhawan, Janpath, New Delhi – 110001</div>
+              </div>
             </div>
-            <div className="text-[10px] text-slate-500">
-              Compliant with GIGW 3.0 Guidelines · ISO 27001 Certified
+
+            {/* Column 2: Public & Analytical Portals (Span 3) */}
+            <div className="lg:col-span-3 space-y-3">
+              <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
+                Analytical Portals
+              </h5>
+              <ul className="space-y-2 text-[12.5px] text-slate-300">
+                <li>
+                  <Link to="/nagrik" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group font-medium text-emerald-300">
+                    <ChevronRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                    <span>Nagrik Portal (Public Citizens)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/decision-hub" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+                    <span>Decision Intelligence Hub (10 Engines)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/decision-hub?engine=satya_kavach" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+                    <span>Satya-Kavach (CCEA 20% Audit)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/decision-hub?engine=artha_nivaran" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+                    <span>Artha-Nivaran (PSU Financial Radar)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/decision-hub?engine=setu_varsha" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+                    <span>Setu-Varsha (Climate Exposure)</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/decision-hub?engine=karya_dakshata" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+                    <span>Karya-Dakshata (Agency Simulator)</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: National Infrastructure Network (Span 2) */}
+            <div className="lg:col-span-2 space-y-3">
+              <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
+                Government Portals
+              </h5>
+              <ul className="space-y-2 text-[12.5px] text-slate-300">
+                <li>
+                  <a href="https://mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    MoSPI Official Website
+                  </a>
+                </li>
+                <li>
+                  <a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    PM GatiShakti NMP
+                  </a>
+                </li>
+                <li>
+                  <a href="https://data.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    Open Government Data (OGD)
+                  </a>
+                </li>
+                <li>
+                  <a href="https://niti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    NITI Aayog
+                  </a>
+                </li>
+                <li>
+                  <a href="https://paimana-proj.mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    PAIMANA Repository
+                  </a>
+                </li>
+                <li>
+                  <a href="https://cloud.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                    NIC MeghRaj Cloud
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Official Policies & Technical Hosting (Span 3) */}
+            <div className="lg:col-span-3 space-y-3">
+              <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
+                Website Policies &amp; Help
+              </h5>
+              
+              <ul className="space-y-2 text-[12.5px] text-slate-300">
+                <li>
+                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
+                    Website Policies &amp; Disclaimer
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
+                    Hyperlinking Policy &amp; Terms
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
+                    Privacy Policy
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
+                    Accessibility Statement (GIGW 3.0)
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
+                    Feedback &amp; Grievance Redressal
+                  </span>
+                </li>
+              </ul>
+
+              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
+                <div>Hosted on <strong className="text-slate-200">National Informatics Centre (NIC)</strong> Platform</div>
+                <div>Designed for <strong className="text-slate-200">Smart India Hackathon (SIH 2026)</strong></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Copyright Strip */}
-      <div className="bg-slate-950 text-slate-400 text-xs py-4 border-t border-slate-800">
-        <div className="gov-content flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>&copy; {new Date().getFullYear()} Ministry of Statistics &amp; Programme Implementation. All rights reserved.</span>
-          <span className="font-mono text-[11px] text-slate-400">Prakalp-Drishti Decision Engine v3.2 · CCEA Monitored</span>
+      <div className="bg-[#030A12] text-slate-400 text-[12px] py-4 border-t border-slate-800/80">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+          <span>&copy; {new Date().getFullYear()} Ministry of Statistics &amp; Programme Implementation, Government of India.</span>
+          <div className="flex items-center gap-3 text-[11.5px] text-slate-400">
+            <span className="font-semibold text-amber-400/90">Prakalp-Drishti Release v3.2</span>
+            <span className="text-slate-700">|</span>
+            <span>2,207 Central Sector Projects</span>
+          </div>
         </div>
       </div>
     </footer>
@@ -420,6 +537,11 @@ function NotFoundView() {
   );
 }
 
+/* ─── Protected Route Wrapper for Government / Decision Support ── */
+function ProtectedRoute({ children }) {
+  return <LoginGate>{children}</LoginGate>;
+}
+
 /* ─── Main Application Shell ─────────────────────────────────── */
 export default function App() {
   return (
@@ -430,29 +552,37 @@ export default function App() {
 
         <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
           <Routes>
+            {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
             <Route path="/" element={<AmeyMasterView />} />
-            <Route path="/decision-hub" element={<DecisionHubView />} />
-            
-            {/* ── Nagrik Portal (Public Transparency) ── */}
             <Route path="/nagrik" element={<PublicDashboardView />} />
             <Route path="/public" element={<Navigate to="/nagrik" replace />} />
             <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
 
-            {/* ── The underlying engine routes (direct links preserved for zero regression) ── */}
-            <Route path="/satya-kavach" element={<SatyaKavachView />} />
-            <Route path="/artha-nivaran" element={<ArthaNivaranView />} />
-            <Route path="/setu-varsha" element={<SetuVarshaView />} />
-            <Route path="/karya-dakshata" element={<KaryaDakshataSimulator />} />
+            {/* ── Tier 2: Government Official & Analytical Engines (Gated by LoginGate) ── */}
+            <Route
+              path="/decision-hub"
+              element={
+                <ProtectedRoute>
+                  <DecisionHubView />
+                </ProtectedRoute>
+              }
+            />
 
-            {/* ── Legacy per-developer paths ── */}
-            <Route path="/tanmay" element={<Navigate to="/satya-kavach" replace />} />
-            <Route path="/parth" element={<Navigate to="/artha-nivaran" replace />} />
-            <Route path="/janhavi" element={<Navigate to="/setu-varsha" replace />} />
-            <Route path="/nivaran" element={<Navigate to="/artha-nivaran" replace />} />
-            <Route path="/anumati" element={<Navigate to="/satya-kavach" replace />} />
-            <Route path="/aditya" element={<Navigate to="/setu-varsha" replace />} />
-            <Route path="/soham" element={<Navigate to="/decision-hub" replace />} />
-            <Route path="/eo-auditor" element={<Navigate to="/setu-varsha" replace />} />
+            {/* ── Direct Engine Routes -> Redirect into Authenticated Decision Hub ── */}
+            <Route path="/satya-kavach" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+            <Route path="/artha-nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+            <Route path="/setu-varsha" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+            <Route path="/karya-dakshata" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
+
+            {/* ── Legacy per-developer paths -> Redirect into Authenticated Decision Hub ── */}
+            <Route path="/tanmay" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+            <Route path="/anumati" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+            <Route path="/parth" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+            <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+            <Route path="/janhavi" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+            <Route path="/aditya" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+            <Route path="/soham" element={<Navigate to="/decision-hub?engine=benchmark" replace />} />
+            <Route path="/eo-auditor" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
 
             {/* Catch-all */}
             <Route path="*" element={<NotFoundView />} />

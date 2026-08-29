@@ -142,8 +142,8 @@ export default {
            The webfonts are an enhancement, never a dependency. */
         sans: ['"Inter"', '"Segoe UI"', 'system-ui', '"Noto Sans"', 'sans-serif'],
         heading: ['"Plus Jakarta Sans"', '"Inter"', '"Segoe UI"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', '"Cascadia Mono"', '"SFMono-Regular"', 'Consolas',
-               '"Liberation Mono"', 'monospace'],
+        mono: ['"Plus Jakarta Sans"', '"Inter"', '"Segoe UI"', 'system-ui', 'sans-serif'],
+        num: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
         cinzel: ['"Cinzel"', 'Georgia', 'serif'],
         devanagari: ['"Noto Sans Devanagari"', '"Nirmala UI"', '"Inter"', 'sans-serif'],
       },
