@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Clock, GitBranch, DollarSign, FileText, Building2, Sparkles,
   FlaskConical, Search, Layers, Compass, ShieldCheck, ChevronRight,
@@ -17,8 +18,31 @@ import SetuVarshaView from '../src/views/SetuVarshaView';
 import KaryaDakshataSimulator from '../src/components/KaryaDakshataSimulator';
 import LoginGate from './LoginGate';
 
+// Normalize engine alias to official engine IDs
+function normalizeEngine(id) {
+  if (!id) return 'unified_cockpit';
+  const clean = String(id).toLowerCase().replace(/-/g, '_');
+  const aliasMap = {
+    tanmay: 'satya_kavach',
+    satyakavach: 'satya_kavach',
+    anumati: 'satya_kavach',
+    parth: 'artha_nivaran',
+    arthanivaran: 'artha_nivaran',
+    nivaran: 'artha_nivaran',
+    janhavi: 'setu_varsha',
+    setuvarsha: 'setu_varsha',
+    aditya: 'setu_varsha',
+    karyadakshata: 'karya_dakshata',
+    cockpit: 'unified_cockpit',
+  };
+  return aliasMap[clean] || clean;
+}
+
 export default function DecisionHubView() {
-  const [activeEngine, setActiveEngine] = useState('unified_cockpit');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedEngine = normalizeEngine(searchParams.get('engine'));
+
+  const [activeEngine, setActiveEngine] = useState(() => requestedEngine || 'unified_cockpit');
   const [selectedProjectId, setSelectedProjectId] = useState(() => {
     return localStorage.getItem('prakalp:selectedProjectId') || '619092';
   });
@@ -35,6 +59,20 @@ export default function DecisionHubView() {
       sessionStorage.setItem('prakalp:sidebarCollapsed', String(next));
       return next;
     });
+  };
+
+  // Sync state if URL query param changes
+  useEffect(() => {
+    const fromUrl = normalizeEngine(searchParams.get('engine'));
+    if (fromUrl && fromUrl !== activeEngine) {
+      setActiveEngine(fromUrl);
+    }
+  }, [searchParams]);
+
+  const selectEngine = (engineId) => {
+    setActiveEngine(engineId);
+    setSearchParams({ engine: engineId });
+    setMobileDrawerOpen(false);
   };
 
   useEffect(() => {
@@ -150,10 +188,7 @@ export default function DecisionHubView() {
                       role="tab"
                       aria-selected={isActive}
                       title={isCollapsed ? `${eng.label} — ${eng.desc}` : undefined}
-                      onClick={() => {
-                        setActiveEngine(eng.id);
-                        setMobileDrawerOpen(false);
-                      }}
+                      onClick={() => selectEngine(eng.id)}
                       className={`engine-tab w-full flex items-center transition-colors cursor-pointer ${
                         isCollapsed ? 'justify-center p-3' : 'items-start gap-3 p-3 text-left'
                       } ${isActive ? 'active' : ''}`}
