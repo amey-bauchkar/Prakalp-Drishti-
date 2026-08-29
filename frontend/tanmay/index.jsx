@@ -1,545 +1,643 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ShieldAlert, AlertTriangle, Scale, RefreshCw, Search, Filter,
-  Calculator, Award, ArrowRight, ChevronRight, BarChart3, FileSearch,
-  ShieldCheck, Layers, CheckCircle2, FileText, Activity
+  ShieldCheck, AlertTriangle, Scale, RefreshCw, Search,
+  ChevronRight, ArrowRight, FileText, Info, HelpCircle,
+  ChevronDown, ChevronUp, Clock, AlertCircle, Building2, Landmark
 } from 'lucide-react';
 
 export default function SatyaKavachView() {
-  const [activeTab, setActiveTab] = useState('bunching');
+  const [viewMode, setViewMode] = useState('portfolio'); // 'portfolio' | 'inspector'
+  
+  // Data state
   const [summaryData, setSummaryData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
-  const [clauseData, setClauseData] = useState(null);
-  const [rankingsData, setRankingsData] = useState(null);
+  const [projectDossier, setProjectDossier] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dossierLoading, setDossierLoading] = useState(false);
+  
+  // Selected project state
   const [selectedProjectId, setSelectedProjectId] = useState(() => localStorage.getItem('prakalp:selectedProjectId') || '619092');
-  const [activeProject, setActiveProject] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSector, setSelectedSector] = useState('All');
-
-  // Simulator state
-  const [simOrigCost, setSimOrigCost] = useState(1000);
-  const [simSanctionYear, setSimSanctionYear] = useState(2018);
-  const [simRevCost, setSimRevCost] = useState(1195);
-  const [simSteelWeight, setSimSteelWeight] = useState(20);
-  const [simCementWeight, setSimCementWeight] = useState(15);
-  const [simFuelWeight, setSimFuelWeight] = useState(15);
-  const [simLaborWeight, setSimLaborWeight] = useState(25);
-  const [simOtherWeight, setSimOtherWeight] = useState(25);
-  const [simResult, setSimResult] = useState(null);
-  const [simulating, setSimulating] = useState(false);
+  const [showCalculationDisclosure, setShowCalculationDisclosure] = useState(false);
 
   // Global project sync
   useEffect(() => {
     const handleSelect = (e) => {
       if (e.detail) {
         setSelectedProjectId(String(e.detail));
+        loadProjectDossier(String(e.detail));
       }
     };
     window.addEventListener('prakalp:selectProject', handleSelect);
     return () => window.removeEventListener('prakalp:selectProject', handleSelect);
   }, []);
 
-  // When project changes, fetch its metadata to populate simulator & filter table
+  // Fetch initial summary & histogram datasets
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  // Load project dossier when selectedProjectId changes
   useEffect(() => {
     if (selectedProjectId) {
-      fetch(`/api/projects/${selectedProjectId}`)
-        .then(r => r.ok ? r.json() : null)
-        .then(p => {
-          if (p) {
-            setActiveProject(p);
-            if (p.original_cost_cr) setSimOrigCost(p.original_cost_cr);
-            if (p.revised_cost_cr) setSimRevCost(p.revised_cost_cr);
-            if (p.sanction_date) {
-              const yr = parseInt(String(p.sanction_date).slice(0, 4));
-              if (yr && yr > 1990 && yr <= 2026) setSimSanctionYear(yr);
-            }
-          }
-        })
-        .catch(() => {});
+      loadProjectDossier(selectedProjectId);
     }
   }, [selectedProjectId]);
 
-  useEffect(() => { fetchAllData(); }, []);
-
-  const fetchAllData = () => {
+  const fetchAllData = async () => {
     setLoading(true);
-    Promise.all([
-      fetch('/api/tanmay/gaming-analysis').then(r => r.json()).catch(() => null),
-      fetch('/api/tanmay/bunching-histogram').then(r => r.json()).catch(() => null),
-      fetch('/api/tanmay/clause-10cc-audit?limit=100').then(r => r.json()).catch(() => null),
-      fetch('/api/tanmay/agency-rankings').then(r => r.json()).catch(() => null),
-    ]).then(([summary, hist, clause, rank]) => {
-      setSummaryData(summary);
+    try {
+      const [sumRes, histRes] = await Promise.all([
+        fetch('http://127.0.0.1:8000/api/tanmay/pattern-analysis'),
+        fetch('http://127.0.0.1:8000/api/tanmay/bunching-histogram'),
+      ]);
+
+      const [sum, hist] = await Promise.all([
+        sumRes.ok ? sumRes.json() : null,
+        histRes.ok ? histRes.json() : null,
+      ]);
+
+      setSummaryData(sum);
       setHistogramData(hist);
-      setClauseData(clause);
-      setRankingsData(rank);
+    } catch (e) {
+      console.error('Failed to load Satya-Kavach data:', e);
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
-  const handleSimulate = (e) => {
-    if (e) e.preventDefault();
-    setSimulating(true);
-    fetch('/api/tanmay/simulate-clause-10cc', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        original_cost_cr: parseFloat(simOrigCost),
-        sanction_year: parseInt(simSanctionYear),
-        revised_cost_cr: parseFloat(simRevCost),
-        p_steel: simSteelWeight / 100,
-        p_cement: simCementWeight / 100,
-        p_fuel: simFuelWeight / 100,
-        p_labor: simLaborWeight / 100,
-        p_other: simOtherWeight / 100
-      })
-    }).then(r => r.json()).then(json => { setSimResult(json); setSimulating(false); })
-      .catch(() => setSimulating(false));
+  const loadProjectDossier = async (pid) => {
+    setDossierLoading(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/tanmay/project-dossier/${pid}`);
+      if (res.ok) {
+        const data = await res.json();
+        setProjectDossier(data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch project dossier:', e);
+    } finally {
+      setDossierLoading(false);
+    }
   };
 
-  useEffect(() => { handleSimulate(); }, []);
+  const handleInspectProject = (pid) => {
+    setSelectedProjectId(String(pid));
+    localStorage.setItem('prakalp:selectedProjectId', String(pid));
+    loadProjectDossier(String(pid));
+    setViewMode('inspector');
+    setShowCalculationDisclosure(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  const filteredFlaggedProjects = summaryData?.flagged_sample_projects?.filter(p => {
-    const q = searchQuery.toLowerCase();
-    const matchQ = p.project_name.toLowerCase().includes(q) || p.project_id.includes(q) || p.agency.toLowerCase().includes(q) || p.state.toLowerCase().includes(q) || p.sector.toLowerCase().includes(q);
-    const matchS = selectedSector === 'All' || p.sector === selectedSector;
-    return matchQ && matchS;
-  }) || [];
+  if (loading && !summaryData) {
+    return (
+      <div className="panel p-12 text-center text-xs text-slate-500 font-sans space-y-3">
+        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-gov-accent" />
+        <p className="font-medium text-slate-600 dark:text-slate-400">
+          Loading SATYA-KAVACH CCEA Boundary Engine…
+        </p>
+      </div>
+    );
+  }
 
-  const filteredClauseRecords = clauseData?.audited_records?.filter(p => {
-    const q = searchQuery.toLowerCase();
-    const matchQ = p.project_name.toLowerCase().includes(q) || p.project_id.includes(q) || p.agency.toLowerCase().includes(q) || p.state.toLowerCase().includes(q) || p.sector.toLowerCase().includes(q);
-    const matchS = selectedSector === 'All' || p.sector === selectedSector;
-    return matchQ && matchS;
-  }) || [];
-
-  const sectors = ['All', 'Roads & Highways', 'Railways', 'Power & Thermal', 'Coal & Mining', 'Civil Aviation', 'Ports & Shipping'];
-
-  const tabs = [
-    { id: 'bunching', label: 'CCEA Evasion Audit' },
-    { id: 'clause10cc', label: 'Clause 10CC Audit' },
-    { id: 'simulator', label: 'Inflation Simulator' },
-    { id: 'leaderboard', label: 'Agency Risk' },
-  ];
+  const kpi = summaryData?.kpi_metrics || {};
+  const boundary = summaryData?.boundary_metrics || {};
+  const signal = summaryData?.mccrary_bunching_signal || {};
+  const flagged = summaryData?.flagged_sample_projects || [];
 
   return (
-    <div className="space-y-8 font-sans">
-      {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="panel p-4 sm:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-8 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <ShieldAlert className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>SATYA-KAVACH · Contract &amp; Compliance Analytics</span>
+    <div className="space-y-5 font-sans text-slate-900 dark:text-slate-100">
+      {/* ── 1. SINGLE HERO HEADER WITH ONE-LINE DESCRIPTOR & CANONICAL STATEMENT ── */}
+      <div className="command-header p-5 sm:p-6 rounded-xl bg-gradient-to-r from-[#1A365D] via-[#0F2342] to-[#0A192F] text-white shadow-md border border-slate-700">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-mono uppercase tracking-wider text-gov-accent border-l-2 border-gov-accent">
+              <Scale className="w-3.5 h-3.5" />
+              <span>STATUTORY AUDIT · CCEA COST-OVERRUN BOUNDARY</span>
             </div>
-            <h1 className="font-heading font-extrabold text-[30px] sm:text-[38px] leading-[1.15] text-gov-navy tracking-tight">
-              20% CCEA Cabinet Rule Evasion &amp;<br />
-              CPWD Clause 10CC Audit
-            </h1>
-            <p className="text-text-secondary text-[15px] sm:text-[15.5px] leading-relaxed max-w-2xl font-sans">
-              McCrary density discontinuity test detecting artificial cost escalation clustering 
-              at 18.0%–19.9%, designed to bypass Cabinet Committee on Economic Affairs scrutiny. 
-              Enforces statutory CPWD Clause 10CC 85% escalable ceilings pegged to tender bid-date indices.
+            <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-tight mt-2 text-white">
+              SATYA-KAVACH: CCEA BOUNDARY ANALYSIS
+            </h2>
+            <p className="text-[12px] font-mono text-slate-300 mt-0.5">
+              Identifying projects unusually close to the 20% CCEA Cabinet review boundary
             </p>
-            <div className="flex items-center gap-4 pt-2">
-              <a href="#analysis" className="btn-saffron-pill py-3 px-6 text-[13.5px] font-bold shadow-md">
-                <span>Explore Analysis</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-              <a href="#methodology" className="text-[14px] font-bold text-gov-navy hover:text-gov-saffron transition-colors flex items-center gap-1">
-                <span>Methodology</span>
-                <ChevronRight className="w-4 h-4" />
-              </a>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewMode('portfolio')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'portfolio'
+                  ? 'bg-gov-accent text-white shadow-xs'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              Portfolio Overview
+            </button>
+            <button
+              onClick={() => setViewMode('inspector')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'inspector'
+                  ? 'bg-gov-accent text-white shadow-xs'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              Project Inspector
+            </button>
+          </div>
+        </div>
+
+        {/* Canonical Statement */}
+        <div className="mt-4 p-3 bg-white/10 backdrop-blur-xs rounded-lg border border-white/15 text-[12px] leading-relaxed text-slate-100">
+          <p className="font-sans italic">
+            “A deterministic forensic layer for screening anomalous cost-reporting patterns around the applicable CCEA cost-overrun boundary.”
+          </p>
+        </div>
+      </div>
+
+      {viewMode === 'portfolio' ? (
+        <div className="space-y-5">
+          {/* ── 2. BOUNDARY ANALYSIS METRICS STRIP ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Active Revised Population */}
+            <div className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+              <span className="text-[10.5px] font-mono text-slate-500 uppercase block">
+                Active Revised Population
+              </span>
+              <span className="font-mono font-bold text-xl text-slate-900 dark:text-slate-100 block mt-0.5">
+                N = {boundary.active_revised_population_n || kpi.active_revised_projects || 1183}
+              </span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">
+                {boundary.excluded_unrevised_n || kpi.no_revision_on_file_projects || 1024} unrevised excluded
+              </span>
+            </div>
+
+            {/* Proximity Band [18%, 20%) */}
+            <div className="p-3.5 bg-amber-50/50 dark:bg-amber-950/20 rounded-xl border border-amber-200 dark:border-amber-900/40 shadow-2xs">
+              <span className="text-[10.5px] font-mono text-amber-800 dark:text-amber-300 uppercase block font-bold">
+                Band [18.0%, 20.0%)
+              </span>
+              <span className="font-mono font-bold text-xl text-amber-700 dark:text-amber-400 block mt-0.5">
+                n = {boundary.numerator_count || signal.numerator_count || 28}
+              </span>
+              <span className="text-[10px] text-amber-700/80 dark:text-amber-400/80 block mt-0.5">
+                Threshold Proximity Zone
+              </span>
+            </div>
+
+            {/* Comparison Band [20%, 22%) */}
+            <div className="p-3.5 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-200 dark:border-rose-900/40 shadow-2xs">
+              <span className="text-[10.5px] font-mono text-rose-800 dark:text-rose-300 uppercase block font-bold">
+                Band [20.0%, 22.0%)
+              </span>
+              <span className="font-mono font-bold text-xl text-rose-700 dark:text-rose-400 block mt-0.5">
+                n = {boundary.denominator_count || signal.denominator_count || 17}
+              </span>
+              <span className="text-[10px] text-rose-700/80 dark:text-rose-400/80 block mt-0.5">
+                Cabinet Threshold Met
+              </span>
+            </div>
+
+            {/* Bin-Mass Ratio and 95% CI */}
+            <div className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+              <span className="text-[10.5px] font-mono text-slate-500 uppercase block">
+                Boundary Bin-Mass Ratio
+              </span>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="font-mono font-bold text-xl text-gov-accent">
+                  {boundary.ratio || signal.boundary_bin_mass_ratio || 1.65}x
+                </span>
+                <span className="text-[11px] font-mono text-slate-500">
+                  95% CI: {boundary.confidence_interval_95?.string || signal.confidence_interval_95 || '[0.91, 2.97]'}
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-400 block mt-0.5">
+                [18,20) vs [20,22) Comparison
+              </span>
             </div>
           </div>
 
-          {/* Key finding Docket Box */}
-          <div className="lg:col-span-4 flex justify-center lg:justify-end">
-            <div className="bg-slate-50 border border-slate-200 rounded-3xl p-7 text-center w-full max-w-xs shadow-subtle">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-2 font-mono">Key Finding</div>
-              <div className="text-[52px] font-heading font-black text-gov-navy leading-none tracking-tight font-mono">1.65×</div>
-              <div className="text-[13.5px] text-text-secondary font-bold mt-2">McCrary density discontinuity ratio</div>
-              <div className="text-[11px] font-mono text-gov-saffron-dark mt-1 font-bold">p &lt; 0.001 · Statistically significant</div>
+          {/* Short Methodological Disclosure */}
+          <div className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-gov-accent shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Methodological Disclosure:</strong> Boundary proximity is a screening indicator, not evidence of intentional manipulation.
+              Documentary review is required to determine the cause of the revision.
+            </p>
+          </div>
+
+          {/* ── 3. COST-OVERRUN HISTOGRAM ── */}
+          <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
+              <div>
+                <h3 className="font-heading font-bold text-sm text-gov-navy dark:text-slate-100">
+                  Cost Overrun Distribution Around the 20.0% CCEA Threshold
+                </h3>
+                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                  Active revised population (N = {histogramData?.population_metadata?.active_revised_count || 1183})
+                </p>
+              </div>
+              <span className="text-xs font-mono text-slate-500">
+                Excluded: {histogramData?.population_metadata?.excluded_no_revision_count || 1024} unrevised projects
+              </span>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              {histogramData?.bins?.map((bin, idx) => {
+                const count = bin.project_count || 0;
+                const maxCount = Math.max(...(histogramData.bins.map((b) => b.project_count) || [1]));
+                const pctWidth = Math.max(2, (count / maxCount) * 100);
+                const isProximity = bin.is_bunching_spike;
+                const isBreached = bin.is_cabinet_breached;
+
+                return (
+                  <div key={idx} className="flex items-center gap-3 text-xs">
+                    <span className="w-64 sm:w-72 shrink-0 text-right font-mono text-[11.5px] text-slate-700 dark:text-slate-300 font-medium">
+                      {bin.bin_label}
+                    </span>
+                    <div className="flex-1 h-6 bg-slate-100 dark:bg-slate-800 rounded overflow-hidden flex items-center p-0.5">
+                      <div
+                        style={{ width: `${pctWidth}%` }}
+                        className={`h-full rounded transition-all flex items-center justify-end pr-2 ${
+                          isProximity
+                            ? 'bg-amber-500 text-white font-bold'
+                            : isBreached
+                            ? 'bg-rose-600 text-white font-bold'
+                            : 'bg-gov-accent/80 text-white'
+                        }`}
+                      >
+                        <span className="text-[10px] font-mono">{count}</span>
+                      </div>
+                    </div>
+                    <span className="w-24 text-right font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                      ₹{bin.total_capex_cr.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── 4. FLAGGED PROJECTS TABLE ── */}
+          <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
+              <div>
+                <h3 className="font-heading font-bold text-sm text-gov-navy dark:text-slate-100">
+                  Projects in the Threshold Proximity Band (18.0%–19.99%)
+                </h3>
+                <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                  {flagged.length} projects positioned immediately below the Cabinet re-sanction threshold
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase font-mono text-[10px]">
+                    <th className="py-2.5 px-2">Project</th>
+                    <th className="py-2.5 px-2">Agency</th>
+                    <th className="py-2.5 px-2 text-right">Original Cost</th>
+                    <th className="py-2.5 px-2 text-right">Revised Cost</th>
+                    <th className="py-2.5 px-2 text-right">Overrun %</th>
+                    <th className="py-2.5 px-2 text-right">Distance to Boundary</th>
+                    <th className="py-2.5 px-2 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-sans">
+                  {flagged.map((p, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-2.5 px-2 font-medium">
+                        <span className="font-mono text-[10px] text-slate-400 block">#{p.project_id}</span>
+                        <span className="text-slate-800 dark:text-slate-200 line-clamp-1">{p.project_name}</span>
+                      </td>
+                      <td className="py-2.5 px-2 text-slate-600 dark:text-slate-400">
+                        <span className="block text-[11px] truncate max-w-[160px]">{p.agency}</span>
+                        <span className="text-[10px] text-slate-400">{p.sector}</span>
+                      </td>
+                      <td className="py-2.5 px-2 text-right font-mono text-slate-700 dark:text-slate-300">
+                        ₹{p.original_cost_cr.toLocaleString('en-IN')} Cr
+                      </td>
+                      <td className="py-2.5 px-2 text-right font-mono font-bold text-slate-900 dark:text-white">
+                        ₹{p.revised_cost_cr.toLocaleString('en-IN')} Cr
+                      </td>
+                      <td className="py-2.5 px-2 text-right font-mono font-bold text-amber-600 dark:text-amber-400">
+                        +{p.overrun_pct}%
+                      </td>
+                      <td className="py-2.5 px-2 text-right font-mono text-slate-500">
+                        {p.distance_to_boundary_pp} pp to 20%
+                      </td>
+                      <td className="py-2.5 px-2 text-center">
+                        <button
+                          onClick={() => handleInspectProject(p.project_id)}
+                          className="px-2.5 py-1 rounded bg-gov-accent hover:bg-[#00509E] text-white text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer transition-all shadow-2xs"
+                        >
+                          <span>Inspect</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-      </section>
+      ) : (
+        /* ── 5. PROJECT INSPECTOR VIEW (§3) ── */
+        <div className="space-y-5">
+          {/* Project Selector Bar */}
+          <div className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 flex-1">
+              <Search className="w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Enter Project ID (e.g. 619092, 400103)..."
+                className="w-full text-xs font-mono bg-transparent border-none focus:outline-hidden text-slate-800 dark:text-slate-200"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => handleInspectProject(searchQuery.trim())}
+                  className="px-3 py-1 bg-gov-accent text-white text-xs font-bold rounded cursor-pointer"
+                >
+                  Inspect
+                </button>
+              )}
+            </div>
 
-      {/* ═══════ STAT STRIP ═══════ */}
-      {loading ? (
-        <div className="loading-center py-12"><RefreshCw className="w-5 h-5 animate-spin" />Loading analysis…</div>
-      ) : summaryData ? (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="panel p-4">
-              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Bunching Zone (18–20%)</div>
-              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_in_bunching_zone_18_20pct}</div>
-              <div className="text-[12px] text-text-muted mt-1">₹{summaryData.kpi_metrics?.bunching_zone_capital_cr?.toLocaleString()} Cr at risk</div>
-            </div>
-            <div className="panel p-4">
-              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Cabinet Breached (≥20%)</div>
-              <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">{summaryData.kpi_metrics?.projects_above_20pct_cabinet_rule}</div>
-              <div className="text-[12px] text-text-muted mt-1">Mandatory PIB review required</div>
-            </div>
-            <div className="panel p-4">
-              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Unjustified Padding</div>
-              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{summaryData.kpi_metrics?.total_unjustified_excess_margin_cr?.toLocaleString()} Cr</div>
-              <div className="text-[12px] text-text-muted mt-1">Clause 10CC excess claims</div>
-            </div>
-            <div className="panel p-4">
-              <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Data Coverage</div>
-              <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">2,207</div>
-              <div className="text-[12px] text-text-muted mt-1">Central mega-projects · 2005–2026</div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode('portfolio')}
+                className="px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium hover:bg-slate-200 cursor-pointer"
+              >
+                Back to Portfolio Overview
+              </button>
             </div>
           </div>
 
-          {/* ═══════ ANALYTICAL WORKSPACE ═══════ */}
-          <section id="analysis" className="space-y-6">
-            <div className="flex items-center gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
-              {tabs.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setActiveTab(t.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${
-                    activeTab === t.id
-                      ? 'bg-gov-navy text-white shadow-elevated'
-                      : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
-                  }`}
-                >
-                  <span>{t.label}</span>
-                </button>
-              ))}
+          {dossierLoading ? (
+            <div className="panel p-12 text-center text-xs text-slate-500 space-y-2">
+              <RefreshCw className="w-5 h-5 animate-spin mx-auto text-gov-accent" />
+              <p>Loading Dossier for Project #{selectedProjectId}…</p>
             </div>
-
-            {/* ── Tab: CCEA Bunching ── */}
-            {activeTab === 'bunching' && (
-              <div className="panel p-4 sm:p-5 space-y-8">
-                {/* Methodology context */}
-                <div className="card-parchment-gold rounded-2xl p-6 sm:p-7 shadow-subtle border border-gov-gold-border">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-[13.5px] text-text-secondary">
-                    <div>
-                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">What is being measured</div>
-                      <p>Distribution of cost revision percentages across all 2,207 central sector mega-projects to detect artificial clustering below the 20% CCEA threshold.</p>
-                    </div>
-                    <div>
-                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">Methodology</div>
-                      <p>McCrary density discontinuity estimator comparing left-side vs right-side bin densities at the 20% regulatory boundary.</p>
-                    </div>
-                    <div>
-                      <div className="font-heading font-bold text-gov-navy text-[14.5px] mb-1">Interpretation</div>
-                      <p>{summaryData.mccrary_bunching_signal?.interpretation}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Histogram */}
-                <div className="space-y-4">
-                  <h3 className="font-heading font-bold text-[20px] text-gov-navy">Cost Overrun Distribution &amp; Bunching Analysis</h3>
-                  <div className="space-y-2">
-                    {histogramData?.bins?.map((bin, idx) => {
-                      const maxCount = Math.max(...(histogramData.bins.map(b => b.project_count) || [100]));
-                      const barWidth = Math.max(3, (bin.project_count / maxCount) * 100);
-                      return (
-                        <div key={idx} className="flex items-center gap-3 text-[13px]">
-                          <div className={`w-44 shrink-0 text-right truncate font-mono font-medium ${
-                            bin.is_bunching_spike ? 'text-gov-saffron font-bold' : bin.is_cabinet_breached ? 'text-rose-600 font-bold' : 'text-text-muted'
-                          }`}>{bin.bin_label}</div>
-                          <div className="flex-1 bg-slate-100 rounded-lg h-6 overflow-hidden relative flex items-center border border-slate-200">
-                            <div className={`h-full rounded-lg transition-all ${
-                              bin.is_bunching_spike ? 'bg-gov-saffron' : bin.is_cabinet_breached ? 'bg-rose-500/80' : 'bg-slate-300'
-                            }`} style={{ width: `${barWidth}%` }} />
-                            <span className="absolute left-3 text-[11.5px] font-bold text-gov-navy font-mono">
-                              {bin.project_count} projects · ₹{bin.total_capex_cr?.toLocaleString()} Cr
-                            </span>
-                          </div>
-                          {bin.is_bunching_spike && <span className="status-badge status-warning shrink-0 font-bold">Spike</span>}
-                          {bin.range_min === 20.0 && bin.range_max === 22.0 && <span className="status-badge status-danger shrink-0 font-bold">Cabinet</span>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Filters */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-6 border-t border-border-default">
-                  <div className="relative w-full sm:w-80">
-                    <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input type="text" placeholder="Search flagged projects…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 text-[13px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-sans" />
-                  </div>
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-                    {sectors.map(sec => (
-                      <button key={sec} onClick={() => setSelectedSector(sec)}
-                        className={`px-3.5 py-2 text-[12px] font-bold rounded-xl transition-all shrink-0 ${
-                          selectedSector === sec ? 'bg-gov-navy text-white shadow-sm' : 'bg-white text-text-secondary border border-border-default hover:bg-slate-50'
-                        }`}>{sec}</button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Table */}
-                <div className="overflow-x-auto">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-[17px] font-bold text-gov-navy font-heading">Flagged Evasion Projects</h3>
-                    <span className="text-[13px] text-text-muted font-mono font-medium">{filteredFlaggedProjects.length} projects</span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Project</th>
-                          <th>Sector / State</th>
-                          <th>Agency</th>
-                          <th className="num">Original Cost</th>
-                          <th className="num">Revised Cost</th>
-                          <th className="num">Overrun</th>
-                          <th className="text-center">Margin to 20%</th>
-                          <th className="text-center">Verdict</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredFlaggedProjects.map((p, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                            <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
-                            <td><span className="font-medium text-gov-navy">{p.sector}</span><br /><span className="text-[11px] text-text-muted">{p.state || 'National'}</span></td>
-                            <td className="text-text-secondary font-medium">{p.agency}</td>
-                            <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                            <td className="num font-mono font-bold text-gov-navy">₹{p.revised_cost_cr.toLocaleString()} Cr</td>
-                            <td className="num font-mono font-bold text-gov-saffron">+{p.overrun_pct}%</td>
-                            <td className="text-center text-[12px] font-mono font-bold text-gov-saffron">{p.evasion_margin_pct}% below</td>
-                            <td className="text-center"><span className={`status-badge ${p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.audit_verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ── Tab: Clause 10CC ── */}
-            {activeTab === 'clause10cc' && (
-              <div className="panel p-4 sm:p-5 space-y-8">
-                <div className="card-parchment-gold rounded-2xl p-6 border border-gov-gold-border">
-                  <h3 className="text-[17px] font-bold text-gov-navy mb-2 font-heading">Statutory Price Escalation Framework</h3>
-                  <p className="text-[13.5px] text-text-secondary leading-relaxed max-w-3xl">
-                    Under CPWD Clause 10CC, only <strong>85% of contract value is escalable</strong> (15% is fixed contractor overhead). 
-                    Macro indices (Steel, Cement, Fuel, Labor) are locked to the tender bid submission date. 
-                    Claims exceeding statutory allowances represent unjustified margin padding.
-                  </p>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-[17px] font-bold text-gov-navy font-heading">Audited Records</h3>
-                    <span className="text-[13px] font-bold text-rose-600 font-mono">Total excess: ₹{clauseData?.total_portfolio_excess_claimed_cr?.toLocaleString()} Cr</span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>Project</th>
-                          <th>Agency / Sector</th>
-                          <th className="text-center">Year</th>
-                          <th className="num">Original</th>
-                          <th className="num">Claimed</th>
-                          <th className="num" style={{color:'#18804B'}}>10CC Cap</th>
-                          <th className="num" style={{color:'#B42318'}}>Excess</th>
-                          <th className="text-center">Verdict</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredClauseRecords.map((p, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                            <td><span className="text-text-muted text-[11px] font-mono mr-1">#{p.project_id}</span><span className="font-bold text-gov-navy">{p.project_name}</span></td>
-                            <td><span className="font-medium text-gov-navy">{p.agency}</span><br /><span className="text-[11px] text-text-muted">{p.sector}</span></td>
-                            <td className="text-center font-mono font-bold">{p.sanction_year}</td>
-                            <td className="num font-mono text-text-muted">₹{p.original_cost_cr.toLocaleString()} Cr</td>
-                            <td className="num font-mono font-bold">₹{p.claimed_escalation_cr.toLocaleString()} Cr</td>
-                            <td className="num font-mono font-bold" style={{color:'#18804B'}}>₹{p.statutory_10cc_allowed_cr.toLocaleString()} Cr</td>
-                            <td className="num font-mono font-bold" style={{color:'#B42318'}}>+₹{p.excess_margin_claimed_cr.toLocaleString()} Cr</td>
-                            <td className="text-center"><span className={`status-badge ${p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'status-danger' : 'status-warning'}`}>{p.verdict === 'EXCESSIVE_PRICE_GOUGING' ? 'Gouging' : 'Flagged'}</span></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ── Tab: Simulator ── */}
-            {activeTab === 'simulator' && (
-              <div className="panel p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-[19px] font-bold text-gov-navy mb-1 font-heading">Contract Price Variation Simulator</h3>
-                  <p className="text-[13px] text-text-muted mb-6">Adjust contract parameters and material weight fractions to calculate statutory allowable escalation under Clause 10CC.</p>
-
-                  <form onSubmit={handleSimulate} className="space-y-5">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Original Cost (₹ Cr)</label>
-                        <input type="number" value={simOrigCost} onChange={e => setSimOrigCost(e.target.value)}
-                          className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold" />
-                      </div>
-                      <div>
-                        <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Revised Cost (₹ Cr)</label>
-                        <input type="number" value={simRevCost} onChange={e => setSimRevCost(e.target.value)}
-                          className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[12px] font-bold text-gov-navy block mb-1 font-mono">Tender Base Year</label>
-                      <select value={simSanctionYear} onChange={e => setSimSanctionYear(e.target.value)}
-                        className="w-full p-3 text-[14px] border border-border-default rounded-xl focus:outline-none focus:border-gov-navy font-mono font-bold">
-                        {[2005,2008,2010,2012,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024].map(yr => (
-                          <option key={yr} value={yr}>{yr}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="space-y-3 border-t border-border-default pt-4">
-                      <div className="text-[12px] font-bold text-gov-navy">Material Weight Fractions (Total: {simSteelWeight + simCementWeight + simFuelWeight + simLaborWeight + simOtherWeight}%)</div>
-                      {[
-                        ['Steel', simSteelWeight, setSimSteelWeight],
-                        ['Cement', simCementWeight, setSimCementWeight],
-                        ['Fuel', simFuelWeight, setSimFuelWeight],
-                        ['Labor', simLaborWeight, setSimLaborWeight],
-                      ].map(([label, val, setter]) => (
-                        <div key={label} className="flex items-center justify-between text-[13px]">
-                          <span className="text-text-secondary w-24 font-medium">{label} ({val}%)</span>
-                          <input type="range" min="0" max="50" value={val} onChange={e => setter(parseInt(e.target.value))}
-                            className="flex-1 mx-3 accent-gov-saffron h-2" />
-                        </div>
-                      ))}
-                    </div>
-
-                    <button type="submit" disabled={simulating} className="btn-saffron-pill w-full justify-center py-3.5 text-xs font-bold uppercase tracking-wider">
-                      {simulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Calculator className="w-4 h-4" />}
-                      <span>Execute Calculation</span>
-                    </button>
-                  </form>
-                </div>
-
-                {/* Results */}
-                {simResult && (
-                  <div className="space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-[18px] font-bold text-gov-navy font-heading">Statutory Audit Result</h3>
-                      <span className={`status-badge ${simResult.audit_verdict === 'COMPLIANT_WITHIN_10CC' ? 'status-success' : 'status-danger'}`}>
-                        {simResult.audit_verdict === 'COMPLIANT_WITHIN_10CC' ? 'Compliant' : 'Non-Compliant'}
+          ) : projectDossier && projectDossier.status !== 'not_found' ? (
+            <div className="space-y-5 animate-fadeIn">
+              {/* Header: ID, Name, Sector, Agency, State */}
+              <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        PROJECT #{projectDossier.project_id}
+                      </span>
+                      <span
+                        className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded ${
+                          projectDossier.boundary?.classification === 'THRESHOLD_PROXIMITY'
+                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-300'
+                            : projectDossier.boundary?.classification === 'ESCALATION_CANDIDATE'
+                            ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300'
+                            : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        }`}
+                      >
+                        {projectDossier.boundary?.classification_label || 'Within Budget Bounds'}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="panel p-4">
-                        <div className="text-[11px] text-text-muted uppercase font-bold">Claimed Overrun</div>
-                        <div className="text-[26px] font-black text-gov-navy mt-1 tracking-tight font-mono">₹{simResult.contractor_claimed_escalation_cr?.toLocaleString()} Cr</div>
-                        <div className="text-[12px] text-gov-saffron font-bold mt-0.5">+{simResult.claimed_overrun_pct}% over original</div>
+                    <h3 className="font-heading font-extrabold text-base sm:text-lg text-gov-navy dark:text-white mt-1.5 leading-snug">
+                      {projectDossier.project_name}
+                    </h3>
+
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1 flex-wrap">
+                      <span>{projectDossier.sector}</span>
+                      <span>·</span>
+                      <span>{projectDossier.agency}</span>
+                      <span>·</span>
+                      <span>{projectDossier.state}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-right shrink-0">
+                    <span className="text-[10px] font-mono uppercase text-slate-400 block">Distance to Boundary</span>
+                    <span className="font-mono font-extrabold text-lg text-gov-navy dark:text-slate-100">
+                      {projectDossier.boundary?.distance_to_boundary_pp !== undefined
+                        ? `${projectDossier.boundary.distance_to_boundary_pp} pp`
+                        : 'N/A'}
+                    </span>
+                    <span className="text-[9.5px] text-slate-400 block">to 20.0% CCEA threshold</span>
+                  </div>
+                </div>
+
+                {/* Applicable Authority & Citation */}
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border-l-2 border-gov-accent text-xs space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-800 dark:text-slate-200">
+                      Applicable Authority: {projectDossier.boundary?.required_approval_authority || 'Administrative Line Ministry'}
+                    </span>
+                    <span className="text-[10.5px] font-mono text-slate-400">CCEA Rule Citation</span>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-400 text-[11.5px]">
+                    {projectDossier.boundary?.statutory_citation}
+                  </p>
+                </div>
+              </div>
+
+              {/* Financial Impact: Original -> Revised -> Increase -> Overrun % (4 numbers) */}
+              <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <h4 className="font-heading font-bold text-sm text-gov-navy dark:text-slate-100">
+                  Financial Impact Summary
+                </h4>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10.5px] font-mono text-slate-500 uppercase block">1. Original Sanction</span>
+                    <span className="font-mono font-bold text-base text-slate-800 dark:text-slate-200 mt-0.5 block">
+                      ₹{projectDossier.costs?.original_cost_cr?.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">Sanction Year: {projectDossier.costs?.sanction_year}</span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10.5px] font-mono text-slate-500 uppercase block">2. Current Revised Cost</span>
+                    <span className="font-mono font-bold text-base text-slate-900 dark:text-white mt-0.5 block">
+                      {projectDossier.costs?.revised_cost_cr !== null && projectDossier.costs?.revised_cost_cr !== undefined
+                        ? `₹${projectDossier.costs.revised_cost_cr.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr`
+                        : 'No Revision on File'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">
+                      {projectDossier.has_revision_on_file ? 'Approved Revision' : 'Baseline Active'}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10.5px] font-mono text-slate-500 uppercase block">3. Net Cost Increase</span>
+                    <span className="font-mono font-bold text-base text-slate-800 dark:text-slate-200 mt-0.5 block">
+                      ₹{projectDossier.costs?.cost_increase_cr?.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">Total Variance</span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10.5px] font-mono text-slate-500 uppercase block">4. Cost Overrun %</span>
+                    <span className={`font-mono font-bold text-base mt-0.5 block ${
+                      projectDossier.costs?.overrun_pct >= 20
+                        ? 'text-rose-600 dark:text-rose-400'
+                        : projectDossier.costs?.overrun_pct >= 18
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-slate-700 dark:text-slate-300'
+                    }`}>
+                      +{projectDossier.costs?.overrun_pct}%
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">Boundary: 20.0%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cost Revision History: Real State Changes Only */}
+              <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <h4 className="font-heading font-bold text-sm text-gov-navy dark:text-slate-100 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gov-accent" />
+                    Cost Revision History (Real State Changes)
+                  </h4>
+                  <span className="text-[11px] font-mono text-slate-500">
+                    {projectDossier.revision_history?.length || 0} Recorded Event(s)
+                  </span>
+                </div>
+
+                <div className="space-y-3 pt-1">
+                  {projectDossier.revision_history?.map((evt, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {evt.title}
+                          </span>
+                          <span className="text-[11px] font-mono text-slate-500">
+                            · {evt.date || 'Date unavailable'}
+                          </span>
+                        </div>
+                        <p className="text-[11.5px] text-slate-600 dark:text-slate-400 mt-0.5">
+                          {evt.details}
+                        </p>
                       </div>
-                      <div className="panel p-4">
-                        <div className="text-[11px] text-text-muted uppercase font-bold">Statutory 10CC Cap</div>
-                        <div className="text-[26px] font-black text-emerald-600 mt-1 tracking-tight font-mono">₹{simResult.statutory_allowed_escalation_cr?.toLocaleString()} Cr</div>
-                        <div className="text-[12px] text-text-muted font-medium mt-0.5">85% escalable ceiling</div>
+
+                      <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
+                        <span className="text-slate-800 dark:text-slate-200 font-bold">
+                          ₹{evt.cost_cr?.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr
+                        </span>
+                        <span className={`px-2 py-0.5 rounded font-bold ${
+                          evt.overrun_pct >= 20
+                            ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                            : evt.overrun_pct >= 18
+                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                            : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}>
+                          +{evt.overrun_pct}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Clause 10CC: Status, Amount, View Calculation Disclosure */}
+              <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                  <div>
+                    <h4 className="font-heading font-bold text-sm text-gov-navy dark:text-slate-100 flex items-center gap-2">
+                      <Scale className="w-4 h-4 text-gov-accent" />
+                      CPWD Clause 10CC Statutory Allowable Escalation
+                    </h4>
+                    <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                      85% statutory escalable base indexed to bid date commodity WPI series
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wide bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200 border border-blue-300">
+                      STATUS: {projectDossier.clause_10cc?.status || 'INDICATIVE'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowCalculationDisclosure(!showCalculationDisclosure)}
+                      className="px-2.5 py-1 rounded bg-gov-navy text-white text-xs font-bold hover:bg-slate-800 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>{showCalculationDisclosure ? 'Hide Calculation' : 'View Calculation'}</span>
+                      {showCalculationDisclosure ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-baseline gap-2 pt-1">
+                  <span className="text-xs text-slate-500">Statutory 10CC Allowable Cap:</span>
+                  <span className="font-mono font-bold text-lg text-emerald-700 dark:text-emerald-300">
+                    ₹{projectDossier.clause_10cc?.statutory_allowed_escalation_cr?.toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr
+                  </span>
+                  <span className="text-xs font-mono text-slate-400">
+                    ({projectDossier.clause_10cc?.cap_pct_of_original_cost}% of Original Sanction)
+                  </span>
+                </div>
+
+                {/* Collapsible View Calculation Disclosure */}
+                {showCalculationDisclosure && (
+                  <div className="p-3.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 text-xs space-y-2 mt-2">
+                    <span className="font-bold text-slate-700 dark:text-slate-300 block uppercase text-[10px]">
+                      Calculation Breakdown
+                    </span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 font-mono text-[11px]">
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Escalable Base (85%)</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          ₹{projectDossier.clause_10cc?.calculation_disclosure?.escalable_base_cr} Cr
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Fixed Risk Margin (15%)</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          ₹{projectDossier.clause_10cc?.calculation_disclosure?.fixed_risk_deduction_cr} Cr
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Composite Inflation Rate</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                          +{projectDossier.clause_10cc?.calculation_disclosure?.composite_inflation_pct}%
+                        </span>
                       </div>
                     </div>
 
-                    {simResult.unjustified_excess_margin_cr > 0 && (
-                      <div className="note note-critical">
-                        <div className="flex items-center justify-between text-[14px] font-bold text-rose-700 font-mono">
-                          <span>Unjustified padding flagged</span>
-                          <span>+₹{simResult.unjustified_excess_margin_cr?.toLocaleString()} Cr</span>
-                        </div>
-                        <p className="text-[12px] text-rose-800 mt-1 font-sans">Disallowance recommended under CPWD General Conditions of Contract.</p>
+                    {projectDossier.clause_10cc?.is_implausible_legacy_cap && (
+                      <div className="p-2.5 bg-amber-50 dark:bg-amber-950/40 rounded border-l-2 border-amber-500 text-[11px] text-amber-900 dark:text-amber-200 mt-2">
+                        <p className="leading-relaxed">
+                          <strong>Note on Legacy Project:</strong> {projectDossier.clause_10cc.legacy_cap_caveat}
+                        </p>
                       </div>
                     )}
-
-                    <div className="border-t border-border-default pt-4">
-                      <div className="text-[12px] font-bold text-gov-navy mb-2 font-mono">Macro Index Growth ({simResult.macro_indices?.base_year} → {simResult.macro_indices?.current_year})</div>
-                      <div className="grid grid-cols-4 gap-3">
-                        {[['Steel', simResult.macro_indices?.steel_growth_pct], ['Cement', simResult.macro_indices?.cement_growth_pct], ['Fuel', simResult.macro_indices?.fuel_growth_pct], ['Labor', simResult.macro_indices?.labor_growth_pct]].map(([label, val]) => (
-                          <div key={label} className="text-center bg-white p-2.5 rounded-xl border border-slate-200">
-                            <div className="text-[11px] text-text-muted font-medium">{label}</div>
-                            <div className="text-[15px] font-black text-gov-navy font-mono">+{val}%</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>
-            )}
 
-            {/* ── Tab: Agency Risk ── */}
-            {activeTab === 'leaderboard' && (
-              <div className="panel p-4 sm:p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[19px] font-bold text-gov-navy font-heading">Agency Compliance &amp; Risk Ranking</h3>
-                  <span className="text-[13px] text-text-muted font-mono font-medium">{rankingsData?.total_agencies_evaluated} agencies evaluated</span>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Agency</th>
-                        <th className="text-center">Projects</th>
-                        <th className="text-center">Bunching (18–20%)</th>
-                        <th className="text-center">Cabinet Breached</th>
-                        <th className="num">Total Capex</th>
-                        <th className="num">Excess Claims</th>
-                        <th className="text-center">Score</th>
-                        <th className="text-center">Risk Tier</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rankingsData?.rankings?.map((a, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="font-bold text-gov-navy">{a.agency_name}</td>
-                          <td className="text-center text-text-muted font-mono">{a.total_projects}</td>
-                          <td className="text-center font-mono font-bold text-gov-saffron">{a.bunching_projects_18_20pct} ({a.bunching_rate_pct}%)</td>
-                          <td className="text-center font-mono font-bold text-rose-600">{a.cabinet_breached_projects}</td>
-                          <td className="num font-mono text-text-muted">₹{a.total_revised_capex_cr?.toLocaleString()} Cr</td>
-                          <td className="num font-mono font-bold text-rose-600">₹{a.total_excess_margin_claimed_cr?.toLocaleString()} Cr</td>
-                          <td className="text-center font-mono font-black text-gov-navy">{a.institutional_gaming_score}/100</td>
-                          <td className="text-center">
-                            <span className={`status-badge ${a.risk_tier === 'HIGH_GAMING_RISK' ? 'status-danger' : a.risk_tier === 'MODERATE_WATCHLIST' ? 'status-warning' : 'status-success'}`}>
-                              {a.risk_tier === 'HIGH_GAMING_RISK' ? 'High Risk' : a.risk_tier === 'MODERATE_WATCHLIST' ? 'Watchlist' : 'Compliant'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </section>
-
-          {/* ═══════ METHODOLOGY ═══════ */}
-          <section id="methodology" className="bg-white border border-border-default rounded-3xl overflow-hidden shadow-card">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="p-8 sm:p-10 border-b lg:border-b-0 lg:border-r border-border-default">
-                <h3 className="text-[17px] font-bold text-gov-navy mb-3 font-heading">20% CCEA Cabinet Overrun Threshold</h3>
-                <p className="text-[14px] text-text-secondary leading-relaxed font-sans">
-                  Projects incurring cost revisions ≥20% of original sanctioned cost require mandatory CCEA and PIB approval. 
-                  SATYA-KAVACH applies McCrary density discontinuity estimators to detect strategic under-reporting at 18.0%–19.99%.
-                </p>
-              </div>
-              <div className="p-8 sm:p-10">
-                <h3 className="text-[17px] font-bold text-gov-navy mb-3 font-heading">CPWD Clause 10CC Escalation Cap</h3>
-                <p className="text-[14px] text-text-secondary leading-relaxed font-sans">
-                  Under standard public works contracts, price escalation is restricted to 85% of contract value 
-                  with base indices pegged to the tender submission date. Inflation claims are audited against 
-                  historical WPI and Labour Wage Index series.
+              {/* The Standing Methodological Note (§3) */}
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2.5">
+                <Info className="w-4 h-4 text-gov-accent shrink-0 mt-0.5" />
+                <p className="leading-relaxed">
+                  <strong>Methodological Note:</strong> Threshold proximity is an anomaly signal, not evidence of intentional manipulation.
+                  Documentary review is required to determine the cause of the revision.
                 </p>
               </div>
             </div>
-          </section>
-        </>
-      ) : null}
+          ) : (
+            <div className="panel p-12 text-center text-xs text-slate-500">
+              Project not found. Select a project from the portfolio overview.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

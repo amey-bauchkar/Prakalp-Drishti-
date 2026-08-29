@@ -23,6 +23,7 @@ if BASE_DIR not in sys.path:
 # now checked against the directory below.
 TESTS = [
     "test_satya_kavach.py",
+    "test_satya_kavach_forensic.py",
     "test_round3_fixes.py",
     "test_vitta_complete.py",
     "test_risk_model.py",

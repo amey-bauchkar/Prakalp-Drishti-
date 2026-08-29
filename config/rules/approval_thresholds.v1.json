@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "description": "Central Sector Mega-Projects (>= Rs 150 Cr) Administrative & Cabinet Approval Thresholds",
+  "proximity_band_pp": 2.0,
+  "rules": [
+    {
+      "rule_id": "CCEA_COST_ESCALATION_V0",
+      "policy_name": "CCEA 20% Cost Revision Approval Rule",
+      "effective_from": "2005-01-01",
+      "effective_to": null,
+      "status": "unverified",
+      "applicability": {
+        "min_sanction_cost_cr": 150.0,
+        "sector": "ALL"
+      },
+      "conditions": {
+        "cost_overrun_pct_gte": 20.0,
+        "time_overrun_months_gte": null
+      },
+      "required_approval_authority": "Cabinet Committee on Economic Affairs (CCEA)",
+      "citation": "TODO_HUMAN_VERIFY (Cabinet Secretariat Circular No. 1/2005 / MoSPI Guidelines - exact gazette date pending confirmation)",
+      "notes": "Baseline reference: Projects with >=20% cost overrun require CCEA revised administrative sanction."
+    },
+    {
+      "rule_id": "CCEA_TIME_EXTENSION_V0",
+      "policy_name": "Time Extension Substantive Revision Rule",
+      "effective_from": "2005-01-01",
+      "effective_to": null,
+      "status": "unverified",
+      "applicability": {
+        "min_sanction_cost_cr": 150.0,
+        "sector": "ALL"
+      },
+      "conditions": {
+        "cost_overrun_pct_gte": null,
+        "time_overrun_months_gte": 24.0
+      },
+      "required_approval_authority": "Cabinet Committee on Economic Affairs (CCEA)",
+      "citation": "TODO_HUMAN_VERIFY (MoSPI Project Monitoring Division Guidelines - reference OM pending confirmation)",
+      "notes": "Baseline reference: Delays exceeding 24 months require revised institutional timeline sanction."
+    },
+    {
+      "rule_id": "MINISTERIAL_REVISED_COST_COMMITTEE_V0",
+      "policy_name": "Standing Committee on Cost Overruns (SCCO) Scrutiny",
+      "effective_from": "2015-01-01",
+      "effective_to": null,
+      "status": "unverified",
+      "applicability": {
+        "min_sanction_cost_cr": 150.0,
+        "sector": "ALL"
+      },
+      "conditions": {
+        "cost_overrun_pct_gte": 10.0,
+        "cost_overrun_pct_lt": 20.0
+      },
+      "required_approval_authority": "Standing Committee on Cost Overruns (SCCO) / Line Ministry",
+      "citation": "TODO_HUMAN_VERIFY (Ministry of Finance Department of Expenditure OM No. 24(35)/PF-II/2012 pending confirmation)",
+      "notes": "Baseline reference: Overruns between 10% and 20% require line ministry SCCO justification."
+    }
+  ]
+}

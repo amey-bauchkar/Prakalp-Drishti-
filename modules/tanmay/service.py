@@ -1,408 +1,409 @@
 """
-PRAKALP-DRISHTI: SATYA-KAVACH
-Module Lead: Tanmay
-Domain: 20% CCEA Cabinet Review Threshold Anti-Gaming & CPWD Clause 10CC Forensic Price Variation Audit.
-
-Features:
-1. McCrary Density Discontinuity Estimator: Detects artificial clustering of project budget revisions
-   in the 18.0% - 19.99% zone to bypass mandatory Cabinet Committee on Economic Affairs (CCEA) approval.
-2. Statutory CPWD Clause 10CC / NHAI Clause 70 Forensic Engine: Audits contractor price variations against
-   the statutory 85% escalable cap using historical WPI construction and labor wage index baselines locked to bid dates.
-3. Agency / Vendor Gaming Profiler: Ranks executing agencies by threshold evasion frequency and excess margin padding.
+PRAKALP-DRISHTI: Satya-Kavach Forensic Service Layer (Simplified & Focused)
+Focus: Deterministic CCEA boundary analysis [18%, 20%) vs [20%, 22%), flagged project queue,
+deduplicated cost revision history, and CPWD Clause 10CC price variation screening.
 """
 
-import os
 import json
+import logging
+import math
+import os
+from typing import Any, Dict, List, Optional
 import numpy as np
 import pandas as pd
-from typing import Dict, Any, List, Optional
 
+from modules.tanmay.rule_engine import get_rule_engine
 from analytics_engine.state_resolution import resolve_state
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
-WPI_PATH = os.path.join(BASE_DIR, "paimana_extracted", "advanced_macro", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv")
-LABOR_PATH = os.path.join(BASE_DIR, "paimana_extracted", "remaining_macro", "CONSTRUCTION_LABOR_WAGE_INDEX_2005_2026.csv")
-ENTITY_MAPPING_PATH = os.path.join(BASE_DIR, "paimana_extracted", "CANONICAL_ENTITIES_MAPPING.json")
+logger = logging.getLogger("prakalp.satya_kavach")
+
+DATA_PATH = os.path.join("paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
+WPI_PATH = os.path.join("paimana_extracted", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv")
+LABOR_PATH = os.path.join("paimana_extracted", "CONSTRUCTION_LABOR_WAGE_INDEX.csv")
+API_PROJECTS_PATH = os.path.join("paimana_extracted", "API_ALL_PROJECTS.csv")
+
 
 class SatyaKavachEngine:
     def __init__(self):
-        self.df = None
-        self.wpi_df = None
-        self.labor_df = None
-        self.entity_mapping = {}
-        self.wpi_by_year = {}
-        self.labor_by_year = {}
+        self.df: Optional[pd.DataFrame] = None
+        self.snapshots_df: Optional[pd.DataFrame] = None
+        self.rule_engine = get_rule_engine()
         self.fitted = False
+
+        # Macro Index series
+        self.wpi_by_year: Dict[int, Dict[str, float]] = {}
+        self.labor_by_year: Dict[int, float] = {}
+
+        self._load_macro_indices()
         self._load_data()
 
-    def _load_data(self):
-        # 1. Load Macro WPI Construction Indices
-        if os.path.exists(WPI_PATH):
-            self.wpi_df = pd.read_csv(WPI_PATH)
-            for _, r in self.wpi_df.iterrows():
-                try:
+    def _load_macro_indices(self):
+        """Loads historical WPI commodity series and labor wage index."""
+        try:
+            if os.path.exists(WPI_PATH):
+                w_df = pd.read_csv(WPI_PATH)
+                for _, r in w_df.iterrows():
                     yr = int(r["Year"])
                     self.wpi_by_year[yr] = {
-                        "all": float(r.get("WPI_All_Commodities", 100.0)),
-                        "cement": float(r.get("WPI_Cement_Lime_Plaster", 100.0)),
-                        "steel": float(r.get("WPI_Iron_Steel_Structural", 100.0)),
-                        "bitumen": float(r.get("WPI_Fuel_Bitumen_HighSpeedDiesel", 100.0)),
-                        "basket": float(r.get("WPI_Construction_Basket", 100.0))
+                        "steel": float(r.get("Steel_WPI_2011_Base", 100.0)),
+                        "cement": float(r.get("Cement_WPI_2011_Base", 100.0)),
+                        "fuel": float(r.get("Bitumen_Fuel_WPI_2011_Base", 100.0)),
+                        "other": float(r.get("Composite_Construction_WPI", 100.0)),
                     }
-                except Exception:
-                    pass
 
-        # 2. Load Labor Wage Indices
-        if os.path.exists(LABOR_PATH):
-            self.labor_df = pd.read_csv(LABOR_PATH)
-            for _, r in self.labor_df.iterrows():
-                try:
+            if os.path.exists(LABOR_PATH):
+                l_df = pd.read_csv(LABOR_PATH)
+                for _, r in l_df.iterrows():
                     yr = int(r["Year"])
                     self.labor_by_year[yr] = float(r.get("Labor_Wage_Index_2010_Base", 100.0))
-                except Exception:
-                    pass
+        except Exception as e:
+            logger.warning(f"Macro indices load warning: {e}")
 
-        # 3. Load Canonical Entity Mapping
-        if os.path.exists(ENTITY_MAPPING_PATH):
-            try:
-                with open(ENTITY_MAPPING_PATH, "r", encoding="utf-8") as f:
-                    self.entity_mapping = json.load(f).get("mapping_by_raw_string", {})
-            except Exception:
-                self.entity_mapping = {}
-
-        # 4. Load Master Project Database
-        if os.path.exists(DATA_PATH):
-            self.df = pd.read_csv(DATA_PATH)
-            self._preprocess_projects()
-            self.fitted = True
-
-    def _preprocess_projects(self):
-        self.df["OriginalCost"] = pd.to_numeric(self.df["OriginalCost"], errors="coerce").fillna(500.0)
-        self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
-        self.df["Expenditure"] = pd.to_numeric(self.df["Expenditure"], errors="coerce").fillna(0.0)
-        self.df["PhysicalProgress"] = pd.to_numeric(self.df["PhysicalProgress"], errors="coerce").fillna(25.0)
-        
-        # Calculate Real Overrun in INR Cr and Percentage
-        self.df["OverrunCr"] = np.maximum(0.0, self.df["RevisedCost"] - self.df["OriginalCost"])
-        self.df["OverrunPct"] = np.where(
-            self.df["OriginalCost"] > 0,
-            (self.df["OverrunCr"] / self.df["OriginalCost"]) * 100.0,
-            0.0
-        )
-        self.df["OverrunPct"] = np.round(self.df["OverrunPct"], 2)
-
-        # Parse Sanction & Target Years
-        self.df["SanctionDateParsed"] = pd.to_datetime(self.df["SanctionDate"], errors="coerce", dayfirst=True)
-        self.df["RevisedDateParsed"] = pd.to_datetime(self.df["RevisedDate"], errors="coerce", dayfirst=True)
-        
-        self.df["SanctionYear"] = self.df["SanctionDateParsed"].dt.year.fillna(2018).astype(int)
-        self.df["RevisedYear"] = self.df["RevisedDateParsed"].dt.year.fillna(2026).astype(int)
-
-        # Map Canonical Company Name
-        self.df["CanonicalAgency"] = self.df["COMPANYNAME"].map(
-            lambda x: self.entity_mapping.get(str(x), {}).get("canonical_id", str(x) if pd.notna(x) else "OTHER_AGENCY")
-        )
-
-        # Compute Clause 10CC Statutory Allowable Escalation for Each Project
-        self._compute_clause_10cc_for_all()
-
-    def _compute_clause_10cc_for_all(self):
-        """
-        Applies CPWD Clause 10CC statutory formula:
-        Escalation = 0.85 * OriginalCost * [ Ps*(S - S0)/S0 + Pc*(C - C0)/C0 + Pf*(F - F0)/F0 + Pl*(L - L0)/L0 + Pm*(M - M0)/M0 ]
-        Where 85% is the statutory escalable fraction (15% is fixed contractor overhead/profit).
-        """
-        statutory_allowed_cr = []
-        excess_claimed_cr = []
-        clause_verdicts = []
-
-        # Standard Statutory Component Weightages:
-        # Steel 20%, Cement 15%, Fuel/Bitumen 15%, Labor 25%, Other Materials 25%
-        p_steel = 0.20
-        p_cement = 0.15
-        p_fuel = 0.15
-        p_labor = 0.25
-        p_other = 0.25
-
-        current_year = 2026
-        curr_wpi = self.wpi_by_year.get(current_year, {"steel": 175.0, "cement": 150.0, "bitumen": 155.0, "basket": 160.0})
-        curr_labor = self.labor_by_year.get(current_year, 380.0)
-
-        for _, row in self.df.iterrows():
-            orig_cost = float(row["OriginalCost"])
-            claimed_overrun = float(row["OverrunCr"])
-            s_year = int(row["SanctionYear"])
-            
-            # Base indices locked to sanction/bid year
-            base_wpi = self.wpi_by_year.get(s_year, self.wpi_by_year.get(2015, {"steel": 100.0, "cement": 100.0, "bitumen": 100.0, "basket": 100.0}))
-            base_labor = self.labor_by_year.get(s_year, self.labor_by_year.get(2015, 193.0))
-
-            delta_steel = (curr_wpi["steel"] - base_wpi["steel"]) / max(1.0, base_wpi["steel"])
-            delta_cement = (curr_wpi["cement"] - base_wpi["cement"]) / max(1.0, base_wpi["cement"])
-            delta_fuel = (curr_wpi["bitumen"] - base_wpi["bitumen"]) / max(1.0, base_wpi["bitumen"])
-            delta_labor = (curr_labor - base_labor) / max(1.0, base_labor)
-            delta_other = (curr_wpi["basket"] - base_wpi["basket"]) / max(1.0, base_wpi["basket"])
-
-            composite_inflation = (
-                p_steel * delta_steel +
-                p_cement * delta_cement +
-                p_fuel * delta_fuel +
-                p_labor * delta_labor +
-                p_other * delta_other
-            )
-
-            # Statutory 85% rule
-            legal_escalation = max(0.0, 0.85 * orig_cost * composite_inflation)
-            statutory_allowed_cr.append(round(legal_escalation, 2))
-
-            excess = max(0.0, claimed_overrun - legal_escalation)
-            excess_claimed_cr.append(round(excess, 2))
-
-            if claimed_overrun == 0:
-                clause_verdicts.append("ZERO_OVERRUN")
-            elif claimed_overrun <= legal_escalation * 1.05:
-                clause_verdicts.append("COMPLIANT_10CC")
-            elif claimed_overrun <= legal_escalation * 1.30:
-                clause_verdicts.append("MODERATE_MARGIN_PADDING")
+    def _load_data(self):
+        """Loads master projects and snapshot monthly progression."""
+        try:
+            # 1. Master Projects Database
+            if os.path.exists(DATA_PATH):
+                self.df = pd.read_csv(DATA_PATH, low_memory=False)
             else:
-                clause_verdicts.append("EXCESSIVE_PRICE_GOUGING")
+                for alt_path in ["master_projects.csv", "paimana_extracted/MASTER_PROJECTS_DATASET.csv"]:
+                    if os.path.exists(alt_path):
+                        self.df = pd.read_csv(alt_path, low_memory=False)
+                        break
 
-        self.df["Clause10CC_AllowedCr"] = statutory_allowed_cr
-        self.df["Clause10CC_ExcessClaimCr"] = excess_claimed_cr
-        self.df["Clause10CC_Verdict"] = clause_verdicts
+            if self.df is not None and not self.df.empty:
+                self._sanitize_dataframe()
+                self.fitted = True
 
-    def get_anti_gaming_summary(self) -> Dict[str, Any]:
+            # 2. Multi-Month Snapshots Log (for timeline reconstruction)
+            if os.path.exists(API_PROJECTS_PATH):
+                self.snapshots_df = pd.read_csv(API_PROJECTS_PATH, low_memory=False)
+
+        except Exception as e:
+            logger.error(f"Failed to load dataset in SatyaKavachEngine: {e}")
+
+    def _sanitize_dataframe(self):
+        """Sanitizes columns, enforces data types, and flags NO_REVISION_ON_FILE."""
+        if "ProjectId" not in self.df.columns and "PROJECT_ID" in self.df.columns:
+            self.df["ProjectId"] = self.df["PROJECT_ID"]
+        if "ProjectName" not in self.df.columns and "PROJECT_NAME" in self.df.columns:
+            self.df["ProjectName"] = self.df["PROJECT_NAME"]
+        if "OriginalCost" not in self.df.columns and "ORIGINAL_COST" in self.df.columns:
+            self.df["OriginalCost"] = self.df["ORIGINAL_COST"]
+        if "RevisedCost" not in self.df.columns and "REVISED_COST" in self.df.columns:
+            self.df["RevisedCost"] = self.df["REVISED_COST"]
+        if "SectorName" not in self.df.columns and "SECTOR" in self.df.columns:
+            self.df["SectorName"] = self.df["SECTOR"]
+        if "AgencyName" not in self.df.columns and "AGENCY" in self.df.columns:
+            self.df["AgencyName"] = self.df["AGENCY"]
+
+        self.df["ProjectId"] = self.df["ProjectId"].astype(str)
+        self.df["OriginalCost"] = pd.to_numeric(self.df["OriginalCost"], errors="coerce").fillna(500.0)
+
+        # Track presence of filed revision
+        self.df["RevisedCostRaw"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce")
+        self.df["HasRevisionOnFile"] = self.df["RevisedCostRaw"].notna()
+
+        # Effective Revised Cost: if NaN, baseline original cost is effective
+        self.df["RevisedCostEffective"] = np.where(
+            self.df["HasRevisionOnFile"],
+            self.df["RevisedCostRaw"],
+            self.df["OriginalCost"],
+        )
+
+        # Overrun percentage
+        denom = np.where(self.df["OriginalCost"] > 0, self.df["OriginalCost"], 1.0)
+        self.df["OverrunPct"] = np.where(
+            self.df["HasRevisionOnFile"],
+            np.round(((self.df["RevisedCostEffective"] - self.df["OriginalCost"]) / denom) * 100.0, 2),
+            0.0,
+        )
+
+        # Sanction Year
+        if "SanctionYear" not in self.df.columns:
+            if "SanctionDate" in self.df.columns:
+                self.df["SanctionYear"] = pd.to_datetime(self.df["SanctionDate"], errors="coerce", dayfirst=True).dt.year.fillna(2018).astype(int)
+            else:
+                self.df["SanctionYear"] = 2018
+        else:
+            self.df["SanctionYear"] = pd.to_numeric(self.df["SanctionYear"], errors="coerce").fillna(2018).astype(int)
+
+    def get_boundary_analysis(self) -> Dict[str, Any]:
         """
-        Returns full statistical bunching audit, McCrary discontinuity metrics,
-        and high-risk flagged project cohorts.
+        Computes the core boundary metrics over the active revised population (§1):
+        - Active revised population N (excluding NO_REVISION_ON_FILE)
+        - Count in [18%, 20%)
+        - Count in [20%, 22%)
+        - Bin ratio and its exact 95% confidence interval
+        - Cost-overrun histogram
+        - Methodological disclosure
         """
         if self.df is None or self.df.empty:
-            return {"status": "no_data"}
+            return {"status": "error", "message": "Master dataset not loaded"}
 
-        # 1. Threshold Cohorts
-        bunching_zone = self.df[(self.df["OverrunPct"] >= 18.0) & (self.df["OverrunPct"] < 20.0)]
-        above_threshold = self.df[self.df["OverrunPct"] >= 20.0]
-        near_above_threshold = self.df[(self.df["OverrunPct"] >= 20.0) & (self.df["OverrunPct"] < 22.0)]
-        below_18 = self.df[(self.df["OverrunPct"] > 0) & (self.df["OverrunPct"] < 18.0)]
-        zero_overrun = self.df[self.df["OverrunPct"] == 0]
+        total_projects = len(self.df)
+        active_revised = self.df[self.df["HasRevisionOnFile"] == True]
+        no_rev_count = total_projects - len(active_revised)
 
-        # 2. McCrary Density Ratio Calculation: Mass([18, 20)) / Mass([20, 22))
-        n_bunch = len(bunching_zone)
-        n_near_above = max(1, len(near_above_threshold))
-        density_ratio = round(n_bunch / n_near_above, 2)
-        
-        # P-value approximation under uniform null hypothesis
-        p_value = 0.00085 if density_ratio >= 1.3 else 0.045
+        # Boundary bands over active revised projects
+        near_below = active_revised[(active_revised["OverrunPct"] >= 18.0) & (active_revised["OverrunPct"] < 20.0)]
+        near_above = active_revised[(active_revised["OverrunPct"] >= 20.0) & (active_revised["OverrunPct"] < 22.0)]
+        all_above_20 = active_revised[active_revised["OverrunPct"] >= 20.0]
 
-        # 3. Capital in High-Risk Evasion Zone
-        bunching_capital_cr = float(bunching_zone["RevisedCost"].sum())
-        total_portfolio_capex = float(self.df["RevisedCost"].sum())
-        excess_margin_in_bunching_cr = float(bunching_zone["Clause10CC_ExcessClaimCr"].sum())
+        num_count = len(near_below)
+        den_count = len(near_above)
 
-        # 4. Top Flagged Projects
-        flagged_projects = []
-        for _, row in bunching_zone.sort_values(by="RevisedCost", ascending=False).head(30).iterrows():
-            orig_cost = float(row["OriginalCost"])
-            rev_cost = float(row["RevisedCost"])
-            ov_pct = float(row["OverrunPct"])
+        # Exact ratio and 95% Confidence Interval
+        if den_count > 0:
+            bin_mass_ratio = round(float(num_count / den_count), 2)
+            # Log-normal standard error for ratio of counts
+            se_log = math.sqrt((1.0 / max(1, num_count)) + (1.0 / den_count))
+            ci_lower = round(math.exp(math.log(bin_mass_ratio) - 1.96 * se_log), 2)
+            ci_upper = round(math.exp(math.log(bin_mass_ratio) + 1.96 * se_log), 2)
+        else:
+            bin_mass_ratio = float(num_count)
+            ci_lower = None
+            ci_upper = None
+
+        # Flagged sample projects table in the [18.0%, 20.0%) band
+        flagged_list = []
+        for _, r in near_below.sort_values(by="OverrunPct", ascending=False).iterrows():
+            pid = str(r["ProjectId"])
+            orig_c = float(r["OriginalCost"])
+            rev_c = float(r["RevisedCostEffective"])
+            ov_pct = float(r["OverrunPct"])
             evasion_margin = round(20.0 - ov_pct, 2)
-            
-            flagged_projects.append({
-                "project_id": str(row["ProjectId"]),
-                "project_name": str(row["ProjectName"]),
-                "sector": str(row["SectorName"]),
-                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
-                "agency": str(row["COMPANYNAME"]),
-                "canonical_agency": str(row["CanonicalAgency"]),
-                "original_cost_cr": orig_cost,
-                "revised_cost_cr": rev_cost,
-                "overrun_cr": float(row["OverrunCr"]),
+            flagged_list.append({
+                "project_id": pid,
+                "project_name": str(r.get("ProjectName", f"Project {pid}")),
+                "sector": str(r.get("SectorName", "General")),
+                "agency": str(r.get("AgencyName", "Central Ministry")),
+                "state": resolve_state(pid, r.get("StateName"))[0],
+                "original_cost_cr": round(orig_c, 2),
+                "revised_cost_cr": round(rev_c, 2),
+                "cost_increase_cr": round(max(0.0, rev_c - orig_c), 2),
                 "overrun_pct": ov_pct,
                 "evasion_margin_pct": evasion_margin,
-                "physical_progress": float(row["PhysicalProgress"]),
-                "expenditure_cr": float(row["Expenditure"]),
-                "clause_10cc_allowed_cr": float(row["Clause10CC_AllowedCr"]),
-                "excess_claimed_cr": float(row["Clause10CC_ExcessClaimCr"]),
-                "audit_verdict": str(row["Clause10CC_Verdict"]),
-                "risk_flag": "HIGH_PROBABILITY_CCEA_EVASION",
-                "risk_description": f"Cost revision of +{ov_pct}% is engineered {evasion_margin}% below the mandatory 20% CCEA Cabinet appraisal threshold."
+                "distance_to_boundary_pp": evasion_margin,
+                "classification": "THRESHOLD_PROXIMITY",
+                "classification_label": "CCEA Threshold Proximity (18.0%–19.99%)",
             })
 
         return {
+            "status": "success",
             "module": "SATYA-KAVACH",
             "module_lead": "Tanmay",
-            "statutory_rule": "Mandatory Cabinet Committee on Economic Affairs (CCEA) Review at >= 20.0% Cost Escalation",
-            "mccrary_bunching_signal": {
-                "density_ratio": density_ratio,
-                "p_value": p_value,
-                "statistical_significance": "p < 0.001 (Highly Significant Discontinuity)",
-                "interpretation": f"Excess density mass spike of {density_ratio}x in the 18.0%–19.99% band confirms strategic threshold-avoidance bunching by project authorities."
-            },
+            "positioning_statement": "A deterministic forensic layer for screening anomalous cost-reporting patterns around the applicable CCEA cost-overrun boundary.",
+            "methodological_disclosure": (
+                "Boundary proximity is a screening indicator, not evidence of intentional manipulation. "
+                "Documentary review is required to determine the cause of the revision."
+            ),
             "kpi_metrics": {
-                "total_projects_analyzed": len(self.df),
-                "projects_in_bunching_zone_18_20pct": len(bunching_zone),
-                "projects_above_20pct_cabinet_rule": len(above_threshold),
-                "projects_under_18pct": len(below_18),
-                "zero_overrun_projects": len(zero_overrun),
-                "bunching_zone_capital_cr": round(bunching_capital_cr, 2),
-                "total_portfolio_capex_cr": round(total_portfolio_capex, 2),
-                "bunching_capital_share_pct": round((bunching_capital_cr / max(1.0, total_portfolio_capex)) * 100.0, 2),
-                "total_unjustified_excess_margin_cr": round(excess_margin_in_bunching_cr, 2)
+                "total_projects_in_dataset": total_projects,
+                "active_revised_projects": len(active_revised),
+                "no_revision_on_file_projects": no_rev_count,
+                "projects_in_bunching_zone_18_20pct": num_count,
+                "projects_in_comparison_zone_20_22pct": den_count,
+                "projects_above_20pct_cabinet_rule": len(all_above_20),
+                "bunching_zone_capital_cr": round(float(near_below["RevisedCostEffective"].sum()), 2),
             },
-            "flagged_sample_projects": flagged_projects
+            "boundary_metrics": {
+                "active_revised_population_n": len(active_revised),
+                "excluded_unrevised_n": no_rev_count,
+                "numerator_count": num_count,
+                "denominator_count": den_count,
+                "numerator_bin": "[18.0%, 20.0%)",
+                "denominator_bin": "[20.0%, 22.0%)",
+                "ratio": bin_mass_ratio,
+                "confidence_interval_95": {
+                    "lower": ci_lower,
+                    "upper": ci_upper,
+                    "string": f"[{ci_lower}, {ci_upper}]" if ci_lower is not None else "N/A",
+                },
+            },
+            "mccrary_bunching_signal": {
+                "boundary_bin_mass_ratio": bin_mass_ratio,
+                "density_ratio": bin_mass_ratio,
+                "numerator_count": num_count,
+                "denominator_count": den_count,
+                "numerator_bin": "[18.0%, 20.0%)",
+                "denominator_bin": "[20.0%, 22.0%)",
+                "total_active_population": len(active_revised),
+                "excluded_no_revision_count": no_rev_count,
+                "confidence_interval_95": f"[{ci_lower}, {ci_upper}]" if ci_lower is not None else "N/A",
+                "interpretation": f"Boundary Bin-Mass Ratio of {bin_mass_ratio}x (95% CI: [{ci_lower}, {ci_upper}]) across active revised cohort.",
+            },
+            "flagged_sample_projects": flagged_list,
         }
+
+    def get_anti_gaming_summary(self) -> Dict[str, Any]:
+        """Alias for backward compatibility and test verification."""
+        return self.get_boundary_analysis()
 
     def get_bunching_histogram_data(self) -> Dict[str, Any]:
         """
-        Generates fine-grained histogram distribution bins around the 20% threshold
-        to clearly visualize the artificial McCrary bunching spike.
+        Generates distribution bins around the 20% CCEA threshold over the active revised population.
+        Excludes unrevised projects with NO_REVISION_ON_FILE to present true cost variance shape.
         """
         if self.df is None or self.df.empty:
-            return {"bins": []}
+            return {"bins": [], "metadata": {}}
 
-        # Bins around 0% to 50%+
-        bins_def = [
-            ("0% (On Budget)", 0.0, 0.01),
-            ("0.1% - 5.0%", 0.01, 5.0),
-            ("5.0% - 10.0%", 5.0, 10.0),
-            ("10.0% - 15.0%", 10.0, 15.0),
-            ("15.0% - 18.0%", 15.0, 18.0),
-            ("18.0% - 19.99% (CCEA Evasion Zone)", 18.0, 20.0),  # CRITICAL SPIKE
-            ("20.0% - 22.0% (Cabinet Breached)", 20.0, 22.0),
-            ("22.0% - 25.0%", 22.0, 25.0),
-            ("25.0% - 30.0%", 25.0, 30.0),
-            ("30.0% - 40.0%", 30.0, 40.0),
-            ("40.0% - 50.0%", 40.0, 50.0),
-            ("50.0%+ (Severe Overrun)", 50.0, 10000.0),
+        active_revised = self.df[self.df["HasRevisionOnFile"] == True]
+        no_rev_count = len(self.df) - len(active_revised)
+
+        bin_definitions = [
+            {"label": "0.0% - 4.99% (Low Overrun)", "min": 0.0, "max": 5.0, "spike": False, "breach": False},
+            {"label": "5.0% - 9.99% (Moderate)", "min": 5.0, "max": 10.0, "spike": False, "breach": False},
+            {"label": "10.0% - 14.99% (Elevated)", "min": 10.0, "max": 15.0, "spike": False, "breach": False},
+            {"label": "15.0% - 17.99% (Pre-Boundary)", "min": 15.0, "max": 18.0, "spike": False, "breach": False},
+            {"label": "18.0% - 19.99% (Threshold Proximity)", "min": 18.0, "max": 20.0, "spike": True, "breach": False},
+            {"label": "20.0% - 22.0% (Cabinet Threshold Met)", "min": 20.0, "max": 22.0, "spike": False, "breach": True},
+            {"label": "22.0% - 29.99% (Substantial Breach)", "min": 22.0, "max": 30.0, "spike": False, "breach": True},
+            {"label": "30.0%+ (Severe Escalation)", "min": 30.0, "max": 9999.0, "spike": False, "breach": True},
         ]
 
-        hist_items = []
-        for label, low, high in bins_def:
-            if low == high:
-                sub = self.df[self.df["OverrunPct"] == 0]
-            elif high >= 10000.0:
-                sub = self.df[self.df["OverrunPct"] >= low]
-            else:
-                sub = self.df[(self.df["OverrunPct"] >= low) & (self.df["OverrunPct"] < high)]
-
-            is_spike = (low == 18.0 and high == 20.0)
-            is_cabinet = (low >= 20.0)
-
-            hist_items.append({
-                "bin_label": label,
-                "range_min": low,
-                "range_max": high,
-                "project_count": int(len(sub)),
-                "total_capex_cr": round(float(sub["RevisedCost"].sum()), 2),
-                "is_bunching_spike": is_spike,
-                "is_cabinet_breached": is_cabinet,
-                "color": "#D97706" if is_spike else ("#E11D48" if is_cabinet else "#2563EB")
+        bins = []
+        for b in bin_definitions:
+            subset = active_revised[(active_revised["OverrunPct"] >= b["min"]) & (active_revised["OverrunPct"] < b["max"])]
+            count = len(subset)
+            total_capex = float(subset["RevisedCostEffective"].sum())
+            bins.append({
+                "bin_label": b["label"],
+                "range_min": b["min"],
+                "range_max": b["max"],
+                "project_count": count,
+                "total_capex_cr": round(total_capex, 2),
+                "is_bunching_spike": b["spike"],
+                "is_cabinet_breached": b["breach"],
             })
 
+        overruns = active_revised["OverrunPct"].values
+        mean_ov = round(float(np.mean(overruns)), 2) if len(overruns) > 0 else 0.0
+        median_ov = round(float(np.median(overruns)), 2) if len(overruns) > 0 else 0.0
+
         return {
-            "title": "Portfolio Cost Escalation Distribution & McCrary Discontinuity",
-            "threshold_reference_pct": 20.0,
-            "bins": hist_items
+            "bins": bins,
+            "population_metadata": {
+                "active_revised_count": len(active_revised),
+                "excluded_no_revision_count": no_rev_count,
+                "mean_overrun_pct": mean_ov,
+                "median_overrun_pct": median_ov,
+                "boundary_threshold_pct": 20.0,
+            },
         }
 
     def get_clause_10cc_audit_report(self, limit: int = 50, sector_filter: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Returns full CPWD Clause 10CC price variation forensic audit across all projects,
-        comparing actual claimed cost revisions against statutory 85% legal allowance.
-        """
+        """Provides verified Clause 10CC price variation forensic audit across projects."""
         if self.df is None or self.df.empty:
-            return {"records": []}
+            return {"statutory_escalable_cap_pct": 85.0, "fixed_contractor_overhead_pct": 15.0, "audited_records": []}
 
-        sub_df = self.df
+        active = self.df[self.df["HasRevisionOnFile"] == True]
         if sector_filter and sector_filter != "All":
-            sub_df = sub_df[sub_df["SectorName"] == sector_filter]
+            active = active[active["SectorName"] == sector_filter]
 
-        # Sort by largest excess claimed margin
-        excessive_df = sub_df[sub_df["OverrunCr"] > 0].sort_values(by="Clause10CC_ExcessClaimCr", ascending=False)
-        
-        results = []
-        for _, row in excessive_df.head(limit).iterrows():
-            orig_cost = float(row["OriginalCost"])
-            rev_cost = float(row["RevisedCost"])
-            claimed_esc = float(row["OverrunCr"])
-            allowed_esc = float(row["Clause10CC_AllowedCr"])
-            excess_margin = float(row["Clause10CC_ExcessClaimCr"])
+        records = []
+        for _, r in active.head(limit).iterrows():
+            pid = str(r["ProjectId"])
+            orig_c = float(r["OriginalCost"])
+            rev_c = float(r["RevisedCostEffective"])
+            s_year = int(r["SanctionYear"])
 
-            results.append({
-                "project_id": str(row["ProjectId"]),
-                "project_name": str(row["ProjectName"]),
-                "sector": str(row["SectorName"]),
-                "state": resolve_state(row.get("ProjectId"), row.get("StateName"))[0],
-                "agency": str(row["COMPANYNAME"]),
-                "sanction_year": int(row["SanctionYear"]),
-                "original_cost_cr": orig_cost,
-                "revised_cost_cr": rev_cost,
-                "claimed_escalation_cr": claimed_esc,
-                "statutory_10cc_allowed_cr": allowed_esc,
-                "excess_margin_claimed_cr": excess_margin,
-                "excess_margin_ratio": round((claimed_esc / max(1.0, allowed_esc)), 2),
-                "verdict": str(row["Clause10CC_Verdict"]),
-                "statutory_rule_citation": "CPWD GCC Clause 10CC (85% escalable ceiling pegged to bid date indices)"
+            calc = self._calculate_10cc_cap(orig_c, s_year)
+            records.append({
+                "project_id": pid,
+                "project_name": str(r.get("ProjectName", f"Project {pid}")),
+                "sector": str(r.get("SectorName", "General")),
+                "agency": str(r.get("AgencyName", "Central Ministry")),
+                "original_cost_cr": orig_c,
+                "revised_cost_cr": rev_c,
+                "sanction_year": s_year,
+                "statutory_10cc_allowed_cr": calc["statutory_allowed_escalation_cr"],
+                "cap_pct_of_original_cost": calc["cap_pct_of_original_cost"],
+                "is_implausible_legacy_cap": calc["is_implausible_legacy_cap"],
+                "claim_status": "UNAVAILABLE",
             })
 
-        total_portfolio_excess = float(self.df["Clause10CC_ExcessClaimCr"].sum())
-        total_projects_flagged = int(len(self.df[self.df["Clause10CC_Verdict"] == "EXCESSIVE_PRICE_GOUGING"]))
-
         return {
-            "statutory_framework": "Central Public Works Department (CPWD) General Conditions of Contract Clause 10CC & NHAI Clause 70",
             "statutory_escalable_cap_pct": 85.0,
             "fixed_contractor_overhead_pct": 15.0,
-            "total_portfolio_excess_claimed_cr": round(total_portfolio_excess, 2),
-            "total_projects_with_price_gouging": total_projects_flagged,
-            "audited_records": results
+            "audited_records": records,
         }
 
-    def get_agency_gaming_rankings(self) -> Dict[str, Any]:
+    def _calculate_10cc_cap(
+        self,
+        original_cost_cr: float,
+        sanction_year: int,
+        p_steel: float = 0.20,
+        p_cement: float = 0.15,
+        p_fuel: float = 0.15,
+        p_labor: float = 0.25,
+        p_other: float = 0.25,
+    ) -> Dict[str, Any]:
         """
-        Ranks executing agencies / PSUs by their propensity to game the 20% CCEA threshold
-        and pad cost revisions beyond Clause 10CC statutory limits.
+        Calculates statutory allowable escalation under CPWD GCC Clause 10CC:
+        Escalable Base = 0.85 * OriginalCost
+        Fixed Risk Deduction = 0.15 * OriginalCost (Contractor Risk Margin)
+        ΔIndex = (Index_t / Index_0) - 1.0 (growth rate)
         """
-        if self.df is None or self.df.empty:
-            return {"rankings": []}
+        base_yr = min(max(int(sanction_year), 2005), 2026)
+        curr_yr = 2026
 
-        agency_stats = []
-        for agency, group in self.df.groupby("COMPANYNAME"):
-            total_proj = len(group)
-            if total_proj < 2:
-                continue
+        base_wpi = self.wpi_by_year.get(base_yr, {"steel": 100.0, "cement": 100.0, "fuel": 100.0, "other": 100.0})
+        curr_wpi = self.wpi_by_year.get(curr_yr, {"steel": 175.0, "cement": 150.0, "fuel": 155.0, "other": 160.0})
 
-            bunch_count = len(group[(group["OverrunPct"] >= 18.0) & (group["OverrunPct"] < 20.0)])
-            cabinet_count = len(group[group["OverrunPct"] >= 20.0])
-            bunch_rate = round((bunch_count / total_proj) * 100.0, 1)
-            
-            total_orig = float(group["OriginalCost"].sum())
-            total_rev = float(group["RevisedCost"].sum())
-            total_excess_margin = float(group["Clause10CC_ExcessClaimCr"].sum())
+        base_labor = self.labor_by_year.get(base_yr, 100.0)
+        curr_labor = self.labor_by_year.get(curr_yr, 380.0)
 
-            # Institutional Gaming Score (0-100) based on bunching frequency and excess margin ratio
-            gaming_score = min(100.0, round((bunch_rate * 2.5) + (min(50.0, (total_excess_margin / max(1.0, total_orig)) * 20.0)), 1))
+        # Commodity price growth rates (ratio - 1)
+        d_steel = max(0.0, (curr_wpi["steel"] - base_wpi["steel"]) / max(1.0, base_wpi["steel"]))
+        d_cement = max(0.0, (curr_wpi["cement"] - base_wpi["cement"]) / max(1.0, base_wpi["cement"]))
+        d_fuel = max(0.0, (curr_wpi["fuel"] - base_wpi["fuel"]) / max(1.0, base_wpi["fuel"]))
+        d_labor = max(0.0, (curr_labor - base_labor) / max(1.0, base_labor))
+        d_other = max(0.0, (curr_wpi["other"] - base_wpi["other"]) / max(1.0, base_wpi["other"]))
 
-            agency_stats.append({
-                "agency_name": str(agency),
-                "total_projects": total_proj,
-                "bunching_projects_18_20pct": bunch_count,
-                "cabinet_breached_projects": cabinet_count,
-                "bunching_rate_pct": bunch_rate,
-                "total_sanctioned_capex_cr": round(total_orig, 2),
-                "total_revised_capex_cr": round(total_rev, 2),
-                "total_excess_margin_claimed_cr": round(total_excess_margin, 2),
-                "institutional_gaming_score": gaming_score,
-                "risk_tier": "HIGH_GAMING_RISK" if gaming_score >= 40 else ("MODERATE_WATCHLIST" if gaming_score >= 15 else "LOW_RISK")
-            })
+        composite_inflation = (
+            p_steel * d_steel +
+            p_cement * d_cement +
+            p_fuel * d_fuel +
+            p_labor * d_labor +
+            p_other * d_other
+        )
 
-        # Sort by highest gaming score
-        agency_stats.sort(key=lambda x: (x["bunching_projects_18_20pct"], x["institutional_gaming_score"]), reverse=True)
+        escalable_base = 0.85 * original_cost_cr
+        fixed_risk = 0.15 * original_cost_cr
+        statutory_cap = round(escalable_base * composite_inflation, 2)
+
+        cap_pct_orig = round((statutory_cap / max(1.0, original_cost_cr)) * 100.0, 1)
+        is_legacy_cap = cap_pct_orig > 50.0
 
         return {
-            "title": "Agency & PSU Threshold Gaming Risk Leaderboard",
-            "total_agencies_evaluated": len(agency_stats),
-            "rankings": agency_stats[:25]
+            "base_year": base_yr,
+            "current_year": curr_yr,
+            "escalable_base_cr": round(escalable_base, 2),
+            "fixed_risk_deduction_cr": round(fixed_risk, 2),
+            "composite_inflation_pct": round(composite_inflation * 100.0, 2),
+            "statutory_allowed_escalation_cr": statutory_cap,
+            "cap_pct_of_original_cost": cap_pct_orig,
+            "is_implausible_legacy_cap": is_legacy_cap,
+            "legacy_cap_caveat": (
+                "Clause 10CC accrues period-wise on quarterly work bills executed during the contract duration. "
+                "Applying cumulative multi-decade inflation against the entire initial contract base over-estimates "
+                "allowable escalation for legacy projects where work was not uniformly executed in the terminal period."
+            ) if is_legacy_cap else None,
+            "deltas": {
+                "steel_growth_pct": round(d_steel * 100.0, 2),
+                "cement_growth_pct": round(d_cement * 100.0, 2),
+                "fuel_growth_pct": round(d_fuel * 100.0, 2),
+                "labor_growth_pct": round(d_labor * 100.0, 2),
+                "other_growth_pct": round(d_other * 100.0, 2),
+            },
+            "component_contributions_cr": {
+                "steel": round(escalable_base * (p_steel * d_steel), 2),
+                "cement": round(escalable_base * (p_cement * d_cement), 2),
+                "fuel": round(escalable_base * (p_fuel * d_fuel), 2),
+                "labor": round(escalable_base * (p_labor * d_labor), 2),
+                "other": round(escalable_base * (p_other * d_other), 2),
+            },
         }
 
     def simulate_clause_10cc(
@@ -410,80 +411,239 @@ class SatyaKavachEngine:
         original_cost_cr: float,
         sanction_year: int,
         revised_cost_cr: float,
+        claimed_escalation_cr: Optional[float] = None,
         p_steel: float = 0.20,
         p_cement: float = 0.15,
         p_fuel: float = 0.15,
         p_labor: float = 0.25,
-        p_other: float = 0.25
+        p_other: float = 0.25,
     ) -> Dict[str, Any]:
-        """
-        Interactive Simulator: Allows officials to test any contract value and custom component weights
-        to calculate legal CPWD Clause 10CC price variation vs claimed amount.
-        """
-        current_year = 2026
-        curr_wpi = self.wpi_by_year.get(current_year, {"steel": 175.0, "cement": 150.0, "bitumen": 155.0, "basket": 160.0})
-        curr_labor = self.labor_by_year.get(current_year, 380.0)
-
-        base_wpi = self.wpi_by_year.get(sanction_year, self.wpi_by_year.get(2015, {"steel": 100.0, "cement": 100.0, "bitumen": 100.0, "basket": 100.0}))
-        base_labor = self.labor_by_year.get(sanction_year, self.labor_by_year.get(2015, 193.0))
-
-        delta_steel = (curr_wpi["steel"] - base_wpi["steel"]) / max(1.0, base_wpi["steel"])
-        delta_cement = (curr_wpi["cement"] - base_wpi["cement"]) / max(1.0, base_wpi["cement"])
-        delta_fuel = (curr_wpi["bitumen"] - base_wpi["bitumen"]) / max(1.0, base_wpi["bitumen"])
-        delta_labor = (curr_labor - base_labor) / max(1.0, base_labor)
-        delta_other = (curr_wpi["basket"] - base_wpi["basket"]) / max(1.0, base_wpi["basket"])
-
-        composite_inflation = (
-            p_steel * delta_steel +
-            p_cement * delta_cement +
-            p_fuel * delta_fuel +
-            p_labor * delta_labor +
-            p_other * delta_other
+        """Operator what-if calculation for Clause 10CC."""
+        calc = self._calculate_10cc_cap(
+            original_cost_cr=original_cost_cr,
+            sanction_year=sanction_year,
+            p_steel=p_steel,
+            p_cement=p_cement,
+            p_fuel=p_fuel,
+            p_labor=p_labor,
+            p_other=p_other,
         )
-
-        statutory_escalation = max(0.0, 0.85 * original_cost_cr * composite_inflation)
-        claimed_overrun = max(0.0, revised_cost_cr - original_cost_cr)
-        excess_margin = max(0.0, claimed_overrun - statutory_escalation)
-        overrun_pct = (claimed_overrun / max(1.0, original_cost_cr)) * 100.0
-
-        is_ccea_bunching = (18.0 <= overrun_pct < 20.0)
+        statutory_cap = calc["statutory_allowed_escalation_cr"]
+        claimed_esc = float(claimed_escalation_cr) if claimed_escalation_cr is not None else max(0.0, revised_cost_cr - original_cost_cr)
+        overrun_pct = round((max(0.0, revised_cost_cr - original_cost_cr) / max(1.0, original_cost_cr)) * 100.0, 2)
 
         return {
             "inputs": {
                 "original_cost_cr": original_cost_cr,
                 "sanction_year": sanction_year,
                 "revised_cost_cr": revised_cost_cr,
-                "weights": {
-                    "steel_pct": p_steel * 100,
-                    "cement_pct": p_cement * 100,
-                    "fuel_bitumen_pct": p_fuel * 100,
-                    "labor_pct": p_labor * 100,
-                    "other_materials_pct": p_other * 100
-                }
+                "claimed_escalation_cr": claimed_esc,
             },
-            "macro_indices": {
-                "base_year": sanction_year,
-                "current_year": current_year,
-                "steel_growth_pct": round(delta_steel * 100.0, 1),
-                "cement_growth_pct": round(delta_cement * 100.0, 1),
-                "fuel_growth_pct": round(delta_fuel * 100.0, 1),
-                "labor_growth_pct": round(delta_labor * 100.0, 1),
-                "composite_inflation_pct": round(composite_inflation * 100.0, 2)
-            },
-            "statutory_formula": "V_L = 0.85 * OriginalCost * CompositeInflation",
-            "statutory_allowed_escalation_cr": round(statutory_escalation, 2),
-            "contractor_claimed_escalation_cr": round(claimed_overrun, 2),
-            "unjustified_excess_margin_cr": round(excess_margin, 2),
-            "claimed_overrun_pct": round(overrun_pct, 2),
-            "is_ccea_threshold_evasion": is_ccea_bunching,
-            "audit_verdict": "COMPLIANT_WITHIN_10CC" if excess_margin <= 0.01 else "EXCESS_MARGIN_REJECTED"
+            "composite_inflation_pct": calc["composite_inflation_pct"],
+            "escalable_base_cr": calc["escalable_base_cr"],
+            "statutory_allowed_escalation_cr": statutory_cap,
+            "claimed_overrun_pct": overrun_pct,
+            "is_ccea_threshold_evasion": bool(18.0 <= overrun_pct < 20.0),
+            "cap_pct_of_original_cost": calc["cap_pct_of_original_cost"],
+            "is_implausible_legacy_cap": calc["is_implausible_legacy_cap"],
+            "legacy_cap_caveat": calc["legacy_cap_caveat"],
+            "statutory_citation": "CPWD GCC Clause 10CC (85% escalable ceiling)",
         }
 
-_satya_kavach_instance = None
+    def get_project_dossier(self, project_id: str) -> Dict[str, Any]:
+        """
+        Builds the focused project inspector dossier (§3):
+        - Header: ID, name, sector, agency, state
+        - Costs: original, revised, increase, overrun %
+        - Boundary: applicable boundary (20%), current overrun, distance in pp
+        - Cost revision history: real state changes only (deduplicated)
+        - Financial impact: original -> revised -> increase
+        - Clause 10CC: status VERIFIED / INDICATIVE / UNAVAILABLE, amount, calculation details
+        - Methodological note
+        """
+        if self.df is None or self.df.empty:
+            return {"status": "not_found", "message": "Dataset not loaded"}
+
+        row_match = self.df[self.df["ProjectId"] == str(project_id)]
+        if row_match.empty:
+            return {"status": "not_found", "message": f"Project #{project_id} not found."}
+
+        row = row_match.iloc[0]
+        pid = str(project_id)
+        p_name = str(row.get("ProjectName", f"Project #{pid}"))
+        sector = str(row.get("SectorName", "General"))
+        agency = str(row.get("AgencyName", "Central Ministry"))
+        state = resolve_state(pid, row.get("StateName"))[0]
+
+        has_rev = bool(row["HasRevisionOnFile"])
+        orig_cost = float(row["OriginalCost"])
+        rev_cost = float(row["RevisedCostEffective"]) if has_rev else orig_cost
+        cost_increase = max(0.0, rev_cost - orig_cost) if has_rev else 0.0
+        ov_pct = float(row["OverrunPct"]) if has_rev else 0.0
+        s_year = int(row["SanctionYear"])
+
+        # Deterministic CCEA Rule Resolution
+        if not has_rev:
+            classification = "NO_REVISION_ON_FILE"
+            classification_label = "No Revision on File (Baseline Sanction Active)"
+            req_authority = "Administrative Line Ministry"
+            citation = "Operating under initial Administrative Approval & Expenditure Sanction (AA&ES)."
+            boundary_pct = 20.0
+            distance_pp = 20.0
+        else:
+            rule_res = self.rule_engine.resolve(
+                original_cost_cr=orig_cost,
+                revised_cost_cr=rev_cost,
+                time_overrun_months=float(row.get("TimeOverrunMonths", 0.0)) if pd.notna(row.get("TimeOverrunMonths")) else None,
+                sector=sector,
+            )
+            classification = rule_res.classification
+            classification_label = rule_res.classification_label
+            req_authority = rule_res.required_approval_authority
+            citation = rule_res.citation
+            boundary_pct = 20.0
+            distance_pp = round(max(0.0, boundary_pct - ov_pct), 2)
+
+        # Deduplicated Revision History (Real State Changes Only)
+        revision_history = self._reconstruct_revision_history(pid, row)
+
+        # Clause 10CC Calculation
+        calc_10cc = self._calculate_10cc_cap(orig_cost, s_year)
+
+        return {
+            "status": "success",
+            "project_id": pid,
+            "project_name": p_name,
+            "sector": sector,
+            "agency": agency,
+            "state": state,
+            "has_revision_on_file": has_rev,
+            "costs": {
+                "original_cost_cr": orig_cost,
+                "revised_cost_cr": rev_cost if has_rev else None,
+                "cost_increase_cr": cost_increase if has_rev else 0.0,
+                "overrun_pct": ov_pct if has_rev else 0.0,
+                "sanction_year": s_year,
+            },
+            "boundary": {
+                "applicable_boundary_pct": boundary_pct,
+                "current_overrun_pct": ov_pct,
+                "distance_to_boundary_pp": distance_pp,
+                "is_in_proximity_band": bool(18.0 <= ov_pct < 20.0),
+                "is_boundary_breached": bool(ov_pct >= 20.0),
+                "classification": classification,
+                "classification_label": classification_label,
+                "required_approval_authority": req_authority,
+                "statutory_citation": citation,
+            },
+            "revision_history": revision_history,
+            "clause_10cc": {
+                "status": "INDICATIVE",  # Contract Schedule F weights indicative
+                "status_label": "Indicative Statutory Cap (CPWD Standard Model)",
+                "statutory_allowed_escalation_cr": calc_10cc["statutory_allowed_escalation_cr"],
+                "cap_pct_of_original_cost": calc_10cc["cap_pct_of_original_cost"],
+                "is_implausible_legacy_cap": calc_10cc["is_implausible_legacy_cap"],
+                "legacy_cap_caveat": calc_10cc["legacy_cap_caveat"],
+                "calculation_disclosure": {
+                    "base_year": calc_10cc["base_year"],
+                    "current_year": calc_10cc["current_year"],
+                    "escalable_base_cr": calc_10cc["escalable_base_cr"],
+                    "fixed_risk_deduction_cr": calc_10cc["fixed_risk_deduction_cr"],
+                    "composite_inflation_pct": calc_10cc["composite_inflation_pct"],
+                    "component_contributions_cr": calc_10cc["component_contributions_cr"],
+                    "commodity_growth_rates": calc_10cc["deltas"],
+                },
+            },
+            "methodological_note": (
+                "Threshold proximity is an anomaly signal, not evidence of intentional manipulation. "
+                "Documentary review is required to determine the cause of the revision."
+            ),
+        }
+
+    def get_project_forensic_dossier(self, project_id: str) -> Dict[str, Any]:
+        """Alias for get_project_dossier."""
+        return self.get_project_dossier(project_id)
+
+    def _reconstruct_revision_history(self, project_id: str, master_row: pd.Series) -> List[Dict[str, Any]]:
+        """
+        Deduplicates snapshots to emit events ONLY upon actual state changes (§3).
+        Suppresses null/nan strings and resolves dates cleanly.
+        """
+        events = []
+
+        # 1. Baseline Administrative Approval
+        raw_s_date = master_row.get("SanctionDate")
+        s_date = str(raw_s_date).strip() if pd.notna(raw_s_date) and str(raw_s_date).strip() not in ["nan", "None", ""] else "Date unavailable"
+        orig_cost = float(master_row["OriginalCost"])
+
+        events.append({
+            "event_type": "ORIGINAL_SANCTION",
+            "date": s_date,
+            "title": "Initial Administrative Approval & Sanction",
+            "cost_cr": orig_cost,
+            "overrun_pct": 0.0,
+            "distance_to_boundary_pp": 20.0,
+            "details": f"Sanctioned at ₹{orig_cost:,.2f} Cr under baseline administrative scope.",
+        })
+
+        # 2. Extract intermediate progression events from snapshots only on true state change
+        if self.snapshots_df is not None:
+            p_snaps = self.snapshots_df[self.snapshots_df["ProjectId"].astype(str) == str(project_id)]
+            if not p_snaps.empty:
+                last_cost = orig_cost
+                for _, s_row in p_snaps.iterrows():
+                    rev_raw = s_row.get("RevisedCost")
+                    if pd.isna(rev_raw) or str(rev_raw).strip() in ["nan", "None", ""]:
+                        continue
+
+                    curr_rev = float(rev_raw)
+                    s_date_raw = s_row.get("RevisedDate") or s_row.get("SanctionDate")
+                    evt_date = str(s_date_raw).strip() if pd.notna(s_date_raw) and str(s_date_raw).strip() not in ["nan", "None", ""] else "Date unavailable"
+
+                    # Only emit if cost changed meaningfully (> 0.01 Cr)
+                    if abs(curr_rev - last_cost) > 0.01:
+                        delta_c = curr_rev - last_cost
+                        ov_pct = round(((curr_rev - orig_cost) / max(1.0, orig_cost)) * 100.0, 2)
+                        dist_pp = round(max(0.0, 20.0 - ov_pct), 2)
+
+                        events.append({
+                            "event_type": "COST_REVISION_EVENT",
+                            "date": evt_date,
+                            "title": f"Cost Revision: ₹{curr_rev:,.2f} Cr ({'+' if delta_c >= 0 else ''}₹{delta_c:,.2f} Cr)",
+                            "cost_cr": curr_rev,
+                            "overrun_pct": ov_pct,
+                            "distance_to_boundary_pp": dist_pp,
+                            "details": f"Revised cost filed at ₹{curr_rev:,.2f} Cr ({ov_pct:+.2f}% overrun vs original sanction).",
+                        })
+                        last_cost = curr_rev
+
+        # 3. Latest recorded state if no intermediate events were emitted but revision is present
+        if len(events) == 1 and bool(master_row["HasRevisionOnFile"]):
+            rev_cost = float(master_row["RevisedCostEffective"])
+            if abs(rev_cost - orig_cost) > 0.01:
+                ov_pct = float(master_row["OverrunPct"])
+                dist_pp = round(max(0.0, 20.0 - ov_pct), 2)
+                raw_rev_date = master_row.get("RevisedDate")
+                r_date = str(raw_rev_date).strip() if pd.notna(raw_rev_date) and str(raw_rev_date).strip() not in ["nan", "None", ""] else "Date unavailable"
+                events.append({
+                    "event_type": "LATEST_REVISION",
+                    "date": r_date,
+                    "title": f"Current Active Revision: ₹{rev_cost:,.2f} Cr",
+                    "cost_cr": rev_cost,
+                    "overrun_pct": ov_pct,
+                    "distance_to_boundary_pp": dist_pp,
+                    "details": f"Operating under approved cost revision of ₹{rev_cost:,.2f} Cr ({ov_pct:+.2f}% overrun).",
+                })
+
+        return events
+
+
+# Singleton engine instance
+_engine_instance = None
+
 
 def get_satya_kavach_engine() -> SatyaKavachEngine:
-    global _satya_kavach_instance
-    if _satya_kavach_instance is None:
-        _satya_kavach_instance = SatyaKavachEngine()
-    return _satya_kavach_instance
-
+    global _engine_instance
+    if _engine_instance is None:
+        _engine_instance = SatyaKavachEngine()
+    return _engine_instance
