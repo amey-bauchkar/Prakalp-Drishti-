@@ -5,7 +5,8 @@ import {
   Clock, ArrowRight, ExternalLink, HelpCircle, Layers, Info, Check,
   TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3
 } from 'lucide-react';
-import { Circle, CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
+import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
+import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
 
 const API = '';
 
@@ -129,9 +130,9 @@ export default function PublicDashboardView() {
         <span className="flex items-center gap-2 flex-wrap">
           <b>NAGRIK PUBLIC TRANSPARENCY PORTAL</b>
           <span className="sep">/</span>
-          <span>RTI ACT §4(1)(b) MANDATE</span>
+          <span>RTI ACT §4 PROACTIVE DISCLOSURE</span>
           <span className="sep">/</span>
-          <span>2,207 MONITORED PROJECTS</span>
+          <span>1,981 ACTIVE PROJECTS · 2,207 CORPUS</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -253,6 +254,9 @@ function PublicMetadataTab({
   states,
   loading
 }) {
+  // Reported by BaseMapLayer when cached tiles are missing. Held here rather
+  // than inside the map so the notice can sit over the pane at a readable size.
+  const [basemapStatus, setBasemapStatus] = useState('ok');
   const mapCenter = activeProject?.latitude && activeProject?.longitude
     ? [activeProject.latitude, activeProject.longitude]
     : [22.5937, 78.9629];
@@ -339,10 +343,7 @@ function PublicMetadataTab({
               style={{ height: '100%', width: '100%' }}
               scrollWheelZoom={false}
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <BaseMapLayer onStatus={setBasemapStatus} />
               {/* `projects`, not `filteredProjects`. The latter is declared in
                   PublicDashboardView and is NOT in scope inside this component --
                   it arrives here as the `projects` prop, already filtered. Both
@@ -407,6 +408,7 @@ function PublicMetadataTab({
                 );
               })}
             </MapContainer>
+            <BaseMapNotice status={basemapStatus} />
           </div>
 
           <div className="panel-head border-t border-b-0 py-2">
@@ -830,10 +832,7 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
                   style={{ height: 360, width: '100%' }}
                   aria-label="Administrative locator showing the recorded centroid and the area within which the works lie"
                 >
-                  <TileLayer
-                    attribution='&copy; OpenStreetMap contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
+                  <BaseMapLayer />
                   <Circle
                     center={[plan.centre[0], plan.centre[1]]}
                     radius={plan.geocode_error_radius_m || 100000}
