@@ -86,18 +86,20 @@ const KaryaDakshataSimulator = () => {
     return (
         <LoginGate>
             <div className="space-y-8 font-sans max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="panel p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div className="space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-                        <Activity className="w-3.5 h-3.5 text-gov-saffron" />
-                        <span>KARYA-DAKSHATA · Agency Execution Simulator</span>
+            {/* ═══════════════════════════════════════════════════════════════
+                TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+                ═══════════════════════════════════════════════════════════════ */}
+            <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                <div className="space-y-2 max-w-2xl relative z-10">
+                    <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+                        <Activity className="w-3.5 h-3.5 text-white" />
+                        <span>KARYA-DAKSHATA · AGENCY EXECUTION SIMULATOR</span>
                     </div>
-                    <h1 className="font-heading font-extrabold text-[30px] sm:text-[36px] text-gov-navy leading-tight tracking-tight">
-                        Execution Reliability Simulator
-                    </h1>
-                    <p className="text-text-secondary text-[15px] max-w-2xl font-sans leading-relaxed">
-                        AI-driven De-Biasing of "Optimistic" Project Estimates using Historical Agency Track Records.
+                    <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+                        EXECUTION RELIABILITY SIMULATOR
+                    </h2>
+                    <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+                        AI-driven de-biasing of optimistic project estimates using historical agency track records and empirical execution velocities.
                     </p>
                 </div>
             </div>

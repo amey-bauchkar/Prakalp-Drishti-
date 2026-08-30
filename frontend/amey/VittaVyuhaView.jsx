@@ -40,41 +40,41 @@ export default function VittaVyuhaView() {
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Top Header Banner */}
-      <section className="panel p-4 sm:p-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <DollarSign className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>Module 3 · Smart Budget Rebalancing</span>
-            </div>
-            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
-              VITTA-VYUHA: Smart Budget Allocation &amp; Rebalancing
-            </h2>
-            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
-              Rebalances national infrastructure funds to maximize completed projects, protect the mandatory 10% North-Eastern Region (NER) quota, and maximize capital efficiency.
-            </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+            <DollarSign className="w-3.5 h-3.5 text-white" />
+            <span>MODULE 3 · SMART BUDGET REBALANCING</span>
           </div>
-
-          {/* Solve Speed Badge */}
-          {denied && !loading && (
-            <div className="note note-critical flex items-start gap-2">
-              <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
-              <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
-            </div>
-          )}
-
-          {data && (
-            <div className="note note-ok flex items-center gap-3 shrink-0">
-              <Zap className="w-5 h-5 text-emerald-600" />
-              <div>
-                <span className="text-[10px] uppercase font-bold text-emerald-700 block font-mono">Optimization Speed</span>
-                <span className="text-[17px] font-black text-emerald-950 font-mono">{data.solve_time_ms} ms</span>
-              </div>
-            </div>
-          )}
+          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+            VITTA-VYUHA: SMART BUDGET ALLOCATION &amp; REBALANCING
+          </h2>
+          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+            Rebalances national infrastructure funds to maximize completed projects, protect the mandatory 10% North-Eastern Region (NER) quota, and maximize capital efficiency.
+          </p>
         </div>
-      </section>
+
+        {/* Solve Speed Badge */}
+        {denied && !loading && (
+          <div className="note note-critical flex items-start gap-2 shrink-0">
+            <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
+            <span>{denied}<span className="block font-normal mt-0.5">Capital reallocation requires the administrator role.</span></span>
+          </div>
+        )}
+
+        {data && (
+          <div className="flex items-center gap-3 bg-black/25 px-4 py-2.5 rounded-sm border border-white/15 shrink-0">
+            <Zap className="w-5 h-5 text-amber-400" />
+            <div>
+              <span className="text-[9.5px] uppercase font-bold text-ink-200 block font-mono">Optimization Speed</span>
+              <span className="text-[17px] font-black text-white font-mono">{data.solve_time_ms} ms</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Interactive Controls Bar */}
       <div className="panel p-4 sm:p-5 space-y-6">

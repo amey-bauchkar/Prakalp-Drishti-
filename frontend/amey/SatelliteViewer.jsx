@@ -115,7 +115,7 @@ function Toast({ message, tone = 'warn', onClose }) {
   );
 }
 
-export default function SatelliteViewer({ projectId = '619092' }) {
+export default function SatelliteViewer({ projectId = '619092', className = 'panel overflow-hidden' }) {
   // Two sources of truth, and only one of them counts.
   //
   // `localTier` is what the cached session claims and is used ONLY to decide
@@ -419,7 +419,7 @@ non-performance — see the imagery-currency note above.</div>
   }
 
   return (
-    <div className="panel overflow-hidden">
+    <div className={className}>
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
       {/* Header */}

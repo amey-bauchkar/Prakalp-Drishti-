@@ -36,46 +36,48 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402" }) {
 
   return (
     <div className="space-y-8 font-sans relative">
-      {/* Top Header Banner */}
-      <section className="panel p-4 sm:p-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <FileText className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>Module 4 · Executive Governance</span>
-            </div>
-            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight flex items-center gap-2">
-              <span>PRAGATI-SAARTHI: Bilingual Cabinet Review Note</span>
-            </h2>
-            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed"> Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
-            </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+            <FileText className="w-3.5 h-3.5 text-white" />
+            <span>MODULE 4 · EXECUTIVE GOVERNANCE</span>
           </div>
-
-          {/* Bilingual Language Switcher */}
-          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
-            <Globe className="w-4 h-4 text-gov-saffron ml-1 mr-0.5" />
-            <button
-              onClick={() => setLang('en')}
-              className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
-                lang === 'en'
-                  ? 'bg-gov-navy text-white shadow-sm'
-                  : 'text-text-secondary hover:text-gov-navy'
-              }`}
-            > English
-            </button>
-            <button
-              onClick={() => setLang('hi')}
-              className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all ${
-                lang === 'hi'
-                  ? 'bg-gov-navy text-white shadow-sm'
-                  : 'text-text-secondary hover:text-gov-navy'
-              }`}
-            >
-              हिन्दी
-            </button>
-          </div>
+          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+            PRAGATI-SAARTHI: BILINGUAL CABINET REVIEW NOTE
+          </h2>
+          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+            Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
+          </p>
         </div>
-      </section>
+
+        {/* Bilingual Language Switcher */}
+        <div className="flex items-center gap-1.5 bg-black/25 p-1.5 rounded-sm border border-white/15 shrink-0">
+          <Globe className="w-4 h-4 text-gov-accent ml-1 mr-0.5" />
+          <button
+            onClick={() => setLang('en')}
+            className={`px-3 py-1 text-xs font-bold rounded-xs transition-all cursor-pointer ${
+              lang === 'en'
+                ? 'bg-gov-accent text-gov-navy font-black shadow-sm'
+                : 'text-ink-200 hover:text-white'
+            }`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => setLang('hi')}
+            className={`px-3 py-1 text-xs font-bold rounded-xs transition-all cursor-pointer ${
+              lang === 'hi'
+                ? 'bg-gov-accent text-gov-navy font-black shadow-sm'
+                : 'text-ink-200 hover:text-white'
+            }`}
+          >
+            हिन्दी
+          </button>
+        </div>
+      </div>
 
       {loading && (
         <div className="p-12 text-center text-text-muted font-bold text-sm panel">

@@ -79,21 +79,23 @@ export default function ModelBenchmarkView() {
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Sovereign Top Header */}
-      <section className="panel p-4 sm:p-5">
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-            <FlaskConical className="w-3.5 h-3.5 text-gov-saffron" />
-            <span>Module 7 · Model Evidence &amp; Benchmarks</span>
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+            <FlaskConical className="w-3.5 h-3.5 text-white" />
+            <span>MODULE 7 · MODEL EVIDENCE &amp; BENCHMARKS</span>
           </div>
-          <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
+          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
             AI/ML VS CONVENTIONAL STATISTICAL BASELINES: EMPIRICAL BENCHMARK AUDIT
           </h2>
-          <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
+          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
             Transparent evaluation comparing Gradient Boosted Trees against OLS and Sector Mean baselines across all 2,207 projects.
           </p>
         </div>
-      </section>
+      </div>
 
       {/* ── Dimension (b): ML vs conventional ─────────────────────────── */}
       {Object.entries(bench.targets || {}).map(([target, blk]) => {
