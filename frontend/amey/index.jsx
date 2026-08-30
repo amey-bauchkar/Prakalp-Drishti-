@@ -94,10 +94,15 @@ export default function AmeyMasterView() {
               />
             </div>
 
-            {/* Top Emblem & Sovereign Institutional Masthead */}
-            <div className="relative z-10 text-center space-y-3 pt-1">
+            {/* Top Emblem & Official Identity */}
+            <div className="relative z-10 flex flex-col items-center justify-center space-y-2 mb-2 pt-1 text-center">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wider uppercase backdrop-blur-md mb-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Smart India Hackathon 2026 · Problem Statement SIH26103 · MoSPI</span>
+              </div>
+
               <div className="flex items-center justify-center">
-                <div className="w-16 h-16 sm:w-18 sm:h-18 bg-white rounded-2xl p-1.5 shadow-lg border border-white/80 flex items-center justify-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-2xl p-1.5 shadow-lg border border-white/80 flex items-center justify-center">
                   <img
                     src="/logos/prakalp_drishti_emblem.png"
                     alt="PRAKALP-DRISHTI Official Emblem"
@@ -118,13 +123,13 @@ export default function AmeyMasterView() {
 
             {/* Centered Main Narrative & Action Buttons */}
             <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4 my-4">
-              <h1 className="font-heading font-extrabold text-[28px] sm:text-[36px] lg:text-[42px] leading-[1.12] text-white tracking-[-0.025em]">
-                National Decision Intelligence for India's 2,207 Mega-Projects
+              <h1 className="font-heading font-extrabold text-[28px] sm:text-[38px] lg:text-[44px] leading-[1.12] text-white tracking-[-0.025em]">
+                National Decision Intelligence for India's Infrastructure
               </h1>
 
-              <p className="text-ink-200 text-[13.5px] sm:text-[15px] leading-relaxed max-w-3xl mx-auto font-sans">
-                Real-time oversight platform monitoring ₹31.4 Lakh Crore in sovereign capital investments. 
-                Equipped with mathematical de-biasing, financial stress testing, and delay contagion modeling.
+              <p className="text-ink-200 text-[13.5px] sm:text-[15.5px] leading-relaxed max-w-3xl mx-auto font-sans">
+                PRAKALP-DRISHTI transforms national project monitoring from descriptive reporting into predictive, 
+                risk-aware decision intelligence for sovereign policymakers and project administrators.
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
@@ -143,18 +148,19 @@ export default function AmeyMasterView() {
               </div>
             </div>
 
-            {/* Bottom Centered Metric Strip */}
-            <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-2xl w-full mx-auto grid grid-cols-3 divide-x divide-white/12 pb-1">
+            {/* Bottom Centered 4-Metric Strip (MoSPI April 2026 Flash Report Aligned) */}
+            <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-3xl w-full mx-auto grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/12 pb-1 gap-y-3 sm:gap-y-0">
               {[
-                { v: '2,207', k: 'Central Sector Works' },
-                { v: '₹41.8L Cr', k: 'Revised Capital Outlay' },
-                { v: '22 Sectors', k: 'Union Line Ministries' },
+                { v: '1,981', k: 'Active Ongoing Projects' },
+                { v: '₹42.78L Cr', k: 'Revised Project Cost' },
+                { v: '22', k: 'Infrastructure Sectors' },
+                { v: '17', k: 'Central Ministries' },
               ].map((m) => (
-                <div key={m.k} className="px-4 text-center">
-                  <div className="font-heading text-[22px] sm:text-[25px] font-extrabold text-white leading-none tracking-tight">
+                <div key={m.k} className="px-3 text-center">
+                  <div className="font-heading text-[20px] sm:text-[23px] font-extrabold text-white leading-none tracking-tight">
                     {m.v}
                   </div>
-                  <div className="text-[9.5px] sm:text-[10.5px] uppercase tracking-institutional text-ink-200 mt-1.5 font-bold">
+                  <div className="text-[9.5px] sm:text-[10px] uppercase tracking-institutional text-ink-200 mt-1.5 font-bold">
                     {m.k}
                   </div>
                 </div>
@@ -190,9 +196,9 @@ export default function AmeyMasterView() {
 
               <div className="lg:col-span-5 border-y lg:border-y-0 lg:border-x border-gov-gold-border/90 py-3 lg:py-0 lg:px-7">
                 <p className="text-[13.5px] sm:text-[14px] text-text-secondary leading-relaxed font-sans">
-                  Empirical oversight across all 2,207 central sector infrastructure projects. 
-                  Automated statutory auditing prevents budget inflation, enforces 80% Right-of-Way pre-requisites, 
-                  and establishes transparent accountability across union ministries.
+                  Predictive decision support across <strong>1,981 active infrastructure projects</strong> (₹42.78L Cr) 
+                  anchored to MoSPI's April 2026 reporting, calibrated on a <strong>2,207-project master corpus</strong> 
+                  to eliminate outcome-censoring bias in completion forecasting.
                 </p>
               </div>
 
@@ -201,7 +207,7 @@ export default function AmeyMasterView() {
                   Statutory PAIMANA Repository
                 </div>
                 <div className="text-[11.5px] text-text-secondary mt-1 font-sans">
-                  Central Sector Projects (&ge; ₹150 Cr) · 2005–2026
+                  Active Monitoring: 1,981 Projects (&ge; ₹150 Cr)
                 </div>
                 <div className="text-[10px] text-gov-saffron-dark font-bold uppercase tracking-widest mt-1">
                   DIID / IPMD Division · MoSPI
@@ -210,7 +216,7 @@ export default function AmeyMasterView() {
             </div>
           </div>
 
-          {/* 2-Column Statutory Directives */}
+          {/* 2-Column Statutory Directives & Analytical Corpus */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* Left: General Information */}
             <div className="lg:col-span-5 panel p-6 sm:p-7 flex flex-col justify-between rounded-2xl">
@@ -234,7 +240,7 @@ export default function AmeyMasterView() {
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-gov-success shrink-0 mt-0.5" />
-                    <span><strong>Pre-Sanction RoW:</strong> Minimum 80% Right-of-Way acquisition prior to project sanction.</span>
+                    <span><strong>RTI Section 4:</strong> Proactive public transparency layer for sovereign capital outlays.</span>
                   </li>
                 </ul>
               </div>
@@ -252,7 +258,7 @@ export default function AmeyMasterView() {
                   <span className="text-[10.5px] font-bold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light px-3 py-1 rounded border border-gov-gold-border">
                     Autonomous Oversight
                   </span>
-                  <span className="text-[11px] text-text-muted font-mono font-semibold">Air-Gapped Sovereign Engine</span>
+                  <span className="text-[11px] text-text-muted font-mono font-semibold">Outcome-Aware ML Architecture</span>
                 </div>
 
                 <h3 className="font-heading font-extrabold text-[19px] sm:text-[22px] text-gov-navy leading-snug">
@@ -261,9 +267,25 @@ export default function AmeyMasterView() {
 
                 <p className="text-[13.5px] sm:text-[14px] text-text-secondary leading-relaxed font-sans">
                   PRAKALP-DRISHTI bridges the critical gap between raw administrative project reports and actionable 
-                  executive policy. By continuously auditing financial distress, weather risk, and structural dependencies, 
-                  it delivers early-warning lead time 106 months ahead of project completion.
+                  executive policy. Active projects provide current-state telemetry, while historical completed projects provide 
+                  ground-truth outcome labels — enabling robust Conformal Prediction without outcome-censoring bias.
                 </p>
+
+                {/* Corpus Pill Breakdown */}
+                <div className="grid grid-cols-3 gap-2.5 pt-2 font-sans">
+                  <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">1,981</div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Active Ongoing</div>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">+ 226</div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Completed Labels</div>
+                  </div>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
+                    <div className="text-[16px] font-extrabold text-emerald-800 font-heading">= 2,207</div>
+                    <div className="text-[10px] text-emerald-700 font-bold uppercase tracking-tight">Master Corpus</div>
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4 mt-4 border-t border-border-default flex items-center justify-between">

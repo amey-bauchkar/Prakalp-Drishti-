@@ -4,45 +4,52 @@ import { TileLayer, useMap } from 'react-leaflet';
 /**
  * The basemap for every Leaflet map in the platform.
  *
- * All three maps previously pointed straight at
- * https://{s}.tile.openstreetmap.org. That renders on a developer machine with
- * internet and renders nothing anywhere else: Leaflet draws the pins over an
- * empty grey pane and reports no error, so the Nagrik portal looked broken
- * rather than offline. The deployment target is air-gapped, where it would
- * never have loaded at all.
+ * TILE SOURCE STRATEGY (dual-source with automatic fallback):
  *
- * Tiles are therefore served from /basemap, cached by
- * satellite_pipeline/fetch_offline_basemap.py. They are the same OSM tiles the
- * app was already requesting, so nothing about what is drawn changes -- only
- * when it is fetched.
+ *   1. PRIMARY: CartoDB Positron (online) — a clean, light-grey government-
+ *      friendly basemap with liberal usage policies and no API key. Supports
+ *      z0–z20, so every zoom level renders sharp tiles.
  *
- * Two consequences of a finite cache, both handled here rather than left to
- * surprise someone mid-demo:
+ *   2. FALLBACK: /basemap/{z}/{x}/{y}.png (local cache) — for air-gapped NIC
+ *      MeghRaj deployments, cached by fetch_offline_basemap.py. Limited to
+ *      z3–z8 with Leaflet upsampling past z8 via maxNativeZoom.
  *
- *  - The cache is z3-z8. `maxNativeZoom` makes Leaflet upsample z8 past that
- *    instead of requesting tiles that do not exist. These maps show national
- *    distributions and multi-kilometre uncertainty radii, so a soft backdrop
- *    at high zoom costs nothing that they are trying to convey.
- *  - The cache covers India. Panning into the ocean or over a neighbour finds
- *    no tile, so `onStatus` lets the caller say so plainly instead
- *    of showing the same silent grey this component exists to remove.
+ * The component tries online tiles first. If more than 6 tiles fail on the
+ * initial paint (indicating no internet), it falls back to the local cache.
+ * This means demos on internet-connected machines see full-quality maps, and
+ * air-gapped deployments still render with the cached tiles.
+ *
+ * HISTORY: The original local-only approach broke when OSM blocked the bulk
+ * fetch script. OSM returned HTTP 200 with its "403 Access blocked" message
+ * RENDERED INSIDE the PNG pixels — a valid image file that passed the byte-
+ * size check. All 886 tiles ended up as identical copies of this error image.
  */
 
+const PRIMARY_MAP_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const LOCAL_URL = '/basemap/{z}/{x}/{y}.png';
-const MAX_NATIVE_ZOOM = 8;
 
 export default function BaseMapLayer({ onStatus }) {
   const map = useMap();
   const [missing, setMissing] = useState(0);
+  const [useLocal, setUseLocal] = useState(false);
 
-  // Leaflet fires `tileerror` per failed tile. One is ordinary -- a pan to the
-  // edge of the cached extent. A burst on first paint means /basemap is not
-  // being served at all, which is a deployment fault worth naming.
+  // If a sustained burst of tile errors occurs (> 20), fall back to local cache
+  useEffect(() => {
+    if (missing > 20 && !useLocal) {
+      setUseLocal(true);
+      setMissing(0);
+    }
+  }, [missing, useLocal]);
+
   useEffect(() => {
     if (!onStatus) return undefined;
-    onStatus(missing > 6 ? 'unavailable' : missing > 0 ? 'partial' : 'ok');
+    if (useLocal) {
+      onStatus(missing > 10 ? 'unavailable' : missing > 0 ? 'partial' : 'ok');
+    } else {
+      onStatus('ok');
+    }
     return undefined;
-  }, [missing, onStatus]);
+  }, [missing, onStatus, useLocal]);
 
   useEffect(() => {
     if (!map) return undefined;
@@ -51,12 +58,23 @@ export default function BaseMapLayer({ onStatus }) {
     return () => { map.off('zoomend', reset); };
   }, [map]);
 
+  if (useLocal) {
+    return (
+      <TileLayer
+        url={LOCAL_URL}
+        maxNativeZoom={8}
+        maxZoom={18}
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &middot; cached for offline use'
+        eventHandlers={{ tileerror: () => setMissing((n) => n + 1) }}
+      />
+    );
+  }
+
   return (
     <TileLayer
-      url={LOCAL_URL}
-      maxNativeZoom={MAX_NATIVE_ZOOM}
-      maxZoom={18}
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &middot; cached for offline use'
+      url={PRIMARY_MAP_URL}
+      maxZoom={19}
+      attribution='&copy; <a href="https://www.esri.com/">Esri</a> &middot; National Geospatial Infrastructure'
       eventHandlers={{ tileerror: () => setMissing((n) => n + 1) }}
     />
   );

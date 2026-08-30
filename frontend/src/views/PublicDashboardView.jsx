@@ -130,9 +130,9 @@ export default function PublicDashboardView() {
         <span className="flex items-center gap-2 flex-wrap">
           <b>NAGRIK PUBLIC TRANSPARENCY PORTAL</b>
           <span className="sep">/</span>
-          <span>RTI ACT §4(1)(b) MANDATE</span>
+          <span>RTI ACT §4 PROACTIVE DISCLOSURE</span>
           <span className="sep">/</span>
-          <span>2,207 MONITORED PROJECTS</span>
+          <span>1,981 ACTIVE PROJECTS · 2,207 CORPUS</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
