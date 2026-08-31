@@ -183,7 +183,7 @@ def load_in_memory_cache():
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
 
 # Dynamic Auto-Discovery of Member Routers (Zero-Conflict Protocol)
-MEMBERS = ["amey", "tanmay", "parth", "janhavi", "soham", "aditya", "karya_dakshata"]
+MEMBERS = ["amey", "tanmay", "parth", "janhavi", "aditya", "karya_dakshata"]
 for member in MEMBERS:
     mounted = False
     for candidate in (f"modules.{member}.router", f"backend.modules.{member}.router"):

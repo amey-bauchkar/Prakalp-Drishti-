@@ -396,7 +396,7 @@ for owner, path, keyfield in [
     ("SATYA-KAVACH (tanmay)", "/api/tanmay/status", None),
     ("ARTHA-NETRA (parth)", "/api/parth/status", None),
     ("VARSHA-SPEED (janhavi)", "/api/janhavi/status", None),
-    ("DPR-SCORER (soham)", "/api/soham/status", None),
+    ("KARYA-DAKSHATA (karya_dakshata)", "/api/karya-dakshata/status", None),
     ("EO-AUDITOR (aditya)", "/api/aditya/status", None),
 ]:
     s, d = call(path)
@@ -1592,8 +1592,18 @@ try:
     # STALENESS.
     _s_now = imagery_staleness(as_of_iso="2023-03-01")
     check(F, "fresh imagery is not flagged stale", not _s_now["is_stale"], "")
-    _s_old = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=90.0)
-    check(F, "44-month-old imagery is flagged stale", _s_old["is_stale"], "")
+    # These asserted a 44-month staleness warning built on a false label:
+    # release id 93 is not a Wayback release, so the after-epoch came from the
+    # live basemap (fetched 2026-08), not 2023-01. The imagery is fresher than
+    # claimed and the BASELINE is far older -- 2014-02, not 2018-02.
+    _s_now = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=90.0)
+    check(F, "vintage is reported UNKNOWN rather than asserted fresh",
+          _s_now["severity"] == "UNKNOWN", f"={_s_now['severity']}")
+    check(F, "the ~150-month measurement span is disclosed",
+          _s_now["measurement_span_months"] > 140,
+          f"={_s_now.get('measurement_span_months')}")
+    _s_old = imagery_staleness(as_of_iso="2031-01-01", reported_progress_pct=90.0)
+    check(F, "a genuinely stale pair is still flagged", _s_old["is_stale"], "")
     check(F, "a stale pair with high reported progress carries an escalation caveat",
           "discrepancy_caveat" in _s_old, "")
 except Exception as _e:
@@ -1751,7 +1761,7 @@ if len(_cv) == 2:
 for _ep in ("/api/tanmay/gaming-analysis", "/api/tanmay/bunching-histogram",
             "/api/tanmay/clause-10cc-audit", "/api/tanmay/anumati/clearances",
             "/api/parth/psu-risk", "/api/parth/portfolio", "/api/parth/agencies",
-            "/api/soham/election-rush", "/api/aditya/contractors",
+            "/api/karya-dakshata/agencies", "/api/aditya/contractors",
             "/api/aditya/projects", "/api/janhavi/status"):
     s_, _d = call(_ep, tok=ADMIN)
     check(F, f"{_ep} responds", s_ == 200, f"status={s_}")

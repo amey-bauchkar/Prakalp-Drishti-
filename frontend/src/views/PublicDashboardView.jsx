@@ -5,7 +5,8 @@ import {
   Clock, ArrowRight, ExternalLink, HelpCircle, Layers, Info, Check,
   TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3
 } from 'lucide-react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
+import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
 
 const API = '';
 
@@ -111,7 +112,7 @@ export default function PublicDashboardView() {
     {
       id: 'pratibimb',
       label: 'Satellite Verification (PRATIBIMB)',
-      desc: 'Sentinel-2 dual-epoch optical before/after ground inspection',
+      desc: 'Dual-epoch optical before/after ground inspection (ESRI World Imagery)',
       icon: Eye
     },
     {
@@ -129,9 +130,9 @@ export default function PublicDashboardView() {
         <span className="flex items-center gap-2 flex-wrap">
           <b>NAGRIK PUBLIC TRANSPARENCY PORTAL</b>
           <span className="sep">/</span>
-          <span>RTI ACT §4(1)(b) MANDATE</span>
+          <span>RTI ACT §4 PROACTIVE DISCLOSURE</span>
           <span className="sep">/</span>
-          <span>2,207 MONITORED PROJECTS</span>
+          <span>1,981 ACTIVE PROJECTS · 2,207 CORPUS</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -157,9 +158,9 @@ export default function PublicDashboardView() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="panel p-3 bg-white/[0.05] border-white/15 text-right font-mono">
+            <div className="panel p-3 bg-white/[0.05] border-white/15 text-right">
               <div className="text-[9.5px] uppercase tracking-wider text-ink-300 font-bold">Monitored Portfolio</div>
-              <div className="text-[18px] font-bold text-white leading-tight">₹31.4L Cr Capex</div>
+              <div className="text-[19px] font-heading font-extrabold text-white leading-tight">₹31.4L Cr Capex</div>
             </div>
           </div>
         </div>
@@ -253,6 +254,9 @@ function PublicMetadataTab({
   states,
   loading
 }) {
+  // Reported by BaseMapLayer when cached tiles are missing. Held here rather
+  // than inside the map so the notice can sit over the pane at a readable size.
+  const [basemapStatus, setBasemapStatus] = useState('ok');
   const mapCenter = activeProject?.latitude && activeProject?.longitude
     ? [activeProject.latitude, activeProject.longitude]
     : [22.5937, 78.9629];
@@ -267,35 +271,35 @@ function PublicMetadataTab({
         <div className="panel panel-accent">
           <div className="panel-head">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="tag tag-solid font-mono">ID #{activeProject.project_id}</span>
+              <span className="tag tag-solid font-heading font-bold text-[10px]">ID #{activeProject.project_id}</span>
               <span className="tag tag-info">{activeProject.sector || 'Central Sector'}</span>
               <span className={`tag ${status.tagClass}`}>{status.label}</span>
               <span className="panel-title truncate ml-1">{activeProject.project_name}</span>
             </div>
             <span className="panel-meta shrink-0">
-              Physical Progress: <strong className="text-gov-navy">{progressPct.toFixed(1)}%</strong>
+              Physical Progress: <strong className="text-gov-navy font-heading font-bold text-[12.5px]">{progressPct.toFixed(1)}%</strong>
             </span>
           </div>
 
           <div className="hairgrid hairgrid-4">
             <div className="metric-cell">
               <span className="metric-label">Executing Agency</span>
-              <span className="metric-value metric-value-sm truncate">{activeProject.company || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold truncate">{activeProject.company || '—'}</span>
               <span className="metric-sub truncate">{activeProject.state || 'Pan-India'}</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Original Sanction Date</span>
-              <span className="metric-value metric-value-sm font-mono">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
               <span className="metric-sub">CCEA baseline approval</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Target Completion</span>
-              <span className="metric-value metric-value-sm font-mono">{activeProject.target_date?.slice(0, 10) || '—'}</span>
+              <span className="metric-value metric-value-sm font-heading font-bold">{activeProject.target_date?.slice(0, 10) || '—'}</span>
               <span className="metric-sub">Revised deadline</span>
             </div>
             <div className="metric-cell">
               <span className="metric-label">Schedule Deviation</span>
-              <span className={`metric-value metric-value-sm ${Number(activeProject.delayed_months) > 0 ? 'metric-neg' : 'metric-pos'}`}>
+              <span className={`metric-value metric-value-sm font-heading font-bold ${Number(activeProject.delayed_months) > 0 ? 'metric-neg' : 'metric-pos'}`}>
                 {Number(activeProject.delayed_months) > 0 ? `+${activeProject.delayed_months} Months` : 'Nil Delay'}
               </span>
               <span className="metric-sub">Against original target</span>
@@ -311,7 +315,7 @@ function PublicMetadataTab({
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="font-mono text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Completed</span>
+            <span className="font-heading text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Completed</span>
           </div>
         </div>
       )}
@@ -339,10 +343,7 @@ function PublicMetadataTab({
               style={{ height: '100%', width: '100%' }}
               scrollWheelZoom={false}
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <BaseMapLayer onStatus={setBasemapStatus} />
               {/* `projects`, not `filteredProjects`. The latter is declared in
                   PublicDashboardView and is NOT in scope inside this component --
                   it arrives here as the `projects` prop, already filtered. Both
@@ -384,9 +385,9 @@ function PublicMetadataTab({
                     <Popup>
                       <div className="p-1 font-sans text-xs space-y-1">
                         <div className="font-bold text-slate-900">{p.project_name}</div>
-                        <div className="text-slate-600 font-mono text-[10px]">ID: #{p.project_id} · {p.sector}</div>
-                        <div className="text-slate-700 font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
-                        <div className="text-slate-700">Progress: {p.progress_perc}% ({pStat.label})</div>
+                        <div className="text-slate-600 font-heading font-semibold text-[10px]">ID: #{p.project_id} · {p.sector}</div>
+                        <div className="text-slate-700 font-heading font-bold">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
+                        <div className="text-slate-700 font-heading font-semibold">Progress: {p.progress_perc}% ({pStat.label})</div>
                         {approx && (
                           <div className="text-amber-800 bg-amber-50 border border-amber-300 rounded-xs px-1 py-0.5 text-[10px] leading-snug">
                             <strong>Approximate location.</strong> Plotted at a
@@ -407,6 +408,7 @@ function PublicMetadataTab({
                 );
               })}
             </MapContainer>
+            <BaseMapNotice status={basemapStatus} />
           </div>
 
           <div className="panel-head border-t border-b-0 py-2">
@@ -466,15 +468,15 @@ function PublicMetadataTab({
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="font-mono text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
+                        <span className="font-heading text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
                         <span className="text-[9.5px] font-bold text-[#0060B6] truncate">{p.sector}</span>
                       </div>
                       <h4 className="text-xs font-bold text-gov-navy truncate">{p.project_name}</h4>
                       <p className="text-[11px] text-gov-muted truncate mt-0.5">{p.company} · {p.state}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className={`tag ${pStat.tagClass}`}>{p.progress_perc}%</span>
-                      <div className="font-mono text-[10.5px] text-gov-muted mt-1">
+                      <span className={`tag ${pStat.tagClass} font-heading font-bold`}>{p.progress_perc}%</span>
+                      <div className="font-heading font-bold text-[11px] text-gov-navy mt-1">
                         ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
                       </div>
                     </div>
@@ -529,13 +531,13 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
       <div className="hairgrid hairgrid-4">
         <div className="metric-cell">
           <span className="metric-label">Sanctioned Baseline</span>
-          <span className="metric-value font-mono">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">CCEA Approved Initial Outlay</span>
         </div>
 
         <div className="metric-cell">
           <span className="metric-label">Revised Sanctioned Cost</span>
-          <span className="metric-value font-mono text-[#0060B6]">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold text-[#0060B6]">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className={`metric-sub font-medium ${costVariance > 0 ? 'metric-warn' : 'metric-pos'}`}>
             {costVariance > 0 ? `+₹${costVariance.toLocaleString('en-IN')} Cr (+${costVariancePct.toFixed(1)}%)` : 'Within Initial Outlay'}
           </span>
@@ -543,13 +545,13 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 
         <div className="metric-cell">
           <span className="metric-label">Cumulative Disbursal (Est.)</span>
-          <span className="metric-value font-mono metric-pos">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold metric-pos">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">Tied to {progressPerc}% physical milestone</span>
         </div>
 
         <div className="metric-cell">
           <span className="metric-label">CPWD WPI Escalation</span>
-          <span className="metric-value font-mono">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+          <span className="metric-value font-heading font-bold">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-semibold text-gov-muted">Cr</span></span>
           <span className="metric-sub">Statutory Clause 10CC buffer</span>
         </div>
       </div>
@@ -561,7 +563,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
             <BarChart3 className="w-3.5 h-3.5 text-gov-accent" />
             Visual Capex Comparison · {activeProject.project_name}
           </span>
-          <span className="panel-meta font-mono">#{activeProject.project_id}</span>
+          <span className="panel-meta font-heading font-bold">#{activeProject.project_id}</span>
         </div>
 
         <div className="space-y-4">
@@ -569,7 +571,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">1. Initial Approved Budget (CCEA Baseline)</span>
-              <span className="font-mono font-bold text-gov-navy">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
+              <span className="font-heading font-bold text-gov-navy">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
             </div>
             <div className="w-full bg-gov-border h-3 rounded-xs overflow-hidden">
               <div
@@ -583,7 +585,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">2. Revised Sanctioned Budget (MoSPI RCE)</span>
-              <span className="font-mono font-bold text-[#0060B6]">
+              <span className="font-heading font-bold text-[#0060B6]">
                 ₹{revCost.toLocaleString('en-IN')} Cr ({costVariancePct >= 0 ? `+${costVariancePct.toFixed(1)}%` : '0%'})
               </span>
             </div>
@@ -599,7 +601,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-gov-navy">3. Cumulative Disbursed Amount (Milestone Realized)</span>
-              <span className="font-mono font-bold metric-pos">
+              <span className="font-heading font-bold metric-pos">
                 ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr ({progressPerc}% of Revised)
               </span>
             </div>
@@ -621,7 +623,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
             <span className="w-2.5 h-2.5 rounded-xs bg-emerald-600 shrink-0 ml-2" />
             <span>Disbursed Funds</span>
           </div>
-          <span className="font-mono">RTI §4(1)(b)(xi) Standardized Realization</span>
+          <span className="font-heading font-semibold">RTI §4(1)(b)(xi) Standardized Realization</span>
         </div>
       </div>
 
@@ -645,17 +647,17 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
               <tr>
                 <td className="font-semibold text-gov-navy">Initial Approved Baseline</td>
                 <td className="text-gov-muted">Cabinet Committee on Economic Affairs (CCEA)</td>
-                <td className="num font-mono font-bold">₹{origCost.toLocaleString('en-IN')}</td>
-                <td><span className="tag tag-ok">APPROVED</span></td>
+                <td className="num font-heading font-bold">₹{origCost.toLocaleString('en-IN')}</td>
+                <td><span className="tag tag-ok font-heading font-bold">APPROVED</span></td>
               </tr>
               <tr>
                 <td className="font-semibold text-gov-navy">Cumulative Cost Variation / Revised Scope</td>
                 <td className="text-gov-muted">MoSPI Revised Cost Estimates (RCE)</td>
-                <td className={`num font-mono font-bold ${costVariance > 0 ? 'text-amber-700' : ''}`}>
+                <td className={`num font-heading font-bold ${costVariance > 0 ? 'text-amber-700' : ''}`}>
                   ₹{costVariance.toLocaleString('en-IN')}
                 </td>
                 <td>
-                  <span className={costVariancePct >= 20 ? 'tag tag-critical' : 'tag tag-warn'}>
+                  <span className={costVariancePct >= 20 ? 'tag tag-critical font-heading font-bold' : 'tag tag-warn font-heading font-bold'}>
                     {costVariancePct >= 20 ? 'CCEA REAPPRAISAL TRIGGERED' : 'WITHIN DELEGATED POWERS'}
                   </span>
                 </td>
@@ -663,18 +665,18 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
               <tr>
                 <td className="font-semibold text-gov-navy">Contractor Cumulative Realization</td>
                 <td className="text-gov-muted">Physical Milestone Verification</td>
-                <td className="num font-mono font-bold metric-pos">
+                <td className="num font-heading font-bold metric-pos">
                   ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td><span className="tag tag-ok">DISBURSED</span></td>
+                <td><span className="tag tag-ok font-heading font-bold">DISBURSED</span></td>
               </tr>
               <tr>
                 <td className="font-semibold text-gov-navy">CPWD Clause 10CC Escalation Allocation</td>
                 <td className="text-gov-muted">Wholesale Price Index (WPI) Formula</td>
-                <td className="num font-mono font-bold text-azure">
+                <td className="num font-heading font-bold text-azure">
                   ₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td><span className="tag tag-info">INDEX-TIED</span></td>
+                <td><span className="tag tag-info font-heading font-bold">INDEX-TIED</span></td>
               </tr>
             </tbody>
           </table>
@@ -690,25 +692,49 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 function PublicPratibimbTab({ projects, activeProject, selectProject }) {
   const [sliderPos, setSliderPos] = useState(50);
   const [imagery, setImagery] = useState(null);
+  const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (activeProject?.project_id) {
-      setLoading(true);
+    if (!activeProject?.project_id) return undefined;
+    let dead = false;
+    setLoading(true);
+    setPlan(null);
+    setSliderPos(50);
+    // The plan decides which of three panels this tab becomes. Fetched
+    // alongside the imagery record so the tab never renders a swipe comparator
+    // for a project that must not have one.
+    Promise.all([
       fetch(`/api/satellite/${activeProject.project_id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setImagery(data);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`/api/eo/viewport/${activeProject.project_id}`)
+        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([img, vp]) => {
+      if (dead) return;
+      setImagery(img);
+      setPlan(vp);
+      setLoading(false);
+    });
+    return () => { dead = true; };
   }, [activeProject]);
 
   if (!activeProject) return null;
 
-  const beforeImg = imagery?.before_url || `/satellite-imagery/${activeProject.project_id}_BEFORE.jpg`;
-  const afterImg = imagery?.after_url || `/satellite-imagery/${activeProject.project_id}_AFTER.jpg`;
+  // Fail closed. Until the plan arrives — or if it never does — this tab
+  // behaves as locator_only. 596 of 2,207 projects must never be shown a
+  // satellite comparison, and defaulting to the richest panel would hand it to
+  // exactly those.
+  const mode = plan?.render_mode || (loading ? null : 'locator_only');
+  const isCompound = mode === 'compound';
+  const isCorridor = mode === 'corridor';
+  const isLocatorOnly = mode === 'locator_only';
+
+  // Served through the tiered endpoint. The old /satellite-imagery/ static
+  // path was removed: it exposed 4,414 files anonymously with no redaction.
+  const beforeImg = `/api/eo/tile/${activeProject.project_id}/BEFORE`;
+  const afterImg = `/api/eo/tile/${activeProject.project_id}/AFTER`;
+  const gsd = plan?.gsd_m_per_px ?? null;
+  const isSubMetre = typeof gsd === 'number' && gsd > 0 && gsd < 1.0;
   const status = getProjectStatus(activeProject);
 
   return (
@@ -726,26 +752,171 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
         <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="tag tag-solid font-mono">#{activeProject.project_id}</span>
-              <span className="tag tag-ok">SENTINEL-2 OPTICAL PASS</span>
-              <span className={`tag ${status.tagClass}`}>{status.label}</span>
+              <span className="tag tag-solid font-heading font-bold">#{activeProject.project_id}</span>
+              {/* Was "SENTINEL-2 OPTICAL PASS". This imagery is ESRI ArcGIS
+                  World Imagery and its Wayback archive, not Sentinel-2 — a
+                  different sensor, a different resolution and a different
+                  revisit cadence. Naming the wrong satellite on a public
+                  transparency page is a provenance error, not a label choice. */}
+              <span className="tag tag-info font-heading font-bold">
+                ESRI WORLD IMAGERY · WAYBACK ARCHIVE
+              </span>
+              {!isLocatorOnly && gsd != null && (
+                <span className={`tag font-heading font-bold ${isSubMetre ? 'tag-ok' : 'tag-info'}`}>
+                  {isSubMetre ? `SUB-METRE · ${gsd} m/px` : `${gsd} m/px`}
+                </span>
+              )}
+              {isLocatorOnly && (
+                <span className="tag tag-warn font-heading font-bold">
+                  ADMINISTRATIVE CENTROID
+                </span>
+              )}
+              <span className={`tag ${status.tagClass} font-heading font-bold`}>{status.label}</span>
             </div>
             <h3 className="font-heading font-extrabold text-base text-gov-navy leading-tight">
               {activeProject.project_name}
             </h3>
-            <p className="text-xs text-gov-muted mt-1">
-              Dual-epoch Sentinel-2 optical imagery showing physical ground transformation from baseline sanction to current epoch.
+            <p className="text-xs text-gov-muted mt-1 font-sans">
+              {isLocatorOnly
+                ? 'No site-level coordinate is on record for this project, so no satellite comparison is published. An administrative locator is shown below with the reason.'
+                : isCorridor
+                  ? 'Dual-epoch optical imagery of one strip of a linear alignment. One frame covers a fraction of the route; chainage packages index the remainder.'
+                  : 'Dual-epoch optical imagery showing physical ground change between the baseline and the most recent pass held for this site.'}
             </p>
           </div>
 
-          <div className="panel p-3 bg-gov-surface-2 shrink-0 text-right font-mono">
+          <div className="panel p-3 bg-gov-surface-2 shrink-0 text-right">
             <span className="text-[9.5px] uppercase tracking-wider text-gov-muted block font-bold">Reported Progress</span>
-            <span className="text-xl font-black text-gov-navy">{activeProject.progress_perc}%</span>
+            <span className="text-2xl font-heading font-extrabold text-gov-navy">{activeProject.progress_perc}%</span>
           </div>
         </div>
       </div>
 
+      {/* ── LOCATOR ONLY: RTI §4 disclosure, no imagery ──────────────────── */}
+      {isLocatorOnly && (
+        <div className="panel overflow-hidden">
+          <div className="panel-head">
+            <span className="panel-title">Administrative Locator</span>
+            <span className="panel-meta">RTI §4(1)(b) proactive disclosure</span>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <div className="note note-warn flex items-start gap-2.5 mb-4" role="status">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="text-[11.5px] leading-relaxed font-sans">
+                <strong className="block mb-1 font-heading tracking-wide text-[11px]">
+                  ADMINISTRATIVE CENTROID · SURVEYED SITE PLOT AWAITED
+                </strong>
+                The coordinate held for this project locates its{' '}
+                {String(plan?.geocode_precision || '').includes('STATE') ? 'State' : 'administrative region'}
+                {' '}rather than the works. Publishing satellite imagery framed on
+                it would show unrelated ground — and because that imagery would be
+                genuine and correctly dated, it would appear exactly as
+                authoritative as a true site view. This Ministry therefore
+                withholds the comparison rather than publish a picture of the
+                wrong place.
+                <span className="block mt-1.5">
+                  Cadastral site boundaries for legacy sanctions are being
+                  digitised progressively. Satellite verification for this project
+                  will be published once a surveyed plot boundary is on record.
+                </span>
+              </div>
+            </div>
+
+            {plan?.centre?.[0] != null && plan?.centre?.[1] != null && (
+              <div className="rounded-xs overflow-hidden border border-gov-border">
+                <MapContainer
+                  center={[plan.centre[0], plan.centre[1]]}
+                  zoom={6}
+                  scrollWheelZoom={false}
+                  style={{ height: 360, width: '100%' }}
+                  aria-label="Administrative locator showing the recorded centroid and the area within which the works lie"
+                >
+                  <BaseMapLayer />
+                  <Circle
+                    center={[plan.centre[0], plan.centre[1]]}
+                    radius={plan.geocode_error_radius_m || 100000}
+                    pathOptions={{ color: '#B45309', fillColor: '#F59E0B',
+                                   fillOpacity: 0.10, weight: 1.5, dashArray: '4 4' }}
+                  />
+                </MapContainer>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gov-border border border-gov-border rounded-xs overflow-hidden mt-4">
+              {[
+                ['Coordinate provenance', plan?.geocode_precision || 'Not recorded'],
+                ['Area of uncertainty', plan?.geocode_error_radius_m != null
+                  ? `${Number(plan.geocode_error_radius_m).toLocaleString('en-IN')} m radius` : '—'],
+                ['Satellite verdict', 'Withheld'],
+              ].map(([k, v]) => (
+                <div key={k} className="bg-white p-3">
+                  <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block font-heading">{k}</span>
+                  <span className="text-[12px] font-extrabold text-gov-navy font-heading">{v}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
+              The reported progress figure above is unaffected by this and is
+              disclosed in full. What is withheld is the imagery, not the numbers:
+              a citizen is entitled to the finding, and to know when the Ministry
+              cannot support one from pixels.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── CORRIDOR: chainage overview above the strip ──────────────────── */}
+      {isCorridor && (
+        <div className="panel overflow-hidden">
+          <div className="panel-head">
+            <span className="panel-title">Corridor Alignment · Chainage Overview</span>
+            <span className="panel-meta">
+              {plan?.frame_covers_m != null
+                ? `strip below covers ${(plan.frame_covers_m / 1000).toFixed(2)} km`
+                : 'linear alignment'}
+            </span>
+          </div>
+          <div className="p-4 sm:p-5">
+            {plan?.packages?.length ? (
+              <>
+                <div className="flex flex-wrap gap-1.5" role="list">
+                  {plan.packages.map((pk) => (
+                    <span key={pk.package} role="listitem"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xs text-[10.5px] font-bold border border-gov-border bg-gov-surface text-gov-navy font-heading">
+                      Package {pk.package}: Km {pk.chainage_km[0]}–{pk.chainage_km[1]}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
+                  This alignment is divided into {plan.packages.length} chainage
+                  packages. The comparison below shows one strip near the recorded
+                  point — roughly{' '}
+                  <strong className="font-heading text-gov-navy">
+                    {plan.frame_covers_m != null && plan.packages.length
+                      ? ((plan.frame_covers_m / 1000) /
+                         (plan.packages[plan.packages.length - 1].chainage_km[1] || 1) * 100).toFixed(1)
+                      : '—'}%
+                  </strong>{' '}
+                  of the route. Per-package imagery requires the surveyed
+                  alignment, which is not yet published for this project.
+                </p>
+              </>
+            ) : (
+              <p className="text-[10.5px] text-gov-muted leading-relaxed font-sans">
+                The sanctioned route length is not recorded for this project, so
+                chainage packages cannot be listed. The comparison below shows the
+                alignment near the recorded point only, and should not be read as
+                representing the whole route.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Clean Dual-Epoch Before / After Swipe */}
+      {!isLocatorOnly && (
       <div className="panel space-y-0 overflow-hidden">
         <div className="panel-head">
           <span className="panel-title">Interactive Epoch Comparison</span>
@@ -803,20 +974,38 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
             />
 
             {/* Corner Watermarks */}
-            <div className="absolute bottom-3 left-3 z-10 bg-black/75 text-white text-[10.5px] font-mono px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
+            <div className="absolute bottom-3 left-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
               EPOCH 1: Baseline Sanction
             </div>
-            <div className="absolute bottom-3 right-3 z-10 bg-black/75 text-white text-[10.5px] font-mono px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
+            <div className="absolute bottom-3 right-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
               EPOCH 2: Latest Pass
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gov-muted pt-1">
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Optical sub-meter resolution imagery corroborated against project coordinates.</span>
+              {/* Was "Optical sub-meter resolution imagery corroborated against
+                  project coordinates" — untrue twice over. Measured, the finest
+                  framing across all 285 compound projects is 1.18 m/px and most
+                  sit at 2-9 m/px, because zoom is capped so the frame contains
+                  the geocode error. And "corroborated against project
+                  coordinates" asserts a verification that the coordinate's own
+                  provenance does not support. Both now state what was measured. */}
+              {isSubMetre
+                ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                : <Eye className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />}
+              <span className="font-sans">
+                {gsd != null
+                  ? <>Optical imagery at <strong className="font-heading text-gov-navy">{gsd} m/px</strong>
+                      {isSubMetre ? ' (sub-metre).' : '.'}{' '}
+                      {plan?.zoom_limited_by === 'geocode'
+                        ? 'Framed wide enough to contain this coordinate’s uncertainty.'
+                        : 'Framed to this facility class.'}
+                    </>
+                  : 'Optical imagery at the resolution held for this site.'}
+              </span>
             </div>
-            <span className="font-mono text-[11px]">
+            <span className="font-heading font-semibold text-[11.5px]">
               {activeProject.location_is_approximate
                 ? <>Approximate area: {Number(activeProject.latitude).toFixed(1)}°N,{' '}
                     {Number(activeProject.longitude).toFixed(1)}°E{' '}
@@ -831,6 +1020,7 @@ function PublicPratibimbTab({ projects, activeProject, selectProject }) {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -897,24 +1087,24 @@ function PublicClearancesTab() {
                 <div className="flex items-start justify-between gap-2 border-b border-gov-border pb-2.5">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <span className="tag tag-solid font-mono text-[9px]">#{p.project_id}</span>
-                      <span className="tag tag-info text-[9px]">{p.state || 'Pan-India'}</span>
+                      <span className="tag tag-solid font-heading font-bold text-[9.5px]">#{p.project_id}</span>
+                      <span className="tag tag-info text-[9.5px]">{p.state || 'Pan-India'}</span>
                     </div>
                     <h4 className="text-xs font-bold text-gov-navy leading-snug truncate">{p.project_name}</h4>
                   </div>
-                  <span className={`${tagCls} text-[10px] shrink-0`}>{status}</span>
+                  <span className={`${tagCls} font-heading font-bold text-[10px] shrink-0`}>{status}</span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Forest Diversion</span>
-                    <span className="font-mono font-bold text-gov-navy text-[11px]">
+                    <span className="font-heading font-bold text-gov-navy text-[12px]">
                       {p.total_forest_diversion_ha ? `${p.total_forest_diversion_ha} ha` : '—'}
                     </span>
                   </div>
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Review Period</span>
-                    <span className="font-mono font-bold text-gov-navy text-[11px]">{p.days_overdue || 0}d</span>
+                    <span className="font-heading font-bold text-gov-navy text-[12px]">{p.days_overdue || 0}d</span>
                   </div>
                   <div className="panel p-2 bg-gov-surface">
                     <span className="metric-label text-[9px]">Bottleneck</span>

@@ -32,11 +32,11 @@ from fastapi.responses import JSONResponse
 # permissions. Nothing in the page loads from a third-party origin.
 _CSP = (
     "default-src 'self'; "
-    "img-src 'self' data:; "
+    "img-src 'self' data: blob: https://server.arcgisonline.com https://*.arcgisonline.com https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com https://*.tile.openstreetmap.org; "
     "script-src 'self' 'unsafe-inline'; "
     "style-src 'self' 'unsafe-inline'; "
     "font-src 'self'; "
-    "connect-src 'self' http://127.0.0.1:8000 http://localhost:8000; "
+    "connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://server.arcgisonline.com https://*.arcgisonline.com https://*.basemaps.cartocdn.com; "
     "object-src 'none'; "
     "frame-ancestors 'none'; "
     "base-uri 'self'; "

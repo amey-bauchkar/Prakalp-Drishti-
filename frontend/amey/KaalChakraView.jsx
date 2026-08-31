@@ -72,39 +72,41 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Top Header Banner */}
-      <section className="panel p-4 sm:p-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <Clock className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>Module 1 · Timeline Forecasting</span>
-            </div>
-            <h1 className="font-heading font-extrabold text-[26px] sm:text-[32px] leading-tight text-gov-navy tracking-tight"> KAAL-CHAKRA: Realistic Project Completion &amp; Delay Forecast
-            </h1>
-            <p className="text-text-secondary text-[14px] max-w-2xl font-sans leading-relaxed"> Replaces contractor promises with realistic AI-predicted completion dates based on historical performance, on-ground progress pace, and repeated deadline resets.
-            </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="command-header p-5 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+            <Clock className="w-3.5 h-3.5 text-white" />
+            <span>MODULE 1 · TIMELINE FORECASTING</span>
           </div>
-
-          {/* Quick Project Lookup */}
-          <form onSubmit={handleSearch} className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-border-default shadow-sm shrink-0">
-            <input
-              type="text"
-              placeholder="Enter MoSPI Project Code (e.g. 706724)..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-white text-gov-navy text-xs px-3.5 py-2.5 rounded-xl border border-border-default focus:outline-none focus:border-gov-navy placeholder-slate-400 w-56 font-mono font-bold"
-            />
-            <button
-              type="submit"
-              className="btn-saffron-pill py-2.5 px-4 text-xs font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5"
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span>Analyze</span>
-            </button>
-          </form>
+          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+            KAAL-CHAKRA: REALISTIC PROJECT COMPLETION &amp; DELAY FORECAST
+          </h2>
+          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+            Replaces contractor promises with realistic AI-predicted completion dates based on historical performance, on-ground progress pace, and repeated deadline resets.
+          </p>
         </div>
-      </section>
+
+        {/* Quick Project Lookup */}
+        <form onSubmit={handleSearch} className="flex items-center gap-2 bg-black/25 p-2 rounded-sm border border-white/15 shrink-0">
+          <input
+            type="text"
+            placeholder="Enter MoSPI Code (e.g. 706724)"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="text-[11.5px] bg-ink-900/80 text-white border border-white/20 rounded-sm px-2.5 py-1.5 focus:outline-none focus:border-gov-accent w-52 font-mono tracking-tight placeholder:text-ink-200"
+          />
+          <button
+            type="submit"
+            className="bg-gov-accent text-gov-navy-dark hover:bg-gov-accent-hover py-1.5 px-3.5 rounded-sm text-[11px] font-extrabold uppercase tracking-institutional flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Analyze</span>
+          </button>
+        </form>
+      </div>
 
       {loading && (
         <div className="p-12 text-center text-text-muted font-bold text-sm panel">
@@ -333,6 +335,14 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       />
                     )}
 
+                    {/* P95 Marker Pin Line */}
+                    {positions && (
+                      <div 
+                        className="absolute top-[-8px] bottom-[-8px] w-0.5 border-l-2 border-rose-500 -translate-x-1/2 z-20"
+                        style={{ left: `${positions.p95Pct}%` }}
+                      />
+                    )}
+
                     {/* P50 Median Indicator Notch */}
                     {positions && (
                       <div 
@@ -350,7 +360,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                         className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
                         style={{ left: `${positions.targetPct}%` }}
                       >
-                        <div className="w-0.5 h-3 bg-rose-500" />
+                        <div className="w-0.5 h-3 border-l-2 border-dashed border-rose-500" />
                         <div className="note note-critical flex items-center gap-1.5 whitespace-nowrap font-mono">
                           <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
                           <span>Statutory Target: {data.revised_end_date}</span>
@@ -358,15 +368,25 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                       </div>
                     )}
 
-                    {/* P95 Tail Marker Label */}
+                    {/* P95 Tail Marker Label (anchored to pin, badge pinned inside container) */}
                     {positions && (
                       <div 
-                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-20 transition-all duration-500"
+                        className={`absolute top-0 flex flex-col z-20 transition-all duration-500 ${
+                          positions.p95Pct > 70
+                            ? 'items-end -translate-x-full pr-0'
+                            : positions.p95Pct < 30
+                            ? 'items-start translate-x-0 pl-0'
+                            : 'items-center -translate-x-1/2'
+                        }`}
                         style={{ left: `${positions.p95Pct}%` }}
                       >
-                        <div className="w-0.5 h-2 bg-rose-400" />
-                        <span className="note note-critical whitespace-nowrap font-mono"> Conservative Risk Bound (P95): {data.p95_date}
-                        </span>
+                        <div className={`w-0.5 h-3 bg-rose-500 ${
+                          positions.p95Pct > 70 ? 'self-end mr-0' : positions.p95Pct < 30 ? 'self-start ml-0' : 'self-center'
+                        }`} />
+                        <div className="note note-critical flex items-center gap-1.5 whitespace-nowrap font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
+                          <span>Conservative Risk Bound (P95): {data.p95_date}</span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -415,7 +435,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                     <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p80_date}</p>
                     <span className="text-[9.5px] text-text-muted font-medium font-sans">80th Percentile Buffer Target</span>
                   </div>
-                  <div className="note note-critical text-center">
+                  <div className="panel p-4 text-center border-l-2 border-l-rose-600 bg-rose-50/40">
                     <span className="text-[10.5px] font-bold text-rose-700 uppercase tracking-wider font-mono">Severe Delay Tail (P95)</span>
                     <p className="text-xs font-black text-rose-900 mt-1 font-mono">{data.p95_date}</p>
                     <span className="text-[9.5px] text-rose-700 font-bold font-sans">95th Percentile Risk Exposure</span>

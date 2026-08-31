@@ -25,11 +25,41 @@
   "PhysicalProgress": 41,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.8122,
-  "longitude": 93.9245,
+  "latitude": 24.757604,
+  "longitude": 93.8927774,
   "bbox": "[93.8745, 24.7622, 93.9745, 24.8622]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 24.8122,
+  "longitude_previous": 93.9245,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 96566387,
+    "name": "Bir Tikendrajit International Airport",
+    "display_name": "Bir Tikendrajit International Airport, Tiddim Road, Tulihal, Wangoi, Imphal West, Manipur, 795140, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Imphal Airport",
+    "boundingbox": [
+     "24.7424893",
+     "24.7738462",
+     "93.8841253",
+     "93.9088112"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1745.3250540001247
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701121,
@@ -57,11 +87,41 @@
   "PhysicalProgress": 86,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 16.9951,
-  "longitude": 81.8106,
+  "latitude": 17.1049842,
+  "longitude": 81.8181098,
   "bbox": "[81.7606, 16.9451, 81.8606, 17.0451]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 16.9951,
+  "longitude_previous": 81.8106,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 135670403,
+    "name": "Rajahmundry Airport",
+    "display_name": "Rajahmundry Airport, MDR0250, Madhurapudi, Korukonda, East Godavari, Andhra Pradesh, 533102, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Rajahmundry Airport",
+    "boundingbox": [
+     "17.0898236",
+     "17.1204578",
+     "81.7907426",
+     "81.8313065"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2157.917158463555
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701101,
@@ -89,11 +149,41 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.595,
-  "longitude": 85.1274,
+  "latitude": 25.5918458,
+  "longitude": 85.0900477,
   "bbox": "[85.0774, 25.545, 85.1774, 25.645]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 25.595,
+  "longitude_previous": 85.1274,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 97955336,
+    "name": "Jayprakash Narayan International Airport",
+    "display_name": "Jayprakash Narayan International Airport, NH139, Patna, Patna Rural, Patna, Bihar, 800002, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Patna Airport",
+    "boundingbox": [
+     "25.5862708",
+     "25.5975247",
+     "85.0758596",
+     "85.0993673"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1180.0724080107213
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612788,
@@ -121,11 +211,41 @@
   "PhysicalProgress": 74,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.8479,
-  "longitude": 74.5001,
+  "latitude": 15.8593476,
+  "longitude": 74.6142405,
   "bbox": "[74.4501, 15.7979, 74.5501, 15.8979]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 15.8479,
+  "longitude_previous": 74.5001,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 555353901,
+    "name": "Belgaum Airport",
+    "display_name": "Belgaum Airport, SH20, Balekundri Khurd, Belagavi taluku, Belagavi, Karnataka, 591124, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Belagavi Airport",
+    "boundingbox": [
+     "15.8511549",
+     "15.8682581",
+     "74.5973611",
+     "74.6336323"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1942.004722259327
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612787,
@@ -285,11 +405,41 @@
   "PhysicalProgress": 96,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.2395,
-  "longitude": 73.0165,
+  "latitude": 26.262838,
+  "longitude": 73.0524368,
   "bbox": "[72.9665, 26.1895, 73.0665, 26.2895]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 26.2395,
+  "longitude_previous": 73.0165,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 239937938,
+    "name": "Amrita Devi Bishnoi Airport Jodhpur",
+    "display_name": "Amrita Devi Bishnoi Airport Jodhpur, SH61, Rai Ka Bagh, Jodhpur, Jodhpur Tehsil, Jodhpur, Rajasthan, 342011, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Jodhpur Airport",
+    "boundingbox": [
+     "26.2619746",
+     "26.2648070",
+     "73.0494599",
+     "73.0554949"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 301.23208788505184
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612063,
@@ -512,11 +662,41 @@
   "PhysicalProgress": 14,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.3104,
-  "longitude": 82.9826,
+  "latitude": 25.4509975,
+  "longitude": 82.8635994,
   "bbox": "[82.9326, 25.2604, 83.0326, 25.3604]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 25.3104,
+  "longitude_previous": 82.9826,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 26648704,
+    "name": "Lal Bahadur Shastri International Airport",
+    "display_name": "Lal Bahadur Shastri International Airport, NH31, Pindra, Varanasi, Uttar Pradesh, 221006, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Lal Airport",
+    "boundingbox": [
+     "25.4447094",
+     "25.4574384",
+     "82.8443986",
+     "82.8809778"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1838.4098883577533
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612194,
@@ -708,11 +888,41 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 15.314,
-  "longitude": 74.1216,
+  "latitude": 15.3805714,
+  "longitude": 73.8317181,
   "bbox": "[74.0716, 15.264, 74.1716, 15.364]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 15.314,
+  "longitude_previous": 74.1216,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 91549529,
+    "name": "Goa International Airport",
+    "display_name": "Goa International Airport, Airport Road, Chicalim, Vasco, Mormugao, South Goa, Goa, 403802, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Goa Airport",
+    "boundingbox": [
+     "15.3733674",
+     "15.3878055",
+     "73.8141645",
+     "73.8511499"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1984.879015178347
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 706724,
@@ -772,11 +982,41 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8368,
-  "longitude": 80.945,
+  "latitude": 26.7638378,
+  "longitude": 80.8855916,
   "bbox": "[80.895, 26.7868, 80.995, 26.8868]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 26.8368,
+  "longitude_previous": 80.945,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1360909049,
+    "name": "Lucknow Airport Bus Depot",
+    "display_name": "Lucknow Airport Bus Depot, Vikram Nagar, Lucknow, Uttar Pradesh, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Lucknow Airport",
+    "boundingbox": [
+     "26.7636016",
+     "26.7640699",
+     "80.8853299",
+     "80.8858540"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 60.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 611602,
@@ -804,11 +1044,41 @@
   "PhysicalProgress": 24,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.0725,
-  "longitude": 80.2818,
+  "latitude": 12.993374,
+  "longitude": 80.1725867,
   "bbox": "[80.2318, 13.0225, 80.3318, 13.1225]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.0725,
+  "longitude_previous": 80.2818,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 23633604,
+    "name": "Chennai International Airport",
+    "display_name": "Chennai International Airport, Grand Southern Trunk Road, Meenambakkam, Tirusulam, Alandur, Chennai, Tamil Nadu, 600027, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Chennai Airport",
+    "boundingbox": [
+     "12.9782602",
+     "13.0084713",
+     "80.1451247",
+     "80.1894724"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2405.1925078252398
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 611440,
@@ -5572,11 +5842,41 @@
   "PhysicalProgress": 7,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.2901,
-  "longitude": 85.8104,
+  "latitude": 20.1478932,
+  "longitude": 85.6759728,
   "bbox": "[85.7604, 20.2401, 85.8604, 20.3401]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 20.2901,
+  "longitude_previous": 85.8104,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 621537202,
+    "name": "Indian Institute of Technology, Bhubaneswar",
+    "display_name": "Indian Institute of Technology, Bhubaneswar, Khordha Town to IIT Road, Jatani, Khordha, Odisha, 752050, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "IIT Bhubaneswar",
+    "boundingbox": [
+     "20.1403338",
+     "20.1556091",
+     "85.6558843",
+     "85.6842594"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1482.711129446983
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 602098,
@@ -5797,11 +6097,41 @@
   "PhysicalProgress": 92,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 31.6355,
-  "longitude": 74.8609,
+  "latitude": 31.623197,
+  "longitude": 74.9004399,
   "bbox": "[74.8109, 31.5855, 74.9109, 31.6855]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 31.6355,
+  "longitude_previous": 74.8609,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 7074314681,
+    "name": "Sri Guru Ram Das Institute Of Dental Sciences And Research",
+    "display_name": "Sri Guru Ram Das Institute Of Dental Sciences And Research, Sher Shah Suri Marg, Sharifpura, Golden Avenue, Amritsar, Amritsar I Tahsil, Amritsar, Punjab, 14300",
+    "category": "amenity",
+    "type": "hospital",
+    "place_rank": 30,
+    "query": "Amritsar Institute",
+    "boundingbox": [
+     "31.6231470",
+     "31.6232470",
+     "74.9003899",
+     "74.9004899"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612898,
@@ -5861,11 +6191,41 @@
   "PhysicalProgress": 76,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 17.3709,
-  "longitude": 78.4909,
+  "latitude": 17.5922751,
+  "longitude": 78.1221891,
   "bbox": "[78.4409, 17.3209, 78.5409, 17.4209]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 17.3709,
+  "longitude_previous": 78.4909,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 305851274,
+    "name": "Indian Institute of Technology Hyderabad",
+    "display_name": "Indian Institute of Technology Hyderabad, NH161, Kandi, Kandi mandal, Sangareddy, Telangana, 502285, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "IIT Hyderabad",
+    "boundingbox": [
+     "17.5795338",
+     "17.6050608",
+     "78.1156702",
+     "78.1317644"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1420.8328200000167
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 609736,
@@ -5926,11 +6286,43 @@
   "PhysicalProgress": 15,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.6939,
-  "longitude": 77.0911,
+  "latitude": 28.6818775,
+  "longitude": 77.074,
   "bbox": "[77.0411, 28.6439, 77.1411, 28.7439]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 28.6939,
+  "longitude_previous": 77.0911,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 6465991443,
+    "name": "Surajmal Stadium",
+    "display_name": "Surajmal Stadium, Rohtak Road, Nangloi, Rohini, Delhi, North West Delhi, Delhi, 110083, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Surajmal",
+    "boundingbox": [
+     "28.6768775",
+     "28.6868775",
+     "77.0690000",
+     "77.0790000"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH",
+  "eo_eligibility_previous": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "eo_eligibility_basis": "Reclassified against imagery, not by re-running the heuristic: a z18 before/after mosaic of this site is on disk and passes the featureless-raster check, which is direct evidence the works are observable from orbit."
  },
  {
   "ProjectId": 613013,
@@ -6281,11 +6673,43 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.9258,
-  "longitude": 79.3982,
+  "latitude": 21.2446287,
+  "longitude": 81.3183069,
   "bbox": "[79.3482, 21.8758, 79.4482, 21.9758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 21.9258,
+  "longitude_previous": 79.3982,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1412995394,
+    "name": "Indian Institute of Technology, Bhilai",
+    "display_name": "Indian Institute of Technology, Bhilai, SH7, Khapri, Durg Tahsil, Durg, Chhattisgarh, 490020, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "IIT Bhilai",
+    "boundingbox": [
+     "21.2370684",
+     "21.2521324",
+     "81.3106387",
+     "81.3258225"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 838.4622400001341
+  },
+  "geocode_precision_previous": "NATIONAL_CENTROID_MATCH",
+  "eo_eligibility_previous": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "eo_eligibility_basis": "Reclassified against imagery, not by re-running the heuristic: a z18 before/after mosaic of this site is on disk and passes the featureless-raster check, which is direct evidence the works are observable from orbit."
  },
  {
   "ProjectId": 617878,
@@ -6345,11 +6769,41 @@
   "PhysicalProgress": 36,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.7277,
-  "longitude": 75.8634,
+  "latitude": 22.5269276,
+  "longitude": 75.9262066,
   "bbox": "[75.8134, 22.6777, 75.9134, 22.7777]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 22.7277,
+  "longitude_previous": 75.8634,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 659577709,
+    "name": "Indian Institute Of Technology Indore",
+    "display_name": "Indian Institute Of Technology Indore, common road, Simrol, Mhow Tahsil, Indore, Madhya Pradesh, 453485, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "IIT Indore",
+    "boundingbox": [
+     "22.5182955",
+     "22.5356483",
+     "75.9177804",
+     "75.9358907"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 965.8568479998672
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 606112,
@@ -6410,11 +6864,41 @@
   "PhysicalProgress": 97,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.8047,
-  "longitude": 93.9317,
+  "latitude": 24.7545772,
+  "longitude": 93.9278882,
   "bbox": "[93.8817, 24.7547, 93.9817, 24.8547]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 24.8047,
+  "longitude_previous": 93.9317,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 662494890,
+    "name": "Manipur University",
+    "display_name": "Manipur University, NH102, Imphal, Wangoi, Imphal West, Manipur, 795003, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "Imphal University",
+    "boundingbox": [
+     "24.7509089",
+     "24.7582454",
+     "93.9223927",
+     "93.9334005"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 556.393514699229
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618992,
@@ -7055,11 +7539,41 @@
   "PhysicalProgress": 8,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.0158,
-  "longitude": 79.0482,
+  "latitude": 22.8623731,
+  "longitude": 78.8648997,
   "bbox": "[78.9982, 21.9658, 79.0982, 22.0658]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 22.0158,
+  "longitude_previous": 79.0482,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 394955715,
+    "name": "Gadarwara Super Thermal Power Station",
+    "display_name": "Gadarwara Super Thermal Power Station, Chorbarheta, Gadarwara Tahsil, Narsinghpur, Madhya Pradesh, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Gadarwara Power Station",
+    "boundingbox": [
+     "22.8530857",
+     "22.8729912",
+     "78.8546166",
+     "78.8741024"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1107.9401300000072
+  },
+  "geocode_precision_previous": "NATIONAL_CENTROID_MATCH"
  },
  {
   "ProjectId": 602538,
@@ -7609,11 +8123,41 @@
   "PhysicalProgress": 21,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 24.0914,
-  "longitude": 82.6876,
+  "latitude": 24.1053349,
+  "longitude": 82.705424,
   "bbox": "[82.6376, 24.0414, 82.7376, 24.1414]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 24.0914,
+  "longitude_previous": 82.6876,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 196411761,
+    "name": "Singrauli Super Thermal Power Station",
+    "display_name": "Singrauli Super Thermal Power Station, Shaktiinagar, Dudhi, Sonbhadra, Uttar Pradesh, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Singrauli Power Station",
+    "boundingbox": [
+     "24.0982014",
+     "24.1124569",
+     "82.6914084",
+     "82.7216257"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1535.2272798128413
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617188,
@@ -7641,11 +8185,41 @@
   "PhysicalProgress": 20,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.5958,
-  "longitude": 79.0182,
+  "latitude": 22.1291371,
+  "longitude": 82.2933042,
   "bbox": "[78.9682, 20.5458, 79.0682, 20.6458]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 20.5958,
+  "longitude_previous": 79.0182,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 248385257,
+    "name": "Sipat Thermal Power Station",
+    "display_name": "Sipat Thermal Power Station, Masturi Tahsil, Bilaspur, Chhattisgarh, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Sipat Power Station",
+    "boundingbox": [
+     "22.1175314",
+     "22.1407054",
+     "82.2788412",
+     "82.3029869"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1289.864840000051
+  },
+  "geocode_precision_previous": "NATIONAL_CENTROID_MATCH"
  },
  {
   "ProjectId": 602096,
@@ -7867,11 +8441,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1258,
-  "longitude": 78.8782,
+  "latitude": 18.1339195,
+  "longitude": 79.3442548,
   "bbox": "[78.8282, 21.0758, 78.9282, 21.1758]",
-  "geocode_precision": "NATIONAL_CENTROID_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 21.1258,
+  "longitude_previous": 78.8782,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 10171208525,
+    "name": "power station",
+    "display_name": "power station, NH765DG, Bheemadeverapalli, Bheemadevarapalli mandal, Hanumakonda, Telangana, 505471, India",
+    "category": "office",
+    "type": "energy_supplier",
+    "place_rank": 30,
+    "query": "Telangana Power Station",
+    "boundingbox": [
+     "18.1338695",
+     "18.1339695",
+     "79.3442048",
+     "79.3443048"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "NATIONAL_CENTROID_MATCH"
  },
  {
   "ProjectId": 602195,
@@ -8124,11 +8728,41 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.8417,
-  "longitude": 91.2862,
+  "latitude": 23.7436934,
+  "longitude": 91.2773921,
   "bbox": "[91.2362, 23.7917, 91.3362, 23.8917]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 23.8417,
+  "longitude_previous": 91.2862,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 3281638676,
+    "name": "Sekerkote",
+    "display_name": "Sekerkote, NH8, Dukli, Sadar, West Tripura, Tripura, 799014, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Sekerkote",
+    "boundingbox": [
+     "23.7386934",
+     "23.7486934",
+     "91.2723921",
+     "91.2823921"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 604852,
@@ -8351,11 +8985,41 @@
   "PhysicalProgress": 89,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3177,
-  "longitude": 86.6126,
+  "latitude": 20.2737294,
+  "longitude": 86.676697,
   "bbox": "[86.5626, 20.2677, 86.6626, 20.3677]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 20.3177,
+  "longitude_previous": 86.6126,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 7732592685,
+    "name": "ORE Terminal",
+    "display_name": "ORE Terminal, Paradip Port Expressway, Paradip, Jagatsinghapur, Odisha, 754142, India",
+    "category": "tourism",
+    "type": "viewpoint",
+    "place_rank": 30,
+    "query": "Paradip Terminal",
+    "boundingbox": [
+     "20.2736794",
+     "20.2737794",
+     "86.6766470",
+     "86.6767470"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 709759,
@@ -8449,11 +9113,41 @@
   "PhysicalProgress": 82,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 32.7338,
-  "longitude": 74.845,
+  "latitude": 32.6810712,
+  "longitude": 74.8422439,
   "bbox": "[74.795, 32.6838, 74.895, 32.7838]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 32.7338,
+  "longitude_previous": 74.845,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 891075600,
+    "name": "Jammu Airport Terminal",
+    "display_name": "Jammu Airport Terminal, Airport Rd, Ashok Nagar, Jammu, Jammu district, Jammu and Kashmir, 180003, India",
+    "category": "aeroway",
+    "type": "terminal",
+    "place_rank": 30,
+    "query": "Jammu Terminal",
+    "boundingbox": [
+     "32.6803231",
+     "32.6818415",
+     "74.8414287",
+     "74.8431754"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 84.51414399971128
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619313,
@@ -9669,11 +10363,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.69,
-  "longitude": 77.107,
+  "latitude": 28.569016,
+  "longitude": 77.2076122,
   "bbox": "[77.057, 28.64, 77.157, 28.74]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 28.69,
+  "longitude_previous": 77.107,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 6362647075,
+    "name": "AIIMS Metro Gate No. 4",
+    "display_name": "AIIMS Metro Gate No. 4, AIIMS Flyover, Kidwai Nagar, New Delhi, Delhi, 110029, India",
+    "category": "railway",
+    "type": "subway_entrance",
+    "place_rank": 30,
+    "query": "AIIMS AIIMS",
+    "boundingbox": [
+     "28.5689660",
+     "28.5690660",
+     "77.2075622",
+     "77.2076622"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612186,
@@ -9734,11 +10458,41 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1846,
-  "longitude": 72.8416,
+  "latitude": 21.1795987,
+  "longitude": 72.8198565,
   "bbox": "[72.7916, 21.1346, 72.8916, 21.2346]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 21.1846,
+  "longitude_previous": 72.8416,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 552624062,
+    "name": "New Civil Hospital",
+    "display_name": "New Civil Hospital, surat, Majura Gate Flyover, Majura Taluka, Surat, Gujarat, 395001, India",
+    "category": "amenity",
+    "type": "hospital",
+    "place_rank": 30,
+    "query": "Surat Hospital",
+    "boundingbox": [
+     "21.1791623",
+     "21.1800169",
+     "72.8194450",
+     "72.8202541"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 60.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612748,
@@ -9929,11 +10683,41 @@
   "PhysicalProgress": 68,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.5177,
-  "longitude": 73.8639,
+  "latitude": 18.6570279,
+  "longitude": 73.7227013,
   "bbox": "[73.8139, 18.4677, 73.9139, 18.5677]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 18.5177,
+  "longitude_previous": 73.8639,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1454583043,
+    "name": "hospital",
+    "display_name": "hospital, mukai chowk, Gahunje - Mukai Chowk Kiwale - Ravet Road, Ravet, Haveli Subdistrict, Pune, Maharashtra, 412101, India",
+    "category": "amenity",
+    "type": "hospital",
+    "place_rank": 30,
+    "query": "Pune Hospital",
+    "boundingbox": [
+     "18.6569134",
+     "18.6571258",
+     "73.7224025",
+     "73.7229948"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 60.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612213,
@@ -10153,11 +10937,41 @@
   "PhysicalProgress": 89,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0805,
-  "longitude": 72.8873,
+  "latitude": 19.2071803,
+  "longitude": 72.8769761,
   "bbox": "[72.8373, 19.0305, 72.9373, 19.1305]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0805,
+  "longitude_previous": 72.8873,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 8797549260,
+    "name": "ESIC Hospital",
+    "display_name": "ESIC Hospital, Thakur Village Road, Dattani Park, Thakur Village, R/S Ward, Mumbai Zone 4, Mumbai Suburban District, Maharashtra, 400101, India",
+    "category": "amenity",
+    "type": "hospital",
+    "place_rank": 30,
+    "query": "ESIC Hospital",
+    "boundingbox": [
+     "19.2071303",
+     "19.2072303",
+     "72.8769261",
+     "72.8770261"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 708662,
@@ -10217,11 +11031,41 @@
   "PhysicalProgress": 45,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.0866,
-  "longitude": 80.2845,
+  "latitude": 13.0428248,
+  "longitude": 80.2321524,
   "bbox": "[80.2345, 13.0366, 80.3345, 13.1366]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.0866,
+  "longitude_previous": 80.2845,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 354985391,
+    "name": "Metro",
+    "display_name": "Metro, Maharajapuram Santhanam Salai, Ward 136, Zone 10 Kodambakkam, Chennai Corporation, Chennai, Tamil Nadu, 600017, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Chennai Metro",
+    "boundingbox": [
+     "13.0427201",
+     "13.0429294",
+     "80.2320796",
+     "80.2322251"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 60.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 609424,
@@ -11025,11 +11869,41 @@
   "PhysicalProgress": 98,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0805,
-  "longitude": 72.8855,
+  "latitude": 19.0901376,
+  "longitude": 72.8638223,
   "bbox": "[72.8355, 19.0305, 72.9355, 19.1305]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0805,
+  "longitude_previous": 72.8855,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 22826676,
+    "name": "Chhatrapati Shivaji Maharaj International Airport",
+    "display_name": "Chhatrapati Shivaji Maharaj International Airport, Nehru Road, Andheri East, K/E Ward, Mumbai Zone 3, Mumbai, Mumbai Suburban District, Maharashtra, 400057, Ind",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Nehru Airport",
+    "boundingbox": [
+     "19.0790846",
+     "19.1012253",
+     "72.8438683",
+     "72.8819613"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2003.6531424043358
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617838,
@@ -12635,11 +13509,43 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.1382,
-  "longitude": 91.7275,
+  "latitude": 26.1849846,
+  "longitude": 91.8096863,
   "bbox": "[91.6775, 26.0882, 91.7775, 26.1882]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 26.1382,
+  "longitude_previous": 91.7275,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 122009489,
+    "name": "Guwahati Refinery",
+    "display_name": "Guwahati Refinery, Noonmati Refinery, Dispur, Kamrup Metropolitan, Assam, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Guwahati Refinery",
+    "boundingbox": [
+     "26.1807242",
+     "26.1892114",
+     "91.8032914",
+     "91.8152737"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 598.4900806667978
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH",
+  "eo_eligibility_previous": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "eo_eligibility_basis": "Reclassified against imagery, not by re-running the heuristic: a z18 before/after mosaic of this site is on disk and passes the featureless-raster check, which is direct evidence the works are observable from orbit."
  },
  {
   "ProjectId": 709753,
@@ -12699,11 +13605,41 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0748,
-  "longitude": 72.881,
+  "latitude": 19.012711,
+  "longitude": 72.9030827,
   "bbox": "[72.831, 19.0248, 72.931, 19.1248]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0748,
+  "longitude_previous": 72.881,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 430012320,
+    "name": "Mumbai Refinery",
+    "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Mumbai Refinery",
+    "boundingbox": [
+     "19.0026369",
+     "19.0226640",
+     "72.8981575",
+     "72.9088917"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1114.708386000004
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 709761,
@@ -13024,11 +13960,41 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 20.3093,
-  "longitude": 86.6075,
+  "latitude": 20.2969452,
+  "longitude": 86.6170085,
   "bbox": "[86.5575, 20.2593, 86.6575, 20.3593]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 20.3093,
+  "longitude_previous": 86.6075,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 4696613607,
+    "name": "IOCL Paradip Refinery Township, Officer's Club",
+    "display_name": "IOCL Paradip Refinery Township, Officer's Club, Paradip Port Expressway, Paradip, Paradeep Lock, Jagatsinghapur, Odisha, 754120, India",
+    "category": "amenity",
+    "type": "nightclub",
+    "place_rank": 30,
+    "query": "Paradip Refinery",
+    "boundingbox": [
+     "20.2968952",
+     "20.2969952",
+     "86.6169585",
+     "86.6170585"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 709842,
@@ -13217,11 +14183,41 @@
   "PhysicalProgress": 51,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.2274,
-  "longitude": 80.319,
+  "latitude": 13.2174681,
+  "longitude": 80.3216013,
   "bbox": "[80.269, 13.1774, 80.369, 13.2774]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 13.2274,
+  "longitude_previous": 80.319,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 5274094702,
+    "name": "Ennore",
+    "display_name": "Ennore, Railway Station Rd, Nehru Nagar, Ward 2, Zone 1 Tiruvottiyur, Chennai Corporation, Madhavaram, Thiruvallur, Tamil Nadu, 600057, India, CMWSSB Division 2",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Ennore",
+    "boundingbox": [
+     "13.2124681",
+     "13.2224681",
+     "80.3166013",
+     "80.3266013"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 400119,
@@ -13281,11 +14277,41 @@
   "PhysicalProgress": 5,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0838,
-  "longitude": 72.887,
+  "latitude": 19.012711,
+  "longitude": 72.9030827,
   "bbox": "[72.837, 19.0338, 72.937, 19.1338]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0838,
+  "longitude_previous": 72.887,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 430012320,
+    "name": "Mumbai Refinery",
+    "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Mumbai Refinery",
+    "boundingbox": [
+     "19.0026369",
+     "19.0226640",
+     "72.8981575",
+     "72.9088917"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1114.708386000004
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701330,
@@ -13602,11 +14628,41 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0718,
-  "longitude": 72.875,
+  "latitude": 19.012711,
+  "longitude": 72.9030827,
   "bbox": "[72.825, 19.0218, 72.925, 19.1218]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0718,
+  "longitude_previous": 72.875,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 430012320,
+    "name": "Mumbai Refinery",
+    "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Mumbai Refinery",
+    "boundingbox": [
+     "19.0026369",
+     "19.0226640",
+     "72.8981575",
+     "72.9088917"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1114.708386000004
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701329,
@@ -14252,11 +15308,41 @@
   "PhysicalProgress": 75,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 12.9063,
-  "longitude": 74.8602,
+  "latitude": 12.9298239,
+  "longitude": 74.8224536,
   "bbox": "[74.8102, 12.8563, 74.9102, 12.9563]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 12.9063,
+  "longitude_previous": 74.8602,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 18821078,
+    "name": "New Mangalore Port",
+    "display_name": "New Mangalore Port, Kulur, Mangaluru, Mangaluru taluk, Dakshina Kannada, Karnataka, 575001, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Mangalore Port",
+    "boundingbox": [
+     "12.9044802",
+     "12.9551588",
+     "74.8047995",
+     "74.8287280"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617304,
@@ -14317,11 +15403,41 @@
   "PhysicalProgress": 17,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 9.9276,
-  "longitude": 76.2709,
+  "latitude": 9.9544233,
+  "longitude": 76.3449805,
   "bbox": "[76.2209, 9.8776, 76.3209, 9.9776]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 9.9276,
+  "longitude_previous": 76.2709,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 845049738,
+    "name": "Kochi Metro Rail Phase II",
+    "display_name": "Kochi Metro Rail Phase II, Refinery Road, Chathari, Thrippunithura, Kanayannur, Ernakulam, Kerala, 682301, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Kochi Refinery",
+    "boundingbox": [
+     "9.9506317",
+     "9.9555115",
+     "76.3352457",
+     "76.3520110"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 919.1122646802087
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617837,
@@ -25840,11 +26956,41 @@
   "PhysicalProgress": 24,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.5087,
-  "longitude": 87.2993,
+  "latitude": 23.494862,
+  "longitude": 87.3181832,
   "bbox": "[87.2493, 23.4587, 87.3493, 23.5587]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.5087,
+  "longitude_previous": 87.2993,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 8999700619,
+    "name": "Durgapur",
+    "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Durgapur",
+    "boundingbox": [
+     "23.4898620",
+     "23.4998620",
+     "87.3131832",
+     "87.3231832"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 400174,
@@ -25936,11 +27082,41 @@
   "PhysicalProgress": 33,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.5186,
-  "longitude": 87.3005,
+  "latitude": 23.494862,
+  "longitude": 87.3181832,
   "bbox": "[87.2505, 23.4686, 87.3505, 23.5686]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.5186,
+  "longitude_previous": 87.3005,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 8999700619,
+    "name": "Durgapur",
+    "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Durgapur",
+    "boundingbox": [
+     "23.4898620",
+     "23.4998620",
+     "87.3131832",
+     "87.3231832"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617257,
@@ -26163,11 +27339,41 @@
   "PhysicalProgress": 32,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.5291,
-  "longitude": 87.302,
+  "latitude": 23.494862,
+  "longitude": 87.3181832,
   "bbox": "[87.252, 23.4791, 87.352, 23.5791]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.5291,
+  "longitude_previous": 87.302,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 8999700619,
+    "name": "Durgapur",
+    "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Durgapur",
+    "boundingbox": [
+     "23.4898620",
+     "23.4998620",
+     "87.3131832",
+     "87.3231832"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617253,
@@ -26358,11 +27564,41 @@
   "PhysicalProgress": 34,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.5345,
-  "longitude": 87.3176,
+  "latitude": 23.494862,
+  "longitude": 87.3181832,
   "bbox": "[87.2676, 23.4845, 87.3676, 23.5845]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.5345,
+  "longitude_previous": 87.3176,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 8999700619,
+    "name": "Durgapur",
+    "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Durgapur",
+    "boundingbox": [
+     "23.4898620",
+     "23.4998620",
+     "87.3131832",
+     "87.3231832"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701600,
@@ -29749,11 +30985,41 @@
   "PhysicalProgress": 100,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0207,
-  "longitude": 72.5621,
+  "latitude": 23.0482017,
+  "longitude": 72.5643302,
   "bbox": "[72.5121, 22.9707, 72.6121, 23.0707]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 23.0207,
+  "longitude_previous": 72.5621,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1101058045,
+    "name": "Red Line, Ahmedabad Metro",
+    "display_name": "Red Line, Ahmedabad Metro, SabarmatiTaluka, Ahmedabad, Gujarat, 380014, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Ahmedabad Metro",
+    "boundingbox": [
+     "22.9978001",
+     "23.0967876",
+     "72.5322484",
+     "72.5966689"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702631,
@@ -29781,11 +31047,41 @@
   "PhysicalProgress": 87,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.0207,
-  "longitude": 72.5723,
+  "latitude": 23.0482017,
+  "longitude": 72.5643302,
   "bbox": "[72.5223, 22.9707, 72.6223, 23.0707]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 23.0207,
+  "longitude_previous": 72.5723,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1101058045,
+    "name": "Red Line, Ahmedabad Metro",
+    "display_name": "Red Line, Ahmedabad Metro, SabarmatiTaluka, Ahmedabad, Gujarat, 380014, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Ahmedabad Metro",
+    "boundingbox": [
+     "22.9978001",
+     "23.0967876",
+     "72.5322484",
+     "72.5966689"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612878,
@@ -29813,11 +31109,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 12.9584,
-  "longitude": 77.5958,
+  "latitude": 12.8929532,
+  "longitude": 77.5661622,
   "bbox": "[77.5458, 12.9084, 77.6458, 13.0084]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 12.9584,
+  "longitude_previous": 77.5958,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 12182166,
+    "name": "Metro",
+    "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+    "category": "shop",
+    "type": "wholesale",
+    "place_rank": 30,
+    "query": "Bangalore Metro",
+    "boundingbox": [
+     "12.8924069",
+     "12.8937429",
+     "77.5654518",
+     "77.5671716"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 93.31068910592202
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702625,
@@ -29845,11 +31171,41 @@
   "PhysicalProgress": 43,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.2734,
-  "longitude": 77.409,
+  "latitude": 23.2348551,
+  "longitude": 77.4021474,
   "bbox": "[77.359, 23.2234, 77.459, 23.3234]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 23.2734,
+  "longitude_previous": 77.409,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 13931041527,
+    "name": "Metro",
+    "display_name": "Metro, Subhash Yadav Marg, Police Radio Colony, Bhopal, Huzur Tahsil, Bhopal, Madhya Pradesh, 462001, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Bhopal Metro",
+    "boundingbox": [
+     "23.2348051",
+     "23.2349051",
+     "77.4020974",
+     "77.4021974"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702665,
@@ -29877,11 +31233,41 @@
   "PhysicalProgress": 65,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 12.9767,
-  "longitude": 77.5874,
+  "latitude": 12.8929532,
+  "longitude": 77.5661622,
   "bbox": "[77.5374, 12.9267, 77.6374, 13.0267]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 12.9767,
+  "longitude_previous": 77.5874,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 12182166,
+    "name": "Metro",
+    "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+    "category": "shop",
+    "type": "wholesale",
+    "place_rank": 30,
+    "query": "Bangalore Metro",
+    "boundingbox": [
+     "12.8924069",
+     "12.8937429",
+     "77.5654518",
+     "77.5671716"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 93.31068910592202
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702635,
@@ -29909,11 +31295,41 @@
   "PhysicalProgress": 94,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 12.9806,
-  "longitude": 77.6018,
+  "latitude": 12.8929532,
+  "longitude": 77.5661622,
   "bbox": "[77.5518, 12.9306, 77.6518, 13.0306]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 12.9806,
+  "longitude_previous": 77.6018,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 12182166,
+    "name": "Metro",
+    "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+    "category": "shop",
+    "type": "wholesale",
+    "place_rank": 30,
+    "query": "Bangalore Metro",
+    "boundingbox": [
+     "12.8924069",
+     "12.8937429",
+     "77.5654518",
+     "77.5671716"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 93.31068910592202
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619031,
@@ -29941,11 +31357,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.6954,
-  "longitude": 77.0983,
+  "latitude": 28.5248136,
+  "longitude": 77.2930844,
   "bbox": "[77.0483, 28.6454, 77.1483, 28.7454]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 28.6954,
+  "longitude_previous": 77.0983,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 158400658,
+    "name": "Delhi Metro",
+    "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Delhi Metro",
+    "boundingbox": [
+     "28.5232644",
+     "28.5261570",
+     "77.2906920",
+     "77.2952326"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 222.05123955925984
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617207,
@@ -29973,11 +31419,41 @@
   "PhysicalProgress": 4,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.7065,
-  "longitude": 77.1088,
+  "latitude": 28.5248136,
+  "longitude": 77.2930844,
   "bbox": "[77.0588, 28.6565, 77.1588, 28.7565]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 28.7065,
+  "longitude_previous": 77.1088,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 158400658,
+    "name": "Delhi Metro",
+    "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Delhi Metro",
+    "boundingbox": [
+     "28.5232644",
+     "28.5261570",
+     "77.2906920",
+     "77.2952326"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 222.05123955925984
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617206,
@@ -30005,11 +31481,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 28.6942,
-  "longitude": 77.116,
+  "latitude": 28.5248136,
+  "longitude": 77.2930844,
   "bbox": "[77.066, 28.6442, 77.166, 28.7442]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 28.6942,
+  "longitude_previous": 77.116,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 158400658,
+    "name": "Delhi Metro",
+    "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Delhi Metro",
+    "boundingbox": [
+     "28.5232644",
+     "28.5261570",
+     "77.2906920",
+     "77.2952326"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 222.05123955925984
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702633,
@@ -30133,11 +31639,41 @@
   "PhysicalProgress": 54,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 22.7331,
-  "longitude": 75.8496,
+  "latitude": 22.7455418,
+  "longitude": 75.8934689,
   "bbox": "[75.7996, 22.6831, 75.8996, 22.7831]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 22.7331,
+  "longitude_previous": 75.8496,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 6237628398,
+    "name": "Metro",
+    "display_name": "Metro, Old A. B. Road, Indore City, Indore, Juni Indore Tahsil, Indore, Madhya Pradesh, 452001, India",
+    "category": "shop",
+    "type": "tailor",
+    "place_rank": 30,
+    "query": "Indore Metro",
+    "boundingbox": [
+     "22.7454918",
+     "22.7455918",
+     "75.8934189",
+     "75.8935189"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 612066,
@@ -30197,11 +31733,41 @@
   "PhysicalProgress": 12,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.9025,
-  "longitude": 75.775,
+  "latitude": 26.9874419,
+  "longitude": 75.7740788,
   "bbox": "[75.725, 26.8525, 75.825, 26.9525]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 26.9025,
+  "longitude_previous": 75.775,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 863231895,
+    "name": "METRO Supermarket",
+    "display_name": "METRO Supermarket, Jaipur Road, Vishwakarma Industrial Area, Jaipur, Jaipur Municipal Corporation, Jaipur Tehsil, Jaipur, Rajasthan, 302001, India",
+    "category": "shop",
+    "type": "wholesale",
+    "place_rank": 30,
+    "query": "Jaipur Metro",
+    "boundingbox": [
+     "26.9870712",
+     "26.9878095",
+     "75.7733394",
+     "75.7747900"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 71.9482529962598
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701991,
@@ -30261,11 +31827,41 @@
   "PhysicalProgress": 73,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.4361,
-  "longitude": 80.3199,
+  "latitude": 26.5037191,
+  "longitude": 80.2525667,
   "bbox": "[80.2699, 26.3861, 80.3699, 26.4861]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 26.4361,
+  "longitude_previous": 80.3199,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1138319542,
+    "name": "Kalyanpur Metro Station",
+    "display_name": "Kalyanpur Metro Station, NH34, Kanpur, Kanpur Nagar, Uttar Pradesh, 208012, India",
+    "category": "building",
+    "type": "train_station",
+    "place_rank": 30,
+    "query": "Kanpur Metro",
+    "boundingbox": [
+     "26.5033597",
+     "26.5040785",
+     "80.2522105",
+     "80.2529228"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 60.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702664,
@@ -30293,11 +31889,41 @@
   "PhysicalProgress": 10,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 9.9201,
-  "longitude": 76.2679,
+  "latitude": 9.9673119,
+  "longitude": 76.3064177,
   "bbox": "[76.2179, 9.8701, 76.3179, 9.9701]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 9.9201,
+  "longitude_previous": 76.2679,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 722554975,
+    "name": "Kochi Metro Rail",
+    "display_name": "Kochi Metro Rail, Salem - Kochi - Kanyakumari Road, Vyttila, Ernakulam, Kanayannur, Ernakulam, Kerala, 682019, India",
+    "category": "railway",
+    "type": "subway",
+    "place_rank": 30,
+    "query": "Kochi Metro",
+    "boundingbox": [
+     "9.9589581",
+     "9.9725301",
+     "76.2852078",
+     "76.3252195"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2193.448131274419
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619052,
@@ -30325,11 +31951,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 26.8377,
-  "longitude": 80.9423,
+  "latitude": 26.7841898,
+  "longitude": 80.8821005,
   "bbox": "[80.8923, 26.7877, 80.9923, 26.8877]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 26.8377,
+  "longitude_previous": 80.9423,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 396886241,
+    "name": "Metro Depot",
+    "display_name": "Metro Depot, Vikram Nagar, Lucknow, Uttar Pradesh, India",
+    "category": "landuse",
+    "type": "railway",
+    "place_rank": 24,
+    "query": "LUCKNOW Metro",
+    "boundingbox": [
+     "26.7807767",
+     "26.7873237",
+     "80.8788884",
+     "80.8849589"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 364.4060200000663
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619022,
@@ -30390,11 +32046,41 @@
   "PhysicalProgress": 92,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 19.0775,
-  "longitude": 72.8837,
+  "latitude": 19.1137364,
+  "longitude": 72.8422535,
   "bbox": "[72.8337, 19.0275, 72.9337, 19.1275]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 19.0775,
+  "longitude_previous": 72.8837,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 3979085056,
+    "name": "Metro Shoes",
+    "display_name": "Metro Shoes, Swami Vivekanand Road, Irla Gaon, Vile Parle West, K/W Ward, Mumbai Zone 3, Mumbai, Mumbai Suburban District, Maharashtra, 400058, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Mumbai Metro",
+    "boundingbox": [
+     "19.1136864",
+     "19.1137864",
+     "72.8422035",
+     "72.8423035"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702658,
@@ -30422,11 +32108,41 @@
   "PhysicalProgress": 25,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1425,
-  "longitude": 79.0813,
+  "latitude": 21.137435,
+  "longitude": 79.0600722,
   "bbox": "[79.0313, 21.0925, 79.1313, 21.1925]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 21.1425,
+  "longitude_previous": 79.0813,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 4585077913,
+    "name": "Metro",
+    "display_name": "Metro, West High Court Road, Dharampeth, Nagpur City, Nagpur Urban Taluka, Nagpur, Maharashtra, 440011, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Nagpur Metro",
+    "boundingbox": [
+     "21.1373850",
+     "21.1374850",
+     "79.0600222",
+     "79.0601222"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 701745,
@@ -30486,11 +32202,41 @@
   "PhysicalProgress": 40,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.592,
-  "longitude": 85.1274,
+  "latitude": 25.5718574,
+  "longitude": 85.1965759,
   "bbox": "[85.0774, 25.542, 85.1774, 25.642]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 25.592,
+  "longitude_previous": 85.1274,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1442310560,
+    "name": "Ramachak Bairiya Metro Depot",
+    "display_name": "Ramachak Bairiya Metro Depot, Ranipur, Patna, Patna Rural, Patna, Bihar, 800001, India",
+    "category": "landuse",
+    "type": "railway",
+    "place_rank": 24,
+    "query": "Patna Metro",
+    "boundingbox": [
+     "25.5702714",
+     "25.5739926",
+     "85.1890048",
+     "85.2001166"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 557.8978105143617
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617225,
@@ -30551,11 +32297,41 @@
   "PhysicalProgress": 3,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.5273,
-  "longitude": 73.8522,
+  "latitude": 18.5405229,
+  "longitude": 73.883387,
   "bbox": "[73.8022, 18.4773, 73.9022, 18.5773]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 18.5273,
+  "longitude_previous": 73.8522,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 13644309769,
+    "name": "Metro",
+    "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Pune Metro",
+    "boundingbox": [
+     "18.5404729",
+     "18.5405729",
+     "73.8833370",
+     "73.8834370"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618971,
@@ -30583,11 +32359,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.5219,
-  "longitude": 73.8714,
+  "latitude": 18.5405229,
+  "longitude": 73.883387,
   "bbox": "[73.8214, 18.4719, 73.9214, 18.5719]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 18.5219,
+  "longitude_previous": 73.8714,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 13644309769,
+    "name": "Metro",
+    "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Pune Metro",
+    "boundingbox": [
+     "18.5404729",
+     "18.5405729",
+     "73.8833370",
+     "73.8834370"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618985,
@@ -30615,11 +32421,41 @@
   "PhysicalProgress": 0,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 18.5243,
-  "longitude": 73.8576,
+  "latitude": 18.5405229,
+  "longitude": 73.883387,
   "bbox": "[73.8076, 18.4743, 73.9076, 18.5743]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 18.5243,
+  "longitude_previous": 73.8576,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 13644309769,
+    "name": "Metro",
+    "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+    "category": "shop",
+    "type": "shoes",
+    "place_rank": 30,
+    "query": "Pune Metro",
+    "boundingbox": [
+     "18.5404729",
+     "18.5405729",
+     "73.8833370",
+     "73.8834370"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 702630,
@@ -30647,11 +32483,41 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1849,
-  "longitude": 72.8347,
+  "latitude": 21.2182615,
+  "longitude": 72.7640558,
   "bbox": "[72.7847, 21.1349, 72.8847, 21.2349]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "INELIGIBLE_UNDERGROUND_OR_PROCUREMENT",
+  "latitude_previous": 21.1849,
+  "longitude_previous": 72.8347,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 1486710900,
+    "name": "Surat Metro Green Line",
+    "display_name": "Surat Metro Green Line, Gaurav Path Road, Sachin, Chorasi Taluka, Surat, Gujarat, 395009, India",
+    "category": "railway",
+    "type": "construction",
+    "place_rank": 30,
+    "query": "Surat Metro",
+    "boundingbox": [
+     "21.2176872",
+     "21.2188786",
+     "72.7617439",
+     "72.7663555"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 239.28078571239837
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 617327,
@@ -52905,11 +54771,41 @@
   "PhysicalProgress": 30,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.1854,
-  "longitude": 79.9777,
+  "latitude": 23.1799312,
+  "longitude": 80.0539549,
   "bbox": "[79.9277, 23.1354, 80.0277, 23.2354]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.1854,
+  "longitude_previous": 79.9777,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 121089056,
+    "name": "Jabalpur Airport",
+    "display_name": "Jabalpur Airport, Taxi Lane, Dumna, Ranjhi Tahsil, Jabalpur, Madhya Pradesh, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Jabalpur Airport",
+    "boundingbox": [
+     "23.1692928",
+     "23.1914686",
+     "80.0381255",
+     "80.0754236"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1908.4161500245027
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618687,
@@ -52969,11 +54865,41 @@
   "PhysicalProgress": 80,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 23.1749,
-  "longitude": 79.9942,
+  "latitude": 23.1799312,
+  "longitude": 80.0539549,
   "bbox": "[79.9442, 23.1249, 80.0442, 23.2249]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 23.1749,
+  "longitude_previous": 79.9942,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 121089056,
+    "name": "Jabalpur Airport",
+    "display_name": "Jabalpur Airport, Taxi Lane, Dumna, Ranjhi Tahsil, Jabalpur, Madhya Pradesh, India",
+    "category": "aeroway",
+    "type": "aerodrome",
+    "place_rank": 30,
+    "query": "Jabalpur Airport",
+    "boundingbox": [
+     "23.1692928",
+     "23.1914686",
+     "80.0381255",
+     "80.0754236"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 1908.4161500245027
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618684,
@@ -54248,11 +56174,41 @@
   "PhysicalProgress": 95,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 21.1581,
-  "longitude": 79.0852,
+  "latitude": 21.1477175,
+  "longitude": 79.0392433,
   "bbox": "[79.0352, 21.1081, 79.1352, 21.2081]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 21.1581,
+  "longitude_previous": 79.0852,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "way",
+    "osm_id": 27060028,
+    "name": "Rashtrasant Tukadoji Maharaj Nagpur University",
+    "display_name": "Rashtrasant Tukadoji Maharaj Nagpur University, Ambazari Road, Bharat Nagar, Nagpur City, Nagpur Urban Taluka, Nagpur, Maharashtra, 440021, India",
+    "category": "amenity",
+    "type": "university",
+    "place_rank": 30,
+    "query": "Nagpur University",
+    "boundingbox": [
+     "21.1453079",
+     "21.1495746",
+     "79.0363585",
+     "79.0436884"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 380.50672574196136
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619298,
@@ -63159,11 +65115,41 @@
   "PhysicalProgress": 21,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.092,
-  "longitude": 80.271,
+  "latitude": 13.096423,
+  "longitude": 80.303623,
   "bbox": "[80.221, 13.042, 80.321, 13.142]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.092,
+  "longitude_previous": 80.271,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 2882852,
+    "name": "Chennai Port",
+    "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Chennai Port",
+    "boundingbox": [
+     "13.0695789",
+     "13.1223481",
+     "80.2857768",
+     "80.3101433"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618800,
@@ -63191,11 +65177,41 @@
   "PhysicalProgress": 18,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.0971,
-  "longitude": 80.274,
+  "latitude": 13.096423,
+  "longitude": 80.303623,
   "bbox": "[80.224, 13.0471, 80.324, 13.1471]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.0971,
+  "longitude_previous": 80.274,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 2882852,
+    "name": "Chennai Port",
+    "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Chennai Port",
+    "boundingbox": [
+     "13.0695789",
+     "13.1223481",
+     "80.2857768",
+     "80.3101433"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619139,
@@ -63223,11 +65239,41 @@
   "PhysicalProgress": 17,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.086,
-  "longitude": 80.2794,
+  "latitude": 13.096423,
+  "longitude": 80.303623,
   "bbox": "[80.2294, 13.036, 80.3294, 13.136]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.086,
+  "longitude_previous": 80.2794,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 2882852,
+    "name": "Chennai Port",
+    "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Chennai Port",
+    "boundingbox": [
+     "13.0695789",
+     "13.1223481",
+     "80.2857768",
+     "80.3101433"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 619045,
@@ -63255,11 +65301,41 @@
   "PhysicalProgress": 7,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 13.0917,
-  "longitude": 80.2749,
+  "latitude": 13.096423,
+  "longitude": 80.303623,
   "bbox": "[80.2249, 13.0417, 80.3249, 13.1417]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 13.0917,
+  "longitude_previous": 80.2749,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "relation",
+    "osm_id": 2882852,
+    "name": "Chennai Port",
+    "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+    "category": "landuse",
+    "type": "industrial",
+    "place_rank": 24,
+    "query": "Chennai Port",
+    "boundingbox": [
+     "13.0695789",
+     "13.1223481",
+     "80.2857768",
+     "80.3101433"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 2500.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618480,
@@ -68246,11 +70322,41 @@
   "PhysicalProgress": 7,
   "OnboardingDelay": 0,
   "Remarks": null,
-  "latitude": 25.3062,
-  "longitude": 82.9688,
+  "latitude": 25.4539658,
+  "longitude": 82.8805167,
   "bbox": "[82.9188, 25.2562, 83.0188, 25.3562]",
-  "geocode_precision": "GAZETTEER_CITY_MATCH",
-  "eo_eligibility": "ELIGIBLE"
+  "geocode_precision": "OSM_LANDMARK_MATCH",
+  "eo_eligibility": "ELIGIBLE",
+  "latitude_previous": 25.3062,
+  "longitude_previous": 82.9688,
+  "geocode_enrichment": {
+   "source": "OpenStreetMap via Nominatim",
+   "resolved_at": "2026-08-29",
+   "osm": {
+    "osm_type": "node",
+    "osm_id": 292671750,
+    "name": "Babatpur",
+    "display_name": "Babatpur, Satomahua Mangari Road, Pindra, Varanasi, Uttar Pradesh, 221202, India",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "query": "Babatpur, Uttar Pradesh",
+    "boundingbox": [
+     "25.4489658",
+     "25.4589658",
+     "82.8755167",
+     "82.8855167"
+    ]
+   },
+   "checks_passed": [
+    "class",
+    "geography",
+    "name",
+    "displacement"
+   ],
+   "error_radius_m": 250.0
+  },
+  "geocode_precision_previous": "GAZETTEER_CITY_MATCH"
  },
  {
   "ProjectId": 618710,

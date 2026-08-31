@@ -1,0 +1,5973 @@
+{
+ "generated_at": "2026-08-29T15:34:20",
+ "targets": 149,
+ "accepted": [
+  {
+   "project_id": "706718",
+   "project_name": "C/o NITB Imphal Airport",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 24.8122,
+    "longitude": 93.9245
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1745 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Imphal' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 6.86,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 24.757604,
+    "longitude": 93.8927774,
+    "error_radius_m": 1745.3250540001247,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 96566387,
+     "name": "Bir Tikendrajit International Airport",
+     "display_name": "Bir Tikendrajit International Airport, Tiddim Road, Tulihal, Wangoi, Imphal West, Manipur, 795140, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Imphal Airport",
+     "boundingbox": [
+      "24.7424893",
+      "24.7738462",
+      "93.8841253",
+      "93.9088112"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701121",
+   "project_name": "Construction of New  Domestic Terminal Building  at Rajahmundry Airport.",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 16.9951,
+    "longitude": 81.8106
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 2158 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Rajahmundry' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "rajahmundry"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 12.24,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 17.1049842,
+    "longitude": 81.8181098,
+    "error_radius_m": 2157.917158463555,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 135670403,
+     "name": "Rajahmundry Airport",
+     "display_name": "Rajahmundry Airport, MDR0250, Madhurapudi, Korukonda, East Godavari, Andhra Pradesh, 533102, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Rajahmundry Airport",
+     "boundingbox": [
+      "17.0898236",
+      "17.1204578",
+      "81.7907426",
+      "81.8313065"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701101",
+   "project_name": "Construction of New Domestic Terminal Building [Phase-I and II] and other allied structure",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.595,
+    "longitude": 85.1274
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1180 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Patna' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.76,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 25.5918458,
+    "longitude": 85.0900477,
+    "error_radius_m": 1180.0724080107213,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 97955336,
+     "name": "Jayprakash Narayan International Airport",
+     "display_name": "Jayprakash Narayan International Airport, NH139, Patna, Patna Rural, Patna, Bihar, 800002, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Patna Airport",
+     "boundingbox": [
+      "25.5862708",
+      "25.5975247",
+      "85.0758596",
+      "85.0993673"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612788",
+   "project_name": "Construction of New Domestic Terminal Building and Miscellaneous Works at Belagavi Airport",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 15.8479,
+    "longitude": 74.5001
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1942 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Belagavi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 12.28,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 15.8593476,
+    "longitude": 74.6142405,
+    "error_radius_m": 1942.004722259327,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 555353901,
+     "name": "Belgaum Airport",
+     "display_name": "Belgaum Airport, SH20, Balekundri Khurd, Belagavi taluku, Belagavi, Karnataka, 591124, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Belagavi Airport",
+     "boundingbox": [
+      "15.8511549",
+      "15.8682581",
+      "74.5973611",
+      "74.6336323"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701127",
+   "project_name": "Construction of New Passenger Terminal Building for Domestic Operations at Jodhpur Airport",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.2395,
+    "longitude": 73.0165
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 301 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Jodhpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "jodhpur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.42,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.262838,
+    "longitude": 73.0524368,
+    "error_radius_m": 301.23208788505184,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 239937938,
+     "name": "Amrita Devi Bishnoi Airport Jodhpur",
+     "display_name": "Amrita Devi Bishnoi Airport Jodhpur, SH61, Rai Ka Bagh, Jodhpur, Jodhpur Tehsil, Jodhpur, Rajasthan, 342011, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Jodhpur Airport",
+     "boundingbox": [
+      "26.2619746",
+      "26.2648070",
+      "73.0494599",
+      "73.0554949"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701113",
+   "project_name": "Development of Lal Bahadur Shastri International airport, Varanasi including C/o New Termi",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.3104,
+    "longitude": 82.9826
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1838 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Lal' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "bahadur",
+      "international",
+      "lal",
+      "shastri"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 19.68,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 25.4509975,
+    "longitude": 82.8635994,
+    "error_radius_m": 1838.4098883577533,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 26648704,
+     "name": "Lal Bahadur Shastri International Airport",
+     "display_name": "Lal Bahadur Shastri International Airport, NH31, Pindra, Varanasi, Uttar Pradesh, 221006, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Lal Airport",
+     "boundingbox": [
+      "25.4447094",
+      "25.4574384",
+      "82.8443986",
+      "82.8809778"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701105",
+   "project_name": "Goa Airport Terminal Building Extension Project",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 15.314,
+    "longitude": 74.1216
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1985 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Goa' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "goa"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 31.95,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 15.3805714,
+    "longitude": 73.8317181,
+    "error_radius_m": 1984.879015178347,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 91549529,
+     "name": "Goa International Airport",
+     "display_name": "Goa International Airport, Airport Road, Chicalim, Vasco, Mormugao, South Goa, Goa, 403802, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Goa Airport",
+     "boundingbox": [
+      "15.3733674",
+      "15.3878055",
+      "73.8141645",
+      "73.8511499"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701091",
+   "project_name": "Lucknow Airport-Terminal 3- Phase 1 & Other Associated Works",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.8368,
+    "longitude": 80.945
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 26 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Lucknow' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "lucknow"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 10.03,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.7638378,
+    "longitude": 80.8855916,
+    "error_radius_m": 60.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1360909049,
+     "name": "Lucknow Airport Bus Depot",
+     "display_name": "Lucknow Airport Bus Depot, Vikram Nagar, Lucknow, Uttar Pradesh, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Lucknow Airport",
+     "boundingbox": [
+      "26.7636016",
+      "26.7640699",
+      "80.8853299",
+      "80.8858540"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "611602",
+   "project_name": "Modernization of Chennai Airport, Phase II, Part 2",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.0725,
+    "longitude": 80.2818
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 2405 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "chennai"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 14.74,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 12.993374,
+    "longitude": 80.1725867,
+    "error_radius_m": 2405.1925078252398,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 23633604,
+     "name": "Chennai International Airport",
+     "display_name": "Chennai International Airport, Grand Southern Trunk Road, Meenambakkam, Tirusulam, Alandur, Chennai, Tamil Nadu, 600027, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Chennai Airport",
+     "boundingbox": [
+      "12.9782602",
+      "13.0084713",
+      "80.1451247",
+      "80.1894724"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "611961",
+   "project_name": "Construction of IIT Bhubaneswar -Phase III",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 20.2901,
+    "longitude": 85.8104
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1483 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bhubaneswar' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "bhubaneswar"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 21.14,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 20.1478932,
+    "longitude": 85.6759728,
+    "error_radius_m": 1482.711129446983,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 621537202,
+     "name": "Indian Institute of Technology, Bhubaneswar",
+     "display_name": "Indian Institute of Technology, Bhubaneswar, Khordha Town to IIT Road, Jatani, Khordha, Odisha, 752050, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "IIT Bhubaneswar",
+     "boundingbox": [
+      "20.1403338",
+      "20.1556091",
+      "85.6558843",
+      "85.6842594"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "605292",
+   "project_name": "Construction of Permanent Campus of Indian Institute of Management [IIM] Amritsar, Punjab,",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 31.6355,
+    "longitude": 74.8609
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "hospital",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Amritsar' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "institute"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.99,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 31.623197,
+    "longitude": 74.9004399,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 7074314681,
+     "name": "Sri Guru Ram Das Institute Of Dental Sciences And Research",
+     "display_name": "Sri Guru Ram Das Institute Of Dental Sciences And Research, Sher Shah Suri Marg, Sharifpura, Golden Avenue, Amritsar, Amritsar I Tahsil, Amritsar, Punjab, 14300",
+     "category": "amenity",
+     "type": "hospital",
+     "place_rank": 30,
+     "query": "Amritsar Institute",
+     "boundingbox": [
+      "31.6231470",
+      "31.6232470",
+      "74.9003899",
+      "74.9004899"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "609996",
+   "project_name": "Construction of Precast housing and hostels at IIT Hyderabad",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 17.3709,
+    "longitude": 78.4909
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1421 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Hyderabad' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "hyderabad"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 46.21,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 17.5922751,
+    "longitude": 78.1221891,
+    "error_radius_m": 1420.8328200000167,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 305851274,
+     "name": "Indian Institute of Technology Hyderabad",
+     "display_name": "Indian Institute of Technology Hyderabad, NH161, Kandi, Kandi mandal, Sangareddy, Telangana, 502285, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "IIT Hyderabad",
+     "boundingbox": [
+      "17.5795338",
+      "17.6050608",
+      "78.1156702",
+      "78.1317644"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "616886",
+   "project_name": "Delhi University Eastern Campus at Surajmal Vihar",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.6939,
+    "longitude": 77.0911
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Surajmal' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "surajmal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.14,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 28.6818775,
+    "longitude": 77.074,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 6465991443,
+     "name": "Surajmal Stadium",
+     "display_name": "Surajmal Stadium, Rohtak Road, Nangloi, Rohini, Delhi, North West Delhi, Delhi, 110083, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Surajmal",
+     "boundingbox": [
+      "28.6768775",
+      "28.6868775",
+      "77.0690000",
+      "77.0790000"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617877",
+   "project_name": "Phase B Construction of Permanent Campus of IIT Bhilai",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.9258,
+    "longitude": 79.3982
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 838 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bhilai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "bhilai"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 212.49,
+     "limit_km": 400.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 21.2446287,
+    "longitude": 81.3183069,
+    "error_radius_m": 838.4622400001341,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1412995394,
+     "name": "Indian Institute of Technology, Bhilai",
+     "display_name": "Indian Institute of Technology, Bhilai, SH7, Khapri, Durg Tahsil, Durg, Chhattisgarh, 490020, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "IIT Bhilai",
+     "boundingbox": [
+      "21.2370684",
+      "21.2521324",
+      "81.3106387",
+      "81.3258225"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "611957",
+   "project_name": "Phase III A works at IIT Indore [03 Hostels, 01 Studio Apartment, 01 Housing, Heavy & Soph",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 22.7277,
+    "longitude": 75.8634
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 966 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Indore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "indore"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 23.24,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 22.5269276,
+    "longitude": 75.9262066,
+    "error_radius_m": 965.8568479998672,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 659577709,
+     "name": "Indian Institute Of Technology Indore",
+     "display_name": "Indian Institute Of Technology Indore, common road, Simrol, Mhow Tahsil, Indore, Madhya Pradesh, 453485, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "IIT Indore",
+     "boundingbox": [
+      "22.5182955",
+      "22.5356483",
+      "75.9177804",
+      "75.9358907"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "400081",
+   "project_name": "National Sports University [NSU], Imphal [Manipur]",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 24.8047,
+    "longitude": 93.9317
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 556 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Imphal' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "manipur",
+      "university"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 5.59,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 24.7545772,
+    "longitude": 93.9278882,
+    "error_radius_m": 556.393514699229,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 662494890,
+     "name": "Manipur University",
+     "display_name": "Manipur University, NH102, Imphal, Wangoi, Imphal West, Manipur, 795003, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "Imphal University",
+     "boundingbox": [
+      "24.7509089",
+      "24.7582454",
+      "93.9223927",
+      "93.9334005"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618976",
+   "project_name": "Gadarwara Super Thermal Power Project, Stage-II [2x800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 22.0158,
+    "longitude": 79.0482
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1108 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Gadarwara' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "gadarwara",
+      "power",
+      "super",
+      "thermal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 96.0,
+     "limit_km": 400.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 22.8623731,
+    "longitude": 78.8648997,
+    "error_radius_m": 1107.9401300000072,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 394955715,
+     "name": "Gadarwara Super Thermal Power Station",
+     "display_name": "Gadarwara Super Thermal Power Station, Chorbarheta, Gadarwara Tahsil, Narsinghpur, Madhya Pradesh, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Gadarwara Power Station",
+     "boundingbox": [
+      "22.8530857",
+      "22.8729912",
+      "78.8546166",
+      "78.8741024"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612142",
+   "project_name": "Singrauli Super Thermal Power Project, Stage-III [2x800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 24.0914,
+    "longitude": 82.6876
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1535 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Singrauli' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "power",
+      "singrauli",
+      "super",
+      "thermal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.38,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 24.1053349,
+    "longitude": 82.705424,
+    "error_radius_m": 1535.2272798128413,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 196411761,
+     "name": "Singrauli Super Thermal Power Station",
+     "display_name": "Singrauli Super Thermal Power Station, Shaktiinagar, Dudhi, Sonbhadra, Uttar Pradesh, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Singrauli Power Station",
+     "boundingbox": [
+      "24.0982014",
+      "24.1124569",
+      "82.6914084",
+      "82.7216257"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617188",
+   "project_name": "Sipat Super Thermal Power Project, Stage-III [1x800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.5958,
+    "longitude": 79.0182
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1290 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Sipat' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "power",
+      "sipat",
+      "thermal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 379.58,
+     "limit_km": 400.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 22.1291371,
+    "longitude": 82.2933042,
+    "error_radius_m": 1289.864840000051,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 248385257,
+     "name": "Sipat Thermal Power Station",
+     "display_name": "Sipat Thermal Power Station, Masturi Tahsil, Bilaspur, Chhattisgarh, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Sipat Power Station",
+     "boundingbox": [
+      "22.1175314",
+      "22.1407054",
+      "82.2788412",
+      "82.3029869"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619341",
+   "project_name": "Telangana Super Thermal Power Project , Stage-II [3 x 800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.1258,
+    "longitude": 78.8782
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "energy_supplier",
+     "category": "office",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Telangana' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "power"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 336.24,
+     "limit_km": 400.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 18.1339195,
+    "longitude": 79.3442548,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 10171208525,
+     "name": "power station",
+     "display_name": "power station, NH765DG, Bheemadeverapalli, Bheemadevarapalli mandal, Hanumakonda, Telangana, 505471, India",
+     "category": "office",
+     "type": "energy_supplier",
+     "place_rank": 30,
+     "query": "Telangana Power Station",
+     "boundingbox": [
+      "18.1338695",
+      "18.1339695",
+      "79.3442048",
+      "79.3443048"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "400035",
+   "project_name": "Grass Root Rail-fed Depot at Sekerkote, Agartala as resitement of existing Dharmanagar Dep",
+   "sector": "Energy Storage",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.8417,
+    "longitude": 91.2862
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Sekerkote' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "sekerkote"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 10.93,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.7436934,
+    "longitude": 91.2773921,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 3281638676,
+     "name": "Sekerkote",
+     "display_name": "Sekerkote, NH8, Dukli, Sadar, West Tripura, Tripura, 799014, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Sekerkote",
+     "boundingbox": [
+      "23.7386934",
+      "23.7486934",
+      "91.2723921",
+      "91.2823921"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "701349",
+   "project_name": "Paradip-Numaligarh Crude Oil Pipeline [PNCPL] & Crude Oil Import Terminal [COIT] at Paradi",
+   "sector": "Energy Storage",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 20.3177,
+    "longitude": 86.6126
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "viewpoint",
+     "category": "tourism",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Paradip' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "terminal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 8.28,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 20.2737294,
+    "longitude": 86.676697,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 7732592685,
+     "name": "ORE Terminal",
+     "display_name": "ORE Terminal, Paradip Port Expressway, Paradip, Jagatsinghapur, Odisha, 754142, India",
+     "category": "tourism",
+     "type": "viewpoint",
+     "place_rank": 30,
+     "query": "Paradip Terminal",
+     "boundingbox": [
+      "20.2736794",
+      "20.2737794",
+      "86.6766470",
+      "86.6767470"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "400235",
+   "project_name": "Setting up a common user Petroleum Terminal at Jammu, J&K for resitement of existing PSU O",
+   "sector": "Energy Storage",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 32.7338,
+    "longitude": 74.845
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 85 m",
+   "checks": {
+    "class": {
+     "type": "terminal",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Jammu' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "jammu",
+      "terminal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 5.87,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 32.6810712,
+    "longitude": 74.8422439,
+    "error_radius_m": 84.51414399971128,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 891075600,
+     "name": "Jammu Airport Terminal",
+     "display_name": "Jammu Airport Terminal, Airport Rd, Ashok Nagar, Jammu, Jammu district, Jammu and Kashmir, 180003, India",
+     "category": "aeroway",
+     "type": "terminal",
+     "place_rank": 30,
+     "query": "Jammu Terminal",
+     "boundingbox": [
+      "32.6803231",
+      "32.6818415",
+      "74.8414287",
+      "74.8431754"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617882",
+   "project_name": "Setting up IT Infrastructure including Network Security and Hosting at AIIMS, New Delhi",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.69,
+    "longitude": 77.107
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "subway_entrance",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'AIIMS' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "aiims"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 16.66,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 28.569016,
+    "longitude": 77.2076122,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 6362647075,
+     "name": "AIIMS Metro Gate No. 4",
+     "display_name": "AIIMS Metro Gate No. 4, AIIMS Flyover, Kidwai Nagar, New Delhi, Delhi, 110029, India",
+     "category": "railway",
+     "type": "subway_entrance",
+     "place_rank": 30,
+     "query": "AIIMS AIIMS",
+     "boundingbox": [
+      "28.5689660",
+      "28.5690660",
+      "77.2075622",
+      "77.2076622"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612185",
+   "project_name": "C/o Construction of 200 bedded [Up-gradable to 300 bedded] ESI Hospital at Surat Gujarat.",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.1846,
+    "longitude": 72.8416
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 48 m",
+   "checks": {
+    "class": {
+     "type": "hospital",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Surat' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "hospital"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.32,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 21.1795987,
+    "longitude": 72.8198565,
+    "error_radius_m": 60.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 552624062,
+     "name": "New Civil Hospital",
+     "display_name": "New Civil Hospital, surat, Majura Gate Flyover, Majura Taluka, Surat, Gujarat, 395001, India",
+     "category": "amenity",
+     "type": "hospital",
+     "place_rank": 30,
+     "query": "Surat Hospital",
+     "boundingbox": [
+      "21.1791623",
+      "21.1800169",
+      "72.8194450",
+      "72.8202541"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612188",
+   "project_name": "Construction of 200 Bedded [Upgradable to 500 Bedded including 50 beds of SST] ESIC Hospit",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 18.5177,
+    "longitude": 73.8639
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 31 m",
+   "checks": {
+    "class": {
+     "type": "hospital",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Pune' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "hospital"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 21.48,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 18.6570279,
+    "longitude": 73.7227013,
+    "error_radius_m": 60.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1454583043,
+     "name": "hospital",
+     "display_name": "hospital, mukai chowk, Gahunje - Mukai Chowk Kiwale - Ravet Road, Ravet, Haveli Subdistrict, Pune, Maharashtra, 412101, India",
+     "category": "amenity",
+     "type": "hospital",
+     "place_rank": 30,
+     "query": "Pune Hospital",
+     "boundingbox": [
+      "18.6569134",
+      "18.6571258",
+      "73.7224025",
+      "73.7229948"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "616691",
+   "project_name": "Upgradation & Extension of ESIC Hospital and Construction of PG Hostel / Staff Housing for",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0805,
+    "longitude": 72.8873
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "hospital",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mumbai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "esic",
+      "hospital"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 14.13,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.2071803,
+    "longitude": 72.8769761,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 8797549260,
+     "name": "ESIC Hospital",
+     "display_name": "ESIC Hospital, Thakur Village Road, Dattani Park, Thakur Village, R/S Ward, Mumbai Zone 4, Mumbai Suburban District, Maharashtra, 400101, India",
+     "category": "amenity",
+     "type": "hospital",
+     "place_rank": 30,
+     "query": "ESIC Hospital",
+     "boundingbox": [
+      "19.2071303",
+      "19.2072303",
+      "72.8769261",
+      "72.8770261"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702668",
+   "project_name": "Chennai Metro Rail Phase-II Development Project",
+   "sector": "Inland Waterways",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.0866,
+    "longitude": 80.2845
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 12 m",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.47,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.0428248,
+    "longitude": 80.2321524,
+    "error_radius_m": 60.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 354985391,
+     "name": "Metro",
+     "display_name": "Metro, Maharajapuram Santhanam Salai, Ward 136, Zone 10 Kodambakkam, Chennai Corporation, Chennai, Tamil Nadu, 600017, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Chennai Metro",
+     "boundingbox": [
+      "13.0427201",
+      "13.0429294",
+      "80.2320796",
+      "80.2322251"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "709782",
+   "project_name": "ATF Pipeline from Jawaharlal Nehru Port Trust to Navi Mumbai International Airport ",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0805,
+    "longitude": 72.8855
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 2004 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Nehru' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "international"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.52,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.0901376,
+    "longitude": 72.8638223,
+    "error_radius_m": 2003.6531424043358,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 22826676,
+     "name": "Chhatrapati Shivaji Maharaj International Airport",
+     "display_name": "Chhatrapati Shivaji Maharaj International Airport, Nehru Road, Andheri East, K/E Ward, Mumbai Zone 3, Mumbai, Mumbai Suburban District, Maharashtra, 400057, Ind",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Nehru Airport",
+     "boundingbox": [
+      "19.0790846",
+      "19.1012253",
+      "72.8438683",
+      "72.8819613"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "607701",
+   "project_name": "Guwahati Refinery Expansion [1.0 to 1.2 MMTPA] along with installation of CRU, Guwahati Re",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.1382,
+    "longitude": 91.7275
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 598 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Guwahati' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "guwahati",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 9.71,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.1849846,
+    "longitude": 91.8096863,
+    "error_radius_m": 598.4900806667978,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 122009489,
+     "name": "Guwahati Refinery",
+     "display_name": "Guwahati Refinery, Noonmati Refinery, Dispur, Kamrup Metropolitan, Assam, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Guwahati Refinery",
+     "boundingbox": [
+      "26.1807242",
+      "26.1892114",
+      "91.8032914",
+      "91.8152737"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "709760",
+   "project_name": "HP TDAE Unit in Mumbai Refinery",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0748,
+    "longitude": 72.881
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1115 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mumbai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "mumbai",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.28,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.012711,
+    "longitude": 72.9030827,
+    "error_radius_m": 1114.708386000004,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 430012320,
+     "name": "Mumbai Refinery",
+     "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Mumbai Refinery",
+     "boundingbox": [
+      "19.0026369",
+      "19.0226640",
+      "72.8981575",
+      "72.9088917"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "604859",
+   "project_name": "Integrated Para Xylene [PX] and Purified Terephthalic Acid [PTA] Project at Paradip Refine",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 20.3093,
+    "longitude": 86.6075
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "nightclub",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Paradip' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "paradip",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1.69,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 20.2969452,
+    "longitude": 86.6170085,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 4696613607,
+     "name": "IOCL Paradip Refinery Township, Officer's Club",
+     "display_name": "IOCL Paradip Refinery Township, Officer's Club, Paradip Port Expressway, Paradip, Paradeep Lock, Jagatsinghapur, Odisha, 754120, India",
+     "category": "amenity",
+     "type": "nightclub",
+     "place_rank": 30,
+     "query": "Paradip Refinery",
+     "boundingbox": [
+      "20.2968952",
+      "20.2969952",
+      "86.6169585",
+      "86.6170585"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "709750",
+   "project_name": "Laying of new 28 inch Desal Water Pipeline and 10 inch Reject Water Pipeline between CPCL ",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.2274,
+    "longitude": 80.319
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Ennore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "ennore"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1.14,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.2174681,
+    "longitude": 80.3216013,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 5274094702,
+     "name": "Ennore",
+     "display_name": "Ennore, Railway Station Rd, Nehru Nagar, Ward 2, Zone 1 Tiruvottiyur, Chennai Corporation, Madhavaram, Thiruvallur, Tamil Nadu, 600057, India, CMWSSB Division 2",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Ennore",
+     "boundingbox": [
+      "13.2124681",
+      "13.2224681",
+      "80.3166013",
+      "80.3266013"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "616933",
+   "project_name": "Lube Modernization & Bottom Upgradation Project at Mumbai Refinery",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0838,
+    "longitude": 72.887
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1115 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mumbai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "mumbai",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 8.08,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.012711,
+    "longitude": 72.9030827,
+    "error_radius_m": 1114.708386000004,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 430012320,
+     "name": "Mumbai Refinery",
+     "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Mumbai Refinery",
+     "boundingbox": [
+      "19.0026369",
+      "19.0226640",
+      "72.8981575",
+      "72.9088917"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619223",
+   "project_name": "Petro Resid Fluidized Catalytic Cracking [PRFCC] Unit and its associated facilities at Mum",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0718,
+    "longitude": 72.875
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1115 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mumbai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "mumbai",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.2,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.012711,
+    "longitude": 72.9030827,
+    "error_radius_m": 1114.708386000004,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 430012320,
+     "name": "Mumbai Refinery",
+     "display_name": "Mumbai Refinery, M/E Ward, Mumbai Zone 5, Mumbai, Mumbai Suburban District, Maharashtra, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Mumbai Refinery",
+     "boundingbox": [
+      "19.0026369",
+      "19.0226640",
+      "72.8981575",
+      "72.9088917"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "709774",
+   "project_name": "Revamping/ Augmentation of facilities at existing port terminal at Mangalore",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 12.9063,
+    "longitude": 74.8602
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 2821 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mangalore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "mangalore",
+      "port"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.86,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 12.9298239,
+    "longitude": 74.8224536,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 18821078,
+     "name": "New Mangalore Port",
+     "display_name": "New Mangalore Port, Kulur, Mangaluru, Mangaluru taluk, Dakshina Kannada, Karnataka, 575001, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Mangalore Port",
+     "boundingbox": [
+      "12.9044802",
+      "12.9551588",
+      "74.8047995",
+      "74.8287280"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "709799",
+   "project_name": "Setting up Polypropylene Unit at Kochi Refinery",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 9.9276,
+    "longitude": 76.2709
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 919 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Kochi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "kochi"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 8.64,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 9.9544233,
+    "longitude": 76.3449805,
+    "error_radius_m": 919.1122646802087,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 845049738,
+     "name": "Kochi Metro Rail Phase II",
+     "display_name": "Kochi Metro Rail Phase II, Refinery Road, Chathari, Thrippunithura, Kanayannur, Ernakulam, Kerala, 682301, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Kochi Refinery",
+     "boundingbox": [
+      "9.9506317",
+      "9.9555115",
+      "76.3352457",
+      "76.3520110"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617242",
+   "project_name": "Installation of New Bar Mill at Durgapur Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.5087,
+    "longitude": 87.2993
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Durgapur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "durgapur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.46,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.494862,
+    "longitude": 87.3181832,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 8999700619,
+     "name": "Durgapur",
+     "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Durgapur",
+     "boundingbox": [
+      "23.4898620",
+      "23.4998620",
+      "87.3131832",
+      "87.3231832"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612781",
+   "project_name": "Rebuilding of COB 4 at Durgapur Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.5186,
+    "longitude": 87.3005
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Durgapur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "durgapur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.2,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.494862,
+    "longitude": 87.3181832,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 8999700619,
+     "name": "Durgapur",
+     "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Durgapur",
+     "boundingbox": [
+      "23.4898620",
+      "23.4998620",
+      "87.3131832",
+      "87.3231832"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617251",
+   "project_name": "Revamping of Air Pollution Control Systems of SP-1 at Durgapur Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.5291,
+    "longitude": 87.302
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Durgapur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "durgapur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.15,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.494862,
+    "longitude": 87.3181832,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 8999700619,
+     "name": "Durgapur",
+     "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Durgapur",
+     "boundingbox": [
+      "23.4898620",
+      "23.4998620",
+      "87.3131832",
+      "87.3231832"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617246",
+   "project_name": "Up-gradation of Blast Furnace No. 3 at Durgapur Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.5345,
+    "longitude": 87.3176
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Durgapur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "durgapur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.41,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.494862,
+    "longitude": 87.3181832,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 8999700619,
+     "name": "Durgapur",
+     "display_name": "Durgapur, J.P. Avenue Railway Flyover, Durgapur, Faridpur Durgapur, Paschim Bardhaman, West Bengal, 713200, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Durgapur",
+     "boundingbox": [
+      "23.4898620",
+      "23.4998620",
+      "87.3131832",
+      "87.3231832"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702639",
+   "project_name": "Ahmedabad Metro Rail Project [Phase-I]",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.0207,
+    "longitude": 72.5621
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 5510 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Ahmedabad' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "ahmedabad",
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.07,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.0482017,
+    "longitude": 72.5643302,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1101058045,
+     "name": "Red Line, Ahmedabad Metro",
+     "display_name": "Red Line, Ahmedabad Metro, SabarmatiTaluka, Ahmedabad, Gujarat, 380014, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Ahmedabad Metro",
+     "boundingbox": [
+      "22.9978001",
+      "23.0967876",
+      "72.5322484",
+      "72.5966689"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702631",
+   "project_name": "Ahmedabad Metro Rail Project, Phase-II",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.0207,
+    "longitude": 72.5723
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 5510 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Ahmedabad' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "ahmedabad",
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.16,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.0482017,
+    "longitude": 72.5643302,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1101058045,
+     "name": "Red Line, Ahmedabad Metro",
+     "display_name": "Red Line, Ahmedabad Metro, SabarmatiTaluka, Ahmedabad, Gujarat, 380014, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Ahmedabad Metro",
+     "boundingbox": [
+      "22.9978001",
+      "23.0967876",
+      "72.5322484",
+      "72.5966689"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612878",
+   "project_name": "Bangalore Metro Rail Project - PHASE-3",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 12.9584,
+    "longitude": 77.5958
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 93 m",
+   "checks": {
+    "class": {
+     "type": "wholesale",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bangalore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.95,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 12.8929532,
+    "longitude": 77.5661622,
+    "error_radius_m": 93.31068910592202,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 12182166,
+     "name": "Metro",
+     "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+     "category": "shop",
+     "type": "wholesale",
+     "place_rank": 30,
+     "query": "Bangalore Metro",
+     "boundingbox": [
+      "12.8924069",
+      "12.8937429",
+      "77.5654518",
+      "77.5671716"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702625",
+   "project_name": "Bhopal Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.2734,
+    "longitude": 77.409
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bhopal' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.34,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.2348551,
+    "longitude": 77.4021474,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 13931041527,
+     "name": "Metro",
+     "display_name": "Metro, Subhash Yadav Marg, Police Radio Colony, Bhopal, Huzur Tahsil, Bhopal, Madhya Pradesh, 462001, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Bhopal Metro",
+     "boundingbox": [
+      "23.2348051",
+      "23.2349051",
+      "77.4020974",
+      "77.4021974"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702665",
+   "project_name": "Construction Bangalore Metro Rail Project Phase-2A & 2B",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 12.9767,
+    "longitude": 77.5874
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 93 m",
+   "checks": {
+    "class": {
+     "type": "wholesale",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bangalore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 9.59,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 12.8929532,
+    "longitude": 77.5661622,
+    "error_radius_m": 93.31068910592202,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 12182166,
+     "name": "Metro",
+     "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+     "category": "shop",
+     "type": "wholesale",
+     "place_rank": 30,
+     "query": "Bangalore Metro",
+     "boundingbox": [
+      "12.8924069",
+      "12.8937429",
+      "77.5654518",
+      "77.5671716"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702635",
+   "project_name": "Construction of Bangalore Metro Rail Project Phase 2.",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 12.9806,
+    "longitude": 77.6018
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 93 m",
+   "checks": {
+    "class": {
+     "type": "wholesale",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Bangalore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 10.48,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 12.8929532,
+    "longitude": 77.5661622,
+    "error_radius_m": 93.31068910592202,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 12182166,
+     "name": "Metro",
+     "display_name": "Metro, Kanakapura Road, Yelachenahalli, Vasanthapura, Bengaluru South City Corporation, Bengaluru, Bangalore South, Bengaluru Urban, Karnataka, 560111, India",
+     "category": "shop",
+     "type": "wholesale",
+     "place_rank": 30,
+     "query": "Bangalore Metro",
+     "boundingbox": [
+      "12.8924069",
+      "12.8937429",
+      "77.5654518",
+      "77.5671716"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619031",
+   "project_name": "Delhi Metro Rail Phase V A",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.6954,
+    "longitude": 77.0983
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 222 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Delhi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "delhi",
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 26.86,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 28.5248136,
+    "longitude": 77.2930844,
+    "error_radius_m": 222.05123955925984,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 158400658,
+     "name": "Delhi Metro",
+     "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Delhi Metro",
+     "boundingbox": [
+      "28.5232644",
+      "28.5261570",
+      "77.2906920",
+      "77.2952326"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617207",
+   "project_name": "Delhi Metro Rail Phase-IV [2 Corridors]",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.7065,
+    "longitude": 77.1088
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 222 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Delhi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "delhi",
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 27.05,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 28.5248136,
+    "longitude": 77.2930844,
+    "error_radius_m": 222.05123955925984,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 158400658,
+     "name": "Delhi Metro",
+     "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Delhi Metro",
+     "boundingbox": [
+      "28.5232644",
+      "28.5261570",
+      "77.2906920",
+      "77.2952326"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617206",
+   "project_name": "Delhi Metro Rail Phase-IV [Rithala - Kundli Corridor]",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.6942,
+    "longitude": 77.116
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 222 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Delhi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "delhi",
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 25.57,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 28.5248136,
+    "longitude": 77.2930844,
+    "error_radius_m": 222.05123955925984,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 158400658,
+     "name": "Delhi Metro",
+     "display_name": "Delhi Metro, Mathura Road, Badarpur, Central, Delhi, South East Delhi, Delhi, 110044, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Delhi Metro",
+     "boundingbox": [
+      "28.5232644",
+      "28.5261570",
+      "77.2906920",
+      "77.2952326"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702626",
+   "project_name": "Indore Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 22.7331,
+    "longitude": 75.8496
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "tailor",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Indore' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.71,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 22.7455418,
+    "longitude": 75.8934689,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 6237628398,
+     "name": "Metro",
+     "display_name": "Metro, Old A. B. Road, Indore City, Indore, Juni Indore Tahsil, Indore, Madhya Pradesh, 452001, India",
+     "category": "shop",
+     "type": "tailor",
+     "place_rank": 30,
+     "query": "Indore Metro",
+     "boundingbox": [
+      "22.7454918",
+      "22.7455918",
+      "75.8934189",
+      "75.8935189"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "612068",
+   "project_name": "Jaipur Metro Phase 1D Project from Mansarovar to Ajmer Road Chauraha",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.9025,
+    "longitude": 75.775
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 72 m",
+   "checks": {
+    "class": {
+     "type": "wholesale",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Jaipur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 9.45,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.9874419,
+    "longitude": 75.7740788,
+    "error_radius_m": 71.9482529962598,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 863231895,
+     "name": "METRO Supermarket",
+     "display_name": "METRO Supermarket, Jaipur Road, Vishwakarma Industrial Area, Jaipur, Jaipur Municipal Corporation, Jaipur Tehsil, Jaipur, Rajasthan, 302001, India",
+     "category": "shop",
+     "type": "wholesale",
+     "place_rank": 30,
+     "query": "Jaipur Metro",
+     "boundingbox": [
+      "26.9870712",
+      "26.9878095",
+      "75.7733394",
+      "75.7747900"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702628",
+   "project_name": "Kanpur Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.4361,
+    "longitude": 80.3199
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 40 m",
+   "checks": {
+    "class": {
+     "type": "train_station",
+     "category": "building",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Kanpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 10.07,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.5037191,
+    "longitude": 80.2525667,
+    "error_radius_m": 60.0,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1138319542,
+     "name": "Kalyanpur Metro Station",
+     "display_name": "Kalyanpur Metro Station, NH34, Kanpur, Kanpur Nagar, Uttar Pradesh, 208012, India",
+     "category": "building",
+     "type": "train_station",
+     "place_rank": 30,
+     "query": "Kanpur Metro",
+     "boundingbox": [
+      "26.5033597",
+      "26.5040785",
+      "80.2522105",
+      "80.2529228"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702664",
+   "project_name": "Kochi Metro Rail Phase 2 Development  Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 9.9201,
+    "longitude": 76.2679
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 2193 m",
+   "checks": {
+    "class": {
+     "type": "subway",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Kochi' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "kochi",
+      "metro",
+      "rail"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 6.73,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 9.9673119,
+    "longitude": 76.3064177,
+    "error_radius_m": 2193.448131274419,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 722554975,
+     "name": "Kochi Metro Rail",
+     "display_name": "Kochi Metro Rail, Salem - Kochi - Kanyakumari Road, Vyttila, Ernakulam, Kanayannur, Ernakulam, Kerala, 682019, India",
+     "category": "railway",
+     "type": "subway",
+     "place_rank": 30,
+     "query": "Kochi Metro",
+     "boundingbox": [
+      "9.9589581",
+      "9.9725301",
+      "76.2852078",
+      "76.3252195"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619052",
+   "project_name": "LUCKNOW METRO RAIL PROJECT PHASE-1B EAST WEST CORRIDOR",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.8377,
+    "longitude": 80.9423
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 364 m",
+   "checks": {
+    "class": {
+     "type": "railway",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'LUCKNOW' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 8.43,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 26.7841898,
+    "longitude": 80.8821005,
+    "error_radius_m": 364.4060200000663,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 396886241,
+     "name": "Metro Depot",
+     "display_name": "Metro Depot, Vikram Nagar, Lucknow, Uttar Pradesh, India",
+     "category": "landuse",
+     "type": "railway",
+     "place_rank": 24,
+     "query": "LUCKNOW Metro",
+     "boundingbox": [
+      "26.7807767",
+      "26.7873237",
+      "80.8788884",
+      "80.8849589"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702637",
+   "project_name": "Mumbai Metro Line 3",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0775,
+    "longitude": 72.8837
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Mumbai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 5.93,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 19.1137364,
+    "longitude": 72.8422535,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 3979085056,
+     "name": "Metro Shoes",
+     "display_name": "Metro Shoes, Swami Vivekanand Road, Irla Gaon, Vile Parle West, K/W Ward, Mumbai Zone 3, Mumbai, Mumbai Suburban District, Maharashtra, 400058, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Mumbai Metro",
+     "boundingbox": [
+      "19.1136864",
+      "19.1137864",
+      "72.8422035",
+      "72.8423035"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702658",
+   "project_name": "Nagpur Metro Rail Phase II Development Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.1425,
+    "longitude": 79.0813
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Nagpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.27,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 21.137435,
+    "longitude": 79.0600722,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 4585077913,
+     "name": "Metro",
+     "display_name": "Metro, West High Court Road, Dharampeth, Nagpur City, Nagpur Urban Taluka, Nagpur, Maharashtra, 440011, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Nagpur Metro",
+     "boundingbox": [
+      "21.1373850",
+      "21.1374850",
+      "79.0600222",
+      "79.0601222"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702627",
+   "project_name": "Patna Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.592,
+    "longitude": 85.1274
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 558 m",
+   "checks": {
+    "class": {
+     "type": "railway",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Patna' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.29,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 25.5718574,
+    "longitude": 85.1965759,
+    "error_radius_m": 557.8978105143617,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1442310560,
+     "name": "Ramachak Bairiya Metro Depot",
+     "display_name": "Ramachak Bairiya Metro Depot, Ranipur, Patna, Patna Rural, Patna, Bihar, 800001, India",
+     "category": "landuse",
+     "type": "railway",
+     "place_rank": 24,
+     "query": "Patna Metro",
+     "boundingbox": [
+      "25.5702714",
+      "25.5739926",
+      "85.1890048",
+      "85.2001166"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617226",
+   "project_name": "Pune Metro Phase-1 Extension line towards south from Swargate to Katraj",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 18.5273,
+    "longitude": 73.8522
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Pune' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.6,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 18.5405229,
+    "longitude": 73.883387,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 13644309769,
+     "name": "Metro",
+     "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Pune Metro",
+     "boundingbox": [
+      "18.5404729",
+      "18.5405729",
+      "73.8833370",
+      "73.8834370"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618971",
+   "project_name": "Pune Metro Rail Project Phase-2 Corridor 2A Vanaz to Chandani Chowk and Corridor 2B Ramwad",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 18.5219,
+    "longitude": 73.8714
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Pune' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.43,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 18.5405229,
+    "longitude": 73.883387,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 13644309769,
+     "name": "Metro",
+     "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Pune Metro",
+     "boundingbox": [
+      "18.5404729",
+      "18.5405729",
+      "73.8833370",
+      "73.8834370"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618985",
+   "project_name": "Pune Metro Rail Project Phase-2 Line-4 Kharadi to Khadakwasla with Spur Line 4A Nal Stop -",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 18.5243,
+    "longitude": 73.8576
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "shoes",
+     "category": "shop",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Pune' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.26,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 18.5405229,
+    "longitude": 73.883387,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 13644309769,
+     "name": "Metro",
+     "display_name": "Metro, Bund Garden Road, Bund Garden T.P.S, Somwar Peth, Pune, Pune City Subdistrict, Pune, Maharashtra, 411001, India",
+     "category": "shop",
+     "type": "shoes",
+     "place_rank": 30,
+     "query": "Pune Metro",
+     "boundingbox": [
+      "18.5404729",
+      "18.5405729",
+      "73.8833370",
+      "73.8834370"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "702630",
+   "project_name": "Surat Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.1849,
+    "longitude": 72.8347
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 239 m",
+   "checks": {
+    "class": {
+     "type": "construction",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Surat' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro",
+      "surat"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 8.21,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 21.2182615,
+    "longitude": 72.7640558,
+    "error_radius_m": 239.28078571239837,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 1486710900,
+     "name": "Surat Metro Green Line",
+     "display_name": "Surat Metro Green Line, Gaurav Path Road, Sachin, Chorasi Taluka, Surat, Gujarat, 395009, India",
+     "category": "railway",
+     "type": "construction",
+     "place_rank": 30,
+     "query": "Surat Metro",
+     "boundingbox": [
+      "21.2176872",
+      "21.2188786",
+      "72.7617439",
+      "72.7663555"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618688",
+   "project_name": "Outer Ring Road of Jabalpur Town from  Amjhar Road including Airport Connectivity to barel",
+   "sector": "Roads & Highways",
+   "state": "Madhya Pradesh",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.1854,
+    "longitude": 79.9777
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1908 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Jabalpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "jabalpur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 7.82,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.1799312,
+    "longitude": 80.0539549,
+    "error_radius_m": 1908.4161500245027,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 121089056,
+     "name": "Jabalpur Airport",
+     "display_name": "Jabalpur Airport, Taxi Lane, Dumna, Ranjhi Tahsil, Jabalpur, Madhya Pradesh, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Jabalpur Airport",
+     "boundingbox": [
+      "23.1692928",
+      "23.1914686",
+      "80.0381255",
+      "80.0754236"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618686",
+   "project_name": "Outer Ring Road of Jabalpur Town from Kushner to Amjhar Road including Airport Connectivit",
+   "sector": "Roads & Highways",
+   "state": "Madhya Pradesh",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.1749,
+    "longitude": 79.9942
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 1908 m",
+   "checks": {
+    "class": {
+     "type": "aerodrome",
+     "category": "aeroway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Jabalpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "airport",
+      "jabalpur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 6.13,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 23.1799312,
+    "longitude": 80.0539549,
+    "error_radius_m": 1908.4161500245027,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 121089056,
+     "name": "Jabalpur Airport",
+     "display_name": "Jabalpur Airport, Taxi Lane, Dumna, Ranjhi Tahsil, Jabalpur, Madhya Pradesh, India",
+     "category": "aeroway",
+     "type": "aerodrome",
+     "place_rank": 30,
+     "query": "Jabalpur Airport",
+     "boundingbox": [
+      "23.1692928",
+      "23.1914686",
+      "80.0381255",
+      "80.0754236"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "617917",
+   "project_name": "Construction of 4 Lane Flyover at Nagpur RTO Chowk To Nagpur University Campus from Ch 2/2",
+   "sector": "Roads & Highways",
+   "state": "Maharashtra",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.1581,
+    "longitude": 79.0852
+   },
+   "accepted": true,
+   "reason": "OSM way footprint, half-extent 381 m",
+   "checks": {
+    "class": {
+     "type": "university",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Nagpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "nagpur",
+      "university"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 4.9,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 21.1477175,
+    "longitude": 79.0392433,
+    "error_radius_m": 380.50672574196136,
+    "osm": {
+     "osm_type": "way",
+     "osm_id": 27060028,
+     "name": "Rashtrasant Tukadoji Maharaj Nagpur University",
+     "display_name": "Rashtrasant Tukadoji Maharaj Nagpur University, Ambazari Road, Bharat Nagar, Nagpur City, Nagpur Urban Taluka, Nagpur, Maharashtra, 440021, India",
+     "category": "amenity",
+     "type": "university",
+     "place_rank": 30,
+     "query": "Nagpur University",
+     "boundingbox": [
+      "21.1453079",
+      "21.1495746",
+      "79.0363585",
+      "79.0436884"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618801",
+   "project_name": "Construction of New Double Tier 4-lane Elevated Corridor from Chennai Port to Maduravoyal ",
+   "sector": "Roads & Highways",
+   "state": "Tamil Nadu",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.092,
+    "longitude": 80.271
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 2937 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "chennai",
+      "port"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.57,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.096423,
+    "longitude": 80.303623,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 2882852,
+     "name": "Chennai Port",
+     "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Chennai Port",
+     "boundingbox": [
+      "13.0695789",
+      "13.1223481",
+      "80.2857768",
+      "80.3101433"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618800",
+   "project_name": "Construction of New Double Tier 4L Elevated Corridor from Chennai Port to Maduravoyal in C",
+   "sector": "Roads & Highways",
+   "state": "Tamil Nadu",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.0971,
+    "longitude": 80.274
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 2937 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "chennai",
+      "port"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.21,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.096423,
+    "longitude": 80.303623,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 2882852,
+     "name": "Chennai Port",
+     "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Chennai Port",
+     "boundingbox": [
+      "13.0695789",
+      "13.1223481",
+      "80.2857768",
+      "80.3101433"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619139",
+   "project_name": "Construction of New Double Tier 4L Elevated Corridor from Chennai Port to Maduravoyal in C",
+   "sector": "Roads & Highways",
+   "state": "Tamil Nadu",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.086,
+    "longitude": 80.2794
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 2937 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "chennai",
+      "port"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 2.87,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.096423,
+    "longitude": 80.303623,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 2882852,
+     "name": "Chennai Port",
+     "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Chennai Port",
+     "boundingbox": [
+      "13.0695789",
+      "13.1223481",
+      "80.2857768",
+      "80.3101433"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "619045",
+   "project_name": "Construction of New Double Tier 4L Elevated Corridor from Chennai Port to Maduravoyal in C",
+   "sector": "Roads & Highways",
+   "state": "Tamil Nadu",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 13.0917,
+    "longitude": 80.2749
+   },
+   "accepted": true,
+   "reason": "OSM relation footprint, half-extent 2937 m",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Chennai' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "chennai",
+      "port"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 3.15,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 13.096423,
+    "longitude": 80.303623,
+    "error_radius_m": 2500.0,
+    "osm": {
+     "osm_type": "relation",
+     "osm_id": 2882852,
+     "name": "Chennai Port",
+     "display_name": "Chennai Port, Chennai, Tamil Nadu, India",
+     "category": "landuse",
+     "type": "industrial",
+     "place_rank": 24,
+     "query": "Chennai Port",
+     "boundingbox": [
+      "13.0695789",
+      "13.1223481",
+      "80.2857768",
+      "80.3101433"
+     ]
+    }
+   }
+  },
+  {
+   "project_id": "618848",
+   "project_name": "Construction of Underpass beneath airport runway on NH-31 old NH-56 for proposed expansion",
+   "sector": "Roads & Highways",
+   "state": "Uttar Pradesh",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.3062,
+    "longitude": 82.9688
+   },
+   "accepted": true,
+   "reason": "OSM node; no footprint polygon, so a 250 m floor is applied",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Babatpur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "babatpur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 18.67,
+     "limit_km": 60.0,
+     "pass": true
+    }
+   },
+   "new": {
+    "precision": "OSM_LANDMARK_MATCH",
+    "latitude": 25.4539658,
+    "longitude": 82.8805167,
+    "error_radius_m": 250.0,
+    "osm": {
+     "osm_type": "node",
+     "osm_id": 292671750,
+     "name": "Babatpur",
+     "display_name": "Babatpur, Satomahua Mangari Road, Pindra, Varanasi, Uttar Pradesh, 221202, India",
+     "category": "railway",
+     "type": "station",
+     "place_rank": 30,
+     "query": "Babatpur, Uttar Pradesh",
+     "boundingbox": [
+      "25.4489658",
+      "25.4589658",
+      "82.8755167",
+      "82.8855167"
+     ]
+    }
+   }
+  }
+ ],
+ "rejected": [
+  {
+   "project_id": "612063",
+   "project_name": "Construction of New Terminal Building, Second Link Taxi Track, Apron Expansion, and associ",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.4436,
+    "longitude": 81.837
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701126",
+   "project_name": "Development of Dholera International Greenfield Airport , Gujarat",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.5758,
+    "longitude": 78.5582
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "618977",
+   "project_name": "Development of New Greenfield Airport at Bundi, Kota Rajasthan.",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.2174,
+    "longitude": 75.8507
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/county), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "county",
+     "category": "place",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "706724",
+   "project_name": "Guwahati Airport New Integrated Terminal Building Construction Project",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 26.1499,
+    "longitude": 91.738
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612791",
+   "project_name": "Re-Construction of Rigid portions of Secondary Runway, K and  A Taxiway and Strengthening ",
+   "sector": "Aviation & Aviation Infrastructure",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 22.5771,
+    "longitude": 88.3627
+   },
+   "accepted": false,
+   "reason": "no result for query 'NSCBI'",
+   "checks": {}
+  },
+  {
+   "project_id": "606431",
+   "project_name": "CONSTRUCTION OF PERMANENT CAMPUS FOR IIT PALAKKAD UNDER PHASE 1A",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 22.1058,
+    "longitude": 78.9482
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612876",
+   "project_name": "Construction of Permanent Campus for NIT Mizoram at Lengpui, Aizawl",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.7247,
+    "longitude": 92.7314
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 10,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "613008",
+   "project_name": "Construction of Permanent Campus of Central Tribal University of Andhra Pradesh Phase-1",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.2158,
+    "longitude": 78.5682
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/hamlet), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "hamlet",
+     "category": "place",
+     "place_rank": 20,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612916",
+   "project_name": "Construction of permanent campus of Central University of Gujarat at Village kundhela, Dis",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 22.312,
+    "longitude": 73.1746
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612898",
+   "project_name": "Construction of Permanent Campus of National Institute of Technology Arunachal Pradesh",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.3558,
+    "longitude": 79.3082
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612877",
+   "project_name": "Establishment of NIT Puducherry Permanent Campus [Phase-I and Phase-II]",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.9358,
+    "longitude": 78.2482
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 10,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "609041",
+   "project_name": "IoE Projects [Civil Works], IIT Kharagpur",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.5658,
+    "longitude": 78.5882
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612851",
+   "project_name": "Phase 1B - Construction of Academic Block, Hostel, Residential Tower, Directors Residence ",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.7128,
+    "longitude": 77.095
+   },
+   "accepted": false,
+   "reason": "new point is 1765 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "yes",
+     "category": "building",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Hostel' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "hostel"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1765.21,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617878",
+   "project_name": "Phase B of Construction of Permanent Campus of IIT Palakkad",
+   "sector": "Education",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.5758,
+    "longitude": 79.6382
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "400259",
+   "project_name": "Ghatampur Thermal Power Plant 3 X 660 MW",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7458,
+    "longitude": 79.3982
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "400231",
+   "project_name": "NLC Talabira Thermal Power Project",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.1958,
+    "longitude": 78.3282
+   },
+   "accepted": false,
+   "reason": "no result for query 'NLC Power Station'",
+   "checks": {}
+  },
+  {
+   "project_id": "619056",
+   "project_name": "Darlipali Super Thermal Power Project, Stage-II [1x800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.5558,
+    "longitude": 79.2882
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611509",
+   "project_name": "Koderma Thermal Power Station Phase II [2X800 MW] At Koderma, Jharkhand",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 22.0258,
+    "longitude": 79.9982
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611930",
+   "project_name": "Lara Super Thermal Power Project Stage-II [2 x 800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.1258,
+    "longitude": 78.3082
+   },
+   "accepted": false,
+   "reason": "new point is 537 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Lara' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "lara",
+      "power",
+      "super",
+      "thermal"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 536.6,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "619051",
+   "project_name": "Nabinagar Super Thermal Power Project, Stage-II [3x800 MW]",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.4058,
+    "longitude": 78.2182
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/hamlet), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "hamlet",
+     "category": "place",
+     "place_rank": 20,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "602961",
+   "project_name": "Talcher Thermal Power Station Stage III [2 x 660 MW] Expansion",
+   "sector": "Electricity Generation",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.6858,
+    "longitude": 78.2682
+   },
+   "accepted": false,
+   "reason": "new point is 723 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "station",
+     "category": "railway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Talcher' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "talcher"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 722.95,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617839",
+   "project_name": "Capacity Augmentation of Kandla LPG Import Terminal [KLIT] from 0.6 MMTPA to 2.5 MMTPA",
+   "sector": "Energy Storage",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.03,
+    "longitude": 70.2023
+   },
+   "accepted": false,
+   "reason": "new point is 1480 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "company",
+     "category": "office",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Import' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "import"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1480.08,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "619313",
+   "project_name": "Setting up of 50 MW [plus/minus 5 percent] Wind Power Plant for Captive Consumption at MR",
+   "sector": "Energy Storage",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.6658,
+    "longitude": 79.3782
+   },
+   "accepted": false,
+   "reason": "no result for query 'Wind Power Station'",
+   "checks": {}
+  },
+  {
+   "project_id": "701172",
+   "project_name": "AIIMS Darbhanga",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.0158,
+    "longitude": 78.4182
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701167",
+   "project_name": "AIIMS Kashmir at Awantipora Jammu & Kashmir",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 32.7182,
+    "longitude": 74.8555
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701173",
+   "project_name": "AIIMS Majra Rewari Haryana",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7258,
+    "longitude": 80.0382
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617883",
+   "project_name": "Redevelopment of Residential colonies at Ayur Vigyan Nagar and West Ansari Nagar campuses ",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.7134,
+    "longitude": 77.116
+   },
+   "accepted": false,
+   "reason": "no result for query 'Ayur AIIMS'",
+   "checks": {}
+  },
+  {
+   "project_id": "612239",
+   "project_name": "Construction of 100 bedded ESIC Hospital & 32 nos. of Staff qtrs at OMPURA J&K.",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.6358,
+    "longitude": 78.2582
+   },
+   "accepted": false,
+   "reason": "no result for query 'OMPURA'",
+   "checks": {}
+  },
+  {
+   "project_id": "612178",
+   "project_name": "Construction of 100 Bedded ESIC Hospital building and 32 Nos Residential Quarters at Valla",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.2258,
+    "longitude": 78.5182
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612213",
+   "project_name": "Construction of 200 Bedded ESIC Hospital at Butibori, Nagpur, Maharashtra.",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.1497,
+    "longitude": 79.0915
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612201",
+   "project_name": "Construction of 200 bedded ESIC Hospital with 62 Nos Staff quarters , Beltola",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.6558,
+    "longitude": 78.9682
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612259",
+   "project_name": "CONSTRUCTION OF 300 BEDDED HOSPITAL AT HARIDWAR",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 29.9502,
+    "longitude": 78.175
+   },
+   "accepted": false,
+   "reason": "new point is 1328 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "centre",
+     "category": "healthcare",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'BEDDED' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "bedded"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1328.09,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612167",
+   "project_name": "Construction of 350 beds + 50 Super Specialty beds ESIC Hospital Sheelanagar, Visakhapatna",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 17.6949,
+    "longitude": 83.2065
+   },
+   "accepted": false,
+   "reason": "new point is 1315 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "hospital",
+     "category": "amenity",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'ESIC' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "esic",
+      "hospital"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1314.76,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612688",
+   "project_name": "Construction of New OPD Block 200 Bed ward Basement + GF + 6 Floors at the location of old",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 17.3841,
+    "longitude": 78.4798
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 10,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612211",
+   "project_name": "Demolition, Construction and upgradation of ESI Hospital, Kalol, Gujarat from 50 beds to 1",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.8058,
+    "longitude": 78.5682
+   },
+   "accepted": false,
+   "reason": "no result for query 'Demolition'",
+   "checks": {}
+  },
+  {
+   "project_id": "708662",
+   "project_name": "Establishment of 600 bed super specialty hospital with optional development of Medical col",
+   "sector": "Healthcare",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.4658,
+    "longitude": 80.0582
+   },
+   "accepted": false,
+   "reason": "new point is 556 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "apartments",
+     "category": "building",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Medical' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "medical"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 556.48,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "609424",
+   "project_name": "Development of Container Terminal at Tuna-Tekra, Deendayal Port on BOT Basis Under PPP Mod",
+   "sector": "Shipping",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.0458,
+    "longitude": 79.0282
+   },
+   "accepted": false,
+   "reason": "resolved address does not contain the place named in the title (Tuna); likely a same-named facility elsewhere",
+   "checks": {
+    "class": {
+     "type": "pier",
+     "category": "man_made",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Tuna' in resolved address",
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "400141",
+   "project_name": "Expansion of Alumina Refinery Plant with addition of 5th Stream having capacity enhancemen",
+   "sector": "Metals & Mining",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.5958,
+    "longitude": 79.9082
+   },
+   "accepted": false,
+   "reason": "new point is 419 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "works",
+     "category": "man_made",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Alumina' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "alumina",
+      "refinery"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 419.26,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "709831",
+   "project_name": "SOURCING OF BAUXITE ARRANGEMENT FOR 5TH STREAM ALUMINA REFINERY FROM SOUTH BLOCK MINING LE",
+   "sector": "Metals & Mining",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.5658,
+    "longitude": 78.2282
+   },
+   "accepted": false,
+   "reason": "no result for query 'SOURCING'",
+   "checks": {}
+  },
+  {
+   "project_id": "604792",
+   "project_name": "Assam Bio Refinery, ABRPL",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.6858,
+    "longitude": 78.4982
+   },
+   "accepted": false,
+   "reason": "no result for query 'ABRPL'",
+   "checks": {}
+  },
+  {
+   "project_id": "617822",
+   "project_name": "ATF Pipeline from BPCLs Malkapur POL Installation to  Hyderabad International airport",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 17.3874,
+    "longitude": 78.4732
+   },
+   "accepted": false,
+   "reason": "no result for query 'ATF Airport'",
+   "checks": {}
+  },
+  {
+   "project_id": "709786",
+   "project_name": "Augmentation/ Revamping of Dimapur Depot, Dimapur",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 25.9014,
+    "longitude": 93.7231
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701324",
+   "project_name": "Barauni Refinery Capacity Expansion from 6.0 to 9.0 MMTPA",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7958,
+    "longitude": 78.9882
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/town), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "town",
+     "category": "place",
+     "place_rank": 18,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "709779",
+   "project_name": "Capacity Expansion of Digboi Refinery from 0.65 to 1.0 MMTPA",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.3558,
+    "longitude": 78.8182
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/town), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "town",
+     "category": "place",
+     "place_rank": 18,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701289",
+   "project_name": "Capacity Expansion of Panipat Refinery from 15 to 25 MMTPA",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.8158,
+    "longitude": 79.5482
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "709800",
+   "project_name": "CUF POL Depot at Sadashibpur [Meramundali], Odisha",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.1958,
+    "longitude": 78.3782
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "400158",
+   "project_name": "Debottlenecking and Augmentation of Cryogenic facilities at Uran LPG Import Terminal",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.2758,
+    "longitude": 78.5282
+   },
+   "accepted": false,
+   "reason": "no result for query 'Uran LPG Import Terminal'",
+   "checks": {}
+  },
+  {
+   "project_id": "709865",
+   "project_name": "Power Recovery Turbine [PRT] in PFCCU unit as an Energy Conservation Scheme",
+   "sector": "Oil & Gas",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.5258,
+    "longitude": 78.3882
+   },
+   "accepted": false,
+   "reason": "new point is 958 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Power' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "power",
+      "turbine"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 958.12,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611976",
+   "project_name": "Jogeshwari AT Development of JOS-AT as Trainset Maintenance Depot for energy efficient Van",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.8058,
+    "longitude": 80.0482
+   },
+   "accepted": false,
+   "reason": "new point is 1459 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "military",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Maintenance' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "maintenance"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1459.21,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611929",
+   "project_name": "Maintenance cum workshop depot for Vande Bharat Sleeper Trains as per conditions under WTA",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.4158,
+    "longitude": 79.6082
+   },
+   "accepted": false,
+   "reason": "new point is 1520 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "military",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Maintenance' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "maintenance"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1520.08,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "706780",
+   "project_name": "Mumbai Urban Transport Project [MUTP]  Phase-IIIA",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.079,
+    "longitude": 72.8837
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "706779",
+   "project_name": "Mumbai Urban Transport Project [MUTP] - PHASE II",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0634,
+    "longitude": 72.8705
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "706781",
+   "project_name": "Mumbai Urban Transport Project Phase-III",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0859,
+    "longitude": 72.8849
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611943",
+   "project_name": "New broad gauge line between Naliya Jakhau Port 25 Kms",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7058,
+    "longitude": 78.9682
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/village), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "village",
+     "category": "place",
+     "place_rank": 19,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "611944",
+   "project_name": "Quadrupling between Gandhidham Adipur with Y connection at Adipur for providing direct ent",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.27,
+    "longitude": 84.8932
+   },
+   "accepted": false,
+   "reason": "new point is 1591 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "residential",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Adipur' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "adipur"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1591.22,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617409",
+   "project_name": "Railway Manufacturing Unit",
+   "sector": "Railways",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.2458,
+    "longitude": 79.0582
+   },
+   "accepted": false,
+   "reason": "new point is 1242 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "bus_stop",
+     "category": "highway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Railway' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "railway"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1242.0,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "701586",
+   "project_name": "Setting up of a Floating Storage and Regasification Unit [FSRU] - Mumbai",
+   "sector": "Shipping",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.07,
+    "longitude": 72.8912
+   },
+   "accepted": false,
+   "reason": "new point is 1251 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "footway",
+     "category": "highway",
+     "place_rank": 27,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Floating' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "floating"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1250.88,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "400065",
+   "project_name": "Installation of 4th Slab Caster along with its Auxiliaries and a New Ladle Furnace in SMS-",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 22.2598,
+    "longitude": 84.8548
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617257",
+   "project_name": "Rebuilding of Coke Oven Battery No.6 at Bokaro Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.6804,
+    "longitude": 86.161
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617249",
+   "project_name": "Replacement of existing Grinders in CRM-I & II at Bokaro Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.6705,
+    "longitude": 86.1583
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617254",
+   "project_name": "Replacement of remaining 04 sets  of Battery Cyclones with 04 Nos. of ESPs in Sinter Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.6696,
+    "longitude": 86.1406
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617253",
+   "project_name": "Revamping of old sub-systems of Blast Furnace 3 at Bokaro Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.6651,
+    "longitude": 86.1364
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617250",
+   "project_name": "Secondary Emission Control in Converters of SMS-II at Bokaro Steel Plant",
+   "sector": "Steel",
+   "state": "National",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 23.6645,
+    "longitude": 86.1559
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "709858",
+   "project_name": "OPTICAL TRANSPORT NETWORK [OTN] PH-4 IN BSNL",
+   "sector": "Telecommunication",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.7958,
+    "longitude": 78.4282
+   },
+   "accepted": false,
+   "reason": "new point is 1032 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "optometrist",
+     "category": "healthcare",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'OPTICAL' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "optical"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1031.74,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "709859",
+   "project_name": "SETTING UP OF PHYSICAL INFRASTRUCTURE FOR THE NATIONAL INSTITUTE OF COMMUNICATION FINANCE ",
+   "sector": "Telecommunication",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.1858,
+    "longitude": 79.2582
+   },
+   "accepted": false,
+   "reason": "new point is 1207 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "recreation_ground",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'PHYSICAL' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "physical"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1206.56,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617326",
+   "project_name": "Implementation of Transmission Systems in the State of Jharkhand consisting of 400/220/132",
+   "sector": "Transmission & Distribution",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7258,
+    "longitude": 79.8682
+   },
+   "accepted": false,
+   "reason": "new point is 914 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "it",
+     "category": "office",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Implementation' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "implementation"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 914.01,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "616671",
+   "project_name": "Transmission System under ISTS for evacuation of Power from Kudankulam Unit-3&4 [2x1000 MW",
+   "sector": "Transmission & Distribution",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.8758,
+    "longitude": 80.0082
+   },
+   "accepted": false,
+   "reason": "new point is 644 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "industrial",
+     "category": "landuse",
+     "place_rank": 24,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Transmission' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "transmission"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 643.61,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "702629",
+   "project_name": "Agra Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.1858,
+    "longitude": 78.8682
+   },
+   "accepted": false,
+   "reason": "new point is 670 km from the recorded one, beyond the 400 km plausibility limit for a NATIONAL_CENTROID_MATCH",
+   "checks": {
+    "class": {
+     "type": "bus_stop",
+     "category": "highway",
+     "place_rank": 30,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Agra' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "metro"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 670.5,
+     "limit_km": 400.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "616221",
+   "project_name": "Extension of Aqua Line Metro Corridor from Noida Sector-142 station to Botanical Garden, N",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.1758,
+    "longitude": 79.4582
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "612066",
+   "project_name": "Rajasthan Metro Rail Project Phase 1C from Badi Chaupar to Transport Nagar via Galta Gate",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 20.7358,
+    "longitude": 79.4482
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 8,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "617327",
+   "project_name": "Thane Integral Ring Metro Rail Project",
+   "sector": "Urban Public Transport",
+   "state": "National",
+   "old": {
+    "precision": "NATIONAL_CENTROID_MATCH",
+    "latitude": 21.9258,
+    "longitude": 80.0182
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (boundary/administrative), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "administrative",
+     "category": "boundary",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "619141",
+   "project_name": "Construction of four lane access controlled highway from Chillakuru cross road to Turpu Ka",
+   "sector": "Roads & Highways",
+   "state": "Andhra Pradesh",
+   "old": {
+    "precision": "GEONAMES_TOKEN_MATCH",
+    "latitude": 13.84025,
+    "longitude": 79.83094
+   },
+   "accepted": false,
+   "reason": "no result for query 'Chillakuru, Andhra Pradesh'",
+   "checks": {}
+  },
+  {
+   "project_id": "617919",
+   "project_name": "Construction of 4 Nos Grade separtor between km. 281.000 to km. 307.600 km. 286.400 kumhar",
+   "sector": "Roads & Highways",
+   "state": "Chhattisgarh",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 21.2502,
+    "longitude": 81.623
+   },
+   "accepted": false,
+   "reason": "no result for query 'Grade, Chhattisgarh'",
+   "checks": {}
+  },
+  {
+   "project_id": "619068",
+   "project_name": "Construction of Greenfield Connectivity to Jewar International Airport from DND-Faridabad-",
+   "sector": "Roads & Highways",
+   "state": "Haryana",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 19.0706,
+    "longitude": 72.8714
+   },
+   "accepted": false,
+   "reason": "new point is 1121 km from the recorded one, beyond the 60 km plausibility limit for a GAZETTEER_CITY_MATCH",
+   "checks": {
+    "class": {
+     "type": "residential",
+     "category": "highway",
+     "place_rank": 26,
+     "pass": true
+    },
+    "geography": {
+     "basis": "place 'Connectivity' in resolved address",
+     "pass": true
+    },
+    "name": {
+     "overlap": [
+      "connectivity"
+     ],
+     "pass": true
+    },
+    "displacement": {
+     "moved_km": 1120.83,
+     "limit_km": 60.0,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "618496",
+   "project_name": "Delhi-Amritsar-Katra Expressway Phase-II Pkg-XVI Existing Jakh Vijaypur-Kunjwani section o",
+   "sector": "Roads & Highways",
+   "state": "Jammu & Kashmir",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.6918,
+    "longitude": 77.1112
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/city), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "city",
+     "category": "place",
+     "place_rank": 16,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "618012",
+   "project_name": "Widening & strengthenlng to 2LPS from km 0,000 to 40.000 Dhaugaon- Podamari section of NH ",
+   "sector": "Roads & Highways",
+   "state": "Odisha",
+   "old": {
+    "precision": "STATE_CENTROID_MATCH",
+    "latitude": 20.8757,
+    "longitude": 85.1725
+   },
+   "accepted": false,
+   "reason": "no result for query 'Dhaugaon, Odisha'",
+   "checks": {}
+  },
+  {
+   "project_id": "618794",
+   "project_name": "Amritsarairport Junction - Ramdas from km. 100.835 to km. 139.813 Pkg - IV",
+   "sector": "Roads & Highways",
+   "state": "Punjab",
+   "old": {
+    "precision": "GEONAMES_TOKEN_MATCH",
+    "latitude": 31.96739,
+    "longitude": 74.9087
+   },
+   "accepted": false,
+   "reason": "no result for query 'Amritsarairport, Punjab'",
+   "checks": {}
+  },
+  {
+   "project_id": "619200",
+   "project_name": "Delhi-Amritsar-Katra Expressway Phase-I Spur-III from Junction with Amritsar-Jalandhar roa",
+   "sector": "Roads & Highways",
+   "state": "Punjab",
+   "old": {
+    "precision": "GAZETTEER_CITY_MATCH",
+    "latitude": 28.6978,
+    "longitude": 77.0983
+   },
+   "accepted": false,
+   "reason": "resolved to a settlement/admin unit (place/county), which is the centroid problem restated",
+   "checks": {
+    "class": {
+     "type": "county",
+     "category": "place",
+     "place_rank": 12,
+     "pass": false
+    }
+   }
+  },
+  {
+   "project_id": "618869",
+   "project_name": "Construction of 4/6 lane Highway of Southern Bareilly Bypass, starting at Ch. 237000 of NH",
+   "sector": "Roads & Highways",
+   "state": "Uttar Pradesh",
+   "old": {
+    "precision": "STATE_CENTROID_MATCH",
+    "latitude": 26.8067,
+    "longitude": 81.0822
+   },
+   "accepted": false,
+   "reason": "no result for query 'Invertis, Uttar Pradesh'",
+   "checks": {}
+  }
+ ]
+}

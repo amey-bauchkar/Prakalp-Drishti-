@@ -2,11 +2,23 @@
 
 **Version 1.0 · SIH 2026 (SIH26103 / PAIMANA, MoSPI) · Implementation reference**
 
+> **STATUS — read before quoting this document.** This is the original *design*
+> specification. Where it diverges from what is built, [CLAIMS.md](CLAIMS.md) and the
+> engine docstrings are authoritative. The material divergence: VITTA-VYUHA was
+> specified as a MILP with binary fund/defer indicators, and is **implemented as a pure
+> continuous LP** (`integrality` all-zero), because capital tranches are genuinely
+> divisible. That choice is not a downgrade — an LP has valid dual variables and a MILP
+> does not, so the shadow prices this system publishes are meaningful *because* the
+> formulation is continuous. Sections below that reason about binaries, MIP gaps or
+> SOS2 support describe the specified design, not the running code.
+
 Notation convention: $\mathbb{1}\{\cdot\}$ is the indicator function; $(z)^+ = \max(0,z)$; $\hat{\cdot}$ denotes an estimator. All monetary quantities are in ₹ Crore, deflated to a fixed base year unless stated otherwise.
 
 ---
 
-# 1. VITTA VYUHA — Two-Stage Stochastic MILP with CVaR₉₀
+# 1. VITTA VYUHA — Two-Stage Stochastic LP with CVaR₉₀
+
+*(Specified as a MILP; implemented as a continuous LP — see the status note above.)*
 
 ## 1.1 Sets and indices
 
@@ -120,7 +132,7 @@ $$
 \mathrm{CVaR}_{0.90}(L) \;=\; \eta \;+\; \frac{1}{1-0.90}\sum_s p_s\,\zeta_s \;=\; \eta + 10\sum_s p_s \zeta_s .
 $$
 
-Because the outer minimisation over $\eta$ is embedded in the same minimisation as the allocation, no nested loop is needed — this is the key property that makes CVaR tractable in an MILP.
+Because the outer minimisation over $\eta$ is embedded in the same minimisation as the allocation, no nested loop is needed — this is the key property that makes CVaR tractable inside a single linear program.
 
 ## 1.6 Objective
 
@@ -208,7 +220,15 @@ Scenario count is the dominant driver of solve time: the LP relaxation has $O(\l
 
 ## 1.9 Dual / shadow-price derivation
 
-**MILPs have no valid duals.** The correct procedure, which you should state plainly because it signals rigour:
+**MILPs have no valid duals.** That fact drove the implementation decision, and it is
+worth stating plainly because it signals rigour:
+
+**As implemented (what actually runs).** The formulation is a pure continuous LP, so the
+dual vector $\pi$ is valid directly from the single HiGHS solve. No fix-and-re-solve step
+is required, and none is performed.
+
+**Had it been a MILP (the specified design, retained for reference).** Duals would have to
+be recovered indirectly:
 
 1. Solve (OBJ) to optimality (or to a stated MIP gap), obtaining $(\hat y, \hat z, \hat\lambda)$.
 2. **Fix** all binaries at $\hat y, \hat z$ and fix the SOS2 *support* (which adjacent pair is active per project) at the incumbent. The residual problem is a pure LP.
@@ -223,10 +243,10 @@ Reported shadow prices:
 | $\pi_{\text{C4},a}$ | Value of relaxing agency $a$'s absorption ceiling → a ranked **capacity-building target list**, which is a policy recommendation no other module produces |
 | $\pi_{\text{C2},m}$ | Value of an inter-Demand reappropriation — quantifies the cost of budgetary rigidity |
 
-**Validity caveat (state it in the demo).** These duals are valid only for perturbations that do not change the optimal integer solution. Therefore also compute, by parametric re-solve:
+**Validity caveat (state it in the demo).** These duals are valid only over the range in which the optimal basis does not change. Therefore also compute, by parametric re-solve:
 
 - **RHS ranging interval** $[b^-_j, b^+_j]$ over which $\pi_j$ remains constant. The claim "₹100 Cr more buys 3.1 expected completions" is only honest if $100 \in [b^-, b^+]$ — display the interval alongside the number.
-- **Stability radius**: the largest budget perturbation preserving $\hat y$.
+- **Stability radius**: the largest budget perturbation preserving the optimal basis.
 
 ## 1.10 Warm-started re-solve (the budget shock slider)
 

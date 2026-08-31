@@ -47,7 +47,6 @@ export default {
     './tanmay/**/*.{js,ts,jsx,tsx}',
     './parth/**/*.{js,ts,jsx,tsx}',
     './janhavi/**/*.{js,ts,jsx,tsx}',
-    './soham/**/*.{js,ts,jsx,tsx}',
     './aditya/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {

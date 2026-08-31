@@ -19,6 +19,77 @@ from analytics_engine.vitta_vyuha import get_vitta_vyuha_engine, AllocationReque
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRIEFING_ARCHIVE_DIR = os.path.join(BASE_DIR, "artifacts", "briefings")
 
+
+# ── RFC 6962 MERKLE CONSTRUCTION ─────────────────────────────────────────────
+# Two defects in the previous tree, both of which weaken exactly the property a
+# CAG reviewer relies on -- "this root proves these facts":
+#
+#   1. NO DOMAIN SEPARATION. Leaves were sha256(data) and internal nodes were
+#      sha256(left:right), drawn from the same hash domain. An attacker able to
+#      choose fact strings could therefore present an internal node as though it
+#      were a leaf. RFC 6962 s2.1 prefixes every leaf with 0x00 and every internal
+#      node with 0x01 so the two families can never collide.
+#
+#   2. ODD-NODE DUPLICATION. The last node on an odd level was hashed against
+#      itself (right = left). That is CVE-2012-2459: two different leaf sets can
+#      yield an identical root, so a matching root stops proving anything. RFC 6962
+#      splits at the largest power of two below n instead, which is unambiguous for
+#      every n and needs no duplication.
+#
+# The WIRE FORMAT IS UNCHANGED -- proofs remain [{"hash": <64-hex>, "position":
+# "left"|"right"}] and roots remain 64 hex chars -- so archived briefings, the
+# Pydantic contracts and the frontend verifier all keep working. Only the hashing
+# domain and the odd-level rule changed.
+_LEAF_PREFIX = b"\x00"
+_NODE_PREFIX = b"\x01"
+
+
+def _mth_leaf(data: str) -> str:
+    """RFC 6962 leaf hash: SHA-256(0x00 || data)."""
+    return hashlib.sha256(_LEAF_PREFIX + data.encode("utf-8")).hexdigest()
+
+
+def _mth_node(left_hex: str, right_hex: str) -> str:
+    """RFC 6962 internal node: SHA-256(0x01 || left || right) over the raw digests."""
+    return hashlib.sha256(
+        _NODE_PREFIX + bytes.fromhex(left_hex) + bytes.fromhex(right_hex)
+    ).hexdigest()
+
+
+def _split_point(n: int) -> int:
+    """k = the largest power of two strictly less than n (RFC 6962 s2.1)."""
+    k = 1
+    while k * 2 < n:
+        k *= 2
+    return k
+
+
+def _mth(leaf_hashes: List[str]) -> str:
+    """Merkle Tree Hash over already-hashed leaves."""
+    n = len(leaf_hashes)
+    if n == 1:
+        return leaf_hashes[0]
+    k = _split_point(n)
+    return _mth_node(_mth(leaf_hashes[:k]), _mth(leaf_hashes[k:]))
+
+
+def _mth_path(m: int, leaf_hashes: List[str]) -> List[Dict[str, str]]:
+    """
+    RFC 6962 s2.1.1 inclusion path for leaf index m, ordered deepest sibling first
+    so the verifier can fold it straight from the leaf upward. "position" names the
+    side the SIBLING sits on.
+    """
+    n = len(leaf_hashes)
+    if n == 1:
+        return []
+    k = _split_point(n)
+    if m < k:
+        return _mth_path(m, leaf_hashes[:k]) + [
+            {"hash": _mth(leaf_hashes[k:]), "position": "right"}]
+    return _mth_path(m - k, leaf_hashes[k:]) + [
+        {"hash": _mth(leaf_hashes[:k]), "position": "left"}]
+
+
 class PragatiSaarthiEngine:
     def __init__(self):
         self.kaal_engine = get_kaal_chakra_engine()
@@ -27,44 +98,19 @@ class PragatiSaarthiEngine:
 
     def _build_merkle_tree(self, leaves: List[str]) -> tuple[str, Dict[str, List[Dict[str, str]]]]:
         """
-        Builds a full binary SHA-256 Merkle Tree from canonical fact strings.
-        Returns: (merkle_root_hash, {leaf_hash: [ {sibling: hash, position: 'left'|'right'} ]})
+        Builds an RFC 6962 Merkle Tree from canonical fact strings.
+        Returns: (merkle_root_hash, {leaf_hash: [ {hash: sibling, position: 'left'|'right'} ]})
         """
         if not leaves:
-            empty_root = hashlib.sha256(b"empty_tree").hexdigest()
-            return empty_root, {}
+            # RFC 6962: MTH({}) = SHA-256() -- the hash of the empty string.
+            return hashlib.sha256(b"").hexdigest(), {}
 
-        current_level = [hashlib.sha256(leaf.encode("utf-8")).hexdigest() for leaf in leaves]
-        leaf_hashes = list(current_level)
-        tree_levels = [current_level]
+        leaf_hashes = [_mth_leaf(leaf) for leaf in leaves]
+        merkle_root = _mth(leaf_hashes)
 
-        while len(current_level) > 1:
-            next_level = []
-            for i in range(0, len(current_level), 2):
-                left = current_level[i]
-                right = current_level[i + 1] if i + 1 < len(current_level) else left
-                parent = hashlib.sha256(f"{left}:{right}".encode("utf-8")).hexdigest()
-                next_level.append(parent)
-            current_level = next_level
-            tree_levels.append(current_level)
-
-        merkle_root = current_level[0]
-
-        # Generate inclusion proofs for each leaf
-        proofs = {}
+        proofs: Dict[str, List[Dict[str, str]]] = {}
         for leaf_idx, leaf_h in enumerate(leaf_hashes):
-            proof = []
-            curr_idx = leaf_idx
-            for level in tree_levels[:-1]:
-                if curr_idx % 2 == 0:
-                    sibling_idx = curr_idx + 1 if curr_idx + 1 < len(level) else curr_idx
-                    pos = "right"
-                else:
-                    sibling_idx = curr_idx - 1
-                    pos = "left"
-                proof.append({"hash": level[sibling_idx], "position": pos})
-                curr_idx = curr_idx // 2
-            proofs[leaf_h] = proof
+            proofs[leaf_h] = _mth_path(leaf_idx, leaf_hashes)
 
         return merkle_root, proofs
 
@@ -73,21 +119,30 @@ class PragatiSaarthiEngine:
         """
         Cryptographically verifies whether a given leaf belongs to the expected Merkle root.
         Recomputes the root step-by-step from the leaf + positional siblings.
+
+        Fails closed: a malformed proof (non-hex sibling, wrong length, wrong type) is a
+        verification FAILURE, never an exception. The tamper path must return False
+        rather than 500, because this is the endpoint an auditor points at a briefing
+        they already suspect.
         """
-        if len(leaf_str_or_hash) == 64 and all(c in '0123456789abcdefABCDEF' for c in leaf_str_or_hash):
-            curr_hash = leaf_str_or_hash.lower()
-        else:
-            curr_hash = hashlib.sha256(leaf_str_or_hash.encode("utf-8")).hexdigest()
-
-        for step in proof:
-            sibling = str(step.get("hash", step.get("sibling", ""))).lower()
-            position = step.get("position", "right")
-            if position == "left":
-                curr_hash = hashlib.sha256(f"{sibling}:{curr_hash}".encode("utf-8")).hexdigest()
+        try:
+            leaf_str_or_hash = str(leaf_str_or_hash)
+            if len(leaf_str_or_hash) == 64 and all(c in '0123456789abcdefABCDEF' for c in leaf_str_or_hash):
+                curr_hash = leaf_str_or_hash.lower()
             else:
-                curr_hash = hashlib.sha256(f"{curr_hash}:{sibling}".encode("utf-8")).hexdigest()
+                curr_hash = _mth_leaf(leaf_str_or_hash)
 
-        return curr_hash.lower() == str(expected_root).lower()
+            for step in proof:
+                sibling = str(step.get("hash", step.get("sibling", ""))).lower()
+                position = step.get("position", "right")
+                if position == "left":
+                    curr_hash = _mth_node(sibling, curr_hash)
+                else:
+                    curr_hash = _mth_node(curr_hash, sibling)
+
+            return curr_hash.lower() == str(expected_root).lower()
+        except (ValueError, TypeError, AttributeError):
+            return False
 
     def generate_cabinet_briefing(self, focus_project_id: str = "400188") -> CabinetBriefing:
         # 1. Gather Engine Artifacts
@@ -146,7 +201,7 @@ class PragatiSaarthiEngine:
         for idx, (fid, fact) in enumerate(audit_facts.items()):
             if fact.lineage and idx < len(fact_leaves):
                 leaf_str = fact_leaves[idx]
-                leaf_h = hashlib.sha256(leaf_str.encode("utf-8")).hexdigest()
+                leaf_h = _mth_leaf(leaf_str)
                 leaf_proof = proofs.get(leaf_h, [])
                 fact.lineage.merkle_root = merkle_root
                 fact.lineage.merkle_proof = leaf_proof

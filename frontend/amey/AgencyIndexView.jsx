@@ -38,39 +38,39 @@ export default function AgencyIndexView() {
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Header Banner */}
-      <section className="panel p-4 sm:p-5">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
-              <Building2 className="w-3.5 h-3.5 text-gov-saffron" />
-              <span>Agency Performance Scorecard</span>
-            </div>
-            <h2 className="font-heading font-extrabold text-[26px] sm:text-[32px] tracking-tight text-gov-navy leading-tight">
-              CENTRAL EXECUTING AGENCY ACCOUNTABILITY &amp; DELIVERY VELOCITY INDEX
-            </h2>
-            <p className="text-text-secondary text-[14.5px] max-w-2xl font-sans leading-relaxed">
-              Compares on-time delivery rates, cost control, and project execution speed across {data?.total_agencies_monitored} central government executing entities.
-            </p>
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          ═══════════════════════════════════════════════════════════════ */}
+      <div className="command-header p-5 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+        <div className="space-y-2 max-w-2xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+            <Building2 className="w-3.5 h-3.5 text-white" />
+            <span>AGENCY PERFORMANCE SCORECARD</span>
           </div>
+          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+            CENTRAL EXECUTING AGENCY ACCOUNTABILITY &amp; DELIVERY VELOCITY INDEX
+          </h2>
+          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+            Compares on-time delivery rates, cost control, and project execution speed across {data?.total_agencies_monitored} central government executing entities.
+          </p>
+        </div>
 
-          {/* Tier Stat Badges */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="note note-ok text-center">
-              <span className="text-[10px] uppercase font-bold text-emerald-800 block font-mono">Exemplary Delivery (Tier 1)</span>
-              <span className="text-[24px] font-black text-emerald-950 font-mono">{data?.tier_1_agencies || 0}</span>
-            </div>
-            <div className="note note-warn text-center">
-              <span className="text-[10px] uppercase font-bold text-amber-800 block font-mono">Watchlist / Moderate Slip (Tier 2)</span>
-              <span className="text-[24px] font-black text-amber-950 font-mono">{data?.tier_2_agencies || 0}</span>
-            </div>
-            <div className="note note-critical text-center">
-              <span className="text-[10px] uppercase font-bold text-rose-800 block font-mono">Critical Delay Risk (Tier 3)</span>
-              <span className="text-[24px] font-black text-rose-950 font-mono">{data?.tier_3_agencies || 0}</span>
-            </div>
+        {/* Tier Stat Badges */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="bg-black/25 px-3 py-2 rounded-sm border border-white/15 text-center">
+            <span className="text-[9px] uppercase font-bold text-emerald-400 block font-mono">Tier 1 (Exemplary)</span>
+            <span className="text-[20px] font-black text-white font-mono">{data?.tier_1_agencies || 0}</span>
+          </div>
+          <div className="bg-black/25 px-3 py-2 rounded-sm border border-white/15 text-center">
+            <span className="text-[9px] uppercase font-bold text-amber-400 block font-mono">Tier 2 (Watchlist)</span>
+            <span className="text-[20px] font-black text-white font-mono">{data?.tier_2_agencies || 0}</span>
+          </div>
+          <div className="bg-black/25 px-3 py-2 rounded-sm border border-white/15 text-center">
+            <span className="text-[9px] uppercase font-bold text-rose-400 block font-mono">Tier 3 (Critical)</span>
+            <span className="text-[20px] font-black text-white font-mono">{data?.tier_3_agencies || 0}</span>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Filter Bar */}
       <div className="panel p-4 flex flex-col md:flex-row items-center justify-between gap-4">

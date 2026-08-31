@@ -446,26 +446,59 @@ class TestRedaction:
 # ══════════════════════════════════════════════════════════════════════════
 
 class TestStaleness:
-    def test_fresh_imagery_is_not_flagged(self):
-        assert not imagery_staleness(as_of_iso="2023-03-01")["is_stale"]
+    def test_recent_fetch_is_not_flagged_stale(self):
+        assert not imagery_staleness(as_of_iso="2026-09-01")["is_stale"]
 
-    def test_44_month_old_imagery_is_flagged_high(self):
+    # These three previously asserted a 44-month staleness warning. That
+    # warning was built on a false label: the fetch pipeline recorded the
+    # after-epoch as 2023-01 via release id 93, which is not a Wayback release
+    # at all. The tiles actually came from the live basemap, fetched 2026-08.
+    # The tests now assert the corrected behaviour, which is materially
+    # different in both directions -- the imagery is FRESHER than claimed, and
+    # the baseline is far OLDER.
+
+    def test_vintage_is_reported_as_unknown_not_fresh(self):
+        """The fetch date bounds the vintage; it does not state it.
+
+        ESRI publishes no per-tile capture date for the World Imagery mosaic,
+        which routinely carries imagery one to three years old. Reporting "OK"
+        off the fetch date would swap an overstated staleness warning for an
+        unearned freshness claim.
+        """
         s = imagery_staleness(as_of_iso="2026-08-28")
+        assert s["severity"] == "UNKNOWN", f"severity={s['severity']}"
+        assert s["latest_epoch_is_bound"] is True
+        assert "not published by the provider" in s["headline"].lower()
+
+    def test_the_twelve_year_measurement_span_is_disclosed(self):
+        """The real finding the false label was hiding.
+
+        Baseline is Wayback 2014-02-20 (release 10), not the 2018-02 every
+        label claimed, so the comparison spans ~150 months rather than 59 and
+        every areal velocity divided by 59 was overstated 2.54x.
+        """
+        s = imagery_staleness(as_of_iso="2026-08-28")
+        assert s["baseline_imagery_epoch"] == "2014-02"
+        assert s["measurement_span_months"] > 140, s["measurement_span_months"]
+        assert "12.5 years" in s["detail"] or "years" in s["detail"]
+
+    def test_the_rate_is_declared_a_lower_bound(self):
+        """Span is an upper bound, so any rate from it is a lower bound."""
+        s = imagery_staleness(as_of_iso="2026-08-28")
+        assert "lower" in s["detail"].lower()
+
+    def test_a_genuinely_stale_pair_still_flags_high(self):
+        """The stale path must survive the correction, not be deleted with it."""
+        s = imagery_staleness(as_of_iso="2031-01-01")
         assert s["is_stale"] and s["severity"] == "HIGH"
-        assert s["imagery_age_months"] > 40
+        assert "non-performance" in s["detail"].lower()
 
-    def test_stale_finding_warns_against_citing_it_as_non_performance(self):
-        s = imagery_staleness(as_of_iso="2026-08-28")
-        assert "non-performance" in s["detail"].lower(), (
-            "a zero-change finding across a 44-month blind window is not "
-            "evidence of inaction and must not be cited as such")
-
-    def test_high_reported_progress_gets_an_escalation_caveat(self):
-        s = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=90.0)
+    def test_stale_plus_high_reported_progress_escalates(self):
+        s = imagery_staleness(as_of_iso="2031-01-01", reported_progress_pct=90.0)
         assert "discrepancy_caveat" in s
 
     def test_low_reported_progress_needs_no_escalation(self):
-        s = imagery_staleness(as_of_iso="2026-08-28", reported_progress_pct=3.0)
+        s = imagery_staleness(as_of_iso="2031-01-01", reported_progress_pct=3.0)
         assert "discrepancy_caveat" not in s
 
 
@@ -957,3 +990,346 @@ class TestSecretHygiene:
             ["git", "grep", "-lE", r"gsk_[A-Za-z0-9]{30,}"],
             cwd=self.ROOT, capture_output=True, text=True).stdout.strip()
         assert hits == "", f"live-looking Groq key committed in: {hits}"
+
+# ══════════════════════════════════════════════════════════════════════════
+# 14. VIEWPORT PLANNING — geocode-gated framing
+# ══════════════════════════════════════════════════════════════════════════
+
+class TestViewportPlanner:
+    """Zoom is gated on geocode provenance, not on sector.
+
+    Only 8 of 2,207 project coordinates are exact matches; 831 are OSM landmark
+    matches, 506 are CITY centroids and 596 are state or national centroids.
+    Framing tightly on those magnifies the error into a total miss, and the
+    sharper the frame the more authoritative the wrong ground looks.
+    """
+
+    def test_state_and_national_centroids_serve_no_imagery(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        for prec in ("STATE_CENTROID_MATCH", "NATIONAL_CENTROID_MATCH"):
+            p = plan_viewport("X", "Healthcare", 22.5, 78.5, geocode_precision=prec)
+            assert p.render_mode == "locator_only", f"{prec} -> {p.render_mode}"
+            assert p.bbox is None
+            assert "centroid" in p.caveat
+
+    def test_unknown_provenance_fails_closed(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Healthcare", 22.5, 78.5, geocode_precision=None)
+        assert p.render_mode == "locator_only"
+
+    def test_a_weak_geocode_is_framed_wider_than_a_strong_one(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        strong = plan_viewport("A", "Healthcare", 22.5, 78.5,
+                               geocode_precision="GEONAMES_EXACT_MATCH")
+        weak = plan_viewport("B", "Healthcare", 22.5, 78.5,
+                             geocode_precision="GAZETTEER_CITY_MATCH")
+        assert weak.zoom < strong.zoom, (
+            f"a city-centroid hospital was framed at z{weak.zoom}, as tight as "
+            f"the exact-match one at z{strong.zoom}")
+        assert weak.frame_covers_m > strong.frame_covers_m
+
+    def test_frame_always_contains_the_declared_error_radius(self):
+        """The invariant the first version of the table violated on 80% of rows."""
+        from analytics_engine.eo_viewport import GEOCODE_CLASS, plan_viewport
+        for prec, cfg in GEOCODE_CLASS.items():
+            if not cfg["serve"]:
+                continue
+            for lat in (8.0, 22.5, 34.0):
+                p = plan_viewport("X", "Healthcare", lat, 78.0,
+                                  geocode_precision=prec)
+                assert p.error_fits_in_frame, (
+                    f"{prec} at lat {lat}: {p.frame_covers_m} m frame cannot hold "
+                    f"a {p.geocode_error_radius_m} m error radius")
+
+    def test_zoom_never_exceeds_the_measured_provider_ceiling(self):
+        from analytics_engine.eo_viewport import MAX_PROVIDER_ZOOM, plan_viewport
+        p = plan_viewport("X", "Telecommunication", 28.57, 77.21,
+                          geocode_precision="GEONAMES_EXACT_MATCH")
+        assert p.zoom <= MAX_PROVIDER_ZOOM, (
+            "z19+ returns a blank placeholder outside dense urban areas")
+
+    def test_linear_assets_get_chainage_packages(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Roads & Highways", 22.5, 78.5,
+                          geocode_precision="OSM_LANDMARK_MATCH",
+                          linear_length_km=95.0, asset_geometry="LINEAR")
+        assert p.render_mode == "corridor"
+        assert len(p.packages) == 5, f"95 km / 20 km -> {len(p.packages)}"
+        assert p.packages[0]["chainage_km"] == [0.0, 20.0]
+        assert p.packages[-1]["chainage_km"][1] == 95.0
+
+    def test_package_centres_are_null_not_interpolated(self):
+        """No alignment polyline exists, so a per-package centre would be invented."""
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Railways", 22.5, 78.5,
+                          geocode_precision="OSM_CORRIDOR_MIDPOINT",
+                          linear_length_km=60.0, asset_geometry="LINEAR")
+        assert all(pk["centre"] is None for pk in p.packages)
+        assert all("alignment polyline" in pk["requires"] for pk in p.packages)
+
+    def test_corridor_states_what_fraction_of_the_route_is_visible(self):
+        from analytics_engine.eo_viewport import plan_viewport
+        p = plan_viewport("X", "Roads & Highways", 22.5, 78.5,
+                          geocode_precision="OSM_LANDMARK_MATCH",
+                          linear_length_km=200.0, asset_geometry="LINEAR")
+        assert "% of the route" in p.caveat
+
+    def test_bbox_is_not_square_in_degrees(self):
+        """Longitude degrees shrink with latitude; one delta for both is wrong."""
+        from analytics_engine.eo_viewport import bbox_from_centre
+        for lat in (8.0, 34.0):
+            mn_lon, mn_lat, mx_lon, mx_lat = bbox_from_centre(lat, 78.0, 500.0)
+            assert (mx_lon - mn_lon) > (mx_lat - mn_lat), \
+                f"at lat {lat} the longitude span must exceed the latitude span"
+
+    def test_gsd_matches_web_mercator(self):
+        from analytics_engine.eo_viewport import ground_sample_distance as g
+        assert abs(g(0.0, 18) - 40075016.686 / (256 * 2 ** 18)) < 1e-6
+        assert g(60.0, 18) < g(0.0, 18)
+        assert abs(g(22.0, 17) / g(22.0, 18) - 2.0) < 1e-9
+
+    def test_placeholder_tile_is_detected(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, is_blank_placeholder)
+        blank, why = is_blank_placeholder(b"x" * PLACEHOLDER_BYTES, None)
+        assert blank and "placeholder" in why
+        flat = np.full((256, 256, 3), 128, np.uint8)
+        blank, why = is_blank_placeholder(b"x" * 9999, flat)
+        assert blank, "a featureless raster must be rejected as ground truth"
+        rng = np.random.RandomState(3)
+        real = cv2.GaussianBlur((rng.rand(256, 256, 3) * 255).astype(np.uint8),
+                                (0, 0), 0.8)
+        blank, _ = is_blank_placeholder(b"x" * 40000, real)
+        assert not blank, "real imagery must not be discarded as a placeholder"
+
+    def test_zoom_fallback_walks_down_to_real_imagery(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, fetch_with_zoom_fallback)
+        rng = np.random.RandomState(4)
+        real = cv2.GaussianBlur((rng.rand(64, 64, 3) * 255).astype(np.uint8),
+                                (0, 0), 0.7)
+
+        def fake(z):
+            return ((b"x" * 40000, real) if z <= 16
+                    else (b"x" * PLACEHOLDER_BYTES, None))
+
+        out = fetch_with_zoom_fallback(22.5, 78.5, 18, fake)
+        assert out["ok"] and out["zoom"] == 16 and out["downgraded"]
+        assert "no imagery above" in out["note"]
+
+    def test_fallback_reports_failure_rather_than_returning_a_blank(self):
+        from analytics_engine.eo_viewport import (
+            PLACEHOLDER_BYTES, fetch_with_zoom_fallback)
+        out = fetch_with_zoom_fallback(
+            22.5, 78.5, 18, lambda z: (b"x" * PLACEHOLDER_BYTES, None))
+        assert out["ok"] is False and out["raw"] is None
+        assert "outside its coverage" in out["note"]
+
+    def test_plan_digest_separates_different_framings(self):
+        from analytics_engine.eo_viewport import plan_digest, plan_viewport
+        a = plan_viewport("P", "Healthcare", 22.5, 78.5,
+                          geocode_precision="GEONAMES_EXACT_MATCH")
+        b = plan_viewport("P", "Healthcare", 22.5, 78.5,
+                          geocode_precision="GAZETTEER_CITY_MATCH")
+        assert plan_digest(a) != plan_digest(b), (
+            "two framings of one project must not share a cache key")
+
+# ══════════════════════════════════════════════════════════════════════════
+# 15. z18 SUB-METRE SHOWCASE BAKE
+# ══════════════════════════════════════════════════════════════════════════
+
+BAKED_SHOWCASE = ["607701", "616886", "617877", "701091", "701113"]
+
+
+@pytest.fixture(scope="module")
+def baked_tiles(admin_token):
+    """Fetch each tile under test once and share it across the class.
+
+    Two things shape this. First, /api/eo/tile is budgeted at 120 requests
+    per minute per IP and that budget is shared between tiers, so
+    refetching the same tile per assertion spends budget the rest of the
+    suite needs. Only seven fetches are made here -- five official, and two
+    public, one redacted and one not, which is the whole of what the
+    public-tier assertions actually distinguish.
+
+    Second, these run at the end of a suite that has already spent most of
+    the window, so the first fetch can be throttled through no fault of the
+    code under test. The fixture waits out the window rather than accepting
+    429 as a pass: every assertion downstream is about delivered pixels, so
+    treating a throttled response as acceptable would leave the tests
+    passing while measuring nothing. The limiter is a production control
+    and is left intact -- this waits for it, it does not bypass it.
+    """
+    import time
+
+    import cv2
+    import numpy as np
+    out = {}
+    wanted = [("official", p, admin_token) for p in BAKED_SHOWCASE]
+    wanted += [("public", "607701", None), ("public", "616886", None)]
+    waited = False
+    for tier, pid, tok in wanted:
+        st, blob, _ = _request(f"/api/eo/tile/{pid}/AFTER", tok)
+        if st == 429 and not waited:
+            time.sleep(62)          # one limiter window, once per class
+            waited = True
+            st, blob, _ = _request(f"/api/eo/tile/{pid}/AFTER", tok)
+        assert st == 200 and blob, (
+            f"{tier} tile for {pid} returned status={st}, {len(blob)} B"
+            + (" -- still throttled after waiting out a full window, which "
+               "points at the limiter rather than at the bake" if st == 429
+               else ""))
+        out[(tier, pid)] = cv2.imdecode(np.frombuffer(blob, np.uint8),
+                                        cv2.IMREAD_COLOR)
+    return out
+
+
+@requires_api
+class TestShowcaseBake:
+    """Five flagship projects served from baked 0.52 m/px mosaics.
+
+    The bake exists because the zoom cap trades resolution for coverage, and
+    that trade is avoidable: a 9x9 grid at z18 spans 1.2 km at 0.52 m/px where
+    one 1024 px frame over the same ground must drop to z14 and 8.4 m/px. The
+    cap's constraint -- the frame contains the geocode error radius -- is still
+    met, just at higher resolution.
+    """
+
+    BAKED = BAKED_SHOWCASE
+
+    def test_manifest_lists_only_verified_sub_metre_pairs(self):
+        from analytics_engine.eo_viewport import showcase_bake
+        for pid in self.BAKED:
+            b = showcase_bake(pid)
+            assert b is not None, f"{pid} missing from the manifest"
+            assert b["zoom"] == 18
+            assert b["gsd_m_per_px"] < 1.0, f"{pid} at {b['gsd_m_per_px']} m/px"
+            assert b["sub_metre"] is True
+            assert b["mosaic_px"] >= 1792
+
+    def test_both_epochs_cover_identical_ground(self):
+        """A swipe over mismatched extents wipes between two different areas.
+
+        The grid fallback runs per epoch, so patchy 2018 coverage left two of
+        these five with BEFORE at 7x7 and AFTER at 9x9. Both mosaics are
+        centred on the same coordinate, so the manifest builder centre-crops to
+        the smaller extent rather than serving the mismatch.
+        """
+        import os
+
+        import cv2
+        from analytics_engine.eo_viewport import showcase_bake
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for pid in self.BAKED:
+            b = showcase_bake(pid)
+            bi = cv2.imread(os.path.join(root, b["before_path"]))
+            ai = cv2.imread(os.path.join(root, b["after_path"]))
+            assert bi is not None and ai is not None, f"{pid} mosaic unreadable"
+            assert bi.shape == ai.shape, (
+                f"{pid}: epochs differ, {bi.shape[:2]} vs {ai.shape[:2]} — a swipe "
+                f"would compare different ground")
+
+    def test_neither_epoch_is_an_all_placeholder_mosaic(self):
+        """A grey mosaic decodes fine and would index as sub-metre ground truth."""
+        import os
+
+        import cv2
+        from analytics_engine.eo_viewport import showcase_bake
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for pid in self.BAKED:
+            b = showcase_bake(pid)
+            for key in ("before_path", "after_path"):
+                img = cv2.imread(os.path.join(root, b[key]))
+                lap = float(cv2.Laplacian(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY),
+                                          cv2.CV_64F).var())
+                assert lap > 120.0, f"{pid} {key}: Laplacian {lap:.0f} — featureless"
+
+    def test_planner_serves_the_bake_over_the_zoom_cap(self, admin_token):
+        for pid in self.BAKED:
+            st, d = _json(f"/api/eo/viewport/{pid}", admin_token)
+            assert st == 200, f"{pid} status={st}"
+            assert d["render_mode"] == "compound", f"{pid} -> {d['render_mode']}"
+            assert d["zoom"] == 18
+            assert d["zoom_limited_by"] == "showcase_bake"
+            assert d["gsd_m_per_px"] < 1.0, f"{pid} at {d['gsd_m_per_px']}"
+
+    def test_a_baked_refinery_is_not_routed_to_corridor(self, admin_token):
+        """Sector geometry and facility geometry disagree, and the bake wins.
+
+        Oil & Gas is in LINEAR_SECTORS for pipelines, so Guwahati Refinery was
+        being framed as a corridor at 2.14 m/px while a 0.536 m/px compound
+        mosaic of it sat unused. The override is checked before the
+        linear/compound split for exactly this.
+        """
+        st, d = _json("/api/eo/viewport/607701", admin_token)
+        assert st == 200
+        assert d["render_mode"] == "compound", (
+            "a refinery with a baked facility mosaic must not be corridor-framed")
+
+    def test_official_tier_receives_the_full_mosaic(self, baked_tiles):
+        for pid in self.BAKED:
+            img = baked_tiles[("official", pid)]
+            assert img is not None and img.shape[1] >= 1792, (
+                f"{pid}: official tier got {img.shape[1]} px, not the mosaic")
+
+    def test_badge_reports_what_the_caller_actually_receives(self, baked_tiles,
+                                                             admin_token):
+        """The source figure is not the served figure, and the badge reads the served one.
+
+        Reporting the bake's 0.52 m/px to a public caller would put a sub-metre
+        badge over a 512 px tile at 2.41 m/px -- the same class of mismatch as
+        the sub-metre claim removed from this codebase earlier.
+        """
+        for pid in self.BAKED:
+            st, d = _json(f"/api/eo/viewport/{pid}", admin_token)
+            assert st == 200
+            img = baked_tiles[("official", pid)]
+            assert img.shape[1] == d["frame_px"], (
+                f"{pid}: badge says {d['frame_px']} px, tile is {img.shape[1]} px")
+            implied = d["frame_covers_m"] / img.shape[1]
+            assert abs(implied - d["gsd_m_per_px"]) < 0.01, (
+                f"{pid}: badge says {d['gsd_m_per_px']} m/px, the tile actually "
+                f"resolves {implied:.3f}")
+
+    def test_a_sensitive_baked_project_is_still_redacted_publicly(self, baked_tiles):
+        """The bake must not become a redaction bypass.
+
+        Guwahati Refinery is Oil & Gas -- critical national infrastructure -- so
+        its public tile stays coarsened even though a sub-metre mosaic exists
+        for the auditor tier. The badge is checked against the delivered pixels
+        here too, because this is the tier where an inherited source figure
+        would overstate by the widest margin.
+        """
+        st, d = _json("/api/eo/viewport/607701")
+        assert st == 200 and d["tier"] == "public"
+        assert d["gsd_m_per_px"] > 1.0, (
+            f"a sensitive project served the public tier at "
+            f"{d['gsd_m_per_px']} m/px")
+        assert d["resolution_reduced_for_tier"] is True
+        img = baked_tiles[("public", "607701")]
+        assert img.shape[1] == d["frame_px"] <= 512, (
+            f"public tile is {img.shape[1]} px against a badge of {d['frame_px']}")
+
+    def test_a_non_sensitive_baked_project_keeps_sub_metre_publicly(self, baked_tiles):
+        """Otherwise the bake is downsampled out of the property it was baked for."""
+        st, d = _json("/api/eo/viewport/616886")
+        assert st == 200 and d["tier"] == "public"
+        assert d["gsd_m_per_px"] < 1.0, f"public got {d['gsd_m_per_px']} m/px"
+        assert d["frame_px"] == 1536
+        img = baked_tiles[("public", "616886")]
+        assert img.shape[1] == 1536, (
+            f"badge promises 1536 px sub-metre, tile is {img.shape[1]} px")
+
+    def test_epochs_come_from_verified_release_ids(self):
+        from analytics_engine.eo_viewport import showcase_bake
+        b = showcase_bake("616886")
+        assert b["before_epoch"] == "2018-12" and b["after_epoch"] == "2023-01"
+        assert "verified against the provider index" in b["basis"]
+        assert "2014-02" in b["basis"], (
+            "the basis should name the corpus-wide mislabel it does not share")
+
+    def test_an_unbaked_project_is_unaffected(self, admin_token):
+        st, d = _json("/api/eo/viewport/619092", admin_token)
+        assert st == 200
+        assert d["zoom_limited_by"] != "showcase_bake"
+        assert d.get("showcase_bake") is False

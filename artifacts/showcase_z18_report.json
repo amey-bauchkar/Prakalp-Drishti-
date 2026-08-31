@@ -1,0 +1,28 @@
+{
+ "surveyed": 70,
+ "qualified": 2,
+ "baked": [
+  {
+   "project_id": "701113",
+   "name": "Development of Lal Bahadur Shastri International airport, Varanasi inc",
+   "sector": "Aviation & Aviation Infrastructure",
+   "lat": 25.4509975,
+   "lon": 82.8635994,
+   "before_release": "23448",
+   "before_epoch": "2018-12-14",
+   "after_release": "11475",
+   "after_epoch": "2023-01-11",
+   "gsd": 0.539,
+   "before_path": "paimana_extracted\\satellite_data\\showcase_z18\\701113_BEFORE_z18.jpg",
+   "before_laplacian": 1767.5,
+   "before_blank_fraction": 0.0,
+   "after_path": "paimana_extracted\\satellite_data\\showcase_z18\\701113_AFTER_z18.jpg",
+   "after_laplacian": 458.9,
+   "after_blank_fraction": 0.0,
+   "mosaic_px": 2304,
+   "covers_m": 1241.9
+  }
+ ],
+ "zoom": 18,
+ "grid": 9
+}

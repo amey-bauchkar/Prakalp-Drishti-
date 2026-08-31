@@ -134,7 +134,7 @@ export default function ProjectSearchBar() {
                   >
                     <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[11px] font-bold text-gov-saffron-dark bg-gov-saffron-light px-2 py-0.5 rounded-md border border-gov-gold-border">
+                        <span className="font-heading text-[11px] font-bold text-gov-saffron-dark bg-gov-saffron-light px-2 py-0.5 rounded-md border border-gov-gold-border">
                           #{p.project_id}
                         </span>
                         <span className="font-bold text-[13px] text-gov-navy truncate font-sans">
@@ -154,7 +154,7 @@ export default function ProjectSearchBar() {
                         {p.delayed_months > 0 && (
                           <>
                             <span>•</span>
-                            <span className="text-rose-600 font-bold flex items-center gap-0.5 font-mono">
+                            <span className="text-rose-600 font-bold flex items-center gap-0.5 font-heading">
                               <AlertTriangle className="w-3 h-3" />
                               Delayed +{p.delayed_months}m
                             </span>
@@ -163,10 +163,10 @@ export default function ProjectSearchBar() {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="font-bold text-[13px] text-gov-navy font-mono">
+                      <div className="font-bold text-[13px] text-gov-navy font-heading">
                         ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
                       </div>
-                      <div className="text-[10.5px] text-emerald-700 font-bold font-mono">
+                      <div className="text-[10.5px] text-emerald-700 font-bold font-heading">
                         {p.progress_perc || 0}% Progress
                       </div>
                     </div>

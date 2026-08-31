@@ -181,11 +181,11 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
       {/* ═══════════════════════════════════════════════════════════════
           MAIN MULTI-ENGINE GRID (INTEGRATED SOVEREIGN TELEMETRY DOCKETS)
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: KAAL-CHAKRA & SATELLITE */}
-        <div className="lg:col-span-6 space-y-6">
+      <div className="space-y-6">
+        {/* Top Row: TIMELINE FORECAST & VITTA-VYUHA REBALANCING */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Card 1: TIMELINE FORECAST (Kaal-Chakra Survival Model) */}
-          <div className="panel overflow-hidden">
+          <div className="lg:col-span-6 panel overflow-hidden">
             {/* Header Docket Strip */}
             <div className="p-5 sm:p-6 border-b border-border-default bg-slate-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1 max-w-md">
@@ -277,20 +277,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
             </div>
           </div>
 
-          {/* Card 2: PRATIBIMB dual-epoch ground truth.
-              No wrapping .panel here: SatelliteViewer renders its own panel
-              root, and nesting one inside another produced a double border and
-              doubled padding. No auth props either -- the viewer subscribes to
-              authClient directly, so a sign-in or an expiry anywhere in the app
-              re-renders it into the matching persona without the cockpit
-              having to know a session exists. */}
-          <SatelliteViewer projectId={projectId} />
-        </div>
-
-        {/* Right Column: VITTA-VYUHA & PMO COPILOT */}
-        <div className="lg:col-span-6 space-y-6">
-          {/* Card 3: SETU-GRAPH & VITTA-VYUHA Allocation */}
-          <div className="panel overflow-hidden">
+          {/* Card 2: SETU-GRAPH & VITTA-VYUHA Allocation */}
+          <div className="lg:col-span-6 panel overflow-hidden">
             {/* Header Docket Strip */}
             <div className="p-5 sm:p-6 border-b border-border-default bg-slate-50/60 flex items-center justify-between">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm text-[10px] font-extrabold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light border border-gov-gold-border font-mono">
@@ -356,70 +344,116 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Card 4: PRAGATI-SAARTHI Fact-Grounded PMO Copilot */}
-          <div className="bg-gov-navy text-white p-6 sm:p-7 rounded-2xl border border-slate-700/80 shadow-elevated space-y-5 relative overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-700/80 pb-3.5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
-                  <FileText className="w-3.5 h-3.5 text-gov-saffron-light" />
+        {/* ═══════════════════════════════════════════════════════════════
+            BOTTOM SECTION: UNIFIED FORENSIC AUDIT & EXECUTIVE DECISION BRIEF
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className="panel overflow-hidden">
+          {/* Shared Header Docket Strip */}
+          <div className="p-5 sm:p-6 border-b border-border-default bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm text-[10px] font-extrabold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light border border-gov-gold-border font-mono">
+                <ShieldCheck className="w-3.5 h-3.5 text-gov-saffron" />
+                <span>INTEGRATED FORENSICS &amp; DECISION DIRECTIVES</span>
+              </div>
+              <span className="hidden sm:inline-block text-slate-300 font-mono">|</span>
+              <h3 className="font-heading font-extrabold text-[15px] sm:text-[17px] text-gov-navy">
+                Forensic Ground-Truth Audit &amp; Executive Decision Brief
+              </h3>
+            </div>
+            <span className="text-[11px] font-mono font-bold text-gov-navy bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs shrink-0">
+              Verified Dossier: #{projectId}
+            </span>
+          </div>
+
+          {/* Unified Two-Column Inner Layout with Crisp Divider */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-border-default items-stretch">
+            {/* Left Inner Column: Forensic Imagery & Ground Truth */}
+            <div className="lg:col-span-6 flex flex-col">
+              <SatelliteViewer projectId={projectId} className="flex-1 flex flex-col justify-between" />
+            </div>
+
+            {/* Right Inner Column: Executive Decision Brief, Action Directives & Copilot */}
+            <div className="lg:col-span-6 p-5 sm:p-6 space-y-6 flex flex-col justify-between bg-slate-50/25">
+              {/* Executive Summary Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-gov-accent" />
+                    <h4 className="font-heading font-extrabold text-[13px] uppercase tracking-wider text-gov-navy">
+                      Executive Summary &amp; Ground Truth Context
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-mono text-gov-muted bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    Audit Certified
+                  </span>
                 </div>
-                <span className="text-[12px] font-extrabold uppercase tracking-wider text-gov-saffron-light font-heading"> EXECUTIVE DECISION BRIEF
+                <p className="text-[12.5px] text-slate-700 leading-relaxed font-sans pt-1">
+                  {copilot?.executive_summary}
+                </p>
+              </div>
+
+              {/* Recommended Action Directives Section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <span className="text-[11px] uppercase tracking-wider font-extrabold text-gov-navy block font-mono">
+                    Recommended Action Directives
+                  </span>
+                  <span className="text-[10.5px] font-mono text-gov-muted">
+                    {copilot?.action_items?.length || 0} Priority Items
+                  </span>
+                </div>
+
+                <div className="divide-y divide-border-default">
+                  {copilot?.action_items?.map((act, i) => (
+                    <div
+                      key={i}
+                      className="py-3 first:pt-0 last:pb-0 text-[12.5px] space-y-1.5"
+                    >
+                      <div className="flex items-center justify-between font-bold mb-0.5">
+                        <span className={`uppercase text-[10.5px] font-mono tracking-wider ${
+                          act.priority === 'CRITICAL' ? 'text-rose-700 font-extrabold' : 'text-gov-accent'
+                        }`}>
+                          {act.category?.replace('_', ' ')}
+                        </span>
+                        <span className="text-[10px] font-mono text-gov-muted"> Metric: {act.citing_fact_id}
+                        </span>
+                      </div>
+                      <p className="text-[12px] text-slate-700 leading-relaxed">{act.finding}</p>
+                      <p className="text-[12px] font-bold text-gov-navy mt-1 flex items-start gap-1.5">
+                        <span>Recommendation: {act.recommendation}</span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Interactive Ask the PMO Copilot Section */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between pb-2 border-b border-border-default">
+                  <span className="text-[11px] uppercase tracking-wider font-extrabold text-gov-navy block font-mono">
+                    Ask the PMO Copilot
+                  </span>
+                  <span className="text-[10px] font-mono text-gov-muted">
+                    Fact-Grounded Engine
+                  </span>
+                </div>
+                <div className="bg-slate-900 text-white p-4 rounded-xl border border-slate-800 shadow-xs">
+                  <CopilotChat projectId={projectId} />
+                </div>
+              </div>
+
+              {/* Provenance Merkle Footer */}
+              <div className="pt-3 border-t border-border-default flex items-center justify-between gap-3 flex-wrap text-[10.5px] text-gov-muted">
+                <div className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Every figure carries a SHA-256 Merkle inclusion proof</span>
+                </div>
+                <span className="font-mono text-[9.5px] text-gov-muted bg-slate-100 px-2 py-0.5 rounded-sm border border-slate-200">
+                  Generated prose is rejected if citing unverified data
                 </span>
               </div>
-              <span className="text-[10.5px] font-mono text-slate-300 bg-white/10 px-2.5 py-0.5 rounded border border-white/15"> Verified Document: #{projectId}
-              </span>
-            </div>
-
-            <p className="text-[13px] text-slate-200 leading-relaxed font-sans bg-white/5 p-3.5 rounded-xl border border-white/10">
-              {copilot?.executive_summary}
-            </p>
-
-            <div className="space-y-3">
-              <span className="text-[11px] uppercase tracking-wider font-extrabold text-gov-saffron-light block font-mono"> Recommended Action Directives:
-              </span>
-              {copilot?.action_items?.map((act, i) => (
-                <div
-                  key={i}
-                  className={`p-3.5 sm:p-4 rounded-xl border text-[12.5px] space-y-1.5 transition-all ${
-                    act.priority === 'CRITICAL'
-                      ? 'bg-rose-950/40 border-rose-500/40 text-rose-100'
-                      : 'bg-white/5 border-white/10 text-slate-200'
-                  }`}
-                >
-                  <div className="flex items-center justify-between font-bold mb-0.5">
-                    <span className="uppercase text-[10.5px] text-gov-saffron-light font-mono tracking-wider">
-                      {act.category?.replace('_', ' ')}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400"> Metric: {act.citing_fact_id}
-                    </span>
-                  </div>
-                  <p className="text-[12.5px] text-slate-200 leading-relaxed">{act.finding}</p>
-                  <p className="text-[12.5px] font-bold text-white mt-1.5 pt-1.5 border-t border-white/10 flex items-start gap-1.5">
-                    <span>Recommendation: {act.recommendation}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Interactive Q&A over the same verified fact layer. */}
-            <div className="pt-4 border-t border-slate-700/80">
-              <CopilotChat projectId={projectId} />
-            </div>
-
-            {/* Provenance footer.
-                The wording is deliberately about the MECHANISM rather than a
-                blanket boast: figures are audit-verified because generated text
-                is rejected when it contains one that is not, which is a
-                checkable claim. */}
-            <div className="pt-3 border-t border-slate-700/80 flex items-center justify-between gap-3 flex-wrap text-[11px] text-slate-300">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Every figure carries a SHA-256 Merkle inclusion proof</span>
-              </div>
-              <span className="font-mono text-[10px] text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded-sm border border-slate-700">
-                Generated prose is rejected if it cites an unverified number
-              </span>
             </div>
           </div>
         </div>
