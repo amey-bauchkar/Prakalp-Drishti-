@@ -14,7 +14,8 @@ export default function VarshaSpeedView() {
   const [projectsData, setProjectsData] = useState(null);
   const [activeTab, setActiveTab] = useState('simulation');
   const [regionFilter, setRegionFilter] = useState('ALL');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [stateSearchTerm, setStateSearchTerm] = useState('');
+  const [projectSearchTerm, setProjectSearchTerm] = useState('');
   const [sectorFilter, setSectorFilter] = useState('ALL');
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +78,6 @@ export default function VarshaSpeedView() {
         .then((p) => {
           if (p && p.state) {
             handleStateSelect(p.state);
-            setSearchTerm(p.project_name || p.project_id);
           }
         })
         .catch(() => {});
@@ -105,16 +105,19 @@ export default function VarshaSpeedView() {
   // Filtered state list
   const filteredStates = (impactData?.state_impact_records || []).filter((item) => {
     const matchesRegion = regionFilter === 'ALL' || item.region === regionFilter;
-    const matchesSearch = item.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.terrain.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = !stateSearchTerm ||
+                          item.state.toLowerCase().includes(stateSearchTerm.toLowerCase()) ||
+                          item.terrain.toLowerCase().includes(stateSearchTerm.toLowerCase());
     return matchesRegion && matchesSearch;
   });
 
   // Filtered projects list
   const filteredProjects = (projectsData?.projects || []).filter((p) => {
     const matchesSector = sectorFilter === 'ALL' || p.sector.toLowerCase().includes(sectorFilter.toLowerCase());
-    const matchesSearch = p.project_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          p.state.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = !projectSearchTerm ||
+                          p.project_name.toLowerCase().includes(projectSearchTerm.toLowerCase()) ||
+                          p.state.toLowerCase().includes(projectSearchTerm.toLowerCase()) ||
+                          String(p.project_id).includes(projectSearchTerm);
     return matchesSector && matchesSearch;
   });
 
@@ -330,73 +333,109 @@ export default function VarshaSpeedView() {
               <input
                 type="text"
                 placeholder="Search state or terrain..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white border border-border-default text-gov-navy pl-10 pr-3 py-2 rounded-xl text-xs outline-none focus:border-gov-navy shadow-sm"
+                value={stateSearchTerm}
+                onChange={(e) => setStateSearchTerm(e.target.value)}
+                className="w-full bg-white border border-border-default text-gov-navy pl-10 pr-8 py-2 rounded-xl text-xs outline-none focus:border-gov-navy shadow-sm"
               />
+              {stateSearchTerm && (
+                <button
+                  onClick={() => setStateSearchTerm('')}
+                  className="absolute right-2.5 top-2.5 text-xs text-text-muted hover:text-gov-navy font-bold"
+                >
+                  ✕
+                </button>
+              )}
             </div>
           </div>
 
           {/* State Working Window Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredStates.map((rec, idx) => (
-              <div
-                key={idx}
-                className="panel p-4 space-y-4 hover:border-gov-saffron/40 transition-all"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-heading font-extrabold text-[17px] text-gov-navy">{rec.state}</h4>
-                    <p className="text-[12px] text-text-muted font-medium">{rec.terrain}</p>
-                  </div>
-                  <span className={`text-[10px] px-2.5 py-0.5 rounded-sm border font-bold uppercase ${getRiskBadgeColor(rec.risk_tier)}`}>
-                    {rec.risk_tier.replace(/_/g, ' ')}
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 pt-3 border-t border-border-default text-[12.5px]">
-                  <div className="flex justify-between items-center">
-                    <span className="text-text-muted">Simulated Lost Days:</span>
-                    <span className="font-mono font-bold text-rose-600">{rec.simulated_lost_days} Days</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-text-muted">Effective Working Window:</span>
-                    <span className="font-mono font-bold text-gov-navy">{rec.effective_working_window_months} Mo/yr</span>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-text-muted">Schedule Multiplier:</span>
-                    <span className="font-mono font-bold text-amber-700">{rec.schedule_stretch_multiplier}x Multiplier</span>
-                  </div>
-                </div>
-
-                {/* Progress bar representing work window */}
-                <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between text-[10.5px] text-text-muted font-mono font-bold">
-                    <span>Working Months</span>
-                    <span>{rec.effective_working_window_months} / 12.0</span>
-                  </div>
-                  <div className="meter">
-                    <div
-                      className="h-full bg-gov-navy-light"
-                      style={{ width: `${(rec.effective_working_window_months / 12.0) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-border-default flex items-center justify-between text-[11px] text-text-muted font-medium">
-                  <span>Hist. Mean Departure: <strong className="text-gov-navy font-mono">{rec.historical_mean_departure_pct}%</strong></span>
-                  <button
-                    onClick={() => { setSelectedState(rec.state); fetchStateTimeline(rec.state); setActiveTab('historical'); }}
-                    className="text-gov-saffron hover:underline font-bold flex items-center gap-0.5"
+          {filteredStates.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredStates.map((rec, idx) => {
+                const isSelected = rec.state.toLowerCase() === selectedState.toLowerCase();
+                return (
+                  <div
+                    key={idx}
+                    className={`panel p-4 space-y-4 hover:border-gov-saffron/40 transition-all ${
+                      isSelected ? 'border-gov-saffron shadow-md ring-1 ring-gov-saffron/30 bg-amber-50/10' : ''
+                    }`}
                   >
-                    View 20-Yr Trend <ArrowUpRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-heading font-extrabold text-[17px] text-gov-navy">{rec.state}</h4>
+                          {isSelected && (
+                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gov-saffron-light text-gov-saffron-dark font-mono uppercase">
+                              Active State
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[12px] text-text-muted font-medium">{rec.terrain}</p>
+                      </div>
+                      <span className={`text-[10px] px-2.5 py-0.5 rounded-sm border font-bold uppercase ${getRiskBadgeColor(rec.risk_tier)}`}>
+                        {rec.risk_tier.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+
+                    <div className="space-y-2.5 pt-3 border-t border-border-default text-[12.5px]">
+                      <div className="flex justify-between items-center">
+                        <span className="text-text-muted">Simulated Lost Days:</span>
+                        <span className="font-mono font-bold text-rose-600">{rec.simulated_lost_days} Days</span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-text-muted">Effective Working Window:</span>
+                        <span className="font-mono font-bold text-gov-navy">{rec.effective_working_window_months} Mo/yr</span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-text-muted">Schedule Multiplier:</span>
+                        <span className="font-mono font-bold text-amber-700">{rec.schedule_stretch_multiplier}x Multiplier</span>
+                      </div>
+                    </div>
+
+                    {/* Progress bar representing work window */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex justify-between text-[10.5px] text-text-muted font-mono font-bold">
+                        <span>Working Months</span>
+                        <span>{rec.effective_working_window_months} / 12.0</span>
+                      </div>
+                      <div className="meter">
+                        <div
+                          className="h-full bg-gov-navy-light"
+                          style={{ width: `${(rec.effective_working_window_months / 12.0) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-border-default flex items-center justify-between text-[11px] text-text-muted font-medium">
+                      <span>Hist. Mean Departure: <strong className="text-gov-navy font-mono">{rec.historical_mean_departure_pct}%</strong></span>
+                      <button
+                        onClick={() => { setSelectedState(rec.state); fetchStateTimeline(rec.state); setActiveTab('historical'); }}
+                        className="text-gov-saffron hover:underline font-bold flex items-center gap-0.5"
+                      >
+                        View 20-Yr Trend <ArrowUpRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="panel p-8 text-center space-y-3 bg-slate-50 border border-slate-200">
+              <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" />
+              <h4 className="font-heading font-bold text-[16px] text-gov-navy">No states match your search criteria</h4>
+              <p className="text-xs text-text-muted">
+                {stateSearchTerm ? `No states matching "${stateSearchTerm}" in region "${regionFilter}".` : `No states found in region "${regionFilter}".`}
+              </p>
+              <button
+                onClick={() => { setStateSearchTerm(''); setRegionFilter('ALL'); }}
+                className="px-4 py-2 bg-gov-navy text-white text-xs font-bold rounded-xl shadow-sm hover:bg-gov-navy-light transition"
+              >
+                Reset Filters &amp; View All 30 States
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -510,21 +549,42 @@ export default function VarshaSpeedView() {
               <p className="text-xs text-text-muted">Auditing 2,207 real mega-projects against state terrain and seasonal downtime factors</p>
             </div>
 
-            {/* Sector Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gov-navy">Sector:</span>
-              <select
-                value={sectorFilter}
-                onChange={(e) => setSectorFilter(e.target.value)}
-                className="bg-slate-50 text-gov-navy border border-border-default px-3.5 py-2 rounded-xl text-xs font-bold outline-none shadow-sm"
-              >
-                <option value="ALL">All Sectors</option>
-                <option value="Road">Roads &amp; Highways</option>
-                <option value="Rail">Railways</option>
-                <option value="Power">Power</option>
-                <option value="Petroleum">Petroleum &amp; Gas</option>
-                <option value="Aviation">Civil Aviation</option>
-              </select>
+            {/* Search & Sector Filter */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-64">
+                <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-text-muted" />
+                <input
+                  type="text"
+                  placeholder="Search project or state..."
+                  value={projectSearchTerm}
+                  onChange={(e) => setProjectSearchTerm(e.target.value)}
+                  className="w-full bg-slate-50 border border-border-default text-gov-navy pl-10 pr-8 py-2 rounded-xl text-xs outline-none focus:border-gov-navy shadow-sm"
+                />
+                {projectSearchTerm && (
+                  <button
+                    onClick={() => setProjectSearchTerm('')}
+                    className="absolute right-2.5 top-2.5 text-xs text-text-muted hover:text-gov-navy font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <span className="text-xs font-bold text-gov-navy">Sector:</span>
+                <select
+                  value={sectorFilter}
+                  onChange={(e) => setSectorFilter(e.target.value)}
+                  className="bg-slate-50 text-gov-navy border border-border-default px-3.5 py-2 rounded-xl text-xs font-bold outline-none shadow-sm w-full sm:w-auto"
+                >
+                  <option value="ALL">All Sectors</option>
+                  <option value="Road">Roads &amp; Highways</option>
+                  <option value="Rail">Railways</option>
+                  <option value="Power">Power</option>
+                  <option value="Petroleum">Petroleum &amp; Gas</option>
+                  <option value="Aviation">Civil Aviation</option>
+                </select>
+              </div>
             </div>
           </div>
 

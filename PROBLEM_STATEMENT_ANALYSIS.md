@@ -116,7 +116,7 @@ MoSPI classifies project delays into 6 official administrative categories:
 
 * **Unverified Self-Reporting**: Physical progress is self-reported by EPC contractors and field agencies via web forms, creating severe moral hazard.
 * **Ghost Spending Projects**: In the 2,207-project portfolio, **131 projects are spending capital at more than 2x their rate of physical progress**, subsequently demanding average price hikes of +171%.
-* **Lack of Earth-Observation Ground-Truth**: High-level Cabinet reviews lack automated, sub-meter satellite change detection (fusing Sentinel-2 optical and cloud-penetrating Sentinel-1 SAR) to verify whether claimed earthworks, tracks, and foundations exist on the ground.
+* **Lack of Earth-Observation Ground-Truth**: High-level Cabinet reviews lack automated satellite change detection to verify whether claimed earthworks, tracks and foundations exist on the ground. *(The problem statement frames this as sub-metre optical + Sentinel-1 SAR. Our build deliberately meets neither: imagery is Esri World Imagery at 2.08-2.35 m/px, and no Sentinel-1 scenes are ingested. Both are refused rather than approximated -- see [CLAIMS.md](CLAIMS.md).)*
 * **Audit Exposure**: Briefing notes for Cabinet Secretariat and PRAGATI meetings lack cryptographic data provenance, exposing data to disputes during Comptroller and Auditor General (CAG) and Central Vigilance Commission (CVC) reviews.
 
 ---
@@ -187,7 +187,7 @@ Any viable solution addressing this problem statement must satisfy the following
    - Supply-chain graph must be condensed into a strict DAG via Tarjan SCC to eliminate circular deadlocks.
    - Capital allocation must be formulated as a Two-Stage Stochastic LP with CVaR90 tail risk.
 3. **Zero-Trust Physical Verification**:
-   - Must integrate sub-meter dual-epoch satellite imagery (optical + SAR) with an automated EO-eligibility classifier.
+   - Must integrate dual-epoch satellite imagery with an automated EO-eligibility classifier. **Partially met, stated as such:** dual-epoch optical at 2.08-2.35 m/px with the EO-eligibility classifier is live; the sub-metre and SAR halves are **not** met -- the sensor cannot support sub-metre, and no Sentinel-1 scenes are ingested. `sar_readiness()` publishes the empty contract rather than a fabricated coherence value.
 4. **Zero-Hallucination Governance Briefings**:
    - No LLM may generate untraced numerical figures.
    - All rendered metrics must possess RFC 8785 JCS canonicalization and SHA-256 binary Merkle tree proofs.

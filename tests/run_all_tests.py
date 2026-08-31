@@ -33,6 +33,7 @@ TESTS = [
     "test_api.py",
     "test_janhavi_varsha_speed.py",
     "test_kappa_sensitivity.py",
+    "test_a11y_audit.py",
 ]
 
 # pytest modules and debug scripts are run separately, not by this runner.

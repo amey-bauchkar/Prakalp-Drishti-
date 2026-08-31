@@ -15,7 +15,7 @@ Every team member has an isolated backend workspace (`modules/<name>/`) and fron
 | **Tanmay** | `SATYA-KAVACH` (20% CCEA Cabinet Rule Anti-Gaming & Contractor Claim Audit) | `modules/tanmay/` | `frontend/tanmay/` | `/tanmay` |
 | **Parth** | `ARTHA-NETRA` (PSU Financial Solvency, Debt/Equity & Equity Market Stress) | `modules/parth/` | `frontend/parth/` | `/parth` |
 | **Janhavi** | `VARSHA-SPEED` (IMD Monsoon Rainfall Anomalies & Working-Window Contraction) | `modules/janhavi/` | `frontend/janhavi/` | `/janhavi` |
-| **Soham** | `DPR-SCORER` (Proposal Quality & Pre-Election Foundation Rush Detector) | `modules/soham/` | `frontend/soham/` | `/soham` |
+| **Soham** | `KARYA-DAKSHATA` (Agency Execution Reliability & Proposal De-biasing Simulator) | `modules/karya_dakshata/` | `frontend/src/components/KaryaDakshataSimulator.jsx` | `/karya-dakshata` |
 | **Aditya** | `EO-AUDITOR` (Satellite Earth Observation CV Ground-Truth & War Room) | `modules/aditya/` | `frontend/aditya/` | `/aditya` |
 
 ---

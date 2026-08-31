@@ -547,10 +547,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
+        {/* WCAG 2.4.1 Bypass Blocks. The utility bar and header carry ~40 focusable
+            controls; without this a keyboard or screen-reader operator tabs through
+            all of them on every route change before reaching the analysis. */}
+        <a href="#main-content" className="skip-to-content">Skip to main content</a>
+
         <UtilityBar />
         <InstitutionalHeader />
 
-        <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
+        <main id="main-content" tabIndex={-1} className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
           <Routes>
             {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
             <Route path="/" element={<AmeyMasterView />} />
@@ -581,7 +586,7 @@ export default function App() {
             <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
             <Route path="/janhavi" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
             <Route path="/aditya" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
-            <Route path="/soham" element={<Navigate to="/decision-hub?engine=benchmark" replace />} />
+            <Route path="/soham" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
             <Route path="/eo-auditor" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
 
             {/* Catch-all */}

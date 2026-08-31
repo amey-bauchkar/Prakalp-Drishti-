@@ -70,7 +70,6 @@ export default defineConfig({
       '@tanmay': path.resolve(__dirname, './tanmay'),
       '@parth': path.resolve(__dirname, './parth'),
       '@janhavi': path.resolve(__dirname, './janhavi'),
-      '@soham': path.resolve(__dirname, './soham'),
       '@aditya': path.resolve(__dirname, './aditya'),
     },
   },

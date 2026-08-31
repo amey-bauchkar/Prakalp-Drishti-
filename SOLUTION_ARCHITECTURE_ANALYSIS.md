@@ -17,7 +17,7 @@
    - [4.1 SATYA-KAVACH: 20% CCEA Anti-Gaming & CPWD Clause 10CC Audit (Tanmay)](#41-satya-kavach-20-ccea-anti-gaming--cpwd-clause-10cc-audit-tanmay)
    - [4.2 ARTHA-NETRA: PSU Corporate Leverage & Stock Drawdown Risk (Parth)](#42-artha-netra-psu-corporate-leverage--stock-drawdown-risk-parth)
    - [4.3 VARSHA-SPEED: IMD Monsoon Working-Window Optimization (Janhavi)](#43-varsha-speed-imd-monsoon-working-window-optimization-janhavi)
-   - [4.4 DPR-SCORER & EO-AUDITOR: Pre-Sanction Scrutiny & Orbit Corroboration (Soham & Aditya)](#44-dpr-scorer--eo-auditor-pre-sanction-scrutiny--orbit-corroboration-soham--aditya)
+   - [4.4 KARYA-DAKSHATA & EO-AUDITOR: Agency Reliability & Orbit Corroboration (Soham & Aditya)](#44-karya-dakshata--eo-auditor-agency-reliability--orbit-corroboration-soham--aditya)
 5. [Universal Data Contracts & Bitemporal Data Lakehouse](#5-universal-data-contracts--bitemporal-data-lakehouse)
 6. [Zero-Conflict Team Workspace & Modular Plugin Protocol](#6-zero-conflict-team-workspace--modular-plugin-protocol)
 7. [Cryptographic Audit & Validation Suite](#7-cryptographic-audit--validation-suite)
@@ -81,7 +81,7 @@ MoSPI currently maintains **PAIMANA** (Project Appraisal, Implementation, and Mo
 │   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐   │
 │   │ 5. UNIFIED CAUSAL COCKPIT, PRATIBIMB SATELLITE & AGENCY INDEX                                  │   │
 │   │ • Single-Loop Live Simulator: Delay Shock ──► Graph Contagion ──► Capital Re-Balancing         │   │
-│   │ • PRATIBIMB: Sub-Meter Dual-Epoch Satellite Optical Corroboration (2018 Start vs 2023 Current)│   │
+│   │ • PRATIBIMB: Dual-Epoch Optical Corroboration @ 2.08-2.35 m/px (2018-02 vs 2023-01)          │   │
 │   │ • Sovereign Agency Execution Accountability Index (AEAI) across 61 Central PSUs/Agencies       │   │
 │   │ • Air-Gapped PMO Copilot generating fact-grounded statutory action directives                  │   │
 │   └────────────────────────────────────────────────────────────────────────────────────────────────┘   │
@@ -97,7 +97,7 @@ MoSPI currently maintains **PAIMANA** (Project Appraisal, Implementation, and Mo
 ### 3.1 KAAL-CHAKRA: Probabilistic Schedule Risk & Competing Risks Survival Engine
 
 #### 1. Mathematical Formulation
-Replaces point estimates with an Accelerated Failure Time (**AFT Log-Logistic / Weibull**) survival model conditioned on sector friction, expenditure pace, and contractor frailty:
+Replaces point estimates with a **log-logistic Accelerated Failure Time (AFT)** survival model -- fitted by penalised maximum likelihood under right-censoring (160 observed completions, 1,988 censored), then conditioned on sector friction, expenditure pace and contractor frailty. Weibull is **not** fitted; only the log-logistic family is estimated. See [CLAIMS.md](CLAIMS.md):
 
 $$\log T_i = \mu + \boldsymbol{\beta}^\top \mathbf{x}_i + \sigma\,\varepsilon_i, \qquad \varepsilon_i \sim \text{Logistic}(0, 1) \text{ or Gumbel}$$
 
@@ -246,15 +246,15 @@ Generates statutory actionable directives citing verified metric IDs, operating 
 
 ---
 
-### 4.4 DPR-SCORER & EO-AUDITOR: Pre-Sanction Scrutiny & Orbit Corroboration (Soham & Aditya)
-- **DPR-SCORER (Soham)**: Localized NLP scrutiny of Detailed Project Reports, detecting missing 80% land possession certificates and pre-election rushed approvals (which carry a 79.1% delay rate).
-- **EO-AUDITOR / PRATIBIMB (Aditya)**: Dual-epoch sub-meter optical (Sentinel-2) and SAR (Sentinel-1) satellite change detection, filtering out surface-invisible assets via an honest EO-Eligibility Classifier and auditing 131 Ghost Spending projects.
+### 4.4 KARYA-DAKSHATA & EO-AUDITOR: Agency Reliability & Orbit Corroboration (Soham & Aditya)
+- **KARYA-DAKSHATA (Soham)**: Empirical de-biasing of optimistic proposals by re-pricing them against the executing agency's own historical delivery record across 61 PSUs.
+- **EO-AUDITOR / PRATIBIMB (Aditya)**: Dual-epoch optical satellite change detection, filtering out surface-invisible assets via an honest EO-Eligibility Classifier and auditing Ghost Spending projects.
 
 ---
 
 ## 5. Universal Data Contracts & Bitemporal Data Lakehouse
 
-All inter-module communication is governed by strict Pydantic v2 data contracts in [`analytics_engine/contracts.py`](file:///c:/Users/Tanmay/OneDrive/Desktop/Prakalp/Prakalp-Drishti-/analytics_engine/contracts.py):
+All inter-module communication is governed by strict Pydantic v2 data contracts in [`analytics_engine/contracts.py`](file:///c:/Users/SEBIN/Desktop/SIH%20PS/analytics_engine/contracts.py):
 - `Fact`: Immutable numeric value, unit, precision, `Uncertainty`, and `LineageRef`.
 - `Uncertainty`: Conformal quantiles ($P_{10}, P_{50}, P_{80}, P_{95}$), coverage level ($\alpha$), and monotonicity flag.
 - `LineageRef`: Query SHA-256, Dataset SHA-256, Model SHA-256, Merkle Root, and Merkle Proof path.
@@ -278,14 +278,14 @@ Prakalp-Drishti-/
 │   ├── tanmay/                     # SATYA-KAVACH Service & Router
 │   ├── parth/                      # ARTHA-NETRA Service & Router
 │   ├── janhavi/                    # VARSHA-SPEED Service & Router
-│   ├── soham/                      # DPR-SCORER Service & Router
+│   ├── karya_dakshata/             # KARYA-DAKSHATA Service & Router
 │   └── aditya/                     # EO-AUDITOR Service & Router
 └── frontend/
     ├── amey/                       # Kaal-Chakra, Setu-Graph, Vitta-Vyuha, Pragati Views
     ├── tanmay/                     # Satya-Kavach Dashboard View
     ├── parth/                      # Artha-Netra Health Card View
     ├── janhavi/                    # Varsha-Speed Monsoon Map View
-    ├── soham/                      # DPR-Scorer Quality View
+    ├── src/components/             # Karya-Dakshata Simulator & Public Views
     └── aditya/                     # Satellite War Room View
 ```
 

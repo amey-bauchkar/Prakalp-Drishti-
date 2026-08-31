@@ -13,7 +13,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 1. **Real-time probabilistic completion forecasting** with conformalized confidence guarantees.
 2. **Multi-modal supply-chain contagion modeling** with cooperative game-theoretic risk attribution.
 3. **Continuous two-stage stochastic linear capital optimization** under extreme fiscal tail risk.
-4. **Sub-meter Earth observation verification** using NASA-IBM Prithvi foundation vision transformers.
+4. **Dual-epoch Earth observation verification at 2.08-2.35 m/px** using NASA-IBM Prithvi foundation vision transformers. Sub-metre inference is explicitly refused - see [CLAIMS.md](CLAIMS.md).
 5. **Cryptographically verifiable Merkle audit trails** delivering zero-hallucination bilingual executive briefings.
 6. **Statutory contract audit & anti-gaming detection** exposing regulatory and financial anomalies.
 7. **Citizen-facing proactive transparency** in strict adherence to RTI Act §4(1)(b).
@@ -32,7 +32,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH & VARSHA    │      │ 3. VITTA-VYUHA           │   │
 │   │ • Conformalised Quantiles │ ───► │ • Multi-Modal DAG Network │ ───► │ • Two-Stage LP (HiGHS)   │   │
-│   │ • Competing Risks AFT     │      │ • Max-Plus Schedule Float │      │ • CVaR90 Risk Dial (κ)   │   │
+│   │ • Censored-MLE AFT Fit    │      │ • Max-Plus Schedule Float │      │ • CVaR90 Risk Dial (κ)   │   │
 │   │ • P10-P95 Fan Charts      │      │ • IMD Monsoon Contagion   │      │ • 10% NER Statutory Floor│   │
 │   │ • Baseline Reset Detection│      │ • Shapley Value Risk (φ)  │      │ • Dual Shadow Prices (π) │   │
 │   └───────────────────────────┘      └───────────────────────────┘      └──────────────────────────┘   │
@@ -41,7 +41,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 │                                                    ▼                                                   │
 │   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐   │
 │   │ 4. PRATIBIMB-EO & NASA-IBM PRITHVI FOUNDATION BACKBONE                                         │   │
-│   │ • Sub-Meter Dual-Epoch Optical Comparison (T0 Baseline vs T1 Current)                          │   │
+│   │ • Dual-Epoch Optical Comparison @ 2.08-2.35 m/px (T0 Baseline vs T1 Current)                   │   │
 │   │ • Pretrained Geospatial ViT (NASA-IBM Prithvi) for Construction Stage Identification           │   │
 │   │ • 5-Tier Geocoding Taxonomy (71.8% Site Precision) + Honest "Verdict Withheld" Protocol        │   │
 │   │ • RRN Relative Radiometry + PIF Calibration + 4 Analytical Overlays (Built-up, Corridor, etc.) │   │
@@ -75,7 +75,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 ---
 
 ### 🕒 Engine 1: KAAL-CHAKRA (Realistic Timeline & Competing-Risk Forecasting)
-* **Survival Modeling & Competing Risks**: Rather than naïve linear regression, completion time $T$ is modeled via Accelerated Failure Time (AFT Log-Logistic / Weibull) regression. Absorbing terminal states (e.g. project abandonment, permanent litigation stay, cancellation) are handled via Fine-Gray sub-distribution hazard functions:
+* **Survival Modeling**: Completion time $T$ is modeled via a log-logistic **Accelerated Failure Time (AFT)** regression, fitted by penalised maximum likelihood under right-censoring. Censored projects contribute $\log S(t)$, so the 1,988 still-running projects inform the fit rather than being discarded. Absorbing terminal states are attenuated by a **Fine-Gray-*style*** bounded foreclosure term - no sub-distribution hazard is fitted, because the corpus carries no competing-event labels. The reference form is:
   $$\lambda_k(t; x) = \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t, K = k \mid T \ge t \cup (T < t \cap K \ne k))}{\Delta t}$$
 * **Finite-Sample Conformalized Quantile Regression (CQR)**: Guarantees coverage at target confidence $1 - \alpha$ with strict non-crossing monotonicity:
   $$P_{10} \le P_{50} \le P_{80} \le P_{95}$$
@@ -150,7 +150,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 
 ### 🧠 Engine 6: NASA-IBM PRITHVI GEOSPATIAL FOUNDATION MODEL
 * **Architecture**: 100-Million parameter Geospatial Vision Transformer (ViT) with Patch Embedding (16x16) pretrained by NASA and IBM on Harmonized Landsat-Sentinel (HLS) multi-spectral imagery.
-* **Fine-Tuned Stage Classifier**: Downstream linear probe head trained on Indian infrastructure topologies to classify projects into 5 operational construction phases:
+* **Distantly-Supervised Stage Classifier**: Downstream linear probe over the frozen Prithvi backbone, classifying projects into 5 operational construction phases. The backbone is **not** fine-tuned - no labelled ground-truth corpus for Indian construction stages exists, so distant supervision is used and named as such:
   $$\mathcal{Y} = \{\text{Land Clearance}, \text{Earthwork \& Substructure}, \text{Superstructure}, \text{Finishing \& Commissioning}, \text{Operational / Stalled}\}$$
 * **Sovereign Evidence Triangulation**: Compares self-reported physical progress percentage against Prithvi-predicted stage probabilities. If reported progress is $>75\%$ while Prithvi detects $\text{Land Clearance}$ with $>90\%$ confidence, a **RED FRAUD ALERT** is generated.
 
@@ -213,9 +213,43 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 | **Optimization Speed** | $>2,000\text{ ms}$ (MILP) | **$8.7\text{ ms}$ (HiGHS LP)** | Real-time interactive portfolio rebalancing with exact duals |
 | **Quantile Monotonicity** | Heuristic estimates | **100% Guaranteed Monotone** | Conformalized quantile regression ($P_{10} \le P_{50} \le P_{80} \le P_{95}$) |
 | **Geocoding Accuracy** | Generic fuzzy match | **71.8% Site Precision** | 5-tier offline gazetteer with explicit "Verdict Withheld" guard |
-| **Audit Verification** | Unverified text / LLM | **RFC 8785 + SHA-256 Merkle** | Tamper-proof mathematical provenance for CVC / CAG scrutiny |
+| **Audit Verification** | Unverified text / LLM | **RFC 6962 SHA-256 Merkle** | Domain-separated leaves/nodes; immune to CVE-2012-2459 root collision |
 | **Test Suite Coverage** | Partial test scripts | **476 / 476 Tests Passing** | 100% pass rate across security, math, API and rendering layers |
 | **Deployment Model** | Cloud-dependent APIs | **100% Air-Gapped Sovereign** | Self-contained on Port 8000 with zero external runtime network calls |
+
+### 4.1 Cost-Overrun Model — Stated Against Every Baseline
+
+A single "lift" figure invites the question of which baseline it beat, so all of them are
+published. Chronological split, 5-year maturity gate, 265 held-out projects:
+
+| Baseline | MAE | Our lift over it |
+| :--- | :---: | :---: |
+| Naive train-mean | 22.413 | **27.5%** |
+| Sector-mean (an officer can compute this unaided) | 18.495 | **12.2%** |
+| Conventional method | — | **2.57%** |
+| **Gradient boosting (deployed)** | **16.240** | — |
+
+**The honest headline is 12.2%, not 27.5%** — the sector-mean baseline is the one a real
+officer would actually use. The 27.5% figure is measured against the weakest available
+comparator and is reported here only for completeness.
+
+**$R^2 = -0.044$, and it is not hidden.** $R^2$ is measured against the *test* mean, which
+nobody possesses at prediction time. Under temporal distribution shift (train cohort mean
+$+19.6\%$, test cohort $+5.9\%$) a negative $R^2$ alongside a positive MAE lift means the
+model beats what an officer could do unaided, while still not explaining variance around a
+mean it cannot know. Both statements are true and both are published.
+
+**External features were ablated and do not help.** IMD monsoon, WPI construction,
+election proximity, PSU fundamentals, satellite change and graph centrality made the model
+*worse* (MAE $16.24 \to 17.90$, $-10.2\%$). The artefact records
+`"external_helps": false` and the variant selector drops them. They remain valuable as
+evidence and explanation in the console; they are not load-bearing for this prediction.
+
+**`slip_months` is not served at all.** Chronologically it loses to a train-mean baseline
+by 53–191% at every maturity gate. Schedule risk is served by KAAL-CHAKRA's conformal
+intervals instead, which are separately validated at a measured 93.3% coverage.
+
+Full ledger: [CLAIMS.md](CLAIMS.md).
 
 ---
 

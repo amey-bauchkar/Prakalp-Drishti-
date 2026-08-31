@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend-verification:
-    name: Backend Engines & Content Verification (278/278 Assertions)
+    name: Backend Engines & Content Verification (476/476 Assertions)
     runs-on: ubuntu-latest
 
     steps:
@@ -63,3 +63,26 @@ jobs:
         run: |
           cd frontend
           npm run build
+
+  accessibility-audit:
+    name: Accessibility & Responsive Audit (WCAG 2.1 AA)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Computes WCAG contrast ratios from the design tokens and audits the JSX for
+      # focus visibility, bypass blocks, accessible names and viewport safety. No
+      # browser or npm install needed -- it reads the source, so it cannot go stale
+      # against a built artefact.
+      - name: Run WCAG contrast and structural a11y audit
+        env:
+          PYTHONPATH: .
+        run: |
+          python tests/test_a11y_audit.py

@@ -1,0 +1,47 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — ACCESSIBILITY LAYER
+   ═══════════════════════════════════════════════════════════════════════
+   Imported LAST so it can override anything above it.
+
+   prefers-reduced-motion is honoured globally: users who ask their OS to
+   reduce motion get a terminal with no animation, which matters for a system
+   intended for long analytical sessions. Focus visibility is enforced here
+   rather than left to component authors, so a keyboard operator can always
+   see where they are.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Respect reduced-motion for every transition defined above. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keyboard focus must never be invisible. Components may restyle the ring, but
+   they cannot remove it -- this is the floor. */
+@layer base {
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus-ring, #1a4d8f);
+    outline-offset: 2px;
+  }
+}
+
+/* A visible skip target for keyboard users landing on a dense terminal. */
+@layer components {
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+    padding: 0.625rem 1rem;
+    background: var(--ink-900, #071320);
+    color: #fff;
+    border-radius: 0 0 4px 0;
+  }
+  .skip-to-content:focus {
+    left: 0;
+    top: 0;
+  }
+}

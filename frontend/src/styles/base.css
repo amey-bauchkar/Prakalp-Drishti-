@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — BASE ELEMENT LAYER
+   ═══════════════════════════════════════════════════════════════════════
+   Bare element defaults only -- html, body, headings, tables, rules. Anything
+   that needs a class name belongs in components.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Base ──────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply antialiased font-sans;
+    background: var(--page-bg);
+    color: var(--ink);
+    font-size: 13.5px;
+    line-height: 1.6;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+  }
+
+  /* Every numeral in the application is tabular by default: columns of
+     figures must align and must not reflow as values update. */
+  code, kbd, samp, pre, .font-mono, [class*="font-mono"] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+  }
+
+  table { font-variant-numeric: tabular-nums; }
+
+  /* Institutional scale: tight, dense, quiet. */
+  h1 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.95rem; font-weight: 800; line-height: 1.14;
+       letter-spacing: -0.025em; color: var(--ink-800); }
+  h2 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.4rem;  font-weight: 750; line-height: 1.2;
+       letter-spacing: -0.02em;  color: var(--ink-800); }
+  h3 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 1.05rem; font-weight: 700; line-height: 1.3;
+       letter-spacing: -0.012em; color: var(--ink-800); }
+  h4 { font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+       font-size: 0.9rem;  font-weight: 700; line-height: 1.35;
+       color: var(--ink-800); }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 0.98rem; }
+  }
+
+  a { color: var(--azure); text-decoration: none; }
+  a:hover { color: var(--saffron-deep); }
+
+  :focus-visible {
+    outline: 2px solid var(--saffron);
+    outline-offset: 1px;
+    border-radius: 1px;
+  }
+
+  ::selection { background: var(--gold); color: var(--ink-900); }
+
+  hr { border: 0; border-top: var(--hair); }
+}

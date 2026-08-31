@@ -1,0 +1,38 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — UTILITY LAYER
+   ═══════════════════════════════════════════════════════════════════════
+   Single-purpose helpers -- overflow containment, scroll-snap, tabular
+   figures. Utilities win over components by Tailwind layer order.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Utilities ─────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Horizontal containment.
+     A flex or grid child defaults to min-width:auto, so a wide ledger inside
+     a panel refuses to shrink and pushes the whole document sideways instead
+     of scrolling within its own frame. Measured on /tanmay at 375px: the page
+     scrolled to 604px. These three rules keep every wide surface -- ledgers,
+     tab strips, chart rows -- scrolling inside its own container. */
+  .overflow-x-auto, .overflow-auto { min-width: 0; }
+  .panel { min-width: 0; }
+  .flex > .overflow-x-auto, .grid > .overflow-x-auto { min-width: 0; }
+
+  .num { font-variant-numeric: tabular-nums; font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; }
+  .hairline-t { border-top: 1px solid var(--line); }
+  .hairline-b { border-bottom: 1px solid var(--line); }
+  .hairline-l { border-left: 1px solid var(--line); }
+  .hairline-r { border-right: 1px solid var(--line); }
+
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: var(--surface-2); }
+  ::-webkit-scrollbar-thumb { background: #C3CBD3; border: 2px solid var(--surface-2); border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-mute); }
+  ::-webkit-scrollbar-corner { background: var(--surface-2); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .snap-slide-container { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  .snap-slide-section { scroll-snap-align: start; scroll-snap-stop: always; min-height: calc(100vh - 120px); }
+}

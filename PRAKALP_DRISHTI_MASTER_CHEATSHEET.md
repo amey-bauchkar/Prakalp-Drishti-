@@ -73,8 +73,9 @@
 ---
 
 ### 🛰️ Dataset 2: Satellite Remote Sensing (ESA Sentinel-2, Sentinel-1 SAR & Esri High-Res Tiles)
-* **Exact Online Source**: European Space Agency (ESA) Copernicus Hub (Sentinel-2 10m multispectral, Sentinel-1 C-band Synthetic Aperture Radar) & Esri Wayback World Imagery.
-* **What Was Extracted**: Sub-meter to 10m dual-epoch satellite image pairs for georeferenced project footprints across India.
+* **Exact Online Source**: **Esri ArcGIS World Imagery / Wayback** — this is the only imagery source actually ingested. Sentinel-2 multispectral and Sentinel-1 SAR are *specified future layers*, not present in this build (see the SAR contract in `eo_geospatial.py`).
+* **What Was Extracted**: **4,414 dual-epoch tiles** (2,207 projects × 2 epochs, 2018-02 vs 2023-01), 8-bit **RGB JPEG at 2.08–2.35 m/px**.
+* **⚠️ SAY THIS ACCURATELY**: it is **not** sub-metre and **not** multispectral. Ground sample distance is 2.08–2.35 m/px, so the smallest defensible unit is a connected cluster of several pixels. NDVI/NDBI/NDWI are refused outright — they need NIR/SWIR bands this sensor does not carry. What *is* defensible on three visible bands: **ExG** (Woebbecke 1995), **VARI** (Gitelson 2002), and the Spectral Angle Mapper. See [CLAIMS.md](CLAIMS.md).
 * **WHY WE CHOSE THIS DATASET**:
   1. **Eliminating Contractor Moral Hazard & Ghost Spending**: Contractors self-report physical progress on web forms to unlock milestone funds. Satellites provide an **independent, tamper-proof ground truth**.
   2. **Monsoon Cloud Penetration**: Optical satellites fail during heavy cloud cover; incorporating Sentinel-1 SAR radar ensures continuous structural monitoring through clouds.
@@ -197,13 +198,16 @@ Inside `/decision-hub`, policymakers have access to **10 dedicated analytical en
 
 ### 2. 🕒 Kaal-Chakra Survival Forecast (`kaal_chakra`)
 * **Role**: Replaces misleading single-date deadlines with probabilistic completion curves.
-* **Math**: **Accelerated Failure Time (AFT) Survival Analysis** (Weibull & Log-Logistic) + Reference Class Forecasting (RCF).
+* **Math**: **Log-logistic Accelerated Failure Time (AFT) survival model**, fitted by penalised maximum likelihood under **right-censoring** (160 observed completions vs 1,988 censored) using `scipy` L-BFGS-B. Sector/entity effects shrink under a Normal(0, τ²) prior, τ chosen by 5-fold cross-validation. Wrapped in split-conformal intervals at a **measured 93.3% coverage**.
+* **⚠️ Weibull is NOT fitted** — only log-logistic. Say "log-logistic AFT", never "Weibull".
+* **⚠️ If asked how strong the fit is, answer honestly**: at a 7.4% event rate the median is extrapolated past the follow-up window, and only **Roads & Highways (145 completions)** moves on its own evidence — the other 18 sectors sit near the pooled baseline because the prior put them there. Every group ships with its event count and a `data` / `prior-dominated` tag in `artifacts/aft_survival.json`.
 * **Output**: Strictly monotonic, non-crossing quantiles: $P_{10}$ (Optimistic), $P_{50}$ (Expected Median), $P_{80}$ (Prudent Budget Baseline), and $P_{95}$ (Tail Disaster Worst-Case).
 
 ### 3. 💰 Vitta-Vyuha Linear Reallocation (`vitta_vyuha`)
 * **Role**: Prescriptive capital allocation engine answering *"Where should the Cabinet deploy the next ₹10,000 Crore?"*
-* **Math**: **Two-Stage Stochastic Mixed-Integer Linear Program (MILP)** with **$CVaR_{90}$ tail-risk control** and statutory **10% North-Eastern Region (NER) capital floor**.
-* **Performance**: Solves across 2,207 projects in **$< 2\text{ seconds}$** using the open-source **HiGHS Solver**, supporting interactive budget sliders.
+* **Math**: **Two-Stage Stochastic Linear Program (LP)** with **$CVaR_{90}$ tail-risk control** (Rockafellar–Uryasev) and statutory **10% North-Eastern Region (NER) capital floor**.
+* **⚠️ It is an LP, not a MILP.** Every decision variable is continuous (`integrality` is all-zero) because capital tranches are genuinely divisible. This distinction is load-bearing and *works in our favour*: **an LP has valid duals; a MILP does not** — so the shadow prices we publish are meaningful precisely *because* the formulation is continuous. A true MILP would add a binary fund/defer indicator with a minimum viable tranche; that is a stated future upgrade.
+* **Performance**: Solves across 2,207 projects in **$8.7\text{ ms}$** using the open-source **HiGHS Solver**, supporting interactive budget sliders.
 
 ### 4. 📜 Pragati-Saarthi Cabinet Note (`pragati_saarthi`)
 * **Role**: Generates high-level bilingual (English + official CSTT Hindi) executive briefing dossiers for PMO PRAGATI meetings.
@@ -278,10 +282,12 @@ Inside `/decision-hub`, policymakers have access to **10 dedicated analytical en
 > **Answer**: *"LLMs are probabilistic language models prone to numerical hallucinations—they cannot perform exact linear programming, survival analysis, or forensic legal audits required for public finances. In Prakalp Drishti, all calculations, quantiles, and optimizations are computed deterministically using rigorous mathematical libraries (HiGHS, Lifelines, Scikit-learn). The LLM is only used as a structured summarization layer with strict RFC 8785 canonicalization and SHA-256 Merkle tree verification."*
 
 ### Q5: "What if satellite imagery is cloudy or unavailable?"
-> **Answer**: *"We designed a strict 'Verdict Withheld' protocol. If optical cloud cover exceeds 40%, the system switches to cloud-penetrating Sentinel-1 SAR (Synthetic Aperture Radar). If a project is underground (e.g., subway tunnel) or SAR is inconclusive, the system explicitly withholds its verdict rather than penalizing the contractor with a false negative."*
+> **Answer**: *"We enforce a strict 'Verdict Withheld' protocol. On three visible bands the only honest cloud test is a photometric one, so that is what `cloud_shadow_mask` runs — and it reports its own failure modes rather than posing as a trained cloud classifier. When cloud or shadow makes an epoch unusable, or the project is underground like a subway tunnel, the system withholds its verdict rather than penalising the contractor with a false negative. The all-weather SAR layer is specified with a formal contract in `eo_geospatial.py`, but no Sentinel-1 scenes are ingested in this deployment, so `sar_available` returns false with its reason stated. We publish the empty shape rather than a fabricated coherence value, because a reviewer has no way to tell a fabricated coherence from a measured one."*
+>
+> **⚠️ NEVER say the system "switches to SAR".** It does not. SAR is a designed-but-unpopulated layer, and claiming otherwise is contradicted by our own source.
 
 ### Q6: "How does your optimization model help during sudden budget cuts?"
-> **Answer**: *"Our VITTA-VYUHA engine is formulated as a Two-Stage Stochastic MILP with CVaR90 risk control. It runs in under 2 seconds on the HiGHS open-source solver. If the Ministry of Finance cuts available capex from ₹10,000 Cr to ₹6,000 Cr, the policymaker drags the interactive slider, and the engine instantly re-optimizes capital to protect high-multiplier, near-commissioning assets while maintaining the statutory 10% North-East funding floor."*
+> **Answer**: *"Our VITTA-VYUHA engine is formulated as a Two-Stage Stochastic Linear Program with CVaR90 risk control, solved in 8.7 milliseconds on the HiGHS open-source solver. If the Ministry of Finance cuts available capex from ₹10,000 Cr to ₹6,000 Cr, the policymaker drags the interactive slider and the engine instantly re-optimises capital to protect high-multiplier, near-commissioning assets while maintaining the statutory 10% North-East funding floor. It is deliberately an LP rather than a MILP — every capital tranche is genuinely divisible, and because the formulation is continuous the dual variables are valid, which is what lets us publish real shadow prices per constraint. A MILP has no valid duals, so it could not defend the numbers we put in front of the Cabinet."*
 
 ### Q7: "How is this different from the existing PAIMANA / OCMS portal?"
 > **Answer**: *"PAIMANA is a descriptive reporting portal—it records what contractors upload. Prakalp Drishti transforms it into an active, zero-trust system: (1) we verify claims via satellites, (2) replace static deadlines with calibrated P10–P95 survival fan charts, (3) model cross-ministry domino delays via supply chain DAGs, (4) de-bias proposals with KARYA-DAKSHATA, and (5) provide prescriptive capital allocation optimization."*

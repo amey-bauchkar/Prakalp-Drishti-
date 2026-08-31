@@ -1,0 +1,180 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — DESIGN TOKENS & THEME OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════
+   Every colour, hairline and elevation the system uses, plus the three theme
+   surfaces (default, [data-theme="contrast"], [data-theme="dark"]) and the
+   user font-size preference. Nothing here selects a component: change a value
+   in this file and the whole terminal moves with it.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — SOVEREIGN INSTITUTIONAL DESIGN SYSTEM
+   National Infrastructure Decision Terminal · MoSPI · Government of India
+   ═══════════════════════════════════════════════════════════════════════
+
+   The visual target is an instrument, not a dashboard: hairline structure,
+   tabular figures, high information density, and colour that reports state
+   rather than decorating a surface.
+
+   The redefinitions in @layer components are deliberate. Legacy class names
+   (.hero-saffron-banner, .card-gov-programme, .bulletin-paper-card and so
+   on) are kept and re-pointed at the new language, so several hundred
+   existing call sites adopt it without their markup changing and without
+   the domain text, statistical bounds, or API wiring being touched.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Chrome */
+  --ink-900: #071320;
+  --ink-800: #0B1D2E;
+  --ink-700: #102A40;
+  --ink-600: #1A3A55;
+  --ink-500: #2C5070;
+
+  /* Text */
+  --ink:      #14212E;
+  --ink-soft: #46586B;
+  --ink-mute: #637384;   /* WCAG AA on both #FFF (4.87) and #F7F8F9 (4.58) */
+  --ink-dim:  #9AA8B6;
+
+  /* Paper & structure */
+  --page-bg:     #FBFBFA;
+  --surface:     #FFFFFF;
+  --surface-2:   #F7F8F9;
+  --surface-3:   #F1F3F5;
+  --line:        #E3E6EA;
+  --line-strong: #C9CFD6;
+  /* Boundary of an INTERACTIVE control (inputs, selects, comboboxes). WCAG 1.4.11
+     requires 3:1 for UI component boundaries; --line-strong is 1.57:1 on white and is
+     therefore only safe for decorative separators, which 1.4.11 exempts.
+     #7E8894 measures 3.60:1 on --surface and 3.38:1 on --surface-2. */
+  --line-field:  #7E8894;
+  --focus-ring:  #1A4D8F;
+
+  /* State */
+  --saffron:      #E4610A;
+  --saffron-press:#C2510A;  /* button ground: white text reaches 4.69 */
+  --saffron-deep: #A8410A;
+  --saffron-wash: #FFF4EA;
+  --gold:         #F2B441;
+  --gold-deep:    #8A6A18;
+  --gold-wash:    #FCF7EC;
+  --emerald:      #0E7A4A;
+  --emerald-wash: #EAF6F0;
+  --amber:        #A9680A;
+  --amber-wash:   #FDF6E9;
+  --crimson:      #A81F2D;
+  --crimson-wash: #FCEFF0;
+  --azure:        #17557F;
+  --azure-wash:   #EDF3F8;
+
+  /* Tricolour, for sovereign marks only */
+  --tri-saffron: #FF9933;
+  --tri-green:   #138808;
+  --tri-chakra:  #0A3B8C;
+
+  --hair: 1px solid var(--line);
+}
+
+.font-mono, [class*="font-mono"], .num {
+  font-family: "Plus Jakarta Sans", "Inter", -apple-system, sans-serif !important;
+  font-feature-settings: "tnum" 1, "cv05" 1, "cv11" 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+}
+
+[data-theme="contrast"] {
+  --page-bg: #000000;
+  --surface: #0a0a0a;
+  --surface-2: #141414;
+  --surface-3: #1f1f1f;
+  --line: #ffff00;
+  --line-strong: #ffffff;
+  --line-field: #ffffff;
+  --focus-ring: #ffff00;
+  --ink: #ffffff;
+  --ink-soft: #f0f0f0;
+  --ink-mute: #ffff00;
+  --ink-dim: #e0e0e0;
+  --saffron: #ffb700;
+  --saffron-wash: #2a2000;
+  --emerald: #00ff66;
+  --emerald-wash: #002b11;
+  --amber: #ffff00;
+  --amber-wash: #333300;
+  --crimson: #ff3344;
+  --crimson-wash: #3b0008;
+  filter: contrast(1.1);
+}
+
+[data-theme="contrast"] .bg-white,
+[data-theme="contrast"] .panel,
+[data-theme="contrast"] .card-parchment-gold,
+[data-theme="contrast"] .bulletin-paper-card {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffff00 !important;
+}
+
+[data-theme="contrast"] .text-gov-navy,
+[data-theme="contrast"] .text-text-primary,
+[data-theme="contrast"] .text-text-secondary {
+  color: #ffffff !important;
+}
+
+[data-theme="contrast"] .text-text-muted {
+  color: #ffff00 !important;
+}
+
+[data-theme="dark"] {
+  --page-bg: #0B111E;
+  --surface: #111B2E;
+  --surface-2: #16243D;
+  --surface-3: #1D2E4D;
+  --line: #223554;
+  --line-strong: #324D78;
+  --line-field: #68809F;   /* 4.24:1 on --surface */
+  --focus-ring: #8AB4F8;
+  --ink: #F1F5F9;
+  --ink-soft: #CBD5E1;
+  --ink-mute: #94A3B8;
+  --ink-dim: #64748B;
+  --saffron: #FF9933;
+  --saffron-wash: #2D1A08;
+  --emerald: #10B981;
+  --emerald-wash: #064E3B;
+  --amber: #F59E0B;
+  --amber-wash: #451A03;
+  --crimson: #EF4444;
+  --crimson-wash: #450A0A;
+}
+
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .card-parchment-gold,
+[data-theme="dark"] .bulletin-paper-card {
+  background-color: #111B2E !important;
+  color: #F1F5F9 !important;
+  border-color: #223554 !important;
+}
+
+[data-theme="dark"] .text-gov-navy,
+[data-theme="dark"] .text-text-primary {
+  color: #F1F5F9 !important;
+}
+
+[data-theme="dark"] .text-text-secondary {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .text-text-muted {
+  color: #94A3B8 !important;
+}
+
+html[data-font-size="large"] {
+  font-size: 110%;
+}
+
+html[data-font-size="larger"] {
+  font-size: 120%;
+}

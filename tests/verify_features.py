@@ -396,7 +396,7 @@ for owner, path, keyfield in [
     ("SATYA-KAVACH (tanmay)", "/api/tanmay/status", None),
     ("ARTHA-NETRA (parth)", "/api/parth/status", None),
     ("VARSHA-SPEED (janhavi)", "/api/janhavi/status", None),
-    ("DPR-SCORER (soham)", "/api/soham/status", None),
+    ("KARYA-DAKSHATA (karya_dakshata)", "/api/karya-dakshata/status", None),
     ("EO-AUDITOR (aditya)", "/api/aditya/status", None),
 ]:
     s, d = call(path)
@@ -1761,7 +1761,7 @@ if len(_cv) == 2:
 for _ep in ("/api/tanmay/gaming-analysis", "/api/tanmay/bunching-histogram",
             "/api/tanmay/clause-10cc-audit", "/api/tanmay/anumati/clearances",
             "/api/parth/psu-risk", "/api/parth/portfolio", "/api/parth/agencies",
-            "/api/soham/election-rush", "/api/aditya/contractors",
+            "/api/karya-dakshata/agencies", "/api/aditya/contractors",
             "/api/aditya/projects", "/api/janhavi/status"):
     s_, _d = call(_ep, tok=ADMIN)
     check(F, f"{_ep} responds", s_ == 200, f"status={s_}")
