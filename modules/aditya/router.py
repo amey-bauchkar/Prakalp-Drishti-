@@ -31,7 +31,10 @@ try:
     )
     from modules.aditya.modules.nivaran import NivaranEngine
     from modules.aditya.modules.anumati import AnumatiEngine
-    from modules.aditya.data.sqlite_loader import load_projects_from_sqlite, load_contractors_from_sqlite, get_all_gcc_clauses
+    from modules.aditya.data.sqlite_loader import (
+        load_projects_from_sqlite, load_contractors_from_sqlite, get_all_gcc_clauses,
+        get_governance_project, list_all_governance_projects
+    )
     from modules.aditya.service import get_eo_auditor_engine
 except ImportError:
     from app.schemas.nivaran_schema import (
@@ -87,12 +90,8 @@ def get_satellite_showcase(limit: int = Query(default=50, ge=1, le=2207)):
 # ─── PROJECT CATALOG FOR TESTING ──────────────────────────────────
 @router.get("/api/aditya/projects")
 @router.get("/api/v1/aditya/projects")
-def list_governance_projects():
-    projects_db = load_projects_from_sqlite()
-    summary_list = []
-    for pid, data in projects_db.items():
-        summary_list.append(data.get("metadata", {}))
-    return summary_list
+def list_governance_projects(limit: int = Query(default=100, ge=1, le=2207), q: Optional[str] = None):
+    return list_all_governance_projects(limit=limit, search=q)
 
 
 # ─── CPWD GCC CLAUSES ─────────────────────────────────────────────
@@ -171,16 +170,10 @@ def evaluate_clearance_status(request: ClearanceStatusRequest):
 @router.get("/api/aditya/governance/combined-risk-profile/{project_id}", response_model=CombinedRiskProfileResponse)
 @router.get("/api/v1/governance/combined-risk-profile/{project_id}", response_model=CombinedRiskProfileResponse)
 def get_combined_risk_profile(project_id: str):
-    projects_db = load_projects_from_sqlite()
-    if project_id not in projects_db:
-        if project_id.startswith("PRJ-") and "PRJ-NH-2026-089" in projects_db:
-            project_id = "PRJ-NH-2026-089"
-        elif list(projects_db.keys()):
-            project_id = list(projects_db.keys())[0]
-        else:
-            raise HTTPException(status_code=404, detail=f"Project ID '{project_id}' not found in registry.")
+    project_data = get_governance_project(project_id)
+    if not project_data:
+        raise HTTPException(status_code=404, detail=f"Project ID '{project_id}' not found in registry.")
 
-    project_data = projects_db[project_id]
     meta_dict = project_data["metadata"]
 
     nivaran_req = DisputeRiskAssessmentRequest(**project_data["nivaran_request"])

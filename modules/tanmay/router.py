@@ -164,16 +164,23 @@ def get_clearance_portfolio():
                 estimated_daily_cost_overrun_cr=float(stages[0].get("estimated_daily_cost_overrun_cr") or 0.5),
                 stages=details,
             ))
-            projects.append(assessment.dict())
+            payload = assessment.dict()
+            payload["state"] = stages[0].get("state") or "Pan-India"
+            payload["sector"] = stages[0].get("sector") or "Infrastructure"
+            payload["proposal_numbers"] = [s.get("proposal_no") for s in stages if s.get("proposal_no")]
+            payload["total_forest_diversion_ha"] = round(
+                sum(float(s.get("diversion_forest_ha") or 0) for s in stages), 2
+            )
+            projects.append(payload)
 
-        stalled = [p for p in projects if p.get("risk_category") == "STALLED"]
-        escalate = [p for p in projects if p.get("escalation_recommended")]
+        stalled = [p for p in projects if p.get("overall_clearance_status") == "STALLED"]
+        escalate = [p for p in projects if p.get("pmo_escalation_flag")]
 
         return {
             "available": True,
             "coverage_note": "PARIVESH clearance filings exist for 3 projects, not the full 2,207-project portfolio.",
             "projects_with_clearance_records": len(projects),
-            "clearance_stages_tracked": sum(len(p.get("stages", [])) for p in projects),
+            "clearance_stages_tracked": sum(len(p.get("stage_breakdown", [])) for p in projects),
             "projects_stalled": len(stalled),
             "projects_flagged_for_pmo_escalation": len(escalate),
             "projects": projects,
