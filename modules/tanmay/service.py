@@ -172,7 +172,10 @@ class SatyaKavachEngine:
             orig_c = float(r["OriginalCost"])
             rev_c = float(r["RevisedCostEffective"])
             ov_pct = float(r["OverrunPct"])
+            s_year = int(r.get("SanctionYear", 2018))
             evasion_margin = round(20.0 - ov_pct, 2)
+            calc_10cc = self._calculate_10cc_cap(orig_c, s_year)
+
             flagged_list.append({
                 "project_id": pid,
                 "project_name": str(r.get("ProjectName", f"Project {pid}")),
@@ -185,6 +188,9 @@ class SatyaKavachEngine:
                 "overrun_pct": ov_pct,
                 "evasion_margin_pct": evasion_margin,
                 "distance_to_boundary_pp": evasion_margin,
+                "statutory_10cc_cap_cr": calc_10cc["statutory_allowed_escalation_cr"],
+                "statutory_10cc_cap_pct": calc_10cc["cap_pct_of_original_cost"],
+                "sanction_year": s_year,
                 "classification": "THRESHOLD_PROXIMITY",
                 "classification_label": "CCEA Threshold Proximity (18.0%–19.99%)",
             })

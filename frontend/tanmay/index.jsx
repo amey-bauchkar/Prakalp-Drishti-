@@ -290,6 +290,13 @@ export default function SatyaKavachView() {
                   {flagged.length} projects positioned immediately below the Cabinet re-sanction threshold
                 </p>
               </div>
+              <div
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800/80 text-[10.5px] text-slate-600 dark:text-slate-300 font-mono border border-slate-200 dark:border-slate-700"
+                title="CPWD GCC Clause 10CC: 85% escalable base indexed to bid-date commodity WPI series; 15% fixed contractor risk deducted"
+              >
+                <Scale className="w-3.5 h-3.5 text-gov-accent shrink-0" />
+                <span><strong>10CC Cap:</strong> 85% Base × WPI Inflation (15% Contractor Risk Deducted)</span>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -302,6 +309,7 @@ export default function SatyaKavachView() {
                     <th className="py-2.5 px-2 text-right">Revised Cost</th>
                     <th className="py-2.5 px-2 text-right">Overrun %</th>
                     <th className="py-2.5 px-2 text-right">Distance to Boundary</th>
+                    <th className="py-2.5 px-2 text-right">Acceptable 10CC Cap</th>
                     <th className="py-2.5 px-2 text-center">Action</th>
                   </tr>
                 </thead>
@@ -327,6 +335,14 @@ export default function SatyaKavachView() {
                       </td>
                       <td className="py-2.5 px-2 text-right font-mono text-slate-500">
                         {p.distance_to_boundary_pp} pp to 20%
+                      </td>
+                      <td className="py-2.5 px-2 text-right font-mono">
+                        <span className="font-bold text-emerald-700 dark:text-emerald-400 block">
+                          ₹{p.statutory_10cc_cap_cr !== undefined ? p.statutory_10cc_cap_cr.toLocaleString('en-IN') : '—'} Cr
+                        </span>
+                        <span className="text-[10px] text-slate-400 block">
+                          {p.statutory_10cc_cap_pct !== undefined ? `${p.statutory_10cc_cap_pct}% cap` : '85% base'}
+                        </span>
                       </td>
                       <td className="py-2.5 px-2 text-center">
                         <button
