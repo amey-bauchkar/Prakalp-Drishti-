@@ -329,28 +329,52 @@ def get_governance_project(project_id: str) -> Optional[Dict[str, Any]]:
     daily_burn_rate = round(max(0.1, (orig_cost / 1000.0) * 0.5), 2)
     ctr_id = f"CTR-{clean_id[-4:]}"
 
-    stages = [
-        {
-            "stage_code": "FOREST_CLEARANCE",
-            "stage_name": "Forest Clearance (Stage-I & Stage-II)",
-            "department": "MoEFCC Regional Office & State Forest Nodal Dept",
-            "status": "LOOPBACK" if delay_months > 18 else ("QUERY_RAISED" if delay_months > 6 else "APPROVED"),
-            "days_pending": min(360, int(delay_months * 15)) if delay_months > 0 else 45,
-            "benchmark_days": 120,
-            "loopback_count": 2 if delay_months > 18 else 0,
-            "last_query_date": None
-        },
-        {
-            "stage_code": "LAND_RFCTLARR",
-            "stage_name": "Land Acquisition Handover (RFCTLARR 2013)",
-            "department": "Competent Authority Land Acquisition (CALA)",
-            "status": "IN_REVIEW" if delay_months > 12 else "STAGE_1_APPROVED",
-            "days_pending": min(400, int(delay_months * 20)) if delay_months > 0 else 60,
-            "benchmark_days": 180,
-            "loopback_count": 1 if delay_months > 24 else 0,
-            "last_query_date": None
-        }
-    ]
+    # Query real clearance stages from SQLite parivesh_clearances table
+    stages = []
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM parivesh_clearances WHERE project_id = ?", (clean_id,))
+        p_rows = [dict(r) for r in cur.fetchall()]
+        conn.close()
+        for r in p_rows:
+            stages.append({
+                "stage_code": r.get("stage_code") or "ENVIRONMENT_CLEARANCE",
+                "stage_name": r.get("stage_name") or "Clearance Stage",
+                "department": r.get("department") or "MoEFCC",
+                "status": r.get("status") or "SUBMITTED",
+                "days_pending": int(r.get("days_pending") or 0),
+                "benchmark_days": int(r.get("benchmark_days") or 90),
+                "loopback_count": int(r.get("eds_ads_raised_count") or 0),
+                "last_query_date": r.get("last_query"),
+            })
+    except Exception as e:
+        stages = []
+
+    if not stages:
+        stages = [
+            {
+                "stage_code": "FOREST_CLEARANCE",
+                "stage_name": "Forest Clearance (Stage-I & Stage-II)",
+                "department": "MoEFCC Regional Office & State Forest Nodal Dept",
+                "status": "LOOPBACK" if delay_months > 18 else ("QUERY_RAISED" if delay_months > 6 else "APPROVED"),
+                "days_pending": min(360, int(delay_months * 15)) if delay_months > 0 else 45,
+                "benchmark_days": 120,
+                "loopback_count": 2 if delay_months > 18 else 0,
+                "last_query_date": None
+            },
+            {
+                "stage_code": "LAND_RFCTLARR",
+                "stage_name": "Land Acquisition Handover (RFCTLARR 2013)",
+                "department": "Competent Authority Land Acquisition (CALA)",
+                "status": "IN_REVIEW" if delay_months > 12 else "STAGE_1_APPROVED",
+                "days_pending": min(400, int(delay_months * 20)) if delay_months > 0 else 60,
+                "benchmark_days": 180,
+                "loopback_count": 1 if delay_months > 24 else 0,
+                "last_query_date": None
+            }
+        ]
 
     return {
         "metadata": {
