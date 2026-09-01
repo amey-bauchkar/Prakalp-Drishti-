@@ -147,6 +147,32 @@ def _ingest_job(rows: List[Dict[str, Any]], source: str,
             except Exception as exc:
                 geo_error = f"{type(exc).__name__}: {exc}"
 
+        # Fetch satellite imagery for the newly onboarded projects that have coordinates.
+        # This is done asynchronously before the corpus is sealed.
+        imagery_fetched, imagery_failed = 0, 0
+        imagery_errors = {}
+        if geocodes:
+            try:
+                from analytics_engine.satellite_tile_fetcher import fetch_satellite_tiles
+                from analytics_engine.satellite_fusion import get_satellite_fusion_engine
+                
+                for g in geocodes:
+                    pid = str(g.get("project_id"))
+                    lat = g.get("latitude")
+                    lon = g.get("longitude")
+                    if pid and lat and lon:
+                        res = fetch_satellite_tiles(pid, lat, lon)
+                        if res.get("success"):
+                            imagery_fetched += 1
+                            get_satellite_fusion_engine().invalidate_cache(pid)
+                        else:
+                            imagery_failed += 1
+                            if res.get("error"):
+                                imagery_errors[pid] = res.get("error")
+            except Exception as e:
+                # Do not fail the ingestion if satellite fetch module errors out
+                imagery_errors["_system"] = f"Unexpected error during imagery fetch: {e}"
+
         # Rebuild the in-memory corpus, then seal the version its root describes. Order
         # matters: the root must be computed from what the database now holds, not from
         # what we believe we wrote.
@@ -162,6 +188,9 @@ def _ingest_job(rows: List[Dict[str, Any]], source: str,
             "rows_written": written,
             "geocodes_written": geo_written,
             "geocode_error": geo_error,
+            "imagery_fetched": imagery_fetched,
+            "imagery_failed": imagery_failed,
+            "imagery_errors": imagery_errors,
             "corpus_version": version,
             "corpus_root": view.corpus_root,
             "row_count": view.snapshot.row_count,

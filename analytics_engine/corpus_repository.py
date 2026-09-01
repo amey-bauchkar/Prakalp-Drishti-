@@ -259,3 +259,91 @@ def ner_eligible_states() -> Dict[str, str]:
         with conn.cursor() as cur:
             cur.execute("select project_id, state_name from ner_floor_eligible_geography")
             return {str(r[0]): r[1] for r in cur.fetchall()}
+
+
+# ---------------------------------------------------------------------------------
+# Milestones & imagery epochs (migration 0006)
+# ---------------------------------------------------------------------------------
+
+def insert_milestone(record: Dict[str, Any]) -> int:
+    """Append one statutory progress report. Returns the new milestone_id."""
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "insert into project_milestones "
+                "(project_id, update_date, claimed_progress_pct, "
+                " cumulative_expenditure_cr, milestone_type, remarks, recorded_by, "
+                " row_hash, prev_hash) "
+                "values (%s,%s,%s,%s,%s,%s,%s,%s,%s) returning milestone_id",
+                (record.get("project_id"), record.get("update_date"),
+                 record.get("claimed_progress_pct"),
+                 record.get("cumulative_expenditure_cr"),
+                 record.get("milestone_type", "MONTHLY_PROGRESS"),
+                 record.get("remarks"), record.get("recorded_by"),
+                 record.get("row_hash"), record.get("prev_hash")),
+            )
+            new_id = cur.fetchone()[0]
+        conn.commit()
+    return int(new_id)
+
+
+def latest_milestone_hash(project_id: Any) -> Optional[str]:
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select row_hash from project_milestones where project_id = %s "
+                "order by milestone_id desc limit 1", (int(project_id),))
+            row = cur.fetchone()
+            return row[0] if row else None
+
+
+def milestones_for(project_id: Any) -> List[Dict[str, Any]]:
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select milestone_id, update_date, claimed_progress_pct, "
+                "cumulative_expenditure_cr, milestone_type, remarks, recorded_by "
+                "from project_milestones_current where project_id = %s "
+                "order by update_date", (int(project_id),))
+            return [{"milestone_id": str(r[0]), "update_date": str(r[1]),
+                     "claimed_progress_pct": float(r[2]) if r[2] is not None else None,
+                     "cumulative_expenditure_cr": float(r[3]) if r[3] is not None else None,
+                     "milestone_type": r[4], "remarks": r[5], "recorded_by": r[6]}
+                    for r in cur.fetchall()]
+
+
+def epochs_for(project_id: Any) -> List[Dict[str, Any]]:
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select epoch_id, captured_on, vintage_label, wayback_release, "
+                "tile_path, surface_change_pct, is_baseline "
+                "from project_imagery_epochs where project_id = %s "
+                "order by captured_on nulls last, fetched_at", (int(project_id),))
+            return [{"epoch_id": str(r[0]),
+                     "captured": str(r[1]) if r[1] else None,
+                     "vintage_label": r[2], "wayback_release": r[3],
+                     "tile_path": r[4],
+                     "surface_change_pct": float(r[5]) if r[5] is not None else None,
+                     "is_baseline": r[6]}
+                    for r in cur.fetchall()]
+
+
+def insert_epoch(record: Dict[str, Any]) -> int:
+    """Record a dated observation. Written by the fetch pipeline, never by an MPR."""
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "insert into project_imagery_epochs "
+                "(project_id, captured_on, vintage_label, wayback_release, tile_path, "
+                " surface_change_pct, is_baseline) values (%s,%s,%s,%s,%s,%s,%s) "
+                "on conflict (project_id, vintage_label) do nothing "
+                "returning epoch_id",
+                (record.get("project_id"), record.get("captured_on"),
+                 record.get("vintage_label"), record.get("wayback_release"),
+                 record.get("tile_path"), record.get("surface_change_pct"),
+                 bool(record.get("is_baseline", False))),
+            )
+            row = cur.fetchone()
+        conn.commit()
+    return int(row[0]) if row else 0

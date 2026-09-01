@@ -251,7 +251,8 @@ for member in MEMBERS:
 # The ingestion router (/api/ingest) is likewise cross-cutting: it writes the corpus
 # every member module reads, and answers 503 when no database is configured.
 for aux in ("modules.amey.satellite_router",
-            "modules.ingest.router"):
+            "modules.ingest.router",
+            "modules.ingest.milestones"):
     try:
         _m = __import__(aux, fromlist=["router"])
         app.include_router(_m.router)

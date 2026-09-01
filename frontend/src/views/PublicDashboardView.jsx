@@ -548,7 +548,7 @@ function PublicMetadataTab({
                 // eo_viewport.py. Deriving it here from the precision string would be a
                 // second copy of that table, and the two would drift.
                 const radiusM = Number(p.geocode_error_radius_m);
-                const showUncertainty = p.geocode_serves_imagery === false
+                const showUncertainty = isSelected && p.geocode_serves_imagery === false
                   && Number.isFinite(radiusM) && radiusM > 0;
 
                 return (

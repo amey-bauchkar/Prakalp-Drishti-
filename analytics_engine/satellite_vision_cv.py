@@ -1,6 +1,6 @@
 """
 PRAKALP-DRISHTI: HIGH-PERFORMANCE COMPUTER VISION OPTICAL CHANGE DETECTOR (PRATIBIMB)
-Analyzes real sub-meter dual-epoch satellite imagery (2018 Baseline vs 2023 Current)
+Analyzes real dual-epoch satellite imagery (2014 Baseline vs 2026 Current)
 using genuine computer-vision pixel analysis (Edge Density, Pavement/Texture Shift, Structural Dissimilarity).
 Computes empirical Earth-Observation progress and detects real over-reporting divergence.
 """
@@ -24,7 +24,7 @@ class SatelliteVisionCV:
     @staticmethod
     def analyze_pixel_change(before_path: str, after_path: str, claimed_pct: float = 50.0) -> Dict[str, Any]:
         """
-        Computes genuine optical change metrics between baseline (2018) and current (2023) satellite images.
+        Computes genuine optical change metrics between baseline (2014) and current (2026) satellite images.
         """
         # Missing/unreadable imagery yields a null measurement, never a fabricated
         # "on track" verdict. The old fallback echoed the claimed figure back and

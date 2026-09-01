@@ -9,6 +9,7 @@ import ArthaNivaranView from './views/ArthaNivaranView.jsx';
 import SetuVarshaView from './views/SetuVarshaView.jsx';
 import PublicDashboardView from './views/PublicDashboardView.jsx';
 import AdminIngestView from './views/AdminIngestView.jsx';
+import MilestoneTimelineView from './views/MilestoneTimelineView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -180,7 +181,8 @@ function InstitutionalHeader() {
     { to: '/', label: 'HOME' },
     { to: '/decision-hub', label: 'DECISION HUB' },
     { to: '/nagrik', label: 'NAGRIK PORTAL' },
-    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' }] : []),
+    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' },
+                         { to: '/admin/timeline', label: 'KAAL-DARPAN' }] : []),
   ];
 
   return (
@@ -568,6 +570,7 @@ export default function App() {
             <Route path="/" element={<AmeyMasterView />} />
             <Route path="/nagrik" element={<PublicDashboardView />} />
             <Route path="/admin/ingest" element={<AdminIngestView />} />
+            <Route path="/admin/timeline" element={<MilestoneTimelineView />} />
             <Route path="/public" element={<Navigate to="/nagrik" replace />} />
             <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
 

@@ -1,0 +1,338 @@
+{
+  "generated_at": "2026-09-02T02:18:11",
+  "discovery_zoom": 16,
+  "capture_zoom": 17,
+  "phash_distance_min": 8,
+  "method": "Distinct-release discovery by perceptual hash of one centre tile per Wayback release, then full-grid capture for selected epochs. surface_change_pct is structural change on visible bands (ExG/VARI vegetation exclusion + gradient-orientation differencing). It is NOT a completion estimate: surface change and reported progress correlate at r=0.007 in this corpus.",
+  "projects": [
+    {
+      "project_id": "702625",
+      "latitude": 23.2348551,
+      "longitude": 77.4021474,
+      "distinct_observations_found": 9,
+      "releases_probed": 196,
+      "milestone_anchors": [
+        "2018-11-30",
+        "2022-11-29",
+        "2028-06-30"
+      ],
+      "epochs": [
+        {
+          "epoch_index": 0,
+          "wayback_release": 10,
+          "captured_on": "2014-02-20",
+          "vintage_label": "2014-02-20 (Wayback release 10)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/702625_EPOCH_2014-02-20.jpg",
+          "image_sha256": "5b4f26b79bab58879d21b2986d5bc94db7c07d58d905b4109592dd49e222146d",
+          "surface_change_pct": null,
+          "is_baseline": true
+        },
+        {
+          "epoch_index": 1,
+          "wayback_release": 4756,
+          "captured_on": "2019-12-12",
+          "vintage_label": "2019-12-12 (Wayback release 4756)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/702625_EPOCH_2019-12-12.jpg",
+          "image_sha256": "4735d320a24724f24966c9ad76009f896ff20da385b63e896dffb70c2234d178",
+          "surface_change_pct": 36.639,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 2,
+          "wayback_release": 11475,
+          "captured_on": "2023-01-11",
+          "vintage_label": "2023-01-11 (Wayback release 11475)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/702625_EPOCH_2023-01-11.jpg",
+          "image_sha256": "3d061b891f1f47a7a2b0c20d6adcbb33f1688b087fdc59b12332a34855e952fa",
+          "surface_change_pct": 29.059,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 3,
+          "wayback_release": 48925,
+          "captured_on": "2025-06-26",
+          "vintage_label": "2025-06-26 (Wayback release 48925)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/702625_EPOCH_2025-06-26.jpg",
+          "image_sha256": "15e501ac2b28dea6ae03e1e6689a752c5c270d9b9db9120ded7cdf8f18697a16",
+          "surface_change_pct": 31.701,
+          "is_baseline": false
+        }
+      ]
+    },
+    {
+      "project_id": "618412",
+      "latitude": 34.305291,
+      "longitude": 75.227596,
+      "distinct_observations_found": 8,
+      "releases_probed": 196,
+      "milestone_anchors": [
+        "2018-01-18",
+        "2026-09-30",
+        "2027-12-26"
+      ],
+      "epochs": [
+        {
+          "epoch_index": 0,
+          "wayback_release": 10,
+          "captured_on": "2014-02-20",
+          "vintage_label": "2014-02-20 (Wayback release 10)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/618412_EPOCH_2014-02-20.jpg",
+          "image_sha256": "edb95112ea6984ba8ed6bd78c6a6a2ea4923286bbfaba23111ecaab07364da06",
+          "surface_change_pct": null,
+          "is_baseline": true
+        },
+        {
+          "epoch_index": 1,
+          "wayback_release": 2168,
+          "captured_on": "2018-09-06",
+          "vintage_label": "2018-09-06 (Wayback release 2168)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/618412_EPOCH_2018-09-06.jpg",
+          "image_sha256": "319fb584caa9c5cbba84faf82c54baf6ad0b7c470fbd188b682ffbcbf196fdca",
+          "surface_change_pct": 42.887,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 2,
+          "wayback_release": 47471,
+          "captured_on": "2022-09-21",
+          "vintage_label": "2022-09-21 (Wayback release 47471)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/618412_EPOCH_2022-09-21.jpg",
+          "image_sha256": "4d81f4769250e232826e8e8a08f87ad6d6e767148c3224e927bbea9f21a26398",
+          "surface_change_pct": 31.427,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 3,
+          "wayback_release": 52304,
+          "captured_on": "2025-09-04",
+          "vintage_label": "2025-09-04 (Wayback release 52304)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/618412_EPOCH_2025-09-04.jpg",
+          "image_sha256": "9a96951a161454f4a2ac55b5329624b448b3f0820d902366fb8d6b757175bb2b",
+          "surface_change_pct": 13.589,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 4,
+          "wayback_release": 26334,
+          "captured_on": "2026-08-05",
+          "vintage_label": "2026-08-05 (Wayback release 26334)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/618412_EPOCH_2026-08-05.jpg",
+          "image_sha256": "5ac82eab1abe62cf43f55e0e0ae7104a6c777c8bf6e3e21d599e4abdedaf641a",
+          "surface_change_pct": 3.458,
+          "is_baseline": false
+        }
+      ]
+    },
+    {
+      "project_id": "705237",
+      "latitude": 22.224455,
+      "longitude": 73.139235,
+      "distinct_observations_found": 11,
+      "releases_probed": 196,
+      "milestone_anchors": [
+        "2008-02-28",
+        "2022-03-31",
+        "2025-12-31"
+      ],
+      "epochs": [
+        {
+          "epoch_index": 0,
+          "wayback_release": 10,
+          "captured_on": "2014-02-20",
+          "vintage_label": "2014-02-20 (Wayback release 10)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2014-02-20.jpg",
+          "image_sha256": "07012354315ccd237ffbcd42a92cffdf35081a108531d08d7419a1de2fb0ec64",
+          "surface_change_pct": null,
+          "is_baseline": true
+        },
+        {
+          "epoch_index": 1,
+          "wayback_release": 6984,
+          "captured_on": "2016-09-14",
+          "vintage_label": "2016-09-14 (Wayback release 6984)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2016-09-14.jpg",
+          "image_sha256": "8ac7590509cb249805c3ff5f4f4248f285a8485ece989574425bea3a7b643d23",
+          "surface_change_pct": 32.719,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 2,
+          "wayback_release": 8255,
+          "captured_on": "2018-03-14",
+          "vintage_label": "2018-03-14 (Wayback release 8255)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2018-03-14.jpg",
+          "image_sha256": "f79168cf6cc770b3f8a7d50958608ed5d7e250d42ac774b7ed4aa56ee66f1d26",
+          "surface_change_pct": 32.73,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 3,
+          "wayback_release": 119,
+          "captured_on": "2020-10-14",
+          "vintage_label": "2020-10-14 (Wayback release 119)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2020-10-14.jpg",
+          "image_sha256": "6f2ff86956c90d92b6175ba8f6f49aadf5dbfb18fc93834bfbf6387faf7b823a",
+          "surface_change_pct": 25.659,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 4,
+          "wayback_release": 10321,
+          "captured_on": "2022-03-16",
+          "vintage_label": "2022-03-16 (Wayback release 10321)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2022-03-16.jpg",
+          "image_sha256": "e602bcfce970af82e63d1494c5577423fe4e427836448b437ecfff412e08efbb",
+          "surface_change_pct": 19.666,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 5,
+          "wayback_release": 52930,
+          "captured_on": "2024-05-09",
+          "vintage_label": "2024-05-09 (Wayback release 52930)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/705237_EPOCH_2024-05-09.jpg",
+          "image_sha256": "d80b57850dbaf86b0ab038e9429a28fa6cb6fe75d2cbf9fda37e0277932c81a8",
+          "surface_change_pct": 19.23,
+          "is_baseline": false
+        }
+      ]
+    },
+    {
+      "project_id": "703585",
+      "latitude": 12.987343,
+      "longitude": 77.753803,
+      "distinct_observations_found": 9,
+      "releases_probed": 196,
+      "milestone_anchors": [
+        "2019-04-01",
+        "2024-12-31",
+        "2026-06-26"
+      ],
+      "epochs": [
+        {
+          "epoch_index": 0,
+          "wayback_release": 10,
+          "captured_on": "2014-02-20",
+          "vintage_label": "2014-02-20 (Wayback release 10)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/703585_EPOCH_2014-02-20.jpg",
+          "image_sha256": "211fba844a63e9fb8fb7182c0c8f629413ce60ef82775a2dac791f7326a9d411",
+          "surface_change_pct": null,
+          "is_baseline": true
+        },
+        {
+          "epoch_index": 1,
+          "wayback_release": 6984,
+          "captured_on": "2016-09-14",
+          "vintage_label": "2016-09-14 (Wayback release 6984)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/703585_EPOCH_2016-09-14.jpg",
+          "image_sha256": "59beeb725443d179d64362b156242c562d3e92f9bce402c8aa1b32ee60ce888a",
+          "surface_change_pct": 26.725,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 2,
+          "wayback_release": 4756,
+          "captured_on": "2019-12-12",
+          "vintage_label": "2019-12-12 (Wayback release 4756)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/703585_EPOCH_2019-12-12.jpg",
+          "image_sha256": "add8e770784c222015349b21ab55fe6f4516d4c51110ab9c4c42c0e171346153",
+          "surface_change_pct": 32.894,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 3,
+          "wayback_release": 44710,
+          "captured_on": "2022-06-08",
+          "vintage_label": "2022-06-08 (Wayback release 44710)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/703585_EPOCH_2022-06-08.jpg",
+          "image_sha256": "75b6590745ac092bd66dcc0dda0fdaec8e32e1089276f65d1017f575e5531c83",
+          "surface_change_pct": 32.093,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 4,
+          "wayback_release": 48925,
+          "captured_on": "2025-06-26",
+          "vintage_label": "2025-06-26 (Wayback release 48925)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/703585_EPOCH_2025-06-26.jpg",
+          "image_sha256": "88658dff0c62c27f36c274615aec354a5027ba13b6d547cdf159ecc09967a9bd",
+          "surface_change_pct": 25.137,
+          "is_baseline": false
+        }
+      ]
+    },
+    {
+      "project_id": "619052",
+      "latitude": 26.7841898,
+      "longitude": 80.8821005,
+      "distinct_observations_found": 9,
+      "releases_probed": 196,
+      "milestone_anchors": [
+        "2025-09-03",
+        "2031-04-30"
+      ],
+      "epochs": [
+        {
+          "epoch_index": 0,
+          "wayback_release": 10,
+          "captured_on": "2014-02-20",
+          "vintage_label": "2014-02-20 (Wayback release 10)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2014-02-20.jpg",
+          "image_sha256": "46f0ab8aab6a38944f1b79a5ec26c177889260294d60a9766bad1f0abb620f22",
+          "surface_change_pct": null,
+          "is_baseline": true
+        },
+        {
+          "epoch_index": 1,
+          "wayback_release": 4230,
+          "captured_on": "2014-03-26",
+          "vintage_label": "2014-03-26 (Wayback release 4230)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2014-03-26.jpg",
+          "image_sha256": "7370d3334814dec8fc558640de577fed22fe5861239027c9fe146a9ed63e062c",
+          "surface_change_pct": 25.442,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 2,
+          "wayback_release": 6984,
+          "captured_on": "2016-09-14",
+          "vintage_label": "2016-09-14 (Wayback release 6984)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2016-09-14.jpg",
+          "image_sha256": "e2029d98794b54b82626664cdb20df206b61c3042c3364e16bb0b239096ee001",
+          "surface_change_pct": 24.593,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 3,
+          "wayback_release": 7072,
+          "captured_on": "2018-03-28",
+          "vintage_label": "2018-03-28 (Wayback release 7072)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2018-03-28.jpg",
+          "image_sha256": "62efc8ded8e8995083acdda2aeda6fc3934d71a49050c4fda887cd680720dec8",
+          "surface_change_pct": 31.708,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 4,
+          "wayback_release": 4756,
+          "captured_on": "2019-12-12",
+          "vintage_label": "2019-12-12 (Wayback release 4756)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2019-12-12.jpg",
+          "image_sha256": "a30be9e91b69c2af492081814e3d8bce09ff641ba3ec7f31eb72b5e96460904f",
+          "surface_change_pct": 28.911,
+          "is_baseline": false
+        },
+        {
+          "epoch_index": 5,
+          "wayback_release": 32246,
+          "captured_on": "2026-06-30",
+          "vintage_label": "2026-06-30 (Wayback release 32246)",
+          "tile_path": "paimana_extracted/satellite_data/project_imagery/619052_EPOCH_2026-06-30.jpg",
+          "image_sha256": "11e692ff0f9822fb60e381e9e479e2c22e8e83aa274b1632bcc2858b0c3b92ad",
+          "surface_change_pct": 27.671,
+          "is_baseline": false
+        }
+      ]
+    }
+  ]
+}

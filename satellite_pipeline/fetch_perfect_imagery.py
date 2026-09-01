@@ -65,8 +65,8 @@ DEFAULT_ZOOM = 17
 
 # ESRI Wayback release IDs (verified)
 # https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/WMTS/1.0.0/default028mm/MapServer
-WAYBACK_RELEASE_BEFORE = 10   # Feb 2018 imagery
-WAYBACK_RELEASE_AFTER = 93    # Jan 2023 imagery (latest available)
+WAYBACK_RELEASE_BEFORE = 10   # Wayback 2014-02-20 baseline
+WAYBACK_RELEASE_AFTER = "current"  # ESRI World Imagery live mosaic (<=2026-08)
 
 TILE_SIZE = 256  # Standard web mercator tile size
 TARGET_IMG_SIZE = 800  # Final output image dimensions

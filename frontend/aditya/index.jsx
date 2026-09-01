@@ -34,8 +34,8 @@ export default function EOAuditorView() {
               Governance Risk Intelligence
             </h1>
             <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
-              Sub-meter dual-epoch satellite intelligence cross-referencing reported progress 
-              against optical imagery (2018 Baseline vs 2023 Current), paired with NIVARAN grievance 
+              Dual-epoch satellite intelligence cross-referencing reported progress 
+              against optical imagery (2014 Baseline vs 2026 Current), paired with NIVARAN grievance 
               forensics and ANUMATI environmental clearance tracking.
             </p>
             <div className="flex items-center gap-4 pt-1">
@@ -173,16 +173,16 @@ export default function EOAuditorView() {
                           <span className="text-[9px] text-slate-500 font-mono mt-0.5">High-resolution archive acquisition in queue</span>
                         </div>
                         <span className="absolute bottom-2 left-2 z-20 bg-black/70 px-2 py-0.5 rounded text-[10px] text-white font-mono">
-                          ESRI 2018
+                          ESRI 2014 Baseline
                         </span>
                       </div>
                     </div>
                     <div>
-                      <div className="text-[12px] font-semibold text-gov-navy mb-2">Current Epoch (2023-01)</div>
+                      <div className="text-[12px] font-semibold text-gov-navy mb-2">Current Epoch (2026)</div>
                       <div className="aspect-video bg-slate-900 rounded-md overflow-hidden border border-border-default relative flex items-center justify-center text-slate-400 text-[12px]">
                         <img
                           src={`/satellite-imagery/${selectedProject.project_id}_AFTER.jpg`}
-                          alt="2023 Satellite Current"
+                          alt="2026 Satellite Current"
                           className="w-full h-full object-cover relative z-10"
                           onError={(e) => {
                             e.target.style.display = 'none';
@@ -196,7 +196,7 @@ export default function EOAuditorView() {
                           <span className="text-[9px] text-slate-500 font-mono mt-0.5">Optical ground-truth scheduled for site</span>
                         </div>
                         <span className="absolute bottom-2 left-2 z-20 bg-black/70 px-2 py-0.5 rounded text-[10px] text-white font-mono">
-                          ESRI 2023
+                          ESRI 2026
                         </span>
                       </div>
                     </div>

@@ -309,13 +309,13 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
               <div className="grid grid-cols-2 gap-3">
                 <div 
                   className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
-                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_BEFORE.jpg`, title: '2018 Start', type: 'before' })}
+                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_BEFORE.jpg`, title: `${data.baseline_vintage || '2014'} Baseline`, type: 'before' })}
                 >
                   <img src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`} alt="Before" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
                   <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
                     <Satellite className="w-5 h-5 text-slate-400 mb-1" />
                   </div>
-                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-slate-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">2018 Start</div>
+                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-slate-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">{data.baseline_vintage || '2014'} Baseline</div>
                   
                   {/* Hover overlay hint */}
                   <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -327,13 +327,13 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 
                 <div 
                   className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
-                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_AFTER.jpg`, title: '2023 Current', type: 'after' })}
+                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_AFTER.jpg`, title: `${data.current_vintage ? (data.current_vintage.includes('2026') ? '2026' : data.current_vintage.slice(0, 10)) : '2026'} Current`, type: 'after' })}
                 >
                   <img src={`/satellite-imagery/${data.project_id}_AFTER.jpg`} alt="After" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
                   <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
                     <Satellite className="w-5 h-5 text-slate-400 mb-1" />
                   </div>
-                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">2023 Current</div>
+                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">{data.current_vintage ? (data.current_vintage.includes('2026') ? '2026 Current' : data.current_vintage.slice(0, 10) + ' Current') : '2026 Current'}</div>
                   
                   {/* Hover overlay hint */}
                   <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

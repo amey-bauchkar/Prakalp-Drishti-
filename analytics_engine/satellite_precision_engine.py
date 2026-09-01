@@ -9,7 +9,7 @@ WHAT THIS SENSOR IS, AND WHAT THAT RULES OUT
 
 Every function here was written against the actual corpus: 4,414 ESRI ArcGIS
 World Imagery / Wayback tiles, 8-bit RGB JPEG, ~2.08-2.35 m/px depending on
-latitude and sector zoom, two epochs (2018-02 and 2023-01), no georeferencing
+latitude and sector zoom, two epochs (2014-02 and 2026-08), no georeferencing
 metadata, no sensor model, no DEM.
 
 Four capabilities commonly specified for a GEOINT pipeline are NOT implemented

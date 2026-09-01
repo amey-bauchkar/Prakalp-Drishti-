@@ -150,6 +150,8 @@ def _project_context(pid: str) -> Dict[str, Any]:
         "longitude": geo.get("longitude") or cat.get("longitude"),
         "project_name": cat.get("project_name"),
         "claimed_progress_pct": cat.get("claimed_progress_pct"),
+        "baseline_vintage": cat.get("baseline_vintage", "2014-02"),
+        "current_vintage": cat.get("current_vintage_date") or cat.get("current_vintage", "2026-08"),
     }
 
 
@@ -259,14 +261,38 @@ def _render(pid: str, epoch: str, tier: str) -> Tuple[bytes, str, Dict[str, Any]
     from analytics_engine.eo_viewport import showcase_bake
     bake = showcase_bake(pid)
     path = None
+    ep_upper = (epoch or "").upper()
     if bake:
-        rel = bake["before_path"] if epoch == "BEFORE" else bake["after_path"]
-        cand = os.path.normpath(os.path.join(BASE_DIR_EO, rel))
-        if os.path.exists(cand):
-            path = cand
+        if ep_upper == "BEFORE":
+            rel = bake["before_path"]
+        elif ep_upper == "AFTER":
+            rel = bake["after_path"]
+        else:
+            rel = None
+        if rel:
+            cand = os.path.normpath(os.path.join(BASE_DIR_EO, rel))
+            if os.path.exists(cand):
+                path = cand
     if path is None:
-        path = os.path.join(IMAGERY_DIR, f"{pid}_{epoch}.jpg")
-    if not os.path.exists(path):
+        if ep_upper in ("BEFORE", "AFTER"):
+            cand = os.path.join(IMAGERY_DIR, f"{pid}_{ep_upper}.jpg")
+            if os.path.exists(cand):
+                path = cand
+        else:
+            # Check for direct file or EPOCH_{epoch}
+            cand = os.path.join(IMAGERY_DIR, f"{pid}_EPOCH_{epoch}.jpg")
+            if os.path.exists(cand):
+                path = cand
+            else:
+                cand2 = os.path.join(IMAGERY_DIR, f"{pid}_{epoch}.jpg")
+                if os.path.exists(cand2):
+                    path = cand2
+                elif os.path.exists(IMAGERY_DIR):
+                    for fname in sorted(os.listdir(IMAGERY_DIR)):
+                        if fname.startswith(f"{pid}_EPOCH_") and epoch in fname and fname.endswith(".jpg"):
+                            path = os.path.join(IMAGERY_DIR, fname)
+                            break
+    if path is None or not os.path.exists(path):
         raise HTTPException(status_code=404,
                             detail=f"No {epoch} imagery on file for project {pid}.")
     img = cv2.imread(path)
@@ -277,15 +303,6 @@ def _render(pid: str, epoch: str, tier: str) -> Tuple[bytes, str, Dict[str, Any]
     if tier == "public":
         img = apply_redaction(img, decision)
         h, w = img.shape[:2]
-        # A baked showcase gets a larger public cap, chosen so the public tile
-        # is STILL sub-metre rather than being downsampled out of the very
-        # property it was baked for. A 2304 px / 1235 m mosaic at the standard
-        # 512 px cap lands at 2.41 m/px; at 1536 px it lands at 0.80 m/px.
-        #
-        # This is not a redaction bypass. `apply_redaction` has already run
-        # above, so a sensitive-sector project — Guwahati Refinery among these
-        # five — is blurred and coordinate-coarsened before the cap is applied,
-        # and the larger frame carries the blur with it.
         cap = PUBLIC_MAX_DIM
         if bake and not decision.redact:
             cap = SHOWCASE_PUBLIC_MAX_DIM
@@ -319,10 +336,10 @@ def get_tile(project_id: str, epoch: str, request: Request):
     client can set to request the official tier.
     """
     pid = sanitize_id(project_id, field="project_id")
-    ep = (epoch or "").upper()
-    if ep not in ("BEFORE", "AFTER"):
+    ep = (epoch or "").strip()
+    if not ep:
         raise HTTPException(status_code=404,
-                            detail="Epoch must be BEFORE or AFTER.")
+                            detail="Epoch must not be empty.")
 
     resolved = resolve_tier(request)
     blob, mime, meta = _render(pid, ep, resolved["tier"])
@@ -386,8 +403,8 @@ def get_metadata(project_id: str, request: Request):
         "after_available": os.path.exists(after_p),
         "before_url": f"/api/eo/tile/{pid}/BEFORE",
         "after_url": f"/api/eo/tile/{pid}/AFTER",
-        "epoch_before": "2018-02",
-        "epoch_after": "2023-01",
+        "epoch_before": ctx.get("baseline_vintage", "2014-02"),
+        "epoch_after": ctx.get("current_vintage", "2026-08"),
         # The old record advertised "Sub-meter (~0.5-1.2m/pixel)". The measured
         # ground sample distance is 2.08-2.35 m/px depending on latitude and
         # sector zoom, so that claim overstated the sensor by roughly 3x and is

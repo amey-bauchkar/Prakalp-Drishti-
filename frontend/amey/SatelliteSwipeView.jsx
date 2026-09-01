@@ -129,7 +129,7 @@ const EO_LAYERS = [
     id: 'materials',
     label: 'Material Classes',
     swatch: 'bg-gradient-to-r from-emerald-600 via-slate-400 to-slate-100',
-    note: 'Rule-based material assignment on the 2023 epoch after epoch calibration. Declared thresholds, not a trained classifier — no labelled material corpus exists for these tiles.',
+    note: 'Rule-based material assignment on the current epoch after radiometric calibration. Declared thresholds, not a trained classifier — no labelled material corpus exists for these tiles.',
   },
 ];
 
@@ -324,10 +324,9 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           ref={frameRef}
           role="slider"
           tabIndex={0}
-          aria-label="Reveal 2023 imagery over 2018 baseline"
+          aria-label="Reveal current imagery over baseline"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={Math.round(pos)}
           onKeyDown={onKeyDown}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -353,7 +352,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           {/* BEFORE (base layer) */}
           <img
             src={`${API}${data.before_imagery_url}`}
-            alt={`2018 baseline imagery for project ${data.project_id}`}
+            alt={`Baseline (${data.baseline_vintage || '2014'}) imagery for project ${data.project_id}`}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             draggable={false}
             onError={(e) => { e.target.style.display = 'none'; }}
@@ -362,7 +361,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           {/* AFTER (clipped to the swipe position) */}
           <img
             src={`${API}${data.after_imagery_url}`}
-            alt={`2023 current imagery for project ${data.project_id}`}
+            alt={`Current (${data.current_vintage || '2026'}) imagery for project ${data.project_id}`}
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             draggable={false}
             style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
@@ -370,7 +369,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           />
 
           {/* Analytical overlays. Rendered OUTSIDE the swipe clip on purpose: the
-              measurement covers the whole 2018-2023 interval, so clipping it to
+              measurement covers the dual-epoch interval, so clipping it to
               the handle position would imply the layer belongs to one epoch. */}
           {EO_LAYERS.filter((l) => layers[l.id]).map((l) => (
             <img
@@ -506,7 +505,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
             k: 'Frame Changed',
             v: reliable ? `${data.surface_change_pct ?? 0}%` : '—',
             c: reliable ? 'text-gov-muted' : 'text-gov-muted',
-            t: 'Whole-tile change, 2018 vs 2023. Spans 800-3,700 m of ground, so it includes surrounding farmland and settlements — not just the project.',
+            t: 'Whole-tile change across baseline and current epochs. Spans 800-3,700 m of ground, so it includes surrounding farmland and settlements — not just the project.',
           },
           {
             k: 'Project Footprint',

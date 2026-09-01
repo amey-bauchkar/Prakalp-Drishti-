@@ -4,7 +4,7 @@ PRAKALP-DRISHTI: SATELLITE GROUND-TRUTH FUSION ENGINE (PRATIBIMB)
 Serves the precomputed dual-epoch Earth-observation record for a project.
 
 Scope, stated precisely because the previous version overclaimed it: this engine
-reports how much of the sampled ground structurally changed between the 2018 and 2023
+reports how much of the sampled ground structurally changed between the 2014 and 2026
 epochs, and where that ranks against sector peers. It does NOT estimate what fraction
 of a project is complete, and it does not assert over-reporting. Surface change and
 reported progress correlate at 0.007 across the site-level corpus, so no completion
@@ -263,6 +263,11 @@ class SatelliteFusionEngine:
         self._precision_cache[pid] = out
         return out
 
+    def invalidate_cache(self, project_id: str):
+        """Clear cached results for a project whose imagery just arrived."""
+        pid = str(project_id)
+        self._precision_cache.pop(pid, None)
+
     def get_satellite_audit(self, project_id: str) -> Dict[str, Any]:
         """
         Returns full Earth-Observation audit record for a given project.
@@ -394,9 +399,9 @@ class SatelliteFusionEngine:
             # Vintages describe imagery that was actually fetched. With no tiles there
             # is nothing to date, so naming an epoch would assert provenance for a scene
             # that was never captured for this project.
-            "baseline_vintage": "2014-02" if dual_epoch else None,
-            "current_vintage": ("<=2026-08 (ESRI live mosaic, fetch-bounded)"
-                                if dual_epoch else None),
+            "baseline_vintage": (cat_entry.get("baseline_vintage") or "2014-02") if dual_epoch else None,
+            "current_vintage": (cat_entry.get("current_vintage") or
+                                "<=2026-08 (ESRI live mosaic, fetch-bounded)") if dual_epoch else None,
             "eo_readiness": eo_readiness(dual_epoch, unreliable_reason),
             "audit_hash": hashlib.sha256(
                 f"{pid}:{claimed}:{surface_change}:{status}".encode("utf-8")).hexdigest()

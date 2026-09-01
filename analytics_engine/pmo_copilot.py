@@ -61,12 +61,16 @@ class PMOCopilotEngine:
         sat_fact_id = f"fact_sat_audit_{pid}"
         pctl = sat_audit.get("change_percentile_in_sector")
         pctl_txt = f", {pctl:.0f}th percentile for its sector" if pctl is not None else ""
+        bv = (sat_audit.get("baseline_vintage") or "2014-02").split("-")[0]
+        cv_raw = sat_audit.get("current_vintage") or "2026"
+        cv = cv_raw.replace("<=", "").strip().split("-")[0].split()[0]
+        vintage_span = f"{bv}-{cv}"
         facts_list.append({
             "fact_id": sat_fact_id,
             "label": "Orbital Optical Surface-Change Measurement",
             # Reports the measurement, not a completion estimate. Imagery cannot say
             # what fraction of a DPR is done (r=0.007 against reported progress).
-            "value": f"{sat_audit.get('surface_change_pct', 0.0)}% of sampled ground structurally changed 2018-2023{pctl_txt}",
+            "value": f"{sat_audit.get('surface_change_pct', 0.0)}% of sampled ground structurally changed {vintage_span}{pctl_txt}",
             "unit": "PERCENT",
             "merkle_root": sat_audit["audit_hash"]
         })
@@ -123,7 +127,7 @@ class PMOCopilotEngine:
                 "priority": "HIGH",
                 "finding": (f"Project reports {sat_audit['claimed_progress_pct']}% complete, but structural change at the "
                             f"sampled site is in the bottom decile for its sector "
-                            f"({sat_audit.get('surface_change_pct', 0.0)}% of surface changed 2018-2023).{geom_caveat}"),
+                            f"({sat_audit.get('surface_change_pct', 0.0)}% of surface changed {vintage_span}).{geom_caveat}"),
                 "recommendation": "Prioritise a field visit to reconcile reported progress with observed ground activity.",
                 "citing_fact_id": sat_fact_id
             })

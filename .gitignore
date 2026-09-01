@@ -83,3 +83,6 @@ _shortlist.json
 # those release ids keep resolving. The deployment target is air-gapped, so
 # neither holds there, and 13 MB against a 1.5 GB history buys the five
 # projects' evidence travelling with the code that cites it.
+
+# Wayback raw tile cache (regenerable via satellite_pipeline)
+paimana_extracted/satellite_data/wayback_cache/

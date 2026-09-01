@@ -233,6 +233,27 @@ function JobResult({ job }) {
             <div className="metric-value">{job.duration_s ?? '—'}s</div>
           </div>
         </div>
+
+        {d.imagery_fetched > 0 && (
+          <div className="note note-ok mt-3">
+            <CheckCircle2 size={14} aria-hidden="true" />
+            <span>
+              <strong>🛰️ Satellite imagery fetched:</strong> {d.imagery_fetched} project(s) got dual-epoch tiles.
+              <span className="block mt-1">📡 EO analysis will be available on the Satellite page.</span>
+            </span>
+          </div>
+        )}
+
+        {d.imagery_failed > 0 && (
+          <div className="note note-warn mt-3">
+            <AlertTriangle size={14} aria-hidden="true" />
+            <span>
+              <strong>⚠️ Satellite imagery unavailable</strong> for {d.imagery_failed} project(s) (network timeout).
+              <span className="block mt-1">Will retry on next basemap refresh.</span>
+            </span>
+          </div>
+        )}
+
         <div className="hashline mt-3">
           <span className="microlabel-strong">RFC 6962 Merkle root</span>
           <Hash value={d.corpus_root} />
