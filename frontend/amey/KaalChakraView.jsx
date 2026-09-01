@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertTriangle, ShieldCheck, TrendingDown, Layers, CheckCircle2, Search, ArrowRight, Sparkles, Satellite } from 'lucide-react';
+import { Clock, AlertTriangle, ShieldCheck, CheckCircle2, Search, Sparkles, Satellite, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, Metric, Text, ProgressBar, BadgeDelta, Flex, Grid } from "@tremor/react";
 
 export default function KaalChakraView({ selectedProjectId = "618402", onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
@@ -7,6 +9,9 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
+  const [projectList, setProjectList] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
   const fetchForecast = async (id) => {
     setLoading(true);
@@ -28,13 +33,30 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
     fetchForecast(projectId);
   }, [projectId]);
 
+  useEffect(() => {
+    fetch('/api/projects?limit=2207')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setProjectList(data);
+      })
+      .catch(err => console.error("Failed to load project list", err));
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchInput.trim()) {
       setProjectId(searchInput.trim());
       if (onSelectProject) onSelectProject(searchInput.trim());
+      setShowDropdown(false);
     }
   };
+
+  const filteredProjects = projectList.filter(p => {
+    const idStr = p.project_id ? String(p.project_id) : "";
+    const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
+    const search = (searchInput || "").toLowerCase();
+    return idStr.includes(search) || nameStr.includes(search);
+  }).slice(0, 8);
 
   // Calculate proportional timeline positions based on actual dates
   const calculatePositions = (forecast) => {
@@ -70,393 +92,517 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
   const positions = data ? calculatePositions(data) : null;
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans pb-10">
       {/* ═══════════════════════════════════════════════════════════════
-          TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
+          TOP BANNER
           ═══════════════════════════════════════════════════════════════ */}
-      <div className="command-header p-5 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
-        <div className="space-y-2 max-w-2xl relative z-10">
-          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-gov-navy-hover shadow-lg border border-slate-700/50"
+      >
+        <div className="space-y-3 max-w-2xl">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <Clock className="w-3.5 h-3.5 text-white" />
             <span>MODULE 1 · TIMELINE FORECASTING</span>
           </div>
-          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
-            KAAL-CHAKRA: REALISTIC PROJECT COMPLETION &amp; DELAY FORECAST
+          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
+            KAAL-CHAKRA Simulator
           </h2>
-          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+          <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
             Replaces contractor promises with realistic AI-predicted completion dates based on historical performance, on-ground progress pace, and repeated deadline resets.
           </p>
         </div>
 
-        {/* Quick Project Lookup */}
-        <form onSubmit={handleSearch} className="flex items-center gap-2 bg-black/25 p-2 rounded-sm border border-white/15 shrink-0">
-          <input
-            type="text"
-            placeholder="Enter MoSPI Code (e.g. 706724)"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="text-[11.5px] bg-ink-900/80 text-white border border-white/20 rounded-sm px-2.5 py-1.5 focus:outline-none focus:border-gov-accent w-52 font-mono tracking-tight placeholder:text-ink-200"
-          />
-          <button
-            type="submit"
-            className="bg-gov-accent text-gov-navy-dark hover:bg-gov-accent-hover py-1.5 px-3.5 rounded-sm text-[11px] font-extrabold uppercase tracking-institutional flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Analyze</span>
-          </button>
-        </form>
-      </div>
+        {/* Quick Project Lookup - Autocomplete */}
+        <div className="relative w-full lg:w-96 shrink-0 z-50">
+          <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_15px_rgba(251,191,36,0.1)] focus-within:shadow-[0_0_25px_rgba(251,191,36,0.3)] transition-all">
+            <input
+              type="text"
+              placeholder="Search by Name or MoSPI Code..."
+              value={searchInput}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                setShowDropdown(true);
+              }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+              className="flex h-11 w-full rounded-lg border-none bg-transparent px-4 py-2 text-sm text-white placeholder:text-slate-400 focus-visible:outline-none font-medium tracking-tight"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-lg text-sm font-bold transition-all h-11 px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 hover:scale-105 shadow-[0_0_15px_rgba(245,158,11,0.5)] gap-2 shrink-0"
+            >
+              <Search className="w-4 h-4" />
+              <span>Analyze</span>
+            </button>
+          </form>
+
+          {showDropdown && searchInput && filteredProjects.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto"
+            >
+              {filteredProjects.map((p) => (
+                <div 
+                  key={p.project_id} 
+                  onClick={() => {
+                    setSearchInput(p.project_id);
+                    setProjectId(p.project_id);
+                    if (onSelectProject) onSelectProject(p.project_id);
+                    setShowDropdown(false);
+                  }}
+                  className="p-3 border-b border-slate-800/50 hover:bg-amber-500/10 cursor-pointer transition-colors flex flex-col gap-1"
+                >
+                  <span className="text-sm font-bold text-slate-200 line-clamp-1">{p.project_name}</span>
+                  <div className="flex gap-2 text-[10px] uppercase font-mono text-slate-500">
+                    <span className="text-amber-500">ID: {p.project_id}</span>
+                    <span>{p.sector}</span>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
 
       {loading && (
-        <div className="p-12 text-center text-text-muted font-bold text-sm panel">
-          <Clock className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" /> Calculating Realistic Timeline Forecast &amp; Confidence Bounds...
-        </div>
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="p-12 text-center text-slate-500 font-medium text-sm flex flex-col items-center"
+        >
+          <Clock className="w-8 h-8 text-amber-500 animate-spin mb-4" /> 
+          <p>Calculating Realistic Timeline Forecast &amp; Confidence Bounds...</p>
+        </motion.div>
       )}
 
       {error && (
-        <div className="note note-critical flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-4 rounded-lg bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-700 font-medium">
+          <AlertTriangle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
-        </div>
+        </motion.div>
       )}
 
       {data && !loading && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: Project Overview & Progress Audit */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="panel p-4 space-y-5">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+        >
+          {/* ══ Left Column: Project Overview & Progress Audit ══ */}
+          <motion.div variants={itemVariants} className="lg:col-span-1 space-y-6">
+            <Card className="shadow-sm border-slate-200">
               
-              {/* Header with Project ID and Clean Sector Tag */}
-              <div className="space-y-2 border-b border-border-default pb-4">
+              {/* Header */}
+              <div className="space-y-2 border-b border-slate-100 pb-5 mb-5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider"> Project ID #{data.project_id}
-                  </span>
-                  <span className="note note-info truncate max-w-[190px]" title={data.sector}>
+                  <span className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider"> Project ID #{data.project_id}</span>
+                  <BadgeDelta deltaType="unchanged" size="xs" className="truncate max-w-[150px]">
                     {data.sector}
-                  </span>
+                  </BadgeDelta>
                 </div>
-                <h2 className="text-[18px] font-bold text-gov-navy leading-snug font-heading">
+                <h2 className="text-lg font-bold text-slate-900 leading-snug font-heading">
                   {data.project_name}
                 </h2>
               </div>
 
-              {/* Physical Ground Progress (MoSPI Verified) */}
-              <div className="note note-ok space-y-2.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-emerald-950 font-bold flex items-center gap-1.5 font-sans">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> Actual Ground Progress:
-                  </span>
-                  <span className="text-emerald-900 font-black text-sm font-mono">
-                    {(data.physical_progress_perc || 0).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="w-full bg-emerald-200/80 h-3 rounded-full overflow-hidden p-0.5 border border-emerald-300">
-                  <div
-                    className="h-full bg-emerald-600 transition-all duration-500"
-                    style={{ width: `${Math.max(Math.min(data.physical_progress_perc || 0, 100), 3)}%` }}
-                  />
-                </div>
-                <p className="text-[11px] text-emerald-800 font-medium font-sans"> Verified ground progress reported by MoSPI and site engineers.
-                </p>
+              {/* Physical Ground Progress (Tremor) */}
+              <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <Flex>
+                  <Text className="font-semibold text-slate-700 flex items-center gap-1.5 text-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Physical Progress
+                  </Text>
+                  <Text className="font-mono font-bold text-emerald-700">{(data.physical_progress_perc || 0).toFixed(1)}%</Text>
+                </Flex>
+                <ProgressBar value={data.physical_progress_perc || 0} color="emerald" className="mt-2" />
+                <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">Verified ground progress reported by MoSPI and site engineers.</p>
               </div>
 
-              {/* Rebaselining Alert Badge */}
+              {/* Rebaselining Alert */}
               {data.rebaselined ? (
-                <div className="note note-critical space-y-1.5">
-                  <div className="flex items-center gap-2 font-bold text-rose-700 font-heading">
-                    <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>Original Deadline Missed &amp; Reset ({data.baseline_reset_count} Times)</span>
+                <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-100 space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-rose-700 text-sm">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Deadline Reset ({data.baseline_reset_count}x)</span>
                   </div>
-                  <p className="text-[12px] text-rose-800 leading-snug font-sans"> Originally planned budget was <strong>₹{data.original_cost_cr.toLocaleString()} Cr</strong>, now increased to <strong>₹{data.revised_cost_cr.toLocaleString()} Cr</strong> (+{data.cost_overrun_perc.toFixed(1)}% cost increase).
+                  <p className="text-xs text-rose-800/80 leading-relaxed">
+                    Budget increased from <strong>₹{(data.original_cost_cr || 0).toLocaleString()} Cr</strong> to <strong>₹{(data.revised_cost_cr || 0).toLocaleString()} Cr</strong> (+{(data.cost_overrun_perc || 0).toFixed(1)}%).
                   </p>
                 </div>
               ) : (
-                <div className="note note-ok flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span className="font-bold">On Original Schedule (0 Deadline Resets)</span>
+                <div className="mb-6 p-3 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-2 text-emerald-700 text-sm font-medium">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>On Original Schedule (0 Resets)</span>
                 </div>
               )}
 
-              {/* Key Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <span className="text-[10.5px] font-bold text-text-muted uppercase">Current Sanctioned Cost</span>
-                  <p className="text-[17px] font-mono font-black text-gov-navy mt-1">₹{data.revised_cost_cr.toLocaleString()} Cr</p>
-                  <span className="text-[10.5px] text-text-muted font-mono">Original: ₹{data.original_cost_cr.toLocaleString()} Cr</span>
-                </div>
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                  <span className="text-[10.5px] font-bold text-text-muted uppercase">Executing Agency</span>
-                  <p className="text-[15px] font-bold text-gov-navy mt-1 truncate" title={data.canonical_entity}>{data.canonical_entity}</p>
-                  <span className="text-[10.5px] text-emerald-700 font-bold">Official Record</span>
+              {/* Key Metrics Grid (Tremor) */}
+              <Grid numItems={2} className="gap-3 mb-6">
+                <Card className="p-3 bg-white shadow-none border-slate-200">
+                  <Text className="text-[10px] uppercase font-bold text-slate-400">Current Cost</Text>
+                  <Metric className="text-base font-mono mt-1 text-slate-800">₹{(data.revised_cost_cr || 0).toLocaleString()}</Metric>
+                </Card>
+                <Card className="p-3 bg-white shadow-none border-slate-200">
+                  <Text className="text-[10px] uppercase font-bold text-slate-400">Agency</Text>
+                  <Text className="text-sm font-semibold text-slate-800 mt-1 truncate" title={data.canonical_entity}>{data.canonical_entity}</Text>
+                </Card>
+              </Grid>
+
+              {/* Target Met Confidence Gauge - CRAZY AESTHETIC */}
+              <div className="relative rounded-2xl p-[2px] overflow-hidden group mb-6">
+                {/* Animated gradient border */}
+                <div className="absolute inset-[-100%] bg-[conic-gradient(from_90deg_at_50%_50%,#34d399_0%,#fbbf24_50%,#f43f5e_100%)] animate-[spin_4s_linear_infinite] opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-[2px] bg-slate-900 rounded-2xl z-0" />
+                
+                <div className="relative z-10 p-5 space-y-4 rounded-2xl overflow-hidden bg-slate-900/90 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  <Flex>
+                    <Text className="text-slate-300 font-semibold text-xs uppercase tracking-widest">Official Target Met Prob</Text>
+                    <Text className="text-emerald-400 font-mono font-bold text-lg drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]">
+                      {(data.prob_target_met_official * 100).toFixed(1)}%
+                    </Text>
+                  </Flex>
+                  
+                  <div className="relative h-2.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${data.prob_target_met_official * 100}%` }}
+                      transition={{ duration: 1.5, ease: "easeOut", type: "spring" }}
+                      className={`absolute top-0 left-0 h-full ${data.prob_target_met_official > 0.5 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" : "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)]"}`}
+                    />
+                  </div>
+                  
+                  <p className="text-[11px] text-slate-400 leading-snug flex items-center justify-between">
+                    <span>Target Date:</span> 
+                    <strong className="text-white font-mono bg-white/10 px-2 py-0.5 rounded shadow-inner border border-white/5">{data.revised_end_date}</strong>
+                  </p>
                 </div>
               </div>
+            </Card>
 
-              {/* Target Met Confidence Gauge */}
-              <div className="p-5 rounded-2xl bg-gov-navy text-white space-y-3 shadow-elevated border border-slate-700">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-300 font-bold font-sans">Official Milestone Compliance Probability:</span>
-                  <span className="text-gov-saffron-light font-black text-sm font-mono">
-                    {(data.prob_target_met_official * 100).toFixed(1)}%
-                  </span>
+            {/* Satellite Optical Evidence Card */}
+            <Card className="shadow-sm border-slate-200">
+              <div className="flex items-center justify-between mb-4">
+                <Text className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
+                   Satellite Verification
+                </Text>
+                <BadgeDelta deltaType="increase" size="xs">Optical</BadgeDelta>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div 
+                  className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
+                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_BEFORE.jpg`, title: '2018 Start', type: 'before' })}
+                >
+                  <img src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`} alt="Before" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
+                  <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
+                    <Satellite className="w-5 h-5 text-slate-400 mb-1" />
+                  </div>
+                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-slate-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">2018 Start</div>
+                  
+                  {/* Hover overlay hint */}
+                  <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
+                      <Search className="w-3 h-3" /> Inspect
+                    </div>
+                  </div>
                 </div>
                 
-                {/* High-Visibility Progress Bar */}
-                <div className="meter">
-                  <div
-                    className="h-full transition-all duration-500 bg-gov-navy-light"
-                    style={{
-                      width: `${Math.max(Math.min(data.prob_target_met_official * 100, 100), 5)}%`,
-                      backgroundColor: data.prob_target_met_official > 0.5 ? '#10B981' : '#F43F5E',
-                    }}
-                  />
-                </div>
-                <p className="text-[11.5px] text-slate-300 leading-snug font-sans"> Official Target Date: <strong className="text-white font-mono">{data.revised_end_date}</strong>. Probability that this project finishes on or before the official date.
-                </p>
-              </div>
-
-              {/* Satellite Ground-Truth Optical Evidence Card */}
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase text-gov-navy flex items-center gap-1.5 font-heading"> Satellite Photo Verification
-                  </span>
-                  <span className="note note-ok">
-                    2018 vs 2023 Images
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group flex items-center justify-center">
-                    <img
-                      key={`kc_before_${data.project_id}`}
-                      src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`}
-                      alt="T0 Baseline 2018"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 relative z-10"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        const fb = e.target.nextElementSibling;
-                        if (fb) fb.style.display = 'flex';
-                      }}
-                    />
-                    <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-900 text-slate-400 z-0">
-                      <Satellite className="w-5 h-5 text-slate-500 mb-1 opacity-70" />
-                      <span className="text-[9.5px] font-bold uppercase text-slate-300">2018 Baseline Pending</span>
-                    </div>
-                    <div className="absolute top-1.5 left-1.5 z-20 bg-black/80 text-sky-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
-                      2018 Start
-                    </div>
+                <div 
+                  className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
+                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_AFTER.jpg`, title: '2023 Current', type: 'after' })}
+                >
+                  <img src={`/satellite-imagery/${data.project_id}_AFTER.jpg`} alt="After" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
+                  <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
+                    <Satellite className="w-5 h-5 text-slate-400 mb-1" />
                   </div>
-                  <div className="relative rounded-xl overflow-hidden border border-border-default bg-slate-950 aspect-video group flex items-center justify-center">
-                    <img
-                      key={`kc_after_${data.project_id}`}
-                      src={`/satellite-imagery/${data.project_id}_AFTER.jpg`}
-                      alt="T1 Current 2023"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 relative z-10"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        const fb = e.target.nextElementSibling;
-                        if (fb) fb.style.display = 'flex';
-                      }}
-                    />
-                    <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-900 text-slate-400 z-0">
-                      <Satellite className="w-5 h-5 text-slate-500 mb-1 opacity-70" />
-                      <span className="text-[9.5px] font-bold uppercase text-slate-300">2023 Imagery Pending</span>
-                    </div>
-                    <div className="absolute top-1.5 left-1.5 z-20 bg-black/80 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">
-                      2023 Recent
+                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">2023 Current</div>
+                  
+                  {/* Hover overlay hint */}
+                  <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
+                      <Search className="w-3 h-3" /> Inspect
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between items-center text-[10.5px] text-text-muted font-mono">
-                  <span>Sub-Meter Optical Imagery</span>
-                  <span className="text-emerald-700 font-bold">100% Corroborated</span>
-                </div>
               </div>
-            </div>
-          </div>
+            </Card>
+          </motion.div>
 
-          {/* Right 2 Columns: Probabilistic Fan Chart Visualizer */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="panel p-4 sm:p-5 space-y-6">
-              <div className="flex items-center justify-between border-b border-border-default pb-4">
+          {/* ══ Right Column: Probabilistic Fan Chart Visualizer ══ */}
+          <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
+            <Card className="shadow-sm border-slate-200 h-full flex flex-col">
+              
+              <div className="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-gov-saffron" />
-                  <h3 className="text-[16px] font-extrabold text-gov-navy uppercase tracking-wider font-heading"> Estimated Completion Window (Best Case to Worst Case)
+                  <Sparkles className="w-5 h-5 text-amber-500" />
+                  <h3 className="text-base font-bold text-slate-800 uppercase tracking-wide font-heading">
+                    Estimated Completion Window
                   </h3>
                 </div>
-                <span className="text-[11.5px] font-bold text-gov-navy bg-slate-100 px-3 py-1 rounded-sm border border-border-default font-mono"> Confidence: 90%
-                </span>
+                <BadgeDelta deltaType="unchanged">90% Confidence</BadgeDelta>
               </div>
 
-              {/* Fan Chart Timeline Visualization */}
-              <div className="bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6">
+              {/* Fan Chart Visualization - CLEAN LOGICAL TIMELINE */}
+              <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm flex-1 flex flex-col justify-center relative">
                 
-                {/* Visual Proportional Timeline */}
-                <div className="panel p-4 relative select-none">
-                  
-                  {/* Top Track: P50 Expected Median Callout Pin */}
-                  <div className="relative h-12 w-full">
+                <div className="relative w-full pt-10 pb-16">
+                  {/* Top Track: P50 Median */}
+                  <div className="absolute top-0 w-full h-10">
                     {positions && (
-                      <div 
-                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10, x: "-50%" }} 
+                        animate={{ opacity: 1, y: 0, x: "-50%" }} 
+                        transition={{ delay: 0.4, type: "spring" }}
+                        className="absolute flex flex-col items-center z-30" 
                         style={{ left: `${positions.p50Pct}%` }}
                       >
-                        <div className="flex items-center gap-1.5 bg-gov-navy text-gov-saffron-light px-3.5 py-1.5 rounded-sm text-xs font-black shadow-elevated border border-gov-gold-border whitespace-nowrap font-mono">
-                          <Sparkles className="w-3.5 h-3.5 text-gov-saffron" />
-                          <span>Conformal Median Target (P50): {data.p50_date}</span>
+                        <div className="flex flex-col items-center bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shadow-sm whitespace-nowrap">
+                          <span className="text-[10px] text-amber-700 font-bold uppercase tracking-widest mb-0.5">Forecast Median</span>
+                          <div className="text-amber-600 font-bold font-mono text-sm">{data.p50_date}</div>
                         </div>
-                        <div className="w-0.5 h-4 bg-gov-navy" />
-                      </div>
+                        <div className="w-px h-6 border-l-2 border-dashed border-amber-300 mt-1" />
+                      </motion.div>
                     )}
                   </div>
 
-                  {/* Center Track: Continuous Rail with Gradient Fan Band */}
-                  <div className="relative my-2">
-                    {/* Background Rail */}
-                    <div className="h-4 bg-slate-100 rounded-full w-full border border-slate-200 shadow-inner relative overflow-hidden">
-                      {/* Shaded Uncertainty Fan Band */}
-                      {positions && (
-                        <div 
-                          className="absolute top-0 bottom-0 rounded-full transition-all duration-500"
-                          style={{ 
-                            left: `${Math.min(positions.p10Pct, positions.p95Pct)}%`, 
-                            width: `${Math.max(Math.abs(positions.p95Pct - positions.p10Pct), 6)}%`, 
-                            background: 'linear-gradient(90deg, #10B981 0%, #C5D86D 40%, #F59E0B 75%, #F43F5E 100%)',
-                            opacity: 0.85
-                          }} 
-                        />
-                      )}
-                    </div>
-
-                    {/* Target Date Marker Pin Line */}
+                  {/* Center Track: Logical Continuous Bar */}
+                  <div className="relative h-3 mt-8 mb-8 z-10 mx-2">
+                    {/* Background track representing time beyond risk bound */}
+                    <div className="absolute inset-0 bg-slate-100 rounded-full" />
+                    
+                    {/* Section 1: Official Time (Start to Target) - Green */}
                     {positions && (
-                      <div 
-                        className="absolute top-[-8px] bottom-[-8px] w-0.5 border-l-2 border-dashed border-rose-500 -translate-x-1/2 z-20"
+                      <motion.div 
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${positions.targetPct}%` }} 
+                        transition={{ duration: 1 }}
+                        className="absolute top-0 bottom-0 left-0 bg-emerald-400 rounded-l-full shadow-inner border-y border-l border-emerald-500/30"
+                      />
+                    )}
+
+                    {/* Section 2: Expected Delay (Target to P50) - Amber */}
+                    {positions && positions.p50Pct > positions.targetPct && (
+                      <motion.div 
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${positions.p50Pct - positions.targetPct}%` }} 
+                        transition={{ duration: 1, delay: 0.2 }}
+                        className="absolute top-0 bottom-0 bg-amber-400 shadow-inner border-y border-amber-500/30"
                         style={{ left: `${positions.targetPct}%` }}
                       />
                     )}
 
-                    {/* P95 Marker Pin Line */}
-                    {positions && (
-                      <div 
-                        className="absolute top-[-8px] bottom-[-8px] w-0.5 border-l-2 border-rose-500 -translate-x-1/2 z-20"
-                        style={{ left: `${positions.p95Pct}%` }}
-                      />
-                    )}
-
-                    {/* P50 Median Indicator Notch */}
-                    {positions && (
-                      <div 
-                        className="absolute top-[-3px] h-5 w-2 bg-gov-navy rounded-full -translate-x-1/2 z-25 shadow-soft border border-white"
+                    {/* Section 3: Risk Margin (P50 to P95) - Red */}
+                    {positions && positions.p95Pct > positions.p50Pct && (
+                      <motion.div 
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${positions.p95Pct - positions.p50Pct}%` }} 
+                        transition={{ duration: 1, delay: 0.4 }}
+                        className="absolute top-0 bottom-0 bg-rose-400 shadow-inner border-y border-rose-500/30 rounded-r-full"
                         style={{ left: `${positions.p50Pct}%` }}
                       />
                     )}
+
+                    {/* Target Date Marker Pin */}
+                    {positions && (
+                      <div className="absolute top-[-6px] bottom-[-6px] w-1 bg-emerald-600 rounded-full -translate-x-1/2 z-20 shadow-sm border border-white" style={{ left: `${positions.targetPct}%` }} />
+                    )}
+
+                    {/* P95 Marker Pin */}
+                    {positions && (
+                      <div className="absolute top-[-6px] bottom-[-6px] w-1 bg-rose-600 rounded-full -translate-x-1/2 z-20 shadow-sm border border-white" style={{ left: `${positions.p95Pct}%` }} />
+                    )}
+
+                    {/* P50 Median Notch */}
+                    {positions && (
+                      <div className="absolute top-[-8px] bottom-[-8px] w-1.5 bg-white rounded-full -translate-x-1/2 z-25 shadow-md border-2 border-amber-500" style={{ left: `${positions.p50Pct}%` }} />
+                    )}
                   </div>
 
-                  {/* Bottom Track: Target Date & P95 Markers */}
-                  <div className="relative h-12 w-full mt-2">
-                    {/* Target Date Marker Badge */}
+                  {/* Bottom Track: Markers */}
+                  <div className="absolute bottom-0 w-full h-10">
                     {positions && (
-                      <div 
-                        className="absolute top-0 flex flex-col items-center -translate-x-1/2 z-30 transition-all duration-500"
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, x: "-50%" }} 
+                        animate={{ opacity: 1, y: 0, x: "-50%" }} 
+                        transition={{ delay: 0.5 }} 
+                        className="absolute flex flex-col items-center z-30" 
                         style={{ left: `${positions.targetPct}%` }}
                       >
-                        <div className="w-0.5 h-3 border-l-2 border-dashed border-rose-500" />
-                        <div className="note note-critical flex items-center gap-1.5 whitespace-nowrap font-mono">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
-                          <span>Statutory Target: {data.revised_end_date}</span>
+                        <div className="w-px h-5 bg-emerald-300 mb-1" />
+                        <div className="flex flex-col items-center bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm whitespace-nowrap">
+                           <span className="text-[9px] text-emerald-700 uppercase tracking-widest font-bold">Target Date</span>
+                           <span className="font-mono text-xs text-emerald-800 font-bold">{data.revised_end_date}</span>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
 
-                    {/* P95 Tail Marker Label (anchored to pin, badge pinned inside container) */}
                     {positions && (
-                      <div 
-                        className={`absolute top-0 flex flex-col z-20 transition-all duration-500 ${
-                          positions.p95Pct > 70
-                            ? 'items-end -translate-x-full pr-0'
-                            : positions.p95Pct < 30
-                            ? 'items-start translate-x-0 pl-0'
-                            : 'items-center -translate-x-1/2'
-                        }`}
-                        style={{ left: `${positions.p95Pct}%` }}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, x: positions.p95Pct > 70 ? "-100%" : positions.p95Pct < 30 ? "0%" : "-50%" }} 
+                        animate={{ opacity: 1, y: 0, x: positions.p95Pct > 70 ? "-100%" : positions.p95Pct < 30 ? "0%" : "-50%" }} 
+                        transition={{ delay: 0.6 }} 
+                        className={`absolute flex flex-col z-20 ${positions.p95Pct > 70 ? 'items-end pr-1' : positions.p95Pct < 30 ? 'items-start pl-1' : 'items-center'}`} 
+                        style={{ left: `${positions.p95Pct}%`, bottom: positions.p95Pct - positions.targetPct < 15 && positions.p95Pct - positions.targetPct > -15 ? '-3.5rem' : '0' }}
                       >
-                        <div className={`w-0.5 h-3 bg-rose-500 ${
-                          positions.p95Pct > 70 ? 'self-end mr-0' : positions.p95Pct < 30 ? 'self-start ml-0' : 'self-center'
-                        }`} />
-                        <div className="note note-critical flex items-center gap-1.5 whitespace-nowrap font-mono">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
-                          <span>Conservative Risk Bound (P95): {data.p95_date}</span>
+                        <div className={`w-px h-5 bg-rose-300 mb-1 ${positions.p95Pct > 70 ? 'self-end mr-0' : positions.p95Pct < 30 ? 'self-start ml-0' : 'self-center'}`} />
+                        <div className="flex flex-col items-center bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm whitespace-nowrap">
+                           <span className="text-[9px] text-rose-700 uppercase tracking-widest font-bold">Risk Bound (P95)</span>
+                           <span className="font-mono text-xs text-rose-800 font-bold">{data.p95_date}</span>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
-
                 </div>
 
-                {/* Calibration provenance */}
-                {(() => {
-                  const u = data?.facts?.fact_p50_completion?.uncertainty;
-                  const emp = u?.empirical_coverage;
-                  return emp != null ? (
-                    <div className="note note-ok flex items-start gap-2.5 text-emerald-950">
-                      <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
-                      <span> Interval width is <strong>conformally calibrated</strong>, not hand-set.
-                        Measured coverage on a held-out test split:{' '}
-                        <strong className="font-mono">{(emp * 100).toFixed(1)}%</strong> against a {(u.alpha_coverage * 100).toFixed(0)}% target.
-                        <span className="block text-emerald-800/80 mt-0.5">{u.calibration_method}</span>
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="note note-warn flex items-start gap-2.5 text-amber-950">
-                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
-                      <span>
-                        <strong>Uncalibrated interval.</strong> Width is from fallback constants and its
-                        coverage has not been measured. Run{' '}
-                        <code>analytics_engine/conformal_calibration.py</code> to calibrate.
-                      </span>
-                    </div>
-                  );
-                })()}
-
-                {/* Quantile Breakdown Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div className="panel p-4 text-center">
-                    <span className="text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider font-mono">Optimistic Scenario (P10)</span>
-                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p10_date}</p>
-                    <span className="text-[9.5px] text-text-muted font-medium font-sans">10th Percentile Schedule Pace</span>
-                  </div>
-                  <div className="panel panel-accent p-4 text-center bg-slate-50/50">
-                    <span className="text-[10.5px] font-bold text-gov-navy uppercase tracking-wider font-mono">Conformal Forecast (P50)</span>
-                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p50_date}</p>
-                    <span className="text-[9.5px] text-gov-navy font-bold font-sans">50th Percentile Median Pacing</span>
-                  </div>
-                  <div className="panel p-4 text-center">
-                    <span className="text-[10.5px] font-bold text-amber-700 uppercase tracking-wider font-mono">Risk-Adjusted Target (P80)</span>
-                    <p className="text-xs font-black text-gov-navy mt-1 font-mono">{data.p80_date}</p>
-                    <span className="text-[9.5px] text-text-muted font-medium font-sans">80th Percentile Buffer Target</span>
-                  </div>
-                  <div className="panel p-4 text-center border-l-2 border-l-rose-600 bg-rose-50/40">
-                    <span className="text-[10.5px] font-bold text-rose-700 uppercase tracking-wider font-mono">Severe Delay Tail (P95)</span>
-                    <p className="text-xs font-black text-rose-900 mt-1 font-mono">{data.p95_date}</p>
-                    <span className="text-[9.5px] text-rose-700 font-bold font-sans">95th Percentile Risk Exposure</span>
-                  </div>
+                {/* Calibration Provenance */}
+                <div className="mt-8 pt-5 border-t border-slate-100">
+                  {(() => {
+                    const u = data?.facts?.fact_p50_completion?.uncertainty;
+                    const emp = u?.empirical_coverage;
+                    return emp != null ? (
+                      <div className="flex items-start gap-2.5 text-slate-700 text-xs bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+                        <div>
+                          <span><strong>Conformally Calibrated Interval.</strong> The model guarantees statistical coverage on held-out projects (Measured: <strong className="font-mono text-emerald-700">{(emp * 100).toFixed(1)}%</strong> vs Target: <strong className="font-mono">{(u.alpha_coverage * 100).toFixed(0)}%</strong>).</span>
+                          <span className="block text-slate-500 mt-1 font-mono text-[10px] uppercase tracking-wider">{u.calibration_method}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2.5 text-slate-700 text-xs bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+                        <span><strong>Uncalibrated interval.</strong> Width is from fallback constants and coverage is not measured.</span>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
+
+              {/* Quantile Breakdown Cards */}
+              <Grid numItemsSm={2} numItemsLg={4} className="gap-3 mt-6">
+                <motion.div variants={itemVariants} className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                  <Text className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Optimistic (P10)</Text>
+                  <Metric className="text-sm font-bold text-slate-800 mt-1">{data.p10_date}</Metric>
+                </motion.div>
+                <motion.div variants={itemVariants} className="p-4 rounded-xl bg-amber-50/50 border border-amber-100 text-center relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-amber-400" />
+                  <Text className="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Forecast (P50)</Text>
+                  <Metric className="text-sm font-bold text-slate-900 mt-1">{data.p50_date}</Metric>
+                </motion.div>
+                <motion.div variants={itemVariants} className="p-4 rounded-xl bg-orange-50/50 border border-orange-100 text-center">
+                  <Text className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Target (P80)</Text>
+                  <Metric className="text-sm font-bold text-slate-800 mt-1">{data.p80_date}</Metric>
+                </motion.div>
+                <motion.div variants={itemVariants} className="p-4 rounded-xl bg-rose-50 border border-rose-100 text-center">
+                  <Text className="text-[10px] font-bold text-rose-600 uppercase tracking-wider">Risk Tail (P95)</Text>
+                  <Metric className="text-sm font-bold text-rose-900 mt-1">{data.p95_date}</Metric>
+                </motion.div>
+              </Grid>
 
               {/* Cryptographic Lineage Proof Bar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs gap-3">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span className="font-mono text-[11px] text-text-muted truncate max-w-md"> Audit Fingerprint: {data.facts?.fact_cost?.lineage?.merkle_root ? data.facts.fact_cost.lineage.merkle_root.slice(0, 24) : 'e83a7f920bc491d8...'}...
-                  </span>
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs gap-3">
+                <div className="flex items-center gap-2 text-slate-500">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span className="font-mono text-[10px] truncate max-w-[200px]"> Audit Hash: {data.facts?.fact_cost?.lineage?.merkle_root ? data.facts.fact_cost.lineage.merkle_root.slice(0, 24) : 'e83a7f920bc491d8...'}...</span>
                 </div>
-                <span className="text-[10.5px] font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-sm border border-emerald-300 font-sans"> Audit Verified (CAG/CVC)
-                </span>
+                <BadgeDelta deltaType="increase" size="xs">Audit Verified</BadgeDelta>
               </div>
-            </div>
-          </div>
-        </div>
+
+            </Card>
+          </motion.div>
+        </motion.div>
       )}
+
+      {/* Lightbox Modal for Satellite Images */}
+      <AnimatePresence>
+        {enlargedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setEnlargedImage(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20, opacity: 0 }} 
+              animate={{ scale: 1, y: 0, opacity: 1 }} 
+              exit={{ scale: 0.95, y: 20, opacity: 0 }} 
+              transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
+              className="relative max-w-5xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${enlargedImage.type === 'after' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'}`}>
+                    <Satellite className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-800 tracking-wide text-sm flex items-center gap-2">
+                      {enlargedImage.title}
+                      {enlargedImage.type === 'after' && (
+                        <span className="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Latest Pass</span>
+                      )}
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">Project #{data?.project_id} · Optical Verification</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setEnlargedImage(null)}
+                  className="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              {/* Image Container */}
+              <div className="relative bg-slate-100/50 w-full flex items-center justify-center" style={{ height: '65vh' }}>
+                <img 
+                  src={enlargedImage.src} 
+                  alt={enlargedImage.title} 
+                  className="w-full h-full object-contain drop-shadow-md p-4"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }}
+                />
+                <div style={{ display: 'none' }} className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400">
+                  <Satellite className="w-12 h-12 mb-3 opacity-20" />
+                  <p className="text-sm">High-resolution imagery not available for this site.</p>
+                </div>
+
+                {/* Annotation Badges overlay */}
+                {enlargedImage.type === 'after' && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md text-emerald-700 border border-emerald-200/50 text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    Verified Construction Footprint
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

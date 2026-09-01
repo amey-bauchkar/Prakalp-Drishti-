@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-  FlaskConical, AlertTriangle, TrendingUp, Layers, ShieldAlert,
-  Info, HelpCircle, CheckCircle2, Award, Clock, ArrowRight,
-  ChevronDown, ChevronUp, Zap, Sparkles, BarChart2, ShieldCheck
+  FlaskConical, AlertTriangle, Layers, ShieldAlert,
+  CheckCircle2, Award, Clock, ArrowRight,
+  Zap, Sparkles, BarChart2, ShieldCheck, ChevronRight
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, Metric, Text, ProgressBar, Flex, Grid, BadgeDelta } from "@tremor/react";
 import { apiFetch } from './authClient';
 
 const API = '';
@@ -11,9 +13,9 @@ const API = '';
 const fmt = (v, d = 3) => (v == null ? '—' : Number(v).toFixed(d));
 
 const MODEL_LABEL = {
-  sector_mean_baseline: '1. Sector Average (Old Static Formula)',
-  ols_linear_regression: '2. OLS Linear Regression (Traditional Econometrics)',
-  gradient_boosting: '3. Gradient Boosted Trees (PRAKALP-DRISHTI AI)',
+  sector_mean_baseline: 'Static Sector Average',
+  ols_linear_regression: 'OLS Linear Regression',
+  gradient_boosting: 'PRAKALP-DRISHTI AI',
 };
 
 const TARGET_LABEL = {
@@ -22,11 +24,40 @@ const TARGET_LABEL = {
 };
 
 const BAND_CLS = {
-  CRITICAL: 'bg-rose-50 text-rose-800 border-rose-300',
-  HIGH: 'bg-amber-50 text-amber-800 border-amber-300',
+  CRITICAL: 'bg-rose-50 text-rose-800 border-rose-300 ring-1 ring-rose-500/50',
+  HIGH: 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-500/50',
   MODERATE: 'bg-sky-50 text-sky-800 border-sky-300',
   LOW: 'bg-emerald-50 text-emerald-800 border-emerald-300',
 };
+
+function formatFeatureName(rawFeature) {
+  if (rawFeature.includes('=')) {
+    const [category, value] = rawFeature.split('=');
+    const formattedValue = value
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+      
+    const catMap = {
+      'entity': 'Executing Agency',
+      'sector': 'Infrastructure Sector',
+    };
+    
+    return {
+      primary: catMap[category] || category.charAt(0).toUpperCase() + category.slice(1),
+      secondary: formattedValue
+    };
+  }
+  
+  const prettyNames = {
+    planned_months: { primary: 'Initial Planned Duration', secondary: 'Months' },
+    log_original_cost: { primary: 'Project Outlay Scale', secondary: 'Capex' },
+    physical_progress: { primary: 'Physical Progress Velocity', secondary: 'On-ground %' },
+    sanction_year: { primary: 'Policy Cohort Era', secondary: 'Sanction Year' },
+  };
+  
+  return prettyNames[rawFeature] || { primary: rawFeature.replace(/_/g, ' '), secondary: 'Numeric' };
+}
 
 export default function ModelBenchmarkView() {
   const [bench, setBench] = useState(null);
@@ -34,7 +65,6 @@ export default function ModelBenchmarkView() {
   const [loading, setLoading] = useState(true);
   const [queueDenied, setQueueDenied] = useState(null);
   const [leadTime, setLeadTime] = useState(null);
-  const [showGlossary, setShowGlossary] = useState(false);
 
   useEffect(() => {
     let dead = false;
@@ -53,12 +83,25 @@ export default function ModelBenchmarkView() {
     return () => { dead = true; };
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+  };
+
   if (loading) {
     return (
       <div className="panel p-10 text-center space-y-3">
         <FlaskConical className="w-10 h-10 text-amber-500 animate-spin mx-auto" />
         <p className="text-gov-navy font-bold text-base">Loading empirical model benchmarks and early-warning analytics…</p>
-        <p className="text-xs text-text-muted">Evaluating AI performance against 2,207 historical project baselines</p>
+        <p className="text-xs text-slate-500">Evaluating AI performance against 2,207 historical project baselines</p>
       </div>
     );
   }
@@ -72,128 +115,83 @@ export default function ModelBenchmarkView() {
         </div>
       </div>
     );
-  }  return (
+  }
+
+  return (
     <div className="space-y-8 font-sans pb-12">
-      {/* ── 1. Sovereign Top Header with Plain-English Intent ── */}
-      <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-        <div className="space-y-2 max-w-3xl relative z-10">
-          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
+      {/* ── 1. Top Header ── */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <FlaskConical className="w-48 h-48 text-amber-500" />
+        </div>
+        
+        <div className="space-y-3 max-w-3xl relative z-10">
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-widest uppercase text-amber-400 border-l-2 border-amber-400">
             <FlaskConical className="w-3.5 h-3.5 text-white" />
             <span>MODULE 7 · EMPIRICAL SCIENTIFIC VALIDATION</span>
           </div>
-          <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
-            AI vs Traditional Government Formulas: Empirical Proof of Superiority
+          <h2 className="font-heading font-extrabold text-[24px] sm:text-[32px] tracking-tight text-white leading-tight">
+            AI vs Traditional Formulas: Empirical Proof of Superiority
           </h2>
-          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-2xl">
-            This module provides mathematical proof that PRAKALP-DRISHTI’s AI models significantly outperform 
-            conventional static sector averages and linear formulas. It proves <strong>why</strong> the AI works, 
-            <strong>how early</strong> it detects failure, and <strong>which real-world factors</strong> drive project delays.
+          <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-2xl">
+            Mathematical proof that PRAKALP-DRISHTI’s AI models significantly outperform conventional static sector averages. Validates <strong>why</strong> the AI works, <strong>how early</strong> it detects failure, and <strong>which real-world factors</strong> drive delays.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setShowGlossary(!showGlossary)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/10 hover:bg-white/20 border border-white/25 text-white text-[11.5px] font-bold transition-all cursor-pointer"
-            >
-              <HelpCircle className="w-4 h-4 text-gov-accent" />
-              <span>{showGlossary ? 'Hide Non-Technical Guide' : 'Explain Like I’m 5 (Plain English Guide)'}</span>
-              {showGlossary ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-            <span className="text-[11px] text-slate-300 font-mono">
-              Evaluated on <strong>2,207 Master Project Corpus</strong> (25% held-out test split).
+          <div className="pt-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-600 text-xs text-slate-300 font-mono">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              Evaluated on <strong>2,207 Master Project Corpus</strong> (25% held-out test split)
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ── 2. Expandable "Explain Like I'm 5" (ELI5) Guide ── */}
-      {showGlossary && (
-        <section className="bg-amber-50/90 border border-amber-200 rounded-2xl p-5 sm:p-6 space-y-4 animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 text-amber-900 font-heading font-extrabold text-[15px]">
-            <Sparkles className="w-4.5 h-4.5 text-amber-600" />
-            <span>What does this mathematical evidence mean in simple terms?</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[12.5px] text-amber-950">
-            <div className="bg-white p-4 rounded-xl border border-amber-200/80 space-y-1.5 shadow-2xs">
-              <div className="font-bold text-gov-navy flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                <span>Average Prediction Error (MAE)</span>
-              </div>
-              <p className="text-slate-600 text-[11.5px] leading-relaxed">
-                Think of guessing a building’s cost. If real cost is ₹100 Cr and model says ₹104 Cr, error is 4%. 
-                <strong>Lower error is better</strong>. AI reduces error compared to old formulas.
-              </p>
+      {/* ── 2. Three Key At-A-Glance Executive Takeaways ── */}
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <motion.div variants={itemVariants}>
+          <Card className="h-full border-t-4 border-t-emerald-500 shadow-md">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">Prediction Precision</span>
+              <Award className="w-5 h-5 text-emerald-500" />
             </div>
+            <Metric className="text-slate-900 font-heading">Higher Accuracy</Metric>
+            <Text className="mt-2 text-sm text-slate-600">Machine Learning beats static conventional sector formulas by capturing non-linear risk interactions.</Text>
+          </Card>
+        </motion.div>
 
-            <div className="bg-white p-4 rounded-xl border border-amber-200/80 space-y-1.5 shadow-2xs">
-              <div className="font-bold text-gov-navy flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Early-Warning Window (Lead Time)</span>
+        <motion.div variants={itemVariants}>
+          {/* Animated Glowing Card */}
+          <div className="relative h-full rounded-2xl p-[2px] overflow-hidden group">
+            <div className="absolute inset-[-100%] bg-[conic-gradient(from_90deg_at_50%_50%,#f59e0b_0%,#fbbf24_50%,#fcd34d_100%)] animate-[spin_4s_linear_infinite] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            <Card className="relative h-full z-10 border-none shadow-md bg-white">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">Advance Warning Horizon</span>
+                <Clock className="w-5 h-5 text-amber-500" />
               </div>
-              <p className="text-slate-600 text-[11.5px] leading-relaxed">
-                How many months <em>before</em> a project officially collapses does AI sound the alarm? 
-                PRAKALP-DRISHTI gives MoSPI <strong>108 months (~9 years) of advance lead time</strong>.
-              </p>
+              <Metric className="text-slate-900 font-heading">108 Months Early</Metric>
+              <Text className="mt-2 text-sm text-slate-600">Median lead time from initial sanction to official parliamentary delay declaration.</Text>
+            </Card>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <Card className="h-full border-t-4 border-t-blue-500 shadow-md">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">Delinquency Catch Rate</span>
+              <ShieldCheck className="w-5 h-5 text-blue-500" />
             </div>
+            <Metric className="text-slate-900 font-heading">81.2% Recall</Metric>
+            <Text className="mt-2 text-sm text-slate-600">Successfully intercepts 8 out of every 10 eventual mega-project overruns right at the baseline.</Text>
+          </Card>
+        </motion.div>
+      </motion.div>
 
-            <div className="bg-white p-4 rounded-xl border border-amber-200/80 space-y-1.5 shadow-2xs">
-              <div className="font-bold text-gov-navy flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                <span>Root Cause Attribution (Drivers)</span>
-              </div>
-              <p className="text-slate-600 text-[11.5px] leading-relaxed">
-                Instead of being a "black box", AI identifies exactly <em>which</em> real-world factors 
-                (Land Acquisition, Monsoon Deluge, Material Inflation) caused the overrun.
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── 3. Three Key At-A-Glance Executive Takeaways ── */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
-        <div className="panel p-5 space-y-2 border-l-4 border-l-emerald-600">
-          <div className="flex items-center justify-between">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider text-emerald-800 font-mono">Prediction Precision</span>
-            <Award className="w-4.5 h-4.5 text-emerald-600" />
-          </div>
-          <div className="text-[26px] font-extrabold font-heading text-gov-navy">
-            Higher Accuracy
-          </div>
-          <p className="text-[12px] text-text-secondary leading-snug">
-            Machine Learning beats static conventional sector formulas by capturing non-linear risk interactions.
-          </p>
-        </div>
-
-        <div className="panel p-5 space-y-2 border-l-4 border-l-amber-500">
-          <div className="flex items-center justify-between">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider text-amber-800 font-mono">Advance Warning Horizon</span>
-            <Clock className="w-4.5 h-4.5 text-amber-600" />
-          </div>
-          <div className="text-[26px] font-extrabold font-heading text-gov-navy">
-            108 Months Early
-          </div>
-          <p className="text-[12px] text-text-secondary leading-snug">
-            Median lead time from initial sanction to official parliamentary delay declaration — giving years for early intervention.
-          </p>
-        </div>
-
-        <div className="panel p-5 space-y-2 border-l-4 border-l-blue-600">
-          <div className="flex items-center justify-between">
-            <span className="text-[10.5px] font-bold uppercase tracking-wider text-blue-800 font-mono">Delinquency Catch Rate</span>
-            <ShieldCheck className="w-4.5 h-4.5 text-blue-600" />
-          </div>
-          <div className="text-[26px] font-extrabold font-heading text-gov-navy">
-            81.2% Recall
-          </div>
-          <p className="text-[12px] text-text-secondary leading-snug">
-            Successfully intercepts 8 out of every 10 eventual mega-project overruns right at the pre-sanction baseline.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 4. Visual Model Benchmarking: AI vs Traditional ── */}
+      {/* ── 3. Visual Model Benchmarking ── */}
       {Object.entries(bench.targets || {}).map(([target, blk]) => {
         const mv = blk.ml_vs_conventional;
         const variant = mv?.evaluated_variant || 'cuf_plus_external';
@@ -201,290 +199,343 @@ export default function ModelBenchmarkView() {
         const isCost = target === 'cost_overrun_pct';
 
         return (
-          <div key={target} className="panel p-5 sm:p-6 space-y-6">
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" key={target} className="panel p-6 space-y-8 bg-white border border-slate-200 shadow-sm rounded-2xl">
             {/* Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-default pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border flex items-center justify-center shrink-0">
-                  <BarChart2 className="w-4.5 h-4.5 text-gov-saffron" />
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-5">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0">
+                  <BarChart2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-[16px] sm:text-[18px] font-heading font-extrabold text-gov-navy uppercase tracking-wider">
+                  <h3 className="text-lg font-heading font-extrabold text-slate-900 uppercase tracking-wider">
                     {TARGET_LABEL[target] || target}
                   </h3>
-                  <span className="text-[11.5px] text-text-muted font-sans">
+                  <span className="text-[12px] text-slate-500 font-sans">
                     Testing on <strong>{blk.n_test} held-out projects</strong> (model never saw these during training)
                   </span>
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-sm">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>AI Error: ±{fmt(rows.gradient_boosting?.mae, 2)} {isCost ? '%' : 'mo'}</span>
               </div>
             </div>
 
             {/* Visual Intuitive Bar Comparison */}
-            <div className="space-y-3 bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/80">
-              <div className="text-[12px] font-bold uppercase tracking-wider text-gov-navy font-mono mb-2 flex items-center justify-between">
+            <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 font-mono mb-4 flex items-center justify-between">
                 <span>Model Error Comparison (Lower Bar = Better Accuracy)</span>
-                <span className="text-[10.5px] text-slate-500 font-sans normal-case">Mean Absolute Error (MAE)</span>
+                <span className="text-[10px] text-slate-400 font-sans normal-case">Mean Absolute Error (MAE)</span>
               </div>
 
-              {[
-                { key: 'sector_mean_baseline', name: 'Sector Average (Static Government Benchmark)', val: rows.sector_mean_baseline?.mae, color: 'bg-rose-400' },
-                { key: 'ols_linear_regression', name: 'OLS Linear Regression (Traditional Econometrics)', val: rows.ols_linear_regression?.mae, color: 'bg-amber-400' },
-                { key: 'gradient_boosting', name: 'PRAKALP-DRISHTI AI (Gradient Boosted Trees)', val: rows.gradient_boosting?.mae, color: 'bg-emerald-500', isWinner: true },
-              ].map((m) => {
-                const maxVal = Math.max(rows.sector_mean_baseline?.mae || 1, rows.ols_linear_regression?.mae || 1, rows.gradient_boosting?.mae || 1);
-                const widthPct = Math.max(15, Math.min(100, (m.val / maxVal) * 100));
-
-                return (
-                  <div key={m.key} className="space-y-1">
-                    <div className="flex items-center justify-between text-[12px]">
-                      <span className={`font-medium ${m.isWinner ? 'text-emerald-950 font-bold flex items-center gap-1.5' : 'text-slate-700'}`}>
-                        {m.isWinner && <Award className="w-3.5 h-3.5 text-emerald-600 inline" />}
-                        {m.name}
-                      </span>
-                      <span className="font-mono font-bold text-gov-navy text-[13px]">
-                        ±{fmt(m.val, 2)} {isCost ? '%' : 'months'}
-                      </span>
-                    </div>
-                    <div className="h-3.5 bg-slate-200 rounded-full overflow-hidden flex">
-                      <div
-                        className={`h-full ${m.color} transition-all duration-500 rounded-full flex items-center justify-end pr-2`}
-                        style={{ width: `${widthPct}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Detailed Verification Table for Technical Evaluators */}
-            <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Model Architecture</th>
-                    <th className="num">Average Error (MAE)</th>
-                    <th className="num">Root Mean Square (RMSE)</th>
-                    <th className="num">Explained Fit (R²)</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {['sector_mean_baseline', 'ols_linear_regression', 'gradient_boosting'].map((m) => {
-                    const row = rows[m] || {};
-                    const isML = m === 'gradient_boosting';
-                    return (
-                      <tr key={m} className={isML ? 'bg-emerald-50/40 font-bold border-l-2 border-l-emerald-600' : 'hover:bg-slate-50/60'}>
-                        <td className={isML ? 'font-extrabold text-gov-navy' : 'font-medium text-text-secondary'}>
-                          {MODEL_LABEL[m]}
-                        </td>
-                        <td className="num font-mono font-bold text-gov-navy">
-                          ±{fmt(row.mae, 2)} {isCost ? '%' : 'mo'}
-                        </td>
-                        <td className="num font-mono text-slate-500">{fmt(row.rmse, 2)}</td>
-                        <td className="num font-mono text-slate-600">{fmt(row.r2, 3)}</td>
-                        <td>
-                          {isML ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-sm">
-                              <CheckCircle2 className="w-3 h-3" /> Selected Production Engine
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-slate-400 font-medium">Conventional Baseline</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Root Cause Feature Importance (What drives delays) */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4.5 h-4.5 text-gov-navy" />
-                  <span className="text-[12px] font-bold text-gov-navy uppercase tracking-wider font-heading">
-                    Root Cause Attribution: What actually drives project outcomes?
-                  </span>
-                </div>
-                <span className="text-[10.5px] text-slate-500 font-sans">Permutation Feature Importance</span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {(blk.drivers || []).slice(0, 6).map((d, idx) => {
-                  const max = blk.drivers[0]?.mae_increase_when_shuffled || 1;
-                  const pctW = Math.max(5, (d.mae_increase_when_shuffled / max) * 100);
-                  
-                  // Plain-English label map
-                  const prettyNames = {
-                    planned_months: '📅 Initial Planned Project Duration',
-                    log_original_cost: '💰 Project Outlay Scale & Capex Size',
-                    physical_progress: '🏗️ Current Physical Progress Velocity',
-                    sanction_year: '🏛️ Policy & Sanction Cohort Era',
-                    sector: '🏭 Infrastructure Sector Complexity',
-                    entity: '🏢 Executing PSU / Line Ministry Capacity',
-                  };
+              <div className="space-y-5">
+                {[
+                  { key: 'sector_mean_baseline', name: 'Sector Average (Static Govt Benchmark)', val: rows.sector_mean_baseline?.mae, color: 'bg-rose-400' },
+                  { key: 'ols_linear_regression', name: 'OLS Linear Regression (Traditional Econometrics)', val: rows.ols_linear_regression?.mae, color: 'bg-amber-400' },
+                  { key: 'gradient_boosting', name: 'PRAKALP-DRISHTI AI (Gradient Boosted Trees)', val: rows.gradient_boosting?.mae, color: 'bg-emerald-500', isWinner: true },
+                ].map((m) => {
+                  const maxVal = Math.max(rows.sector_mean_baseline?.mae || 1, rows.ols_linear_regression?.mae || 1, rows.gradient_boosting?.mae || 1);
+                  const widthPct = Math.max(10, Math.min(100, (m.val / maxVal) * 100));
 
                   return (
-                    <div key={d.feature} className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5">
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="font-bold text-gov-navy truncate">
-                          {prettyNames[d.feature] || d.feature}
+                    <div key={m.key} className="space-y-2">
+                      <div className="flex items-center justify-between text-[13px]">
+                        <span className={`font-semibold ${m.isWinner ? 'text-emerald-700 flex items-center gap-2' : 'text-slate-700'}`}>
+                          {m.isWinner && <Award className="w-4 h-4 text-emerald-600" />}
+                          {m.name}
                         </span>
-                        <span className="text-[10px] font-bold uppercase text-slate-500 font-mono">
-                          Impact: +{fmt(d.mae_increase_when_shuffled, 2)}
+                        <span className="font-mono font-bold text-slate-900">
+                          ±{fmt(m.val, 2)} {isCost ? '%' : 'months'}
                         </span>
                       </div>
-                      <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-gov-navy rounded-full" style={{ width: `${pctW}%` }}></div>
+                      <div className="h-4 bg-slate-200 rounded-full overflow-hidden flex shadow-inner">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${widthPct}%` }}
+                          transition={{ duration: 1.5, type: "spring", bounce: 0.2 }}
+                          className={`h-full ${m.color} rounded-full ${m.isWinner ? 'shadow-[0_0_12px_rgba(16,185,129,0.8)]' : ''}`}
+                        />
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-          </div>
+
+            {/* Detailed Verification Grid */}
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 font-mono mb-4">Detailed Metrics Matrix</div>
+              <Grid numItemsSm={1} numItemsLg={3} className="gap-4">
+                {['sector_mean_baseline', 'ols_linear_regression', 'gradient_boosting'].map((m) => {
+                  const row = rows[m] || {};
+                  const isML = m === 'gradient_boosting';
+                  return (
+                    <Card key={m} className={`transition-all hover:scale-[1.02] ${isML ? 'border-emerald-500 bg-emerald-50/20 ring-1 ring-emerald-500/20' : 'border-slate-200 bg-white'}`}>
+                      <div className="flex items-start justify-between mb-4">
+                        <Text className={`font-bold text-sm ${isML ? 'text-emerald-900' : 'text-slate-800'}`}>{MODEL_LABEL[m]}</Text>
+                        {isML && (
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            Production
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <Text className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">MAE (Avg Error)</Text>
+                          <Metric className={`text-lg font-mono ${isML ? 'text-emerald-700' : 'text-slate-900'}`}>±{fmt(row.mae, 2)} {isCost ? '%' : 'mo'}</Metric>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
+                          <div>
+                            <Text className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">RMSE</Text>
+                            <Text className="font-mono font-semibold text-slate-700">{fmt(row.rmse, 2)}</Text>
+                          </div>
+                          <div>
+                            <Text className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">R² Fit</Text>
+                            <Text className="font-mono font-semibold text-slate-700">{fmt(row.r2, 3)}</Text>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </Grid>
+            </div>
+
+            {/* Root Cause Feature Importance */}
+            <div className="pt-6 border-t border-slate-100 space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-5 h-5 text-slate-900" />
+                  <span className="text-[14px] font-extrabold text-slate-900 uppercase tracking-wider font-heading">
+                    Root Cause Attribution: Drivers of Project Outcomes
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 font-sans hidden sm:block">Permutation Feature Importance</span>
+              </div>
+
+              <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(blk.drivers || []).slice(0, 6).map((d, idx) => {
+                  const max = blk.drivers[0]?.mae_increase_when_shuffled || 1;
+                  const pctW = Math.max(5, (d.mae_increase_when_shuffled / max) * 100);
+                  const labels = formatFeatureName(d.feature);
+
+                  return (
+                    <motion.div variants={itemVariants} key={d.feature} className="p-4 bg-white border border-slate-200 rounded-xl space-y-3 shadow-sm hover:shadow-md transition-shadow group">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold font-mono ${idx === 0 ? 'bg-rose-100 text-rose-700' : idx < 3 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                            #{idx + 1}
+                          </div>
+                          <div>
+                            <Text className="font-bold text-slate-900 text-[13px]">{labels.primary}</Text>
+                            <span className="inline-block px-1.5 py-0.5 mt-1 bg-slate-100 text-slate-600 text-[10px] font-mono rounded border border-slate-200">{labels.secondary}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] font-bold uppercase text-slate-400 font-mono block">Impact</span>
+                          <span className="text-[12px] font-bold text-slate-800 font-mono group-hover:text-amber-600 transition-colors">+{fmt(d.mae_increase_when_shuffled, 2)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pctW}%` }}
+                          transition={{ duration: 1, delay: 0.2 + (idx * 0.1) }}
+                          className={`absolute top-0 left-0 h-full rounded-full ${idx === 0 ? 'bg-rose-500' : idx < 3 ? 'bg-amber-500' : 'bg-slate-400'}`} 
+                        />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </motion.div>
         );
       })}
 
       {/* ── 5. Visual Early-Warning Lead Time Section ── */}
       {leadTime?.available && (
-        <section className="panel p-5 sm:p-6 space-y-6">
-          <div className="flex items-center gap-3 border-b border-border-default pb-4">
-            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0">
-              <Clock className="w-4.5 h-4.5" />
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="panel p-6 space-y-8 bg-white border border-slate-200 shadow-sm rounded-2xl">
+          <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-[16px] sm:text-[18px] font-heading font-extrabold text-gov-navy uppercase tracking-wider">
-                How Early Does AI Warn About Project Delays? (Lead-Time Analysis)
+              <h3 className="text-lg font-heading font-extrabold text-slate-900 uppercase tracking-wider">
+                How Early Does AI Warn About Project Delays?
               </h3>
-              <span className="text-[11.5px] text-text-muted font-sans">
+              <span className="text-[12px] text-slate-500 font-sans">
                 Evaluated on <strong>{leadTime.n_evaluated} mature projects</strong> using only information available at Sanction Date
               </span>
             </div>
           </div>
 
           {/* Visual Timeline Graphic */}
-          <div className="p-5 bg-gradient-to-r from-slate-50 via-amber-50/50 to-rose-50/50 rounded-2xl border border-slate-200 space-y-4">
-            <div className="text-[12px] font-bold text-gov-navy uppercase tracking-wider font-mono">
+          <div className="p-6 sm:p-8 bg-gradient-to-br from-slate-50 via-amber-50/30 to-rose-50/30 rounded-2xl border border-slate-200 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+              <Clock className="w-32 h-32 text-amber-500" />
+            </div>
+
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-widest font-mono mb-6 relative z-10">
               The 108-Month Early Intervention Window
             </div>
 
-            <div className="relative flex flex-col md:flex-row items-stretch justify-between gap-4 pt-2">
-              <div className="flex-1 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-1">
-                <div className="text-[10.5px] font-bold text-slate-500 uppercase font-mono">Step 1 · Day 0</div>
-                <div className="font-bold text-gov-navy text-[13.5px]">Project Sanctioned</div>
-                <p className="text-[11px] text-slate-500">Initial Cabinet / CCEA approval and DPR baseline established.</p>
+            <div className="relative flex flex-col md:flex-row items-stretch justify-between gap-4 relative z-10">
+              {/* Connecting animated line for desktop */}
+              <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 z-0">
+                <div className="absolute inset-0 bg-slate-200 border-t-2 border-dashed border-slate-300"></div>
+                <motion.div 
+                  initial={{ width: 0 }} 
+                  whileInView={{ width: '100%' }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 2, ease: "linear" }}
+                  className="absolute inset-0 bg-amber-400 border-t-2 border-dashed border-amber-500"
+                ></motion.div>
               </div>
 
-              <div className="flex items-center justify-center shrink-0 text-amber-600">
-                <ArrowRight className="w-5 h-5 hidden md:block" />
-                <span className="md:hidden text-[11px] font-bold">↓</span>
+              <motion.div variants={itemVariants} className="flex-1 bg-white p-5 rounded-2xl border border-slate-200 shadow-md relative z-10 space-y-2">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono bg-slate-100 inline-block px-2 py-0.5 rounded">Step 1 · Day 0</div>
+                <div className="font-bold text-slate-900 text-base">Project Sanctioned</div>
+                <p className="text-[12px] text-slate-500 leading-relaxed">Initial Cabinet/CCEA approval and DPR baseline established.</p>
+              </motion.div>
+
+              <div className="flex items-center justify-center shrink-0 text-amber-500 md:hidden relative z-10">
+                <span className="text-xl font-bold">↓</span>
               </div>
 
-              <div className="flex-1 bg-amber-500/10 border-2 border-amber-500 p-4 rounded-xl shadow-2xs space-y-1">
-                <div className="text-[10.5px] font-bold text-amber-800 uppercase font-mono flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-amber-600" />
-                  <span>AI Early-Warning Triggered</span>
+              <motion.div variants={itemVariants} className="flex-1 bg-amber-50 border-2 border-amber-400 p-5 rounded-2xl shadow-lg relative z-10 space-y-2 transform transition-transform hover:scale-105">
+                <div className="text-[10px] font-bold text-amber-700 uppercase tracking-widest font-mono bg-amber-100 inline-block px-2 py-0.5 rounded flex items-center gap-1 w-max">
+                  <Zap className="w-3 h-3 text-amber-600" /> AI Early-Warning
                 </div>
-                <div className="font-bold text-amber-950 text-[13.5px]">Risk Score &gt; 15% Flagged</div>
-                <p className="text-[11px] text-amber-900">PRAKALP-DRISHTI identifies fatal delay patterns right at baseline.</p>
+                <div className="font-bold text-amber-900 text-base">Risk Score &gt; 15%</div>
+                <p className="text-[12px] text-amber-800/80 leading-relaxed">PRAKALP-DRISHTI identifies fatal delay patterns right at baseline.</p>
+                {/* Pulse ring */}
+                <div className="absolute -inset-1 rounded-2xl border border-amber-400 animate-ping opacity-20 pointer-events-none"></div>
+              </motion.div>
+
+              <div className="flex items-center justify-center shrink-0 text-slate-400 md:hidden relative z-10">
+                <span className="text-xl font-bold">↓</span>
               </div>
 
-              <div className="flex items-center justify-center shrink-0 text-slate-400">
-                <ArrowRight className="w-5 h-5 hidden md:block" />
-                <span className="md:hidden text-[11px] font-bold">↓</span>
-              </div>
-
-              <div className="flex-1 bg-white p-4 rounded-xl border border-rose-200 shadow-2xs space-y-1">
-                <div className="text-[10.5px] font-bold text-rose-700 uppercase font-mono">Step 3 · Month 120</div>
-                <div className="font-bold text-rose-950 text-[13.5px]">Official Delay Recorded</div>
-                <p className="text-[11px] text-slate-500">Ministry officially tables revised completion deadline in Parliament.</p>
-              </div>
+              <motion.div variants={itemVariants} className="flex-1 bg-white p-5 rounded-2xl border border-rose-200 shadow-md relative z-10 space-y-2">
+                <div className="text-[10px] font-bold text-rose-500 uppercase tracking-widest font-mono bg-rose-50 inline-block px-2 py-0.5 rounded">Step 3 · Month 120</div>
+                <div className="font-bold text-rose-900 text-base">Official Delay</div>
+                <p className="text-[12px] text-slate-500 leading-relaxed">Ministry officially tables revised completion deadline in Parliament.</p>
+              </motion.div>
             </div>
 
-            <div className="text-center pt-2">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-[12px] font-bold shadow-2xs">
-                <Award className="w-4 h-4 text-emerald-700" />
-                <span>Result: <strong>108 Months (9 Years)</strong> of advance lead time for proactive ministerial intervention!</span>
-              </span>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1, type: "spring" }}
+              className="text-center pt-8 relative z-10"
+            >
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-emerald-50 border-2 border-emerald-400 shadow-lg group hover:bg-emerald-100 transition-colors">
+                <Award className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
+                <span className="text-emerald-900 text-sm">Result: <strong className="font-black text-emerald-700">108 Months (9 Years)</strong> of advance lead time for proactive intervention!</span>
+              </div>
+            </motion.div>
           </div>
 
           {/* 4 Statistical Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Grid numItemsSm={2} numItemsLg={4} className="gap-4">
             {[
-              { k: 'Delinquency Recall', v: `${(leadTime.recall * 100).toFixed(1)}%`, desc: 'Of eventual overruns caught', highlight: true },
-              { k: 'Prediction Precision', v: `${(leadTime.precision * 100).toFixed(1)}%`, desc: `vs ${((leadTime.base_rate || 0.28) * 100).toFixed(1)}% random guessing`, highlight: true },
-              { k: 'Lift Over Random', v: `${(leadTime.precision / (leadTime.base_rate || 0.28)).toFixed(2)}×`, desc: 'Better than random audit', highlight: true },
-              { k: 'Median Lead-Time', v: `${leadTime.median_lead_months} mo`, desc: 'Sanction → recorded revision', highlight: true },
-            ].map((m) => (
-              <div key={m.k} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-center">
-                <div className="text-[10.5px] font-bold text-slate-500 uppercase tracking-tight">{m.k}</div>
-                <div className="text-[20px] font-extrabold text-gov-navy font-heading mt-0.5">{m.v}</div>
-                <div className="text-[10px] text-slate-500 mt-0.5 font-sans">{m.desc}</div>
-              </div>
+              { k: 'Delinquency Catch Rate', v: `${(leadTime.recall * 100).toFixed(1)}%`, desc: 'Of eventual overruns caught', isWinner: true },
+              { k: 'Prediction Precision', v: `${(leadTime.precision * 100).toFixed(1)}%`, desc: `vs ${((leadTime.base_rate || 0.28) * 100).toFixed(1)}% random guessing` },
+              { k: 'Lift Over Random', v: `${(leadTime.precision / (leadTime.base_rate || 0.28)).toFixed(2)}×`, desc: 'Better than random audit' },
+              { k: 'Median Lead-Time', v: `${leadTime.median_lead_months} mo`, desc: 'Sanction → recorded revision', isWinner: true },
+            ].map((m, idx) => (
+              <motion.div variants={itemVariants} key={m.k}>
+                <Card className={`text-center h-full ${m.isWinner ? 'border-emerald-200 bg-emerald-50/30' : 'bg-slate-50'}`}>
+                  <Text className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{m.k}</Text>
+                  <Metric className={`mt-2 font-heading ${m.isWinner ? 'text-emerald-700' : 'text-slate-900'}`}>{m.v}</Metric>
+                  <Text className="text-[11px] text-slate-500 mt-1">{m.desc}</Text>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </Grid>
+        </motion.div>
       )}
 
       {/* ── 6. Early-Warning Risk Escalation Queue ── */}
       {queueDenied && (
-        <div className="note note-critical flex items-start gap-2">
-          <ShieldAlert className="w-4 h-4 shrink-0 mt-px text-rose-600" />
-          <span>{queueDenied}
-            <span className="block font-normal mt-1">The early-warning queue requires sovereign monitoring officer credentials.</span>
-          </span>
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-3">
+          <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
+          <div className="text-sm text-rose-900">
+            <strong>{queueDenied}</strong>
+            <p className="mt-1 opacity-80">The early-warning queue requires sovereign monitoring officer credentials.</p>
+          </div>
         </div>
       )}
 
       {queue?.alerts && (
-        <section className="panel p-5 sm:p-6 space-y-5">
-          <div className="flex items-center justify-between border-b border-border-default pb-4 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-rose-600" />
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="panel p-6 space-y-6 bg-white border border-slate-200 shadow-sm rounded-2xl">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-5 flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-rose-100 text-rose-600">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
               <div>
-                <h3 className="text-[16px] font-bold text-gov-navy uppercase tracking-wider font-heading">
+                <h3 className="text-lg font-bold text-slate-900 uppercase tracking-wider font-heading">
                   Live Early-Warning Escalation Queue
                 </h3>
-                <span className="text-[11px] text-text-muted font-mono">
+                <span className="text-[12px] text-slate-500 font-sans">
                   Ranked by Risk Score × Capital Exposure · {queue.coverage?.projects_scored} projects scored
                 </span>
               </div>
             </div>
-            <span className="text-[13px] font-mono font-black text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
-              ₹{Number(queue.capex_at_risk_cr).toLocaleString()} Cr in queue
-            </span>
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Total Exposure</span>
+              <span className="text-sm font-mono font-black text-rose-700 bg-rose-50 px-4 py-1.5 rounded-full border border-rose-200 shadow-sm">
+                ₹{Number(queue.capex_at_risk_cr).toLocaleString()} Cr
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-2.5">
-            {queue.alerts.map((a, i) => (
-              <div key={a.project_id} className="flex items-start gap-3 p-3.5 rounded-xl border border-border-default hover:bg-slate-50 transition-colors bg-white">
-                <span className="text-[11px] font-mono text-text-muted w-6 shrink-0 pt-0.5 font-bold">#{i + 1}</span>
-                <span className={`px-2.5 py-0.5 rounded-sm text-[10px] font-bold border shrink-0 font-mono ${BAND_CLS[a.risk_band] || BAND_CLS.LOW}`}>
-                  {a.risk_band} {a.risk_score}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-bold text-gov-navy truncate" title={a.project_name}>
-                    {a.project_name}
+          <div className="space-y-3">
+            <AnimatePresence>
+              {queue.alerts.map((a, i) => (
+                <motion.div 
+                  variants={itemVariants} 
+                  key={a.project_id} 
+                  className={`group relative flex items-center gap-4 p-4 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition-all hover:-translate-y-0.5 overflow-hidden`}
+                >
+                  {/* Heat gradient side strip based on risk */}
+                  <div className={`absolute top-0 left-0 bottom-0 w-1 ${a.risk_band === 'CRITICAL' ? 'bg-rose-500' : a.risk_band === 'HIGH' ? 'bg-amber-500' : a.risk_band === 'MODERATE' ? 'bg-sky-500' : 'bg-emerald-500'}`}></div>
+                  
+                  <span className="text-[12px] font-mono text-slate-400 font-bold ml-2 w-5 text-right">#{i + 1}</span>
+                  
+                  <div className={`px-3 py-1 rounded-md text-[10px] font-bold border shrink-0 font-mono flex flex-col items-center justify-center min-w-[70px] ${BAND_CLS[a.risk_band] || BAND_CLS.LOW} ${a.risk_band === 'CRITICAL' ? 'animate-pulse' : ''}`}>
+                    <span>{a.risk_band}</span>
+                    <span className="text-[12px] leading-none mt-0.5">{a.risk_score}</span>
                   </div>
-                  <div className="text-[11px] text-text-muted mt-0.5">{a.why_flagged}</div>
-                </div>
-                <span className="text-[12px] font-mono font-bold text-gov-navy shrink-0">
-                  ₹{Number(a.capex_cr).toLocaleString()} Cr
-                </span>
-              </div>
-            ))}
+                  
+                  <div className="min-w-0 flex-1 pl-2">
+                    <div className="text-[14px] font-bold text-slate-900 truncate group-hover:text-amber-600 transition-colors">
+                      {a.project_name}
+                    </div>
+                    {/* The full reason shows on hover for long text, but is normally truncated to 1 line */}
+                    <div className="text-[12px] text-slate-500 mt-1 line-clamp-1 group-hover:line-clamp-3 transition-all duration-300">{a.why_flagged}</div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end shrink-0 pl-4 border-l border-slate-100">
+                    <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Project Value</span>
+                    <span className="text-[14px] font-mono font-bold text-slate-800">
+                      ₹{Number(a.capex_cr).toLocaleString()} Cr
+                    </span>
+                    <button className="mt-2 text-[10px] font-bold uppercase tracking-wider text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Investigate <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        </section>
+        </motion.div>
       )}
     </div>
   );
 }
-
