@@ -96,9 +96,23 @@ export default function AmeyMasterView() {
 
             {/* Top Emblem & Official Identity */}
             <div className="relative z-10 flex flex-col items-center justify-center space-y-2 mb-2 pt-1 text-center">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wider uppercase backdrop-blur-md mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>National Infrastructure Pipeline · MoSPI · CCEA Sovereign Oversight</span>
+              {/* Sovereign Authority Classification Strip — Balanced 50% Centered Axis */}
+              <div className="w-full max-w-3xl mx-auto flex items-center justify-center text-[10px] sm:text-[11px] font-mono tracking-[0.14em] uppercase mb-1.5 select-none">
+                <div className="flex-1 flex items-center justify-end gap-2 sm:gap-2.5">
+                  <span className="h-px w-6 sm:w-16 bg-gradient-to-r from-transparent to-amber-400/50 flex-1 max-w-[80px]" />
+                  <span className="text-slate-200 font-medium whitespace-nowrap">National Infrastructure Pipeline</span>
+                  <span className="text-amber-400/60">·</span>
+                </div>
+
+                <span className="px-1 text-amber-300 font-bold text-[10.5px] sm:text-[11px] shrink-0 tracking-wider">
+                  MoSPI
+                </span>
+
+                <div className="flex-1 flex items-center justify-start gap-2 sm:gap-2.5">
+                  <span className="text-amber-400/60">·</span>
+                  <span className="text-slate-200 font-medium whitespace-nowrap">CCEA Sovereign Oversight</span>
+                  <span className="h-px w-6 sm:w-16 bg-gradient-to-l from-transparent to-amber-400/50 flex-1 max-w-[80px]" />
+                </div>
               </div>
 
               <div className="flex items-center justify-center">

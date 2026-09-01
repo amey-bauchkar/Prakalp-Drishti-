@@ -15,148 +15,7 @@ import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
 
-/* ─── Sovereign Government Utility Bar (data.gov.in Style) ───────── */
-function UtilityBar() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('prakalp:theme') || 'default');
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('prakalp:fontSize') || 'normal');
-  const session = useSession();
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('prakalp:theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    if (fontSize === 'normal') {
-      document.documentElement.removeAttribute('data-font-size');
-    } else {
-      document.documentElement.setAttribute('data-font-size', fontSize);
-    }
-    localStorage.setItem('prakalp:fontSize', fontSize);
-  }, [fontSize]);
-
-  return (
-    <div className="bg-[#0060B6] text-white text-[11.5px] font-sans border-b border-[#00509E] select-none">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between">
-        {/* Left: Initiative Tag */}
-        <div className="flex items-center gap-2">
-          <span className="font-medium tracking-wide">A Digital India &amp; MoSPI Initiative</span>
-          <span className="text-white/40 hidden md:inline">|</span>
-          <span className="text-white/90 hidden md:inline font-devanagari">भारत सरकार · Government of India</span>
-        </div>
-
-        {/* Right: Theme Selector & Social / Utility Badges */}
-        <div className="flex items-center gap-3.5">
-          {/* Theme Selector (Standard / High-Contrast / Dark) */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium hidden sm:inline text-white/95">Theme:</span>
-            <div className="flex items-center gap-1 bg-white/10 p-0.5 rounded border border-white/20">
-              <button
-                onClick={() => setTheme('default')}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
-                  theme === 'default' ? 'bg-white text-[#0060B6] shadow-xs' : 'text-white/80 hover:text-white'
-                }`}
-                title="Standard Institutional Theme"
-              >
-                Standard
-              </button>
-              <button
-                onClick={() => setTheme('contrast')}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
-                  theme === 'contrast' ? 'bg-yellow-400 text-black shadow-xs font-black' : 'text-white/80 hover:text-white'
-                }`}
-                title="GIGW High Contrast Mode"
-              >
-                High Contrast
-              </button>
-              <button
-                onClick={() => setTheme('dark')}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all ${
-                  theme === 'dark' ? 'bg-slate-900 text-white shadow-xs' : 'text-white/80 hover:text-white'
-                }`}
-                title="Dark Console Mode"
-              >
-                Dark
-              </button>
-            </div>
-          </div>
-
-          {/* Text Size Accessibility Controls (GIGW standard: A- A A+) */}
-          <div className="hidden sm:flex items-center gap-0.5 bg-white/10 p-0.5 rounded border border-white/20 font-mono text-[10px]">
-            <button
-              onClick={() => setFontSize('normal')}
-              className={`px-1.5 py-0.5 rounded ${fontSize === 'normal' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
-              title="Standard text size"
-            >
-              A
-            </button>
-            <button
-              onClick={() => setFontSize('large')}
-              className={`px-1.5 py-0.5 rounded ${fontSize === 'large' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
-              title="Large text size (+10%)"
-            >
-              A+
-            </button>
-            <button
-              onClick={() => setFontSize('larger')}
-              className={`px-1.5 py-0.5 rounded ${fontSize === 'larger' ? 'bg-white text-[#0060B6] font-bold' : 'text-white/80 hover:text-white'}`}
-              title="Extra large text size (+20%)"
-            >
-              A++
-            </button>
-          </div>
-
-          {/* Social / GIGW Official Links */}
-          <div className="flex items-center gap-1.5">
-            <a
-              href="https://www.facebook.com/MoSPI.GoI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors"
-              title="Official MoSPI Facebook"
-            >
-              <Facebook className="w-3 h-3 fill-current" />
-            </a>
-
-            <a
-              href="https://twitter.com/GoI_MoSPI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-5 h-5 rounded-full bg-white text-[#0060B6] flex items-center justify-center hover:bg-slate-100 transition-colors font-bold text-[10px]"
-              title="Official MoSPI X (Twitter)"
-            >
-              <span className="font-sans font-black text-[10px] leading-none">𝕏</span>
-            </a>
-
-            <a
-              href="https://data.gov.in"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-5 h-5 rounded-full bg-white text-[#FF9933] flex items-center justify-center hover:bg-slate-100 transition-colors"
-              title="Open Government Data Portal"
-            >
-              <Rss className="w-2.5 h-2.5" />
-            </a>
-          </div>
-
-          {/* Active Session / Sign Out if authenticated */}
-          {session && (
-            <div className="flex items-center gap-1.5 bg-white/15 px-2 py-0.5 rounded border border-white/30 text-[10px]">
-              <ShieldCheck className="w-3 h-3 text-emerald-300 shrink-0" />
-              <span className="font-bold">{session.username}</span>
-              <button
-                onClick={clearSession}
-                className="text-white/80 hover:text-white underline ml-1 font-semibold"
-              >
-                Sign out
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ─── Institutional Header + Navigation (data.gov.in Style) ──── */
 function InstitutionalHeader() {
@@ -263,16 +122,32 @@ function InstitutionalHeader() {
           {/* Vertical Divider */}
           <div className="h-5 w-px bg-slate-300" />
 
-          {/* Login / Register or Role Status */}
+          {/* Login / Register or Role Status with Sign Out */}
           {session ? (
-            <div className="flex items-center gap-1.5 text-[11.5px] font-heading font-bold text-[#0060B6]">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>{session.username}</span>
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs">
+              <div className="flex items-center gap-1.5 text-[12px] font-heading font-bold text-[#0060B6]">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>{session.username}</span>
+                {session.role && (
+                  <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-blue-100/80 text-[#0060B6] font-bold uppercase tracking-wider">
+                    {session.role}
+                  </span>
+                )}
+              </div>
+              <div className="h-3.5 w-px bg-slate-300 mx-0.5" />
+              <button
+                onClick={clearSession}
+                className="flex items-center gap-1 text-[11px] font-heading font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
+                title="Sign out of console"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Sign out</span>
+              </button>
             </div>
           ) : (
             <Link
               to="/decision-hub"
-              className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer"
+              className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer px-2 py-1 rounded hover:bg-slate-50 transition-colors"
             >
               LOGIN | REGISTER
             </Link>
@@ -330,6 +205,36 @@ function InstitutionalHeader() {
                 </NavLink>
               );
             })}
+
+            {session ? (
+              <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between px-3 py-2 text-xs bg-slate-50 rounded-lg">
+                <div className="flex items-center gap-1.5 font-bold text-[#0060B6]">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>{session.username}</span>
+                  {session.role && (
+                    <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold uppercase">
+                      {session.role}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={clearSession}
+                  className="flex items-center gap-1 text-rose-600 font-bold text-xs hover:bg-rose-50 px-2 py-1 rounded transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign out</span>
+                </button>
+              </div>
+            ) : (
+              <div className="pt-2 mt-2 border-t border-slate-100 px-3 py-1">
+                <Link
+                  to="/decision-hub"
+                  className="block text-center py-2 bg-[#0060B6] text-white rounded-lg font-bold text-xs"
+                >
+                  LOGIN | REGISTER
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       )}
@@ -376,6 +281,45 @@ function InstitutionalFooter() {
               <div className="pt-2 text-[11.5px] text-slate-400 space-y-1.5 border-t border-slate-800/80">
                 <div><span className="text-slate-300 font-medium">Nodal Division:</span> Infrastructure &amp; Project Monitoring Division (IPMD)</div>
                 <div><span className="text-slate-300 font-medium">Headquarters:</span> Khurshid Lal Bhawan, Janpath, New Delhi – 110001</div>
+              </div>
+
+              {/* Official Social Channels & Network */}
+              <div className="pt-2.5 border-t border-slate-800/80 space-y-2">
+                <div className="text-[11px] font-bold text-amber-400/90 uppercase tracking-wider font-heading">
+                  Official MoSPI Accounts
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href="https://twitter.com/GoI_MoSPI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors text-[11px] font-medium"
+                    title="Official MoSPI X (Twitter)"
+                  >
+                    <span className="font-sans font-black text-[11px]">𝕏</span>
+                    <span>@GoI_MoSPI</span>
+                  </a>
+                  <a
+                    href="https://www.facebook.com/MoSPI.GoI"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors text-[11px] font-medium"
+                    title="Official MoSPI Facebook"
+                  >
+                    <Facebook className="w-3.5 h-3.5 fill-current text-blue-400" />
+                    <span>MoSPI.GoI</span>
+                  </a>
+                  <a
+                    href="https://data.gov.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors text-[11px] font-medium"
+                    title="Open Government Data Portal RSS"
+                  >
+                    <Rss className="w-3.5 h-3.5 text-amber-400" />
+                    <span>data.gov.in</span>
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -591,7 +535,6 @@ export default function App() {
             all of them on every route change before reaching the analysis. */}
         <a href="#main-content" className="skip-to-content">Skip to main content</a>
 
-        <UtilityBar />
         <InstitutionalHeader />
 
         <main id="main-content" tabIndex={-1} className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
