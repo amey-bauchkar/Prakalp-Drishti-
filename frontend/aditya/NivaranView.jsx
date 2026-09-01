@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Scale, FileText, AlertOctagon, ShieldAlert, Sparkles, Building2, 
-  CheckCircle2, AlertTriangle, ArrowRight, RefreshCw, Send, Sliders, ChevronRight, Gavel
+  CheckCircle2, AlertTriangle, ArrowRight, RefreshCw, Send, Sliders, ChevronRight, Gavel,
+  Info, ShieldCheck, Check, ChevronDown, ChevronUp, Layers, HelpCircle
 } from 'lucide-react';
 import LoginGate from '../amey/LoginGate.jsx';
 
@@ -10,6 +11,12 @@ export default function NivaranView() {
   const [selectedProjectId, setSelectedProjectId] = useState('PRJ-NH-2026-089');
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Accordion state: default expand first flagged clause
+  const [expandedClause, setExpandedClause] = useState(0);
+
+  // Collapsible Sandbox state
+  const [showSandbox, setShowSandbox] = useState(false);
 
   // Custom Clause Sandbox State
   const [customText, setCustomText] = useState(
@@ -131,62 +138,63 @@ export default function NivaranView() {
   const niv = profileData?.nivaran_assessment;
   const meta = profileData?.project_metadata;
   const litigationProb = niv?.litigation_probability ?? 0.78;
-  const gaugeOffset = 251.2 - (251.2 * litigationProb);
+  const riskPct = Math.round(litigationProb * 100);
+  const isCritical = litigationProb >= 0.65;
+  const isModerate = litigationProb >= 0.35 && litigationProb < 0.65;
+  const riskBadge = isCritical 
+    ? 'bg-rose-100 text-rose-800 border-rose-300' 
+    : isModerate 
+      ? 'bg-amber-100 text-amber-800 border-amber-300' 
+      : 'bg-emerald-100 text-emerald-800 border-emerald-300';
 
   return (
     <LoginGate>
-      <div className="space-y-8 font-sans pb-16">
+      <div className="space-y-6 font-sans pb-16">
         
-        {/* ═══════ MODULE HERO HEADER ═══════ */}
-        <div className="bg-slate-900 text-white rounded-2xl p-7 sm:p-9 border border-slate-800 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold uppercase tracking-wider">
-                <Scale className="w-4 h-4 text-indigo-400" />
-                <span>NIVARAN · Contractual, Legal &amp; Dispute Risk Engine</span>
+        {/* ═══════ 1. COMMAND HEADER ═══════ */}
+        <div className="command-header p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent mb-2">
+                <Scale className="w-3.5 h-3.5" />
+                <span>NIVARAN · LEGAL &amp; DISPUTE RADAR</span>
               </div>
-              <h1 className="font-heading font-extrabold text-[28px] sm:text-[34px] text-white leading-tight tracking-tight">
-                Contractual Vulnerability &amp; Dispute Preemption
+              <h1 className="font-heading font-extrabold text-[22px] sm:text-[26px] tracking-[-0.025em] text-white leading-tight">
+                Contract Dispute Risk &amp; Vulnerability Preemption
               </h1>
-              <p className="text-slate-300 text-[14px] leading-relaxed max-w-2xl">
-                NLP scrutiny of CPWD GCC / EPC clauses, empirical analysis of contractor litigation histories, 
-                and predictive arbitration modeling to preempt contractor abandonment before high-court stays.
+              <p className="text-[12.5px] text-ink-200 leading-relaxed mt-1.5">
+                NLP scrutiny of CPWD GCC / EPC clauses, empirical analysis of contractor litigation history, 
+                and predictive arbitration modeling to preempt contractor work-stoppages before high-court stays.
               </p>
             </div>
 
-            {/* Quick Stat Strip */}
-            <div className="lg:col-span-4 bg-slate-950/80 border border-slate-800 rounded-xl p-4.5 grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-[10.5px] font-bold text-slate-400 uppercase">Monitored Contracts</div>
-                <div className="font-mono text-[22px] font-extrabold text-white mt-0.5">2,207</div>
-                <div className="text-[9.5px] text-slate-500 mt-0.5">CPWD GCC &amp; FIDIC</div>
-              </div>
-              <div>
-                <div className="text-[10.5px] font-bold text-slate-400 uppercase">Mean Dispute Risk</div>
-                <div className="font-mono text-[22px] font-extrabold text-red-400 mt-0.5">64.2%</div>
-                <div className="text-[9.5px] text-slate-500 mt-0.5">High / Critical Class</div>
+            <div className="flex items-center gap-3">
+              <div className="panel p-3 bg-white/[0.05] border-white/15 text-right">
+                <div className="text-[9.5px] uppercase tracking-wider text-ink-300 font-bold">Monitored Contracts</div>
+                <div className="text-[20px] font-heading font-extrabold text-white leading-tight">2,207</div>
+                <div className="text-[10px] text-red-300 font-mono mt-0.5 font-bold">64.2% High / Critical Risk</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ═══════ PROJECT SELECTOR BAR ═══════ */}
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Building2 className="w-5 h-5 text-gov-navy shrink-0" />
-            <div>
-              <div className="text-[11px] font-bold text-text-muted uppercase">Select Monitored Infrastructure Project</div>
+        {/* ═══════ 2. STREAMLINED PROJECT DOSSIER BAR ═══════ */}
+        <div className="panel p-3.5 bg-gov-surface border border-gov-border rounded-sm flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Building2 className="w-5 h-5 text-[#0060B6] shrink-0" />
+            <div className="min-w-0 flex-1">
+              <div className="text-[9.5px] font-bold text-gov-muted uppercase tracking-wider font-heading">
+                Active Project Dossier Under Audit
+              </div>
               <select
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
-                className="font-heading font-bold text-[14px] text-gov-navy bg-slate-50 border border-slate-300 rounded px-3 py-1 mt-0.5 focus:outline-none focus:border-indigo-600 cursor-pointer"
+                className="font-heading font-bold text-[13px] text-gov-navy bg-gov-surface-2 border border-gov-border rounded-xs px-2.5 py-1 mt-0.5 focus:outline-none focus:border-[#0060B6] cursor-pointer w-full max-w-xl truncate"
               >
                 {projects.length > 0 ? (
                   projects.map((p) => (
                     <option key={p.project_id} value={p.project_id}>
-                      {p.project_name} ({p.project_id}) — ₹{p.total_sanctioned_cost_cr} Cr
+                      {p.project_name} (#{p.project_id}) — ₹{Number(p.total_sanctioned_cost_cr || 0).toLocaleString()} Cr
                     </option>
                   ))
                 ) : (
@@ -197,168 +205,253 @@ export default function NivaranView() {
           </div>
 
           {meta && (
-            <div className="flex items-center gap-4 text-xs font-sans">
-              <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-800 border border-blue-200 font-bold">
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold text-[11px]">
                 {meta.sector}
               </span>
-              <span className="text-text-secondary">
-                Agency: <strong className="text-gov-navy">{meta.executing_agency}</strong>
+              <span className="px-2.5 py-1 rounded bg-gov-surface-2 text-gov-navy border border-gov-border font-heading font-bold text-[11px]">
+                🏢 {meta.executing_agency}
               </span>
-              <span className="text-text-secondary font-mono">
-                Sanctioned: <strong className="text-gov-navy">₹{meta.total_sanctioned_cost_cr.toLocaleString()} Cr</strong>
+              <span className="px-2.5 py-1 rounded bg-gov-surface-2 text-gov-navy border border-gov-border font-mono font-bold text-[11px]">
+                💰 ₹{Number(meta.total_sanctioned_cost_cr || 0).toLocaleString()} Cr
               </span>
             </div>
           )}
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl p-12 text-center text-slate-500 font-medium border border-slate-200 flex items-center justify-center gap-3">
-            <RefreshCw className="w-5 h-5 animate-spin text-indigo-600" />
-            <span>Analyzing contract legal risks and contractor litigation exposure...</span>
+          <div className="panel p-10 text-center text-xs text-gov-muted space-y-2">
+            <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <div>Auditing contract legal vulnerability and arbitration probability...</div>
           </div>
         ) : (
           <>
-            {/* ═══════ DISPUTE GAUGE & CLAUSE BREAKDOWN ═══════ */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* ═══════ 3. BALANCED 2-COLUMN MAIN CONTENT ═══════ */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              {/* Left Column: Risk Gauge Card */}
-              <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-md flex flex-col justify-between space-y-6">
-                <div>
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              {/* Left Column: Dispute Risk Assessment */}
+              <div className="lg:col-span-5 panel p-5 bg-gov-surface border border-gov-border rounded-sm flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  {/* Card Title */}
+                  <div className="flex items-center justify-between border-b border-gov-border pb-2.5">
                     <div className="flex items-center gap-2">
-                      <Scale className="w-5 h-5 text-indigo-600" />
-                      <h3 className="font-heading font-extrabold text-[16px] text-gov-navy">
-                        Dispute Probability Gauge
+                      <Scale className="w-4 h-4 text-[#0060B6]" />
+                      <h3 className="font-heading font-extrabold text-[13px] text-gov-navy uppercase tracking-wide">
+                        Dispute Risk Index
                       </h3>
                     </div>
-                    <span className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
-                      niv?.dispute_risk_level === 'CRITICAL' ? 'bg-red-100 text-red-700 border border-red-200' :
-                      niv?.dispute_risk_level === 'HIGH' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                      'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                    }`}>
-                      {niv?.dispute_risk_level || 'HIGH'} RISK
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${riskBadge}`}>
+                      {niv?.dispute_risk_level || (isCritical ? 'CRITICAL' : isModerate ? 'HIGH' : 'LOW')} RISK
                     </span>
                   </div>
 
-                  {/* Circular Gauge */}
-                  <div className="flex flex-col items-center justify-center py-6">
-                    <div className="relative w-44 h-44 flex items-center justify-center">
-                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" className="text-slate-100" fill="transparent" />
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="40"
-                          stroke="currentColor"
-                          strokeWidth="8"
-                          className={`${litigationProb > 0.6 ? 'text-red-500' : litigationProb > 0.3 ? 'text-amber-500' : 'text-emerald-500'} transition-all duration-1000 ease-out`}
-                          fill="transparent"
-                          strokeDasharray="251.2"
-                          strokeDashoffset={gaugeOffset}
-                          strokeLinecap="round"
+                  {/* 1. Sleek Horizontal 3-Zone Risk Meter (Replaces Big Circle) */}
+                  <div className="p-3.5 bg-gov-surface-2 rounded-xs border border-gov-border space-y-2.5">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gov-muted font-heading block">
+                          Litigation Probability
+                        </span>
+                        <div className="text-[26px] font-heading font-extrabold text-gov-navy leading-none mt-1">
+                          {riskPct}%{' '}
+                          <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded border inline-block ml-1 align-middle ${riskBadge}`}>
+                            {isCritical ? 'High Dispute Exposure' : isModerate ? 'Moderate Caution' : 'Low Dispute Risk'}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[10.5px] font-mono text-gov-muted">
+                        Threshold: &gt;65% Critical
+                      </span>
+                    </div>
+
+                    {/* 3-Zone Segmented Bar with Needle Marker */}
+                    <div className="space-y-1">
+                      <div className="relative w-full h-2.5 bg-slate-200 rounded-full overflow-hidden flex">
+                        <div className="w-[35%] bg-emerald-500 h-full" title="Low Risk (0-35%)" />
+                        <div className="w-[30%] bg-amber-500 h-full" title="Moderate Risk (35-65%)" />
+                        <div className="w-[35%] bg-rose-500 h-full" title="Critical Risk (65-100%)" />
+                      </div>
+                      <div className="relative w-full h-2">
+                        <div
+                          className="absolute -top-1 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[5px] border-b-gov-navy transform -translate-x-1/2"
+                          style={{ left: `${Math.min(98, Math.max(2, riskPct))}%` }}
                         />
-                      </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                        <span className="text-[34px] font-black text-gov-navy font-mono leading-none">
-                          {Math.round(litigationProb * 100)}%
-                        </span>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                          Litigation Prob.
-                        </span>
+                      </div>
+                      <div className="flex justify-between text-[9px] font-mono text-gov-muted font-bold">
+                        <span className="text-emerald-700">0% LOW</span>
+                        <span className="text-amber-700">35% MODERATE</span>
+                        <span className="text-rose-700">65% CRITICAL</span>
+                        <span>100%</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Dual Meters */}
-                  <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs">
+                  {/* 2. Executive Verdict 3-Point Checklist */}
+                  <div className="p-3 bg-white border border-gov-border rounded-xs space-y-2 text-xs">
+                    <div className="text-[9.5px] font-bold text-gov-muted uppercase tracking-wider font-heading">
+                      Executive Legal Summary
+                    </div>
+                    <div className="space-y-1.5 text-[11.5px] text-gov-navy">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span><strong>Standard Agreement:</strong> Verified CPWD GCC / EPC standard format.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0 mt-0.5" />
+                        <span><strong>Key Risk Area:</strong> Uncapped price escalation &amp; phased land possession.</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                        <span><strong>Recommended Action:</strong> Appoint Dispute Avoidance Board within 14 days.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. Dual Indicator Meters */}
+                  <div className="space-y-3 bg-gov-surface-2 p-3 rounded-xs border border-gov-border text-xs">
                     <div>
                       <div className="flex justify-between font-bold mb-1">
-                        <span className="text-slate-700">NLP Clause Ambiguity Index</span>
+                        <span className="text-gov-navy font-heading text-[11px]">Contract Clause Ambiguity</span>
                         <span className="text-indigo-700 font-mono">{niv?.clause_risk_score ?? 0.85} / 1.0</span>
                       </div>
-                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div className="text-[10px] text-gov-muted mb-1">Vague, one-sided, or open-ended contract clauses.</div>
+                      <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                         <div className="bg-indigo-600 h-full rounded-full" style={{ width: `${(niv?.clause_risk_score ?? 0.85) * 100}%` }} />
                       </div>
                     </div>
 
                     <div>
                       <div className="flex justify-between font-bold mb-1">
-                        <span className="text-slate-700">Contractor Litigation Exposure</span>
+                        <span className="text-gov-navy font-heading text-[11px]">Contractor Past Dispute Record</span>
                         <span className="text-red-600 font-mono">{niv?.contractor_litigation_index ?? 78.5} / 100</span>
                       </div>
-                      <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                      <div className="text-[10px] text-gov-muted mb-1">Frequency of historical lawsuits, claims, and stay orders.</div>
+                      <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-full rounded-full" style={{ width: `${niv?.contractor_litigation_index ?? 78.5}%` }} />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Preemptive Action Box */}
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-1">
-                  <div className="text-[10.5px] font-extrabold text-amber-900 uppercase flex items-center gap-1.5">
-                    <ShieldAlert className="w-4 h-4 text-amber-700 shrink-0" />
-                    <span>Statutory Preemption Protocol:</span>
+                {/* Preemptive Action Protocol Alert Box */}
+                <div className="bg-amber-50 border border-amber-200 rounded-xs p-3 space-y-1">
+                  <div className="text-[10px] font-extrabold text-amber-900 uppercase flex items-center gap-1.5 font-heading">
+                    <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                    <span>Statutory Preemption Protocol</span>
                   </div>
-                  <p className="text-[12px] text-amber-950 font-medium leading-snug">
+                  <p className="text-[11px] text-amber-950 leading-relaxed font-sans">
                     {niv?.recommended_preemptive_action || 'Establish dispute avoidance board and mandate escrow account release for variation orders.'}
                   </p>
                 </div>
               </div>
 
-              {/* Right Column: Flagged Clauses Detailed Scrutiny */}
-              <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200 shadow-md space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              {/* Right Column: Flagged Contract Clauses (Accordion Style) */}
+              <div className="lg:col-span-7 panel p-5 bg-gov-surface border border-gov-border rounded-sm space-y-3.5">
+                <div className="flex items-center justify-between border-b border-gov-border pb-2.5">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-indigo-600" />
-                    <h3 className="font-heading font-extrabold text-[16px] text-gov-navy">
+                    <FileText className="w-4 h-4 text-[#0060B6]" />
+                    <h3 className="font-heading font-extrabold text-[13px] text-gov-navy uppercase tracking-wide">
                       Flagged Contract Clauses &amp; Legal Traps
                     </h3>
                   </div>
-                  <span className="text-[12px] font-mono font-bold text-slate-500">
+                  <span className="text-[11px] font-mono font-bold text-gov-muted">
                     {niv?.flagged_clauses?.length || 0} Clauses Flagged
                   </span>
                 </div>
 
-                <div className="space-y-3.5 max-h-[480px] overflow-y-auto pr-1">
+                <p className="text-[11.5px] text-gov-muted">
+                  Click any clause below to inspect the verbatim contract wording, legal implications, and suggested amendments.
+                </p>
+
+                {/* Compact Accordion List */}
+                <div className="space-y-2.5 max-h-[520px] overflow-y-auto pr-1">
                   {niv?.flagged_clauses && niv.flagged_clauses.length > 0 ? (
-                    niv.flagged_clauses.map((clause, idx) => (
-                      <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-indigo-300 transition-all space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
-                              {clause.category || clause.clause_id}
-                            </span>
-                            <h4 className="font-heading font-bold text-[13.5px] text-gov-navy">
-                              {clause.clause_title}
-                            </h4>
+                    niv.flagged_clauses.map((clause, idx) => {
+                      const isExpanded = expandedClause === idx;
+                      const isCrit = clause.severity === 'CRITICAL';
+                      const isHigh = clause.severity === 'HIGH';
+
+                      return (
+                        <div
+                          key={idx}
+                          className={`rounded-xs border transition-all duration-150 overflow-hidden ${
+                            isExpanded 
+                              ? 'border-[#0060B6] bg-gov-surface shadow-xs' 
+                              : 'border-gov-border bg-gov-surface hover:bg-gov-surface-2'
+                          }`}
+                        >
+                          {/* Accordion Summary Row (Always Visible) */}
+                          <div
+                            onClick={() => setExpandedClause(isExpanded ? -1 : idx)}
+                            className="p-3 flex items-center justify-between gap-3 cursor-pointer select-none"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                              <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-black uppercase shrink-0 border ${
+                                isCrit ? 'bg-red-100 text-red-700 border-red-200' :
+                                isHigh ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                                'bg-blue-100 text-blue-800 border-blue-200'
+                              }`}>
+                                {clause.severity}
+                              </span>
+
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono text-[10px] font-bold text-indigo-900 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-100">
+                                    {clause.category || clause.clause_id}
+                                  </span>
+                                  <h4 className="font-heading font-bold text-[12.5px] text-gov-navy truncate">
+                                    {clause.clause_title}
+                                  </h4>
+                                </div>
+                                {!isExpanded && (
+                                  <div className="text-[11px] text-gov-muted truncate mt-0.5">
+                                    {clause.risk_reason || clause.legal_risk_reason}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <button className="text-gov-muted hover:text-gov-navy p-1">
+                              {isExpanded ? <ChevronUp className="w-4 h-4 text-[#0060B6]" /> : <ChevronDown className="w-4 h-4" />}
+                            </button>
                           </div>
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                            clause.severity === 'CRITICAL' ? 'bg-red-100 text-red-700 border border-red-200' :
-                            clause.severity === 'HIGH' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
-                            {clause.severity} SEVERITY
-                          </span>
+
+                          {/* Accordion Expanded Details */}
+                          {isExpanded && (
+                            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-gov-border/60 bg-gov-surface-2/40 text-xs">
+                              {/* Verbatim snippet */}
+                              <div>
+                                <span className="text-[9.5px] font-bold uppercase tracking-wider text-gov-muted font-heading block mb-1">
+                                  Contract Agreement Wording:
+                                </span>
+                                <p className="text-[11.5px] text-slate-800 font-sans italic bg-white p-2.5 rounded-xs border border-gov-border">
+                                  "{clause.snippet || clause.detected_text}"
+                                </p>
+                              </div>
+
+                              {/* Legal Ramification */}
+                              <div className="text-[11.5px] text-gov-navy leading-relaxed">
+                                <strong className="text-slate-900 font-heading">Legal Ramification: </strong>
+                                {clause.risk_reason || clause.legal_risk_reason}
+                              </div>
+
+                              {/* Recommended Amendment */}
+                              {(clause.suggested_amendment || clause.recommended_amendment) && (
+                                <div className="text-[11px] text-emerald-800 bg-emerald-50/80 p-2.5 rounded-xs border border-emerald-200 font-medium flex items-start gap-2">
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                                  <div>
+                                    <strong className="font-heading">Recommended Amendment: </strong>
+                                    {clause.suggested_amendment || clause.recommended_amendment}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
-
-                        <p className="text-[12.5px] text-slate-700 font-sans italic bg-white p-2.5 rounded border border-slate-200">
-                          "{clause.snippet || clause.detected_text}"
-                        </p>
-
-                        <div className="text-[12px] text-text-secondary leading-relaxed">
-                          <strong className="text-slate-900">Legal Ramification: </strong>
-                          {clause.risk_reason || clause.legal_risk_reason}
-                        </div>
-
-                        {(clause.suggested_amendment || clause.recommended_amendment) && (
-                          <div className="text-[11.5px] text-emerald-800 bg-emerald-50 p-2 rounded border border-emerald-200 font-medium">
-                            <strong>Recommended Amendment: </strong> {clause.suggested_amendment || clause.recommended_amendment}
-                          </div>
-                        )}
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
-                    <div className="p-8 text-center text-slate-400 font-medium">
+                    <div className="p-8 text-center text-gov-muted text-xs">
                       No high-risk clauses identified in current standard agreement.
                     </div>
                   )}
@@ -367,88 +460,110 @@ export default function NivaranView() {
 
             </div>
 
-            {/* ═══════ INTERACTIVE CONTRACT CLAUSE NLP TESTER ═══════ */}
-            <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider">
-                    <Sparkles className="w-4 h-4" />
-                    <span>Real-Time NLP Clause Scrutiny Sandbox</span>
-                  </div>
-                  <h3 className="font-heading font-extrabold text-[20px] text-white">
-                    Test Custom Tender Agreement / CPWD GCC Clause
-                  </h3>
+            {/* ═══════ 4. OPTIONAL TENDER AUDIT SANDBOX (COLLAPSIBLE) ═══════ */}
+            <div className="panel border border-gov-border rounded-sm bg-gov-surface overflow-hidden">
+              <div
+                onClick={() => setShowSandbox(!showSandbox)}
+                className="panel-head p-3.5 bg-gov-surface-2 flex items-center justify-between cursor-pointer hover:bg-gov-surface-3 select-none transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#0060B6]" />
+                  <span className="font-heading font-extrabold text-[12.5px] text-gov-navy uppercase tracking-wide">
+                    Tender Clause NLP Audit Simulator (Optional Sandbox)
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-900 border border-blue-200">
+                    Audit Custom Clauses
+                  </span>
                 </div>
-                <button
-                  onClick={handleEvaluateCustom}
-                  disabled={evaluating}
-                  className="btn-saffron-pill text-[13px] py-2.5 px-6 self-start sm:self-auto shrink-0 shadow-md cursor-pointer flex items-center gap-2"
-                >
-                  {evaluating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Gavel className="w-4 h-4" />}
-                  <span>Run NLP Legal Audit</span>
-                </button>
+                <div className="flex items-center gap-1 text-[11.5px] font-bold text-[#0060B6]">
+                  <span>{showSandbox ? 'Hide Sandbox' : 'Test a Custom Clause'}</span>
+                  {showSandbox ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-7 space-y-2">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase">
-                    Paste Raw Contract Clause / Special Conditions of Contract (SCC):
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={customText}
-                    onChange={(e) => setCustomText(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3.5 text-[13px] text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    placeholder="Enter contractual text..."
-                  />
-                  <div className="flex items-center justify-between text-[11px] text-slate-400">
-                    <span>Evaluates against 4 major litigation pattern dictionaries.</span>
+              {showSandbox && (
+                <div className="p-5 border-t border-gov-border space-y-4 bg-gov-surface">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-gov-border">
+                    <div>
+                      <h4 className="font-heading font-bold text-[13.5px] text-gov-navy">
+                        Test Custom Tender Agreement / CPWD GCC Clause
+                      </h4>
+                      <p className="text-[11px] text-gov-muted">
+                        Simulates contract clause vulnerability against 4 standard dispute pattern dictionaries.
+                      </p>
+                    </div>
+
                     <button
-                      onClick={() => setCustomText('Clause 10CC: Price escalation shall be calculated strictly on WPI base index of sanction year. Deviation beyond 25% requires prior sanction of Cabinet committee.')}
-                      className="text-indigo-400 hover:underline"
+                      onClick={handleEvaluateCustom}
+                      disabled={evaluating}
+                      className="px-4 py-2 bg-[#0060B6] hover:bg-[#004f98] text-white rounded-xs text-xs font-heading font-bold transition-colors cursor-pointer flex items-center gap-2 self-start sm:self-auto"
                     >
-                      Load Sample Clause 10CC
+                      {evaluating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Gavel className="w-3.5 h-3.5" />}
+                      <span>Run NLP Legal Audit</span>
                     </button>
                   </div>
-                </div>
 
-                <div className="lg:col-span-5 bg-slate-950/80 rounded-xl p-5 border border-slate-800 space-y-3 min-h-[160px]">
-                  <div className="text-[11px] font-bold text-slate-400 uppercase border-b border-slate-800/80 pb-2">
-                    Live Audit Output
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                    <div className="lg:col-span-7 space-y-2">
+                      <div className="flex items-center justify-between text-[11px] text-gov-muted">
+                        <span className="font-heading font-bold uppercase">Contract Clause Text:</span>
+                        <button
+                          onClick={() => setCustomText('Clause 10CC: Price escalation shall be calculated strictly on WPI base index of sanction year. Deviation beyond 25% requires prior sanction of Cabinet committee.')}
+                          className="text-[#0060B6] hover:underline font-bold cursor-pointer"
+                        >
+                          Load Sample Clause 10CC
+                        </button>
+                      </div>
+
+                      <textarea
+                        rows={4}
+                        value={customText}
+                        onChange={(e) => setCustomText(e.target.value)}
+                        className="w-full bg-white border border-gov-border rounded-xs p-3 text-[12px] text-gov-navy font-mono focus:outline-none focus:border-[#0060B6] transition-colors"
+                        placeholder="Paste contractual text to audit..."
+                      />
+                    </div>
+
+                    <div className="lg:col-span-5 bg-gov-surface-2 rounded-xs p-4 border border-gov-border space-y-3 min-h-[140px]">
+                      <div className="text-[10.5px] font-bold text-gov-muted uppercase font-heading border-b border-gov-border pb-1.5">
+                        Live Audit Output
+                      </div>
+
+                      {evalError ? (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-xs text-xs text-red-800 space-y-1">
+                          <div className="font-bold flex items-center gap-1.5 text-red-700">
+                            <AlertTriangle className="w-3.5 h-3.5" />
+                            <span>Evaluation Error</span>
+                          </div>
+                          <p className="text-[11px]">{evalError}</p>
+                        </div>
+                      ) : customResult ? (
+                        <div className="space-y-2 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gov-muted">Predicted Dispute Risk:</span>
+                            <span className="font-mono text-sm font-extrabold text-red-700">
+                              {Math.round(customResult.litigation_probability * 100)}% ({customResult.dispute_risk_level})
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gov-muted">Flagged Vulnerabilities:</span>
+                            <span className="font-mono font-bold text-amber-800">
+                              {customResult.flagged_clauses.length} Anomalies Found
+                            </span>
+                          </div>
+                          <div className="p-2.5 rounded-xs bg-white border border-gov-border text-[11.5px] text-gov-navy">
+                            {customResult.recommended_preemptive_action}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-6 text-gov-muted text-xs">
+                          Click "Run NLP Legal Audit" above to test contract clause vulnerability.
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {evalError ? (
-                    <div className="p-3 bg-red-950/60 border border-red-800 rounded-lg text-xs text-red-300 space-y-1">
-                      <div className="font-bold flex items-center gap-1.5 text-red-400">
-                        <AlertTriangle className="w-3.5 h-3.5" />
-                        <span>Evaluation Error</span>
-                      </div>
-                      <p className="text-[11px] leading-relaxed">{evalError}</p>
-                    </div>
-                  ) : customResult ? (
-                    <div className="space-y-2.5 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">Predicted Litigation Risk:</span>
-                        <span className="font-mono text-base font-extrabold text-red-400">
-                          {Math.round(customResult.litigation_probability * 100)}% ({customResult.dispute_risk_level})
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">Flagged Risk Categories:</span>
-                        <span className="font-mono font-bold text-amber-400">
-                          {customResult.flagged_clauses.length} Anomalies
-                        </span>
-                      </div>
-                      <div className="p-2.5 rounded bg-slate-900 border border-slate-800 text-[11.5px] text-slate-300">
-                        {customResult.recommended_preemptive_action}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-6 text-slate-500 text-xs font-mono">
-                      Click "Run NLP Legal Audit" to inspect clause vulnerability in real time.
-                    </div>
-                  )}
                 </div>
-              </div>
+              )}
             </div>
 
           </>

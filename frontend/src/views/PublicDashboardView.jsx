@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  MapPin, Eye, FileText, Landmark, Search, Filter, ShieldCheck,
+  MapPin, FileText, Landmark, Search, Filter, ShieldCheck,
   Calendar, Building2, TrendingUp, AlertTriangle, CheckCircle2,
   Clock, ArrowRight, ExternalLink, HelpCircle, Layers, Info, Check,
-  TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3
+  TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3,
+  Download, ChevronLeft, ChevronsLeft, ChevronsRight, RotateCcw,
+  SlidersHorizontal, ArrowUpDown, ListFilter
 } from 'lucide-react';
 import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
 import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
@@ -110,12 +112,6 @@ export default function PublicDashboardView() {
       icon: FileText
     },
     {
-      id: 'pratibimb',
-      label: 'Satellite Verification (PRATIBIMB)',
-      desc: 'Dual-epoch optical before/after ground inspection (ESRI World Imagery)',
-      icon: Eye
-    },
-    {
       id: 'clearances',
       label: 'Statutory Clearances (ANUMATI)',
       desc: 'PARIVESH Forest, EIA, Wildlife & Land Acquisition pipeline',
@@ -154,7 +150,7 @@ export default function PublicDashboardView() {
             </h1>
             <p className="text-[12.5px] text-ink-200 leading-relaxed max-w-2xl mt-1.5">
               Proactive public disclosure for Central Sector Mega-Projects under Section 4(1)(b) of the Right to Information Act, 2005.
-              Citizens can inspect project baselines, capex progress, verified satellite ground-truth, and statutory environmental clearances.
+              Citizens can inspect project baselines, capex progress, and statutory environmental clearances.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -198,6 +194,7 @@ export default function PublicDashboardView() {
           allProjects={projects}
           activeProject={activeProject}
           selectProject={selectProject}
+          setActiveTab={setActiveTab}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedSector={selectedSector}
@@ -219,16 +216,7 @@ export default function PublicDashboardView() {
         />
       )}
 
-      {/* ── Tab 3: Satellite Verification (PRATIBIMB) ── */}
-      {activeTab === 'pratibimb' && (
-        <PublicPratibimbTab
-          projects={projects}
-          activeProject={activeProject}
-          selectProject={selectProject}
-        />
-      )}
-
-      {/* ── Tab 4: Environmental & Statutory Clearance Status (ANUMATI) ── */}
+      {/* ── Tab 3: Environmental & Statutory Clearance Status (ANUMATI) ── */}
       {activeTab === 'clearances' && (
         <PublicClearancesTab />
       )}
@@ -237,13 +225,14 @@ export default function PublicDashboardView() {
 }
 
 /* ═════════════════════════════════════════════════════════════════════════════
-   TAB 1: PUBLIC METADATA & TRACKING (MAP + DIRECTORY)
+   TAB 1: PUBLIC METADATA & TRACKING (MAP + DIRECTORY + ALL 2,207 MASTER TABLE)
    ═════════════════════════════════════════════════════════════════════════════ */
 function PublicMetadataTab({
   projects,
-  allProjects,
+  allProjects = [],
   activeProject,
   selectProject,
+  setActiveTab,
   searchQuery,
   setSearchQuery,
   selectedSector,
@@ -257,12 +246,206 @@ function PublicMetadataTab({
   // Reported by BaseMapLayer when cached tiles are missing. Held here rather
   // than inside the map so the notice can sit over the pane at a readable size.
   const [basemapStatus, setBasemapStatus] = useState('ok');
+  const [dirLimit, setDirLimit] = useState(100);
+
+  // Master Table State
+  const [tableSearch, setTableSearch] = useState('');
+  const [tableStatus, setTableStatus] = useState('All');
+  const [tableSector, setTableSector] = useState('All');
+  const [tableState, setTableState] = useState('All');
+  const [sortBy, setSortBy] = useState('cost_desc');
+  const [pageSize, setPageSize] = useState(50);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset directory scroll limit when search / filter changes
+  useEffect(() => {
+    setDirLimit(100);
+  }, [searchQuery, selectedSector, selectedState]);
+
+  // Reset table pagination when table filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tableSearch, tableStatus, tableSector, tableState, sortBy, pageSize]);
+
   const mapCenter = activeProject?.latitude && activeProject?.longitude
     ? [activeProject.latitude, activeProject.longitude]
     : [22.5937, 78.9629];
 
   const status = activeProject ? getProjectStatus(activeProject) : null;
   const progressPct = Math.min(100, Math.max(0, Number(activeProject?.progress_perc || 0)));
+
+  // Filter projects that have georeferenced coordinates for Map
+  const mappedProjects = useMemo(() => {
+    return projects.filter((p) => {
+      const lat = Number(p.latitude);
+      const lon = Number(p.longitude);
+      return Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0);
+    });
+  }, [projects]);
+
+  // Handle directory scroll to load more
+  const handleDirScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop <= clientHeight + 150 && dirLimit < projects.length) {
+      setDirLimit((prev) => Math.min(prev + 100, projects.length));
+    }
+  };
+
+  // Master Table Filtered and Sorted Dataset
+  const corpus = allProjects.length > 0 ? allProjects : projects;
+  
+  // High-level Corpus Statistics
+  const portfolioStats = useMemo(() => {
+    let onTrack = 0;
+    let monitored = 0;
+    let critical = 0;
+    let totalCapex = 0;
+
+    corpus.forEach((p) => {
+      const st = getProjectStatus(p);
+      if (st.label === 'ON TRACK') onTrack += 1;
+      else if (st.label === 'UNDER MONITORING') monitored += 1;
+      else critical += 1;
+      totalCapex += Number(p.revised_cost_cr || p.original_cost_cr || 0);
+    });
+
+    return {
+      total: corpus.length,
+      onTrack,
+      monitored,
+      critical,
+      totalCapex,
+    };
+  }, [corpus]);
+
+  const tableFiltered = useMemo(() => {
+    let list = corpus;
+
+    // Search query
+    if (tableSearch.trim()) {
+      const q = tableSearch.toLowerCase();
+      list = list.filter((p) => {
+        return (
+          p.project_name?.toLowerCase().includes(q) ||
+          String(p.project_id).includes(q) ||
+          p.company?.toLowerCase().includes(q) ||
+          p.sector?.toLowerCase().includes(q) ||
+          p.state?.toLowerCase().includes(q)
+        );
+      });
+    }
+
+    // Status filter
+    if (tableStatus !== 'All') {
+      list = list.filter((p) => getProjectStatus(p).label === tableStatus);
+    }
+
+    // Sector filter
+    if (tableSector !== 'All') {
+      list = list.filter((p) => p.sector === tableSector);
+    }
+
+    // State filter
+    if (tableState !== 'All') {
+      list = list.filter((p) => p.state === tableState);
+    }
+
+    // Sorting
+    return [...list].sort((a, b) => {
+      const costA = Number(a.revised_cost_cr || a.original_cost_cr || 0);
+      const costB = Number(b.revised_cost_cr || b.original_cost_cr || 0);
+      const delayA = Number(a.delayed_months || 0);
+      const delayB = Number(b.delayed_months || 0);
+      const progA = Number(a.progress_perc || 0);
+      const progB = Number(b.progress_perc || 0);
+
+      if (sortBy === 'cost_desc') return costB - costA;
+      if (sortBy === 'cost_asc') return costA - costB;
+      if (sortBy === 'delay_desc') return delayB - delayA;
+      if (sortBy === 'delay_asc') return delayA - delayB;
+      if (sortBy === 'progress_desc') return progB - progA;
+      if (sortBy === 'progress_asc') return progA - progB;
+      if (sortBy === 'id_asc') return Number(a.project_id) - Number(b.project_id);
+      if (sortBy === 'name_asc') return (a.project_name || '').localeCompare(b.project_name || '');
+      return 0;
+    });
+  }, [corpus, tableSearch, tableStatus, tableSector, tableState, sortBy]);
+
+  // Master Table Pagination
+  const effectivePageSize = pageSize === 'All' ? Math.max(tableFiltered.length, 1) : Number(pageSize);
+  const totalPages = Math.ceil(tableFiltered.length / effectivePageSize) || 1;
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const pagedProjects = useMemo(() => {
+    if (pageSize === 'All') return tableFiltered;
+    const start = (safeCurrentPage - 1) * effectivePageSize;
+    return tableFiltered.slice(start, start + effectivePageSize);
+  }, [tableFiltered, safeCurrentPage, effectivePageSize, pageSize]);
+
+  // Export current table dataset as CSV
+  const handleExportCSV = () => {
+    const headers = [
+      'Project ID',
+      'Project Name',
+      'Sector',
+      'State',
+      'Executing Agency (PSU)',
+      'Original Cost (Cr)',
+      'Revised Cost (Cr)',
+      'Cost Overrun (Cr)',
+      'Cost Overrun (%)',
+      'Physical Progress (%)',
+      'Schedule Delay (Months)',
+      'Original Sanction Date',
+      'Target Date',
+      'Status',
+      'Geocode Precision',
+      'Latitude',
+      'Longitude'
+    ];
+
+    const csvRows = tableFiltered.map((p) => {
+      const orig = Number(p.original_cost_cr || 0);
+      const rev = Number(p.revised_cost_cr || orig);
+      const diff = rev - orig;
+      const diffPct = orig > 0 ? ((diff / orig) * 100).toFixed(1) : '0.0';
+      const st = getProjectStatus(p);
+      return [
+        p.project_id,
+        `"${(p.project_name || '').replace(/"/g, '""')}"`,
+        `"${(p.sector || '').replace(/"/g, '""')}"`,
+        `"${(p.state || '').replace(/"/g, '""')}"`,
+        `"${(p.company || '').replace(/"/g, '""')}"`,
+        orig,
+        rev,
+        diff.toFixed(2),
+        diffPct,
+        p.progress_perc || 0,
+        p.delayed_months || 0,
+        p.sanction_date || '',
+        p.target_date || '',
+        st.label,
+        p.geocode_precision || '',
+        p.latitude || '',
+        p.longitude || ''
+      ].join(',');
+    });
+
+    const csvString = '\uFEFF' + [headers.join(','), ...csvRows].join('\r\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `prakalp_drishti_public_projects_ledger_${tableFiltered.length}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSelectAndFocus = (pid) => {
+    selectProject(pid);
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  };
 
   return (
     <div className="space-y-6">
@@ -323,11 +506,11 @@ function PublicMetadataTab({
       {/* Interactive Pan-India Map + Directory Filter Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Geographic Leaflet Map */}
-        <div className="lg:col-span-7 panel flex flex-col h-[560px]">
+        <div className="lg:col-span-7 panel flex flex-col h-[580px]">
           <div className="panel-head">
             <span className="panel-title">
               <MapPin className="w-3.5 h-3.5 text-[#0060B6]" />
-              Pan-India Geographic Distribution
+              Pan-India Geographic Distribution ({mappedProjects.length.toLocaleString('en-IN')} Georeferenced Sites)
             </span>
             <div className="flex items-center gap-2.5 text-[10px] font-mono">
               <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-600" /> On Track</span>
@@ -340,42 +523,29 @@ function PublicMetadataTab({
             <MapContainer
               center={mapCenter}
               zoom={5}
+              preferCanvas={true}
               style={{ height: '100%', width: '100%' }}
               scrollWheelZoom={false}
             >
               <BaseMapLayer onStatus={setBasemapStatus} />
-              {/* `projects`, not `filteredProjects`. The latter is declared in
-                  PublicDashboardView and is NOT in scope inside this component --
-                  it arrives here as the `projects` prop, already filtered. Both
-                  this map and the directory list below referenced the outer name,
-                  so the entire Nagrik public portal threw
-                  "ReferenceError: filteredProjects is not defined" on every render:
-                  no markers, no directory, and the search/sector/state controls
-                  had nothing left to update. */}
-              {projects.slice(0, 180).map((p) => {
-                // Number(), not a truthiness test: `!p.latitude` treats a
-                // genuine 0.0 as missing and silently drops the marker.
+              {/* Render all georeferenced projects matching filters using high-performance Leaflet canvas */}
+              {mappedProjects.map((p) => {
                 const lat = Number(p.latitude);
                 const lon = Number(p.longitude);
                 if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
                 const pStat = getProjectStatus(p);
                 const isSelected = String(p.project_id) === String(activeProject?.project_id);
-                // 596 of 2,207 projects are placed at a national or state
-                // centroid rather than at the works. Drawing them as solid pins
-                // told the reader the site was known when it is not, so an
-                // approximate location is drawn hollow and dashed and says so
-                // in the popup.
                 const approx = p.location_is_approximate === true;
                 return (
                   <CircleMarker
                     key={p.project_id}
                     center={[lat, lon]}
-                    radius={isSelected ? 8 : 4.5}
+                    radius={isSelected ? 8.5 : 4}
                     pathOptions={{
                       fillColor: pStat.color,
-                      fillOpacity: approx ? 0.12 : (isSelected ? 0.95 : 0.7),
+                      fillOpacity: approx ? 0.22 : (isSelected ? 0.95 : 0.72),
                       color: approx ? pStat.color : (isSelected ? '#071320' : '#ffffff'),
-                      weight: isSelected ? 2.5 : 1,
+                      weight: isSelected ? 2.5 : 0.8,
                       dashArray: approx ? '2 3' : undefined,
                     }}
                     eventHandlers={{
@@ -392,16 +562,17 @@ function PublicMetadataTab({
                           <div className="text-amber-800 bg-amber-50 border border-amber-300 rounded-xs px-1 py-0.5 text-[10px] leading-snug">
                             <strong>Approximate location.</strong> Plotted at a
                             {' '}{String(p.geocode_precision || '').toLowerCase().includes('state')
-                              ? 'state' : 'national'}{' '}centroid, not a surveyed
-                            site coordinate.
+                              ? 'state' : 'national'}{' '}centroid, not a surveyed site coordinate.
                           </div>
                         )}
-                        <button
-                          onClick={() => selectProject(p.project_id)}
-                          className="mt-1 w-full text-center py-1 bg-[#0060B6] text-white rounded-xs font-bold text-[10px]"
-                        >
-                          Select Project
-                        </button>
+                        <div className="pt-1">
+                          <button
+                            onClick={() => handleSelectAndFocus(p.project_id)}
+                            className="w-full text-center py-1 bg-[#0060B6] hover:bg-[#004f98] text-white rounded-xs font-bold text-[10px]"
+                          >
+                            Inspect Dossier
+                          </button>
+                        </div>
                       </div>
                     </Popup>
                   </CircleMarker>
@@ -412,13 +583,13 @@ function PublicMetadataTab({
           </div>
 
           <div className="panel-head border-t border-b-0 py-2">
-            <span className="panel-meta">Click any map pin to activate project dossier</span>
-            <span className="panel-meta">GeoNames 5-Tier Geocoded</span>
+            <span className="panel-meta">Click any map marker to view quick summary and inspect dossier</span>
+            <span className="panel-meta">GeoNames 5-Tier Geocoding Engine</span>
           </div>
         </div>
 
         {/* Right Column: Search & Filtered Project Directory */}
-        <div className="lg:col-span-5 panel flex flex-col h-[560px]">
+        <div className="lg:col-span-5 panel flex flex-col h-[580px]">
           <div className="p-3 border-b border-gov-border bg-gov-surface-2 space-y-2.5 shrink-0">
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-gov-muted absolute left-2.5 top-2.5" />
@@ -429,14 +600,23 @@ function PublicMetadataTab({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 text-xs bg-gov-surface border border-gov-border rounded-xs focus:outline-none focus:border-gov-accent"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-2 text-xs text-gov-muted hover:text-gov-navy"
+                >
+                  ✕
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <select
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
                 className="w-full text-xs bg-gov-surface border border-gov-border rounded-xs p-1.5 text-gov-navy focus:outline-none"
+                aria-label="Filter by sector"
               >
-                {sectors.slice(0, 15).map((s) => (
+                {sectors.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
@@ -444,52 +624,441 @@ function PublicMetadataTab({
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
                 className="w-full text-xs bg-gov-surface border border-gov-border rounded-xs p-1.5 text-gov-navy focus:outline-none"
+                aria-label="Filter by state"
               >
-                {states.slice(0, 20).map((s) => (
+                {states.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </div>
+            {(selectedSector !== 'All' || selectedState !== 'All' || searchQuery) && (
+              <div className="flex items-center justify-between text-[10px] text-gov-muted">
+                <span>Filter Active: {projects.length} of {allProjects.length || 2207} projects match</span>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedSector('All');
+                    setSelectedState('All');
+                  }}
+                  className="text-azure hover:underline flex items-center gap-1 font-semibold"
+                >
+                  <RotateCcw className="w-2.5 h-2.5" /> Reset Filters
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Scrollable list */}
-          <div className="flex-1 overflow-y-auto divide-y divide-gov-border">
-            {projects.slice(0, 60).map((p) => {
-              const isSelected = String(p.project_id) === String(activeProject?.project_id);
-              const pStat = getProjectStatus(p);
-              return (
-                <div
-                  key={p.project_id}
-                  onClick={() => selectProject(p.project_id)}
-                  className={`p-3 cursor-pointer transition-colors ${
-                    isSelected ? 'bg-gov-surface-3 border-l-3 border-gov-accent font-medium' : 'hover:bg-gov-surface-2'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="font-heading text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
-                        <span className="text-[9.5px] font-bold text-[#0060B6] truncate">{p.sector}</span>
+          {/* Scrollable list with progressive expansion for all 2,207 projects */}
+          <div
+            onScroll={handleDirScroll}
+            className="flex-1 overflow-y-auto divide-y divide-gov-border"
+          >
+            {projects.length === 0 ? (
+              <div className="p-8 text-center text-gov-muted text-xs">
+                No projects found matching the current search criteria.
+              </div>
+            ) : (
+              <>
+                {projects.slice(0, dirLimit).map((p) => {
+                  const isSelected = String(p.project_id) === String(activeProject?.project_id);
+                  const pStat = getProjectStatus(p);
+                  return (
+                    <div
+                      key={p.project_id}
+                      onClick={() => selectProject(p.project_id)}
+                      className={`p-3 cursor-pointer transition-colors ${
+                        isSelected ? 'bg-gov-surface-3 border-l-3 border-gov-accent font-medium' : 'hover:bg-gov-surface-2'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className="font-heading text-[9.5px] font-bold text-gov-muted">#{p.project_id}</span>
+                            <span className="text-[9.5px] font-bold text-[#0060B6] truncate">{p.sector}</span>
+                          </div>
+                          <h4 className="text-xs font-bold text-gov-navy truncate">{p.project_name}</h4>
+                          <p className="text-[11px] text-gov-muted truncate mt-0.5">{p.company} · {p.state}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className={`tag ${pStat.tagClass} font-heading font-bold`}>{p.progress_perc}%</span>
+                          <div className="font-heading font-bold text-[11px] text-gov-navy mt-1">
+                            ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
+                          </div>
+                        </div>
                       </div>
-                      <h4 className="text-xs font-bold text-gov-navy truncate">{p.project_name}</h4>
-                      <p className="text-[11px] text-gov-muted truncate mt-0.5">{p.company} · {p.state}</p>
                     </div>
-                    <div className="text-right shrink-0">
-                      <span className={`tag ${pStat.tagClass} font-heading font-bold`}>{p.progress_perc}%</span>
-                      <div className="font-heading font-bold text-[11px] text-gov-navy mt-1">
-                        ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
-                      </div>
+                  );
+                })}
+
+                {dirLimit < projects.length && (
+                  <div className="p-3 bg-gov-surface-2 text-center space-y-1.5 border-t border-gov-border">
+                    <p className="text-[10.5px] text-gov-muted">
+                      Showing {dirLimit} of {projects.length.toLocaleString('en-IN')} projects
+                    </p>
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => setDirLimit((prev) => Math.min(prev + 100, projects.length))}
+                        className="px-2.5 py-1 text-xs bg-gov-surface border border-gov-border rounded-xs text-gov-navy font-semibold hover:bg-gov-surface-3"
+                      >
+                        Load +100 More
+                      </button>
+                      <button
+                        onClick={() => setDirLimit(projects.length)}
+                        className="px-2.5 py-1 text-xs bg-[#0060B6] text-white rounded-xs font-semibold hover:bg-[#004f98]"
+                      >
+                        Show All ({projects.length.toLocaleString('en-IN')})
+                      </button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                )}
+              </>
+            )}
           </div>
 
-          <div className="panel-head border-t border-b-0 py-2">
-            <span className="panel-meta">{projects.length} Projects in Directory</span>
-            <span className="panel-meta">MoSPI Central Sector</span>
+          <div className="panel-head border-t border-b-0 py-2 justify-between">
+            <span className="panel-meta">
+              Showing {Math.min(dirLimit, projects.length).toLocaleString('en-IN')} of {projects.length.toLocaleString('en-IN')} Projects
+            </span>
+            <span className="panel-meta font-semibold">MoSPI Central Sector</span>
           </div>
+        </div>
+      </div>
+
+      {/* ── MASTER PUBLIC TRACKING REGISTER & TABLE (ALL 2,207 PROJECTS) ── */}
+      <div className="panel">
+        <div className="panel-head flex-wrap gap-2 py-3.5">
+          <div>
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-gov-accent" />
+              <span className="panel-title text-sm sm:text-base">
+                Central Sector Mega-Projects Master Public Tracking Register
+              </span>
+              <span className="tag tag-solid font-mono font-bold text-[10px]">
+                {corpus.length.toLocaleString('en-IN')} PROJECTS
+              </span>
+            </div>
+            <p className="panel-meta text-[11px] mt-0.5">
+              RTI Section 4(1)(b) proactive disclosure covering all {portfolioStats.total.toLocaleString('en-IN')} central projects (₹{(portfolioStats.totalCapex / 100000).toFixed(2)} Lakh Cr capex portfolio)
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportCSV}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs bg-[#0060B6] hover:bg-[#004f98] text-white font-heading font-semibold text-xs shadow-xs transition-colors"
+              title="Download filtered projects as CSV"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export CSV ({tableFiltered.length.toLocaleString('en-IN')})</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4 Summary Stat Mini Cards */}
+        <div className="hairgrid hairgrid-4 border-b border-gov-border">
+          <div className="metric-cell py-2.5">
+            <span className="metric-label">Total Corpus Projects</span>
+            <span className="metric-value metric-value-sm font-heading font-bold text-gov-navy">
+              {portfolioStats.total.toLocaleString('en-IN')}
+            </span>
+            <span className="metric-sub">₹{(portfolioStats.totalCapex / 100000).toFixed(1)} Lakh Cr Total Capex</span>
+          </div>
+          <div className="metric-cell py-2.5">
+            <span className="metric-label">On Track Baseline</span>
+            <span className="metric-value metric-value-sm font-heading font-bold metric-pos">
+              {portfolioStats.onTrack.toLocaleString('en-IN')}
+            </span>
+            <span className="metric-sub">{((portfolioStats.onTrack / portfolioStats.total) * 100).toFixed(1)}% within milestones</span>
+          </div>
+          <div className="metric-cell py-2.5">
+            <span className="metric-label">Under Monitoring</span>
+            <span className="metric-value metric-value-sm font-heading font-bold text-amber-600">
+              {portfolioStats.monitored.toLocaleString('en-IN')}
+            </span>
+            <span className="metric-sub">{((portfolioStats.monitored / portfolioStats.total) * 100).toFixed(1)}% schedule alerts</span>
+          </div>
+          <div className="metric-cell py-2.5">
+            <span className="metric-label">Critical Delay</span>
+            <span className="metric-value metric-value-sm font-heading font-bold metric-neg">
+              {portfolioStats.critical.toLocaleString('en-IN')}
+            </span>
+            <span className="metric-sub">{((portfolioStats.critical / portfolioStats.total) * 100).toFixed(1)}% &gt;24 mo delay</span>
+          </div>
+        </div>
+
+        {/* Master Table Filter Controls Toolbar */}
+        <div className="p-3.5 bg-gov-surface-2 border-b border-gov-border flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Status Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'All', label: `All Projects (${corpus.length})` },
+              { id: 'ON TRACK', label: `On Track (${portfolioStats.onTrack})` },
+              { id: 'UNDER MONITORING', label: `Monitored (${portfolioStats.monitored})` },
+              { id: 'CRITICAL DELAY', label: `Critical Delay (${portfolioStats.critical})` }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTableStatus(tab.id)}
+                className={`px-2.5 py-1 text-xs rounded-xs font-heading font-semibold transition-colors ${
+                  tableStatus === tab.id
+                    ? 'bg-gov-navy text-white shadow-xs'
+                    : 'bg-gov-surface border border-gov-border text-gov-navy hover:bg-gov-surface-3'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search, Sort and Page Size */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative min-w-[180px] sm:min-w-[220px]">
+              <Search className="w-3.5 h-3.5 text-gov-muted absolute left-2.5 top-2.5" />
+              <input
+                type="text"
+                placeholder="Search all 2,207 projects..."
+                value={tableSearch}
+                onChange={(e) => setTableSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-gov-surface border border-gov-border rounded-xs focus:outline-none focus:border-gov-accent"
+              />
+              {tableSearch && (
+                <button
+                  onClick={() => setTableSearch('')}
+                  className="absolute right-2.5 top-1.5 text-xs text-gov-muted hover:text-gov-navy"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-gov-muted whitespace-nowrap">Sort:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="text-xs bg-gov-surface border border-gov-border rounded-xs py-1.5 px-2 text-gov-navy focus:outline-none"
+              >
+                <option value="cost_desc">Cost: Highest First</option>
+                <option value="cost_asc">Cost: Lowest First</option>
+                <option value="delay_desc">Delay: Most Delayed</option>
+                <option value="delay_asc">Delay: Least Delayed</option>
+                <option value="progress_desc">Progress: Highest First</option>
+                <option value="progress_asc">Progress: Lowest First</option>
+                <option value="id_asc">Project ID</option>
+                <option value="name_asc">Project Name (A-Z)</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-gov-muted whitespace-nowrap">Rows:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => setPageSize(e.target.value === 'All' ? 'All' : Number(e.target.value))}
+                className="text-xs bg-gov-surface border border-gov-border rounded-xs py-1.5 px-2 text-gov-navy focus:outline-none"
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={250}>250</option>
+                <option value="All">All 2,207</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* The Master Public Ledger Table */}
+        <div className="panel-flush overflow-x-auto">
+          <table className="ledger w-full text-left">
+            <thead>
+              <tr>
+                <th className="w-16">ID</th>
+                <th className="min-w-[240px]">Project Name & Sector</th>
+                <th className="min-w-[170px]">Agency & State</th>
+                <th className="num min-w-[130px]">Sanction / Revised Cost</th>
+                <th className="min-w-[120px]">Physical Progress</th>
+                <th className="min-w-[110px]">Schedule Delay</th>
+                <th className="min-w-[110px]">Audit Status</th>
+                <th className="text-right min-w-[130px]">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pagedProjects.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-gov-muted text-xs">
+                    No central sector mega-projects match the current filter and search query.
+                  </td>
+                </tr>
+              ) : (
+                pagedProjects.map((p) => {
+                  const pStat = getProjectStatus(p);
+                  const origCost = Number(p.original_cost_cr || 0);
+                  const revCost = Number(p.revised_cost_cr || origCost);
+                  const costDiff = revCost - origCost;
+                  const costDiffPct = origCost > 0 ? (costDiff / origCost) * 100 : 0;
+                  const prog = Math.min(100, Math.max(0, Number(p.progress_perc || 0)));
+                  const delayed = Number(p.delayed_months || 0);
+                  const isSelected = String(p.project_id) === String(activeProject?.project_id);
+
+                  return (
+                    <tr
+                      key={p.project_id}
+                      className={isSelected ? 'bg-gov-surface-3 font-medium' : 'hover:bg-gov-surface-2'}
+                    >
+                      {/* Column 1: ID */}
+                      <td>
+                        <span className="font-heading font-bold text-[11px] text-gov-muted">
+                          #{p.project_id}
+                        </span>
+                      </td>
+
+                      {/* Column 2: Name & Sector */}
+                      <td>
+                        <div className="font-bold text-xs text-gov-navy leading-snug">
+                          {p.project_name}
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                          <span className="tag tag-info text-[9px] py-0">{p.sector}</span>
+                          {p.location_is_approximate && (
+                            <span className="text-[9px] text-amber-700 bg-amber-50 px-1 rounded-xs border border-amber-200">
+                              Centroid Approx
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Column 3: Executing Agency & State */}
+                      <td>
+                        <div className="text-xs font-semibold text-gov-navy truncate max-w-[200px]" title={p.company}>
+                          {p.company || '—'}
+                        </div>
+                        <div className="text-[11px] text-gov-muted flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-2.5 h-2.5" />
+                          <span>{p.state || 'Pan-India'}</span>
+                        </div>
+                      </td>
+
+                      {/* Column 4: Cost */}
+                      <td className="num font-mono">
+                        <div className="font-heading font-bold text-xs text-gov-navy">
+                          ₹{revCost.toLocaleString('en-IN')} Cr
+                        </div>
+                        <div className="text-[10px] text-gov-muted">
+                          Orig: ₹{origCost.toLocaleString('en-IN')} Cr
+                          {costDiff > 0 && (
+                            <span className="text-amber-700 ml-1 font-semibold">
+                              (+{costDiffPct.toFixed(0)}%)
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Column 5: Physical Progress */}
+                      <td>
+                        <div className="flex items-center justify-between text-[10.5px] font-heading font-bold text-gov-navy mb-1">
+                          <span>{prog.toFixed(1)}%</span>
+                        </div>
+                        <div className="w-full bg-gov-border h-1.5 rounded-xs overflow-hidden">
+                          <div
+                            className="bg-[#0060B6] h-full rounded-xs transition-all duration-300"
+                            style={{ width: `${prog}%` }}
+                          />
+                        </div>
+                      </td>
+
+                      {/* Column 6: Delay */}
+                      <td>
+                        <div className={`font-heading font-bold text-xs ${delayed > 0 ? 'metric-neg' : 'metric-pos'}`}>
+                          {delayed > 0 ? `+${delayed} Mos` : 'Nil Delay'}
+                        </div>
+                        <div className="text-[10px] text-gov-muted truncate">
+                          Target: {p.target_date?.slice(0, 10) || '—'}
+                        </div>
+                      </td>
+
+                      {/* Column 7: Status */}
+                      <td>
+                        <span className={`tag ${pStat.tagClass} font-heading font-bold text-[9.5px]`}>
+                          {pStat.label}
+                        </span>
+                      </td>
+
+                      {/* Column 8: Action Buttons */}
+                      <td className="text-right">
+                        <button
+                          onClick={() => handleSelectAndFocus(p.project_id)}
+                          className="px-2.5 py-1 bg-[#0060B6] hover:bg-[#004f98] text-white rounded-xs text-[10.5px] font-heading font-bold transition-colors"
+                          title="Focus in active dossier and map"
+                        >
+                          Inspect
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Master Table Pagination Footer */}
+        <div className="p-3 bg-gov-surface-2 border-t border-gov-border flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="text-gov-muted text-[11.5px]">
+            Showing{' '}
+            <strong className="text-gov-navy font-heading">
+              {tableFiltered.length === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1}
+            </strong>{' '}
+            to{' '}
+            <strong className="text-gov-navy font-heading">
+              {Math.min(safeCurrentPage * effectivePageSize, tableFiltered.length)}
+            </strong>{' '}
+            of{' '}
+            <strong className="text-gov-navy font-heading">
+              {tableFiltered.length.toLocaleString('en-IN')}
+            </strong>{' '}
+            Filtered Projects ({corpus.length.toLocaleString('en-IN')} Total Corpus)
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1">
+              <button
+                disabled={safeCurrentPage <= 1}
+                onClick={() => setCurrentPage(1)}
+                className="p-1.5 rounded-xs border border-gov-border bg-gov-surface disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gov-surface-3 text-gov-navy"
+                title="First Page"
+              >
+                <ChevronsLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                disabled={safeCurrentPage <= 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="p-1.5 rounded-xs border border-gov-border bg-gov-surface disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gov-surface-3 text-gov-navy"
+                title="Previous Page"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+
+              <span className="px-3 py-1 font-heading font-bold text-xs text-gov-navy bg-gov-surface border border-gov-border rounded-xs">
+                Page {safeCurrentPage} of {totalPages}
+              </span>
+
+              <button
+                disabled={safeCurrentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="p-1.5 rounded-xs border border-gov-border bg-gov-surface disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gov-surface-3 text-gov-navy"
+                title="Next Page"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                disabled={safeCurrentPage >= totalPages}
+                onClick={() => setCurrentPage(totalPages)}
+                className="p-1.5 rounded-xs border border-gov-border bg-gov-surface disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gov-surface-3 text-gov-navy"
+                title="Last Page"
+              >
+                <ChevronsRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -687,346 +1256,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 }
 
 /* ═════════════════════════════════════════════════════════════════════════════
-   TAB 3: PUBLIC SATELLITE VERIFICATION (PRATIBIMB)
-   ═════════════════════════════════════════════════════════════════════════════ */
-function PublicPratibimbTab({ projects, activeProject, selectProject }) {
-  const [sliderPos, setSliderPos] = useState(50);
-  const [imagery, setImagery] = useState(null);
-  const [plan, setPlan] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!activeProject?.project_id) return undefined;
-    let dead = false;
-    setLoading(true);
-    setPlan(null);
-    setSliderPos(50);
-    // The plan decides which of three panels this tab becomes. Fetched
-    // alongside the imagery record so the tab never renders a swipe comparator
-    // for a project that must not have one.
-    Promise.all([
-      fetch(`/api/satellite/${activeProject.project_id}`)
-        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
-      fetch(`/api/eo/viewport/${activeProject.project_id}`)
-        .then((r) => (r.ok ? r.json() : null)).catch(() => null),
-    ]).then(([img, vp]) => {
-      if (dead) return;
-      setImagery(img);
-      setPlan(vp);
-      setLoading(false);
-    });
-    return () => { dead = true; };
-  }, [activeProject]);
-
-  if (!activeProject) return null;
-
-  // Fail closed. Until the plan arrives — or if it never does — this tab
-  // behaves as locator_only. 596 of 2,207 projects must never be shown a
-  // satellite comparison, and defaulting to the richest panel would hand it to
-  // exactly those.
-  const mode = plan?.render_mode || (loading ? null : 'locator_only');
-  const isCompound = mode === 'compound';
-  const isCorridor = mode === 'corridor';
-  const isLocatorOnly = mode === 'locator_only';
-
-  // Served through the tiered endpoint. The old /satellite-imagery/ static
-  // path was removed: it exposed 4,414 files anonymously with no redaction.
-  const beforeImg = `/api/eo/tile/${activeProject.project_id}/BEFORE`;
-  const afterImg = `/api/eo/tile/${activeProject.project_id}/AFTER`;
-  const gsd = plan?.gsd_m_per_px ?? null;
-  const isSubMetre = typeof gsd === 'number' && gsd > 0 && gsd < 1.0;
-  const status = getProjectStatus(activeProject);
-
-  return (
-    <div className="space-y-6">
-      {/* RTI Inspection Header */}
-      <div className="panel panel-accent">
-        <div className="panel-head">
-          <div className="flex items-center gap-2">
-            <Eye className="w-3.5 h-3.5 text-gov-accent" />
-            <span className="panel-title">PRATIBIMB · Public Earth Observation Verification</span>
-          </div>
-          <span className="panel-meta">RTI Citizens' Right to Inspect Public Works</span>
-        </div>
-
-        <div className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="tag tag-solid font-heading font-bold">#{activeProject.project_id}</span>
-              {/* Was "SENTINEL-2 OPTICAL PASS". This imagery is ESRI ArcGIS
-                  World Imagery and its Wayback archive, not Sentinel-2 — a
-                  different sensor, a different resolution and a different
-                  revisit cadence. Naming the wrong satellite on a public
-                  transparency page is a provenance error, not a label choice. */}
-              <span className="tag tag-info font-heading font-bold">
-                ESRI WORLD IMAGERY · WAYBACK ARCHIVE
-              </span>
-              {!isLocatorOnly && gsd != null && (
-                <span className={`tag font-heading font-bold ${isSubMetre ? 'tag-ok' : 'tag-info'}`}>
-                  {isSubMetre ? `SUB-METRE · ${gsd} m/px` : `${gsd} m/px`}
-                </span>
-              )}
-              {isLocatorOnly && (
-                <span className="tag tag-warn font-heading font-bold">
-                  ADMINISTRATIVE CENTROID
-                </span>
-              )}
-              <span className={`tag ${status.tagClass} font-heading font-bold`}>{status.label}</span>
-            </div>
-            <h3 className="font-heading font-extrabold text-base text-gov-navy leading-tight">
-              {activeProject.project_name}
-            </h3>
-            <p className="text-xs text-gov-muted mt-1 font-sans">
-              {isLocatorOnly
-                ? 'No site-level coordinate is on record for this project, so no satellite comparison is published. An administrative locator is shown below with the reason.'
-                : isCorridor
-                  ? 'Dual-epoch optical imagery of one strip of a linear alignment. One frame covers a fraction of the route; chainage packages index the remainder.'
-                  : 'Dual-epoch optical imagery showing physical ground change between the baseline and the most recent pass held for this site.'}
-            </p>
-          </div>
-
-          <div className="panel p-3 bg-gov-surface-2 shrink-0 text-right">
-            <span className="text-[9.5px] uppercase tracking-wider text-gov-muted block font-bold">Reported Progress</span>
-            <span className="text-2xl font-heading font-extrabold text-gov-navy">{activeProject.progress_perc}%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── LOCATOR ONLY: RTI §4 disclosure, no imagery ──────────────────── */}
-      {isLocatorOnly && (
-        <div className="panel overflow-hidden">
-          <div className="panel-head">
-            <span className="panel-title">Administrative Locator</span>
-            <span className="panel-meta">RTI §4(1)(b) proactive disclosure</span>
-          </div>
-
-          <div className="p-4 sm:p-5">
-            <div className="note note-warn flex items-start gap-2.5 mb-4" role="status">
-              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="text-[11.5px] leading-relaxed font-sans">
-                <strong className="block mb-1 font-heading tracking-wide text-[11px]">
-                  ADMINISTRATIVE CENTROID · SURVEYED SITE PLOT AWAITED
-                </strong>
-                The coordinate held for this project locates its{' '}
-                {String(plan?.geocode_precision || '').includes('STATE') ? 'State' : 'administrative region'}
-                {' '}rather than the works. Publishing satellite imagery framed on
-                it would show unrelated ground — and because that imagery would be
-                genuine and correctly dated, it would appear exactly as
-                authoritative as a true site view. This Ministry therefore
-                withholds the comparison rather than publish a picture of the
-                wrong place.
-                <span className="block mt-1.5">
-                  Cadastral site boundaries for legacy sanctions are being
-                  digitised progressively. Satellite verification for this project
-                  will be published once a surveyed plot boundary is on record.
-                </span>
-              </div>
-            </div>
-
-            {plan?.centre?.[0] != null && plan?.centre?.[1] != null && (
-              <div className="rounded-xs overflow-hidden border border-gov-border">
-                <MapContainer
-                  center={[plan.centre[0], plan.centre[1]]}
-                  zoom={6}
-                  scrollWheelZoom={false}
-                  style={{ height: 360, width: '100%' }}
-                  aria-label="Administrative locator showing the recorded centroid and the area within which the works lie"
-                >
-                  <BaseMapLayer />
-                  <Circle
-                    center={[plan.centre[0], plan.centre[1]]}
-                    radius={plan.geocode_error_radius_m || 100000}
-                    pathOptions={{ color: '#B45309', fillColor: '#F59E0B',
-                                   fillOpacity: 0.10, weight: 1.5, dashArray: '4 4' }}
-                  />
-                </MapContainer>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-gov-border border border-gov-border rounded-xs overflow-hidden mt-4">
-              {[
-                ['Coordinate provenance', plan?.geocode_precision || 'Not recorded'],
-                ['Area of uncertainty', plan?.geocode_error_radius_m != null
-                  ? `${Number(plan.geocode_error_radius_m).toLocaleString('en-IN')} m radius` : '—'],
-                ['Satellite verdict', 'Withheld'],
-              ].map(([k, v]) => (
-                <div key={k} className="bg-white p-3">
-                  <span className="text-[9px] font-bold text-gov-muted uppercase tracking-wide block font-heading">{k}</span>
-                  <span className="text-[12px] font-extrabold text-gov-navy font-heading">{v}</span>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
-              The reported progress figure above is unaffected by this and is
-              disclosed in full. What is withheld is the imagery, not the numbers:
-              a citizen is entitled to the finding, and to know when the Ministry
-              cannot support one from pixels.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ── CORRIDOR: chainage overview above the strip ──────────────────── */}
-      {isCorridor && (
-        <div className="panel overflow-hidden">
-          <div className="panel-head">
-            <span className="panel-title">Corridor Alignment · Chainage Overview</span>
-            <span className="panel-meta">
-              {plan?.frame_covers_m != null
-                ? `strip below covers ${(plan.frame_covers_m / 1000).toFixed(2)} km`
-                : 'linear alignment'}
-            </span>
-          </div>
-          <div className="p-4 sm:p-5">
-            {plan?.packages?.length ? (
-              <>
-                <div className="flex flex-wrap gap-1.5" role="list">
-                  {plan.packages.map((pk) => (
-                    <span key={pk.package} role="listitem"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xs text-[10.5px] font-bold border border-gov-border bg-gov-surface text-gov-navy font-heading">
-                      Package {pk.package}: Km {pk.chainage_km[0]}–{pk.chainage_km[1]}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-[10.5px] text-gov-muted mt-3 leading-relaxed font-sans">
-                  This alignment is divided into {plan.packages.length} chainage
-                  packages. The comparison below shows one strip near the recorded
-                  point — roughly{' '}
-                  <strong className="font-heading text-gov-navy">
-                    {plan.frame_covers_m != null && plan.packages.length
-                      ? ((plan.frame_covers_m / 1000) /
-                         (plan.packages[plan.packages.length - 1].chainage_km[1] || 1) * 100).toFixed(1)
-                      : '—'}%
-                  </strong>{' '}
-                  of the route. Per-package imagery requires the surveyed
-                  alignment, which is not yet published for this project.
-                </p>
-              </>
-            ) : (
-              <p className="text-[10.5px] text-gov-muted leading-relaxed font-sans">
-                The sanctioned route length is not recorded for this project, so
-                chainage packages cannot be listed. The comparison below shows the
-                alignment near the recorded point only, and should not be read as
-                representing the whole route.
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Clean Dual-Epoch Before / After Swipe */}
-      {!isLocatorOnly && (
-      <div className="panel space-y-0 overflow-hidden">
-        <div className="panel-head">
-          <span className="panel-title">Interactive Epoch Comparison</span>
-          <span className="panel-meta">Drag handle to wipe between epochs</span>
-        </div>
-
-        <div className="p-4 sm:p-5 space-y-3">
-          <div className="flex items-center justify-between text-xs text-gov-muted font-mono pb-1 border-b border-gov-border">
-            <span>👈 EPOCH 1: Baseline (Pre-Construction)</span>
-            <span>EPOCH 2: Latest Satellite Pass 👉</span>
-          </div>
-
-          <div className="relative w-full h-[440px] sm:h-[480px] rounded-xs overflow-hidden border border-gov-border select-none bg-slate-950">
-            {/* After Image (Full background) */}
-            <img
-              src={afterImg}
-              alt="Latest Satellite Pass"
-              className="absolute inset-0 w-full h-full object-cover"
-              onError={(e) => { e.target.src = '/logos/satellite_placeholder.jpg'; }}
-            />
-
-            {/* Before Image (Clipped with slider) */}
-            <div
-              className="absolute inset-0 overflow-hidden"
-              style={{ width: `${sliderPos}%` }}
-            >
-              <img
-                src={beforeImg}
-                alt="Baseline Satellite Epoch"
-                className="absolute inset-0 w-full h-full object-cover max-w-none"
-                style={{ width: '100%', height: '100%' }}
-                onError={(e) => { e.target.src = '/logos/satellite_placeholder.jpg'; }}
-              />
-            </div>
-
-            {/* Slider Line & Handle */}
-            <div
-              className="absolute top-0 bottom-0 w-0.5 bg-white shadow-2xl z-20 flex items-center justify-center pointer-events-none"
-              style={{ left: `${sliderPos}%` }}
-            >
-              <div className="w-7 h-7 rounded-full bg-white text-gov-navy shadow-md border-2 border-[#0060B6] flex items-center justify-center text-[10px] font-black">
-                ↔
-              </div>
-            </div>
-
-            {/* Interactive Range Input Overlay */}
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={sliderPos}
-              onChange={(e) => setSliderPos(Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
-              aria-label="Satellite comparison slider"
-            />
-
-            {/* Corner Watermarks */}
-            <div className="absolute bottom-3 left-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
-              EPOCH 1: Baseline Sanction
-            </div>
-            <div className="absolute bottom-3 right-3 z-10 bg-black/75 text-white text-[10.5px] font-heading font-bold px-2.5 py-1 rounded-xs backdrop-blur-xs border border-white/15">
-              EPOCH 2: Latest Pass
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gov-muted pt-1">
-            <div className="flex items-center gap-1.5">
-              {/* Was "Optical sub-meter resolution imagery corroborated against
-                  project coordinates" — untrue twice over. Measured, the finest
-                  framing across all 285 compound projects is 1.18 m/px and most
-                  sit at 2-9 m/px, because zoom is capped so the frame contains
-                  the geocode error. And "corroborated against project
-                  coordinates" asserts a verification that the coordinate's own
-                  provenance does not support. Both now state what was measured. */}
-              {isSubMetre
-                ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                : <Eye className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />}
-              <span className="font-sans">
-                {gsd != null
-                  ? <>Optical imagery at <strong className="font-heading text-gov-navy">{gsd} m/px</strong>
-                      {isSubMetre ? ' (sub-metre).' : '.'}{' '}
-                      {plan?.zoom_limited_by === 'geocode'
-                        ? 'Framed wide enough to contain this coordinate’s uncertainty.'
-                        : 'Framed to this facility class.'}
-                    </>
-                  : 'Optical imagery at the resolution held for this site.'}
-              </span>
-            </div>
-            <span className="font-heading font-semibold text-[11.5px]">
-              {activeProject.location_is_approximate
-                ? <>Approximate area: {Number(activeProject.latitude).toFixed(1)}°N,{' '}
-                    {Number(activeProject.longitude).toFixed(1)}°E{' '}
-                    <span className="text-amber-700">
-                      — {activeProject.geocode_precision || 'low-confidence geocode'};
-                      not a surveyed site coordinate
-                    </span>
-                  </>
-                : <>Site Coordinates: {Number(activeProject.latitude).toFixed(4)}°N,{' '}
-                    {Number(activeProject.longitude).toFixed(4)}°E</>}
-            </span>
-          </div>
-        </div>
-      </div>
-      )}
-    </div>
-  );
-}
-
-/* ═════════════════════════════════════════════════════════════════════════════
-   TAB 4: ENVIRONMENTAL & STATUTORY CLEARANCE STATUS (ANUMATI)
+   TAB 3: ENVIRONMENTAL & STATUTORY CLEARANCE STATUS (ANUMATI)
    ═════════════════════════════════════════════════════════════════════════════ */
 function PublicClearancesTab() {
   const [data, setData] = useState(null);

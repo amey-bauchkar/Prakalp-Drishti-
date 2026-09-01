@@ -17,13 +17,13 @@ const TABS = [
   {
     id: 'solvency',
     label: 'Solvency Matrix',
-    desc: 'D/E · Altman Z · capex by leverage tier across 2,207 projects',
+    desc: 'Contractor financial health, debt burden & delay correlations across 2,207 projects',
     icon: Scale,
   },
   {
     id: 'litigation',
     label: 'Nivaran Legal Radar',
-    desc: 'Arbitration exposure · GCC dispute clauses · stay orders',
+    desc: 'Contract disputes, arbitration claims & court stay risks',
     icon: Gavel,
   },
 ];
