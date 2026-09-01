@@ -164,6 +164,7 @@ differs("one row duplicated", pd.concat([df, df.iloc[[0]]], ignore_index=True))
 
 # A null becoming a value is a real change, not a representation change.
 _d = df.copy()
+_d["Remarks"] = _d["Remarks"].astype(object)
 _d.loc[0, "Remarks"] = "materially new remark"
 differs("a null replaced by real text", _d)
 
