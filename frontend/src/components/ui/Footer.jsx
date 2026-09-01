@@ -148,7 +148,7 @@ export const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© {new Date().getFullYear()} {t('footer.rights')} SIH25031 Practice System.</p>
+          <p>© {new Date().getFullYear()} {t('footer.rights')} Ministry of Statistics &amp; Programme Implementation, Government of India.</p>
           <div className="flex items-center gap-6">
             <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
             <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>

@@ -98,7 +98,7 @@ export default function AmeyMasterView() {
             <div className="relative z-10 flex flex-col items-center justify-center space-y-2 mb-2 pt-1 text-center">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-white text-[11px] font-bold tracking-wider uppercase backdrop-blur-md mb-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Smart India Hackathon 2026 · Problem Statement SIH26103 · MoSPI</span>
+                <span>National Infrastructure Pipeline · MoSPI · CCEA Sovereign Oversight</span>
               </div>
 
               <div className="flex items-center justify-center">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility } from 'lucide-react';
+import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility, ExternalLink } from 'lucide-react';
 
 import AmeyMasterView from '../amey/index.jsx';
 import DecisionHubView from '../amey/DecisionHubView.jsx';
@@ -10,6 +10,7 @@ import SetuVarshaView from './views/SetuVarshaView.jsx';
 import PublicDashboardView from './views/PublicDashboardView.jsx';
 import AdminIngestView from './views/AdminIngestView.jsx';
 import MilestoneTimelineView from './views/MilestoneTimelineView.jsx';
+import PoliciesView from './views/PoliciesView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -470,35 +471,65 @@ function InstitutionalFooter() {
               
               <ul className="space-y-2 text-[12.5px] text-slate-300">
                 <li>
-                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
-                    Website Policies &amp; Disclaimer
-                  </span>
+                  <a
+                    href="/policies?tab=disclaimer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
+                  >
+                    <span>Website Policies &amp; Disclaimer</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
+                  </a>
                 </li>
                 <li>
-                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
-                    Hyperlinking Policy &amp; Terms
-                  </span>
+                  <a
+                    href="/policies?tab=hyperlinking"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
+                  >
+                    <span>Hyperlinking Policy &amp; Terms</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
+                  </a>
                 </li>
                 <li>
-                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
-                    Privacy Policy
-                  </span>
+                  <a
+                    href="/policies?tab=privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
+                  >
+                    <span>Privacy Policy (DPDP Act)</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
+                  </a>
                 </li>
                 <li>
-                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
-                    Accessibility Statement (GIGW 3.0)
-                  </span>
+                  <a
+                    href="/policies?tab=accessibility"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
+                  >
+                    <span>Accessibility Statement (GIGW 3.0)</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
+                  </a>
                 </li>
                 <li>
-                  <span className="text-slate-300 hover:text-amber-300 transition-colors cursor-pointer block">
-                    Feedback &amp; Grievance Redressal
-                  </span>
+                  <a
+                    href="/policies?tab=grievance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
+                  >
+                    <span>Feedback &amp; Grievance Redressal</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
+                  </a>
                 </li>
               </ul>
 
               <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
                 <div>Hosted on <strong className="text-slate-200">National Informatics Centre (NIC)</strong> Platform</div>
-                <div>Designed for <strong className="text-slate-200">Smart India Hackathon (SIH 2026)</strong></div>
+                <div>Executive Division: <strong className="text-slate-200">Infrastructure &amp; Project Monitoring Division (IPMD)</strong></div>
               </div>
             </div>
           </div>
@@ -570,6 +601,7 @@ export default function App() {
             <Route path="/nagrik" element={<PublicDashboardView />} />
             <Route path="/admin/ingest" element={<AdminIngestView />} />
             <Route path="/admin/timeline" element={<MilestoneTimelineView />} />
+            <Route path="/policies" element={<PoliciesView />} />
             <Route path="/public" element={<Navigate to="/nagrik" replace />} />
             <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
 

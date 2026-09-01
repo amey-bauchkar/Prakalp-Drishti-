@@ -8,15 +8,8 @@ export { clearSession };
 /**
  * Sign-in gate for the decision-support console.
  *
- * SIH26103 specifies role-based access, and enforcement is server-side — this screen
- * is the way in, not the security boundary. Signing in as different roles visibly
- * changes what the console will serve, because the API refuses the request, not
- * because a button is hidden.
- *
- * The demo directory is listed on-screen deliberately: this is a prototype meant to be
- * driven by an evaluator who does not have credentials, and pretending otherwise would
- * just mean handing them out verbally. A deployment federates to the Ministry
- * directory and this panel disappears.
+ * MoSPI PAIMANA architecture specifies role-based access, and enforcement is server-side.
+ * Signing in as different roles visibly changes what the console will serve.
  */
 
 const ROLE_ORDER = ['analyst', 'monitoring_officer', 'ministry_officer', 'administrator'];
