@@ -10,19 +10,30 @@ import {
 
 export default function UnifiedCockpitView({ selectedProjectId = '618402', onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId);
+  const [inputVal, setInputVal] = useState(selectedProjectId);
   const [delayShock, setDelayShock] = useState(0);
   const [budgetPool, setBudgetPool] = useState(15000);
   const [riskKappa, setRiskKappa] = useState(0.75);
   const [simData, setSimData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const runSimulation = () => {
+  // Sync when parent changes selectedProjectId
+  useEffect(() => {
+    if (selectedProjectId && selectedProjectId !== projectId) {
+      setProjectId(selectedProjectId);
+      setInputVal(selectedProjectId);
+    }
+  }, [selectedProjectId]);
+
+  const runSimulation = (targetId = projectId) => {
+    const idToRun = String(targetId || projectId).trim();
+    if (!idToRun) return;
     setLoading(true);
     fetch('/api/amey/unified-simulation', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        project_id: projectId,
+        project_id: idToRun,
         delay_shock_months: parseFloat(delayShock),
         budget_pool_cr: parseFloat(budgetPool),
         risk_dial_kappa: parseFloat(riskKappa),
@@ -40,8 +51,18 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
       });
   };
 
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    const cleanId = inputVal.trim();
+    if (cleanId) {
+      setProjectId(cleanId);
+      if (onSelectProject) onSelectProject(cleanId);
+      runSimulation(cleanId);
+    }
+  };
+
   useEffect(() => {
-    runSimulation();
+    runSimulation(projectId);
   }, [projectId]);
 
   const pct = (v, d = 1) => (Number.isFinite(v) ? (v * 100).toFixed(d) + '%' : '—');
@@ -70,22 +91,22 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-black/25 p-2 rounded-sm border border-white/15 shrink-0">
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 bg-black/25 p-2 rounded-sm border border-white/15 shrink-0">
           <input
             type="text"
             placeholder="Enter MoSPI Code (e.g. 706724)"
-            value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
             className="text-[11.5px] bg-ink-900/80 text-white border border-white/20 rounded-sm px-2.5 py-1.5 focus:outline-none focus:border-gov-accent w-52 font-mono tracking-tight placeholder:text-ink-200"
           />
           <button
-            onClick={runSimulation}
-            className="bg-gov-accent text-gov-navy-dark hover:bg-gov-accent-hover py-1.5 px-3.5 rounded-sm text-[11px] font-extrabold uppercase tracking-institutional flex items-center gap-1.5 transition-colors"
+            type="submit"
+            className="bg-gov-accent text-gov-navy-dark hover:bg-gov-accent-hover py-1.5 px-3.5 rounded-sm text-[11px] font-extrabold uppercase tracking-institutional flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>Run Simulation</span>
           </button>
-        </div>
+        </form>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════

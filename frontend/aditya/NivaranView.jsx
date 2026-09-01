@@ -34,7 +34,7 @@ export default function NivaranView() {
   useEffect(() => {
     async function loadInitial() {
       try {
-        const pRes = await fetch('/api/aditya/projects');
+        const pRes = await fetch('/api/aditya/projects?limit=500');
         if (pRes.ok) {
           const pList = await pRes.json();
           setProjects(pList);
@@ -61,6 +61,15 @@ export default function NivaranView() {
         if (res.ok) {
           const json = await res.json();
           setProfileData(json);
+          if (json?.project_metadata) {
+            const meta = json.project_metadata;
+            setProjects((prev) => {
+              if (!prev.some((p) => String(p.project_id) === String(meta.project_id))) {
+                return [{ ...meta }, ...prev];
+              }
+              return prev;
+            });
+          }
         }
       } catch (err) {
         console.error('Failed to load Nivaran data:', err);
@@ -317,7 +326,7 @@ export default function NivaranView() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
-                              {clause.clause_id}
+                              {clause.category || clause.clause_id}
                             </span>
                             <h4 className="font-heading font-bold text-[13.5px] text-gov-navy">
                               {clause.clause_title}
@@ -333,17 +342,17 @@ export default function NivaranView() {
                         </div>
 
                         <p className="text-[12.5px] text-slate-700 font-sans italic bg-white p-2.5 rounded border border-slate-200">
-                          "{clause.detected_text}"
+                          "{clause.snippet || clause.detected_text}"
                         </p>
 
                         <div className="text-[12px] text-text-secondary leading-relaxed">
                           <strong className="text-slate-900">Legal Ramification: </strong>
-                          {clause.legal_risk_reason}
+                          {clause.risk_reason || clause.legal_risk_reason}
                         </div>
 
-                        {clause.suggested_amendment && (
+                        {(clause.suggested_amendment || clause.recommended_amendment) && (
                           <div className="text-[11.5px] text-emerald-800 bg-emerald-50 p-2 rounded border border-emerald-200 font-medium">
-                            <strong>Recommended Amendment: </strong> {clause.suggested_amendment}
+                            <strong>Recommended Amendment: </strong> {clause.suggested_amendment || clause.recommended_amendment}
                           </div>
                         )}
                       </div>

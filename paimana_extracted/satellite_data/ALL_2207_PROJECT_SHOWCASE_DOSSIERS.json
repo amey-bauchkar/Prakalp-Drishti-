@@ -1116,7 +1116,9 @@
     "change_percentile_in_sector": 17.9,
     "audit_status": "LOW_CHANGE_OBSERVED",
     "statutory_recommendation": "NO_ACTION_INDICATED",
-    "audit_severity": "LOW"
+    "audit_severity": "LOW",
+    "latitude": 26.1078,
+    "longitude": 91.5872
   },
   {
     "project_id": "701091",
