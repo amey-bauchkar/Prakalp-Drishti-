@@ -114,6 +114,12 @@ class EntityResolver:
     def __len__(self) -> int:
         return len(self._by_raw)
 
+    def known_raw_names(self) -> List[str]:
+        """Raw COMPANYNAME spellings that resolve. Feeds the onboarding form's
+        agency picker so an officer selects a resolvable name rather than typing one
+        that will be rejected."""
+        return [raw for raw, cid in self._by_raw.items() if cid and cid != UNRESOLVED]
+
     def resolve(self, raw_name: Any) -> Tuple[Optional[str], str]:
         """
         Returns (canonical_id, status) where status is 'resolved' | 'unresolved'.

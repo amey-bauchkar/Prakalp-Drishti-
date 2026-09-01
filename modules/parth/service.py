@@ -117,9 +117,14 @@ class ArthaNivaranEngine:
 
     # ── ingestion ────────────────────────────────────────────────────────
     def _load(self) -> None:
-        if not os.path.exists(DATA_PATH):
-            return
-        df = pd.read_csv(DATA_PATH, dtype={"ProjectId": str})
+        try:
+            from analytics_engine.corpus_source import load_corpus
+            df = load_corpus()
+            df["ProjectId"] = df["ProjectId"].astype(str)
+        except Exception:
+            if not os.path.exists(DATA_PATH):
+                return
+            df = pd.read_csv(DATA_PATH, dtype={"ProjectId": str})
 
         for col, default in (("OriginalCost", 500.0), ("RevisedCost", np.nan),
                              ("PhysicalProgress", 25.0)):

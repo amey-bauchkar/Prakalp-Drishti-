@@ -115,6 +115,63 @@ for fn in sorted(os.listdir(ENGINE_DIR)):
 
 check("no engine reads the master corpus directly", not offenders, str(offenders))
 
+# The same guard across backend/ and modules/, which the engine-only scan above missed.
+#
+# backend/server.py DID bypass the seam: /api/health and /api/projects served the CSV
+# while every engine served Postgres, so a project onboarded through /api/ingest showed
+# up in the forecasts but not in the project list, and the health count stayed frozen at
+# the pre-ingestion figure. Two sources of truth for "which projects exist" does not
+# error; it quietly disagrees with itself.
+#
+# KNOWN_BYPASSES pins the ones still outstanding. They are read-only analytics surfaces
+# that will not see newly onboarded projects until they are routed too. Listing them
+# makes the gap visible and stops a NEW bypass appearing unnoticed.
+KNOWN_BYPASSES = {
+    os.path.join("modules", "parth", "service.py"),
+    os.path.join("modules", "tanmay", "service.py"),
+    os.path.join("analytics_engine", "karya_engine.py"),
+}
+
+MASTER_CSV = "PAIMANA_MASTER_PROJECTS_DATABASE.csv"
+wide_offenders = []
+for root_dir in ("backend", "modules", "analytics_engine"):
+    base = os.path.join(BASE_DIR, root_dir)
+    for dirpath, _dirs, files in os.walk(base):
+        if "__pycache__" in dirpath or os.sep + "data" in dirpath:
+            continue
+        for fn in files:
+            if not fn.endswith(".py"):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, BASE_DIR)
+            if os.path.basename(full) in {"corpus_source.py", "corpus_provenance.py",
+                                          "ingestion.py"}:
+                continue
+            body = open(full, encoding="utf-8", errors="replace").read()
+            # A read is a bypass only if it actually calls read_csv on the master path.
+            # Comments are skipped: the first version of this scan flagged
+            # backend/server.py on the strength of the comment explaining why it no
+            # longer reads the CSV, which is the sort of finding that trains people to
+            # ignore the check.
+            for line in body.splitlines():
+                if line.strip().startswith("#"):
+                    continue
+                if "pd.read_csv(" in line and ("DATA_PATH" in line
+                                               or MASTER_CSV in line
+                                               or "MASTER_PROJECTS_PATH" in line
+                                               or "self.data_path" in line):
+                    if rel not in KNOWN_BYPASSES:
+                        wide_offenders.append(rel)
+                    break
+
+check("backend/ and modules/ introduce no NEW corpus-seam bypass",
+      not wide_offenders,
+      f"unlisted: {sorted(set(wide_offenders))}")
+check("backend/server.py reads through the seam",
+      "load_corpus()" in open(os.path.join(BASE_DIR, "backend", "server.py"),
+                              encoding="utf-8").read(),
+      "/api/health and /api/projects must agree with the engines")
+
 routed = []
 for fn in sorted(os.listdir(ENGINE_DIR)):
     if fn.endswith(".py"):

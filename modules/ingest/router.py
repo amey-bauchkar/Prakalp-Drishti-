@@ -38,6 +38,7 @@ from analytics_engine import corpus_repository as repo
 from analytics_engine.corpus_provenance import SOURCE_COLUMNS, build_snapshot
 from analytics_engine.corpus_source import corpus_source_name, rebuild_view
 from analytics_engine.ingestion import (
+    REQUIRED_COLUMNS as REQUIRED_FIELDS,
     EntityResolver, load_sector_vocabulary, parse_cuf, to_revision, validate_rows,
 )
 from backend.auth import require
@@ -151,6 +152,49 @@ def ingest_status():
         "max_upload_bytes": MAX_CUF_BYTES,
         "note": ("Ingestion requires a PostgreSQL corpus. Under the CSV bootstrap the "
                  "corpus is read-only and these endpoints answer 503."),
+    }
+
+
+@router.get("/vocabulary")
+def vocabulary(user: dict = Depends(require("read_analytics"))):
+    """
+    The controlled vocabulary the onboarding form must offer.
+
+    Served rather than hardcoded in the frontend deliberately. A sector list duplicated
+    into JSX is a second declaration of the same fact, and the two drift -- which is
+    exactly how nine of eleven hand-set sector keys came to match nothing in the corpus
+    while looking entirely plausible in review. The server owns the vocabulary; the form
+    renders whatever the server says.
+    """
+    resolver = EntityResolver()
+    return {
+        "sectors": sorted(load_sector_vocabulary()),
+        "agencies": sorted(resolver.known_raw_names()),
+        "required_fields": list(REQUIRED_FIELDS),
+    }
+
+
+@router.post("/validate", status_code=200)
+def validate_only(req: OnboardRequest, user: dict = Depends(require("read_analytics"))):
+    """
+    Dry run. Applies the full validation pass and writes NOTHING.
+
+    This is what lets the form tell an officer that their executing agency will not
+    resolve BEFORE they submit, instead of after. It deliberately does not touch the
+    database, so it works under the CSV bootstrap too -- the rules are the same either
+    way; only the duplicate-id check needs the corpus, and it is skipped when absent.
+    """
+    known = repo.known_project_ids() if repo.is_available() else None
+    report = validate_rows(
+        [p.model_dump() for p in req.projects],
+        sector_vocabulary=load_sector_vocabulary(),
+        resolver=EntityResolver(),
+        known_project_ids=known,
+    )
+    return {
+        "valid": report.ok,
+        "checked_against_corpus": known is not None,
+        **report.as_dict(),
     }
 
 

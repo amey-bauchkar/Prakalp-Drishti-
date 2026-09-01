@@ -62,7 +62,25 @@ class VittaVyuhaEngine:
             rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
             if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
                 return max(0.0, (rev_dt - orig_dt).days / 30.4375)
-            return float(row.get("OnboardingDelay", 0.0) or 0.0)
+
+            # The fallback was `float(row.get("OnboardingDelay", 0.0) or 0.0)`, which is
+            # wrong for exactly one input: NaN. **NaN is truthy in Python**, so
+            # `nan or 0.0` short-circuits to nan rather than the intended default, and
+            # the NaN then propagates through risk_score -> base_yield -> the objective
+            # vector, where scipy rejects the entire LP with "c must be ... finite".
+            #
+            # It never fired under the CSV bootstrap, where OnboardingDelay is int64
+            # with no nulls. It fires the moment a project is ONBOARDED with no
+            # onboarding delay recorded, because Postgres stores that as NULL -> NaN.
+            # Dynamic ingestion is what made a five-year-old latent bug reachable, and
+            # the symptom was a 500 on capital allocation rather than a bad number,
+            # which is the good version of this failure.
+            raw = row.get("OnboardingDelay", 0.0)
+            try:
+                val = float(raw)
+            except (TypeError, ValueError):
+                return 0.0
+            return val if np.isfinite(val) else 0.0
         
         self.df["REAL_DELAY_MONTHS"] = self.df.apply(compute_schedule_delay, axis=1)
 

@@ -108,21 +108,40 @@ def _load_from_postgres(url: str) -> pd.DataFrame:
         except ImportError as exc:                         # pragma: no cover
             raise RuntimeError(
                 f"{ENV_VAR} is set but no PostgreSQL driver is installed. "
-                "Install `psycopg[binary]`, or clear {ENV_VAR} to run from the CSV "
+                f"Install `psycopg[binary]`, or clear {ENV_VAR} to run from the CSV "
                 "bootstrap."
             ) from exc
 
-    cols = ", ".join(f'"{sql}"' for sql in sorted(SQL_COLUMN_TO_CORPUS))
+    sql_cols = sorted(SQL_COLUMN_TO_CORPUS)
+    cols = ", ".join(f'"{c}"' for c in sql_cols)
     query = f"select {cols} from project_current"
 
+    # Rows are fetched through the cursor and the frame built explicitly, rather than
+    # via pd.read_sql_query. pandas supports SQLAlchemy connectables and sqlite3 only;
+    # handing it a raw psycopg connection works today but is an explicitly untested
+    # path, and it warns as much on every load. Building the frame here also pins the
+    # column ORDER to sql_cols instead of inheriting whatever the driver reports, which
+    # matters because the corpus hash must not depend on driver behaviour.
     with connect(url) as conn:                             # type: ignore[operator]
-        df = pd.read_sql_query(query, conn)
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
 
-    df = df.rename(columns=SQL_COLUMN_TO_CORPUS)
+    df = pd.DataFrame(rows, columns=sql_cols).rename(columns=SQL_COLUMN_TO_CORPUS)
 
     for c in DATE_COLUMNS:
         if c in df.columns:
             df[c] = pd.to_datetime(df[c], errors="coerce")
+
+    # numeric(18,6) arrives as Decimal from some drivers and float from others. The
+    # engines do arithmetic on these directly, so they are coerced to float here rather
+    # than left to fail somewhere downstream with an unhelpful message. Non-numeric
+    # columns are untouched.
+    for corpus_col in ("OriginalCost", "RevisedCost", "Expenditure", "PhysicalProgress",
+                       "DELAYED_TIME", "COST_OVERRUN", "COST_OVERRUN_PERC",
+                       "COR_PERC", "TOR_PERC", "OnboardingDelay", "AgencyId"):
+        if corpus_col in df.columns:
+            df[corpus_col] = pd.to_numeric(df[corpus_col], errors="coerce")
 
     return df
 

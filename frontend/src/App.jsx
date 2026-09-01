@@ -8,6 +8,7 @@ import SatyaKavachView from './views/SatyaKavachView.jsx';
 import ArthaNivaranView from './views/ArthaNivaranView.jsx';
 import SetuVarshaView from './views/SetuVarshaView.jsx';
 import PublicDashboardView from './views/PublicDashboardView.jsx';
+import AdminIngestView from './views/AdminIngestView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
@@ -170,10 +171,16 @@ function InstitutionalHeader() {
   }, []);
 
   // Top-level Navigation: Sovereign Home, Government Decision Hub, Nagrik Portal
+  // CORPUS ADMIN is offered only to a session holding `allocate_capital`. This is
+  // presentation, NOT access control -- /api/ingest enforces the capability server-side
+  // and the route itself is reachable by URL. Hiding the link merely avoids showing an
+  // officer a door their role cannot open.
+  const canAdminister = !!session?.permissions?.includes('allocate_capital');
   const navItems = [
     { to: '/', label: 'HOME' },
     { to: '/decision-hub', label: 'DECISION HUB' },
     { to: '/nagrik', label: 'NAGRIK PORTAL' },
+    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' }] : []),
   ];
 
   return (
@@ -560,6 +567,7 @@ export default function App() {
             {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
             <Route path="/" element={<AmeyMasterView />} />
             <Route path="/nagrik" element={<PublicDashboardView />} />
+            <Route path="/admin/ingest" element={<AdminIngestView />} />
             <Route path="/public" element={<Navigate to="/nagrik" replace />} />
             <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
 
