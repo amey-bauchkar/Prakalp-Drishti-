@@ -181,8 +181,7 @@ function InstitutionalHeader() {
     { to: '/', label: 'HOME' },
     { to: '/decision-hub', label: 'DECISION HUB' },
     { to: '/nagrik', label: 'NAGRIK PORTAL' },
-    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' },
-                         { to: '/admin/timeline', label: 'KAAL-DARPAN' }] : []),
+    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' }] : []),
   ];
 
   return (
