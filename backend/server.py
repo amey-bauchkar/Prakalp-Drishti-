@@ -203,7 +203,10 @@ for member in MEMBERS:
 # The tiered satellite router lives beside amey's but owns its own prefix
 # (/api/eo) because it is a cross-cutting access-control surface rather than a
 # member module -- it serves the public Nagrik tier as well as the audit tier.
-for aux in ("modules.amey.satellite_router",):
+# The ingestion router (/api/ingest) is likewise cross-cutting: it writes the corpus
+# every member module reads, and answers 503 when no database is configured.
+for aux in ("modules.amey.satellite_router",
+            "modules.ingest.router"):
     try:
         _m = __import__(aux, fromlist=["router"])
         app.include_router(_m.router)

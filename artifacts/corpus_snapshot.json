@@ -1,0 +1,8 @@
+{
+  "algorithm": "RFC6962-SHA256/canonical-json-rows",
+  "column_count": 25,
+  "corpus_root": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+  "corpus_version": 1,
+  "row_count": 2207,
+  "source": "csv-bootstrap"
+}

@@ -63,6 +63,8 @@ except ModuleNotFoundError:  # pragma: no cover - direct `python analytics_engin
 
 from analytics_engine.contracts import Fact, Uncertainty, LineageRef, ProjectForecast
 from analytics_engine.conformal_calibration import load_calibration
+from analytics_engine.corpus_provenance import build_snapshot
+from analytics_engine.corpus_source import load_corpus
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -79,6 +81,8 @@ class KaalChakraEngine:
         self.model_weights = {}
         self.dataset_hash = ""
         self.model_hash = ""
+        self.corpus = None
+        self.corpus_version = None
         self.fitted = False
         # Calibrated interval widths; None means fall back to uncalibrated offsets.
         self.conformal = load_calibration()
@@ -87,11 +91,30 @@ class KaalChakraEngine:
     def _load_and_fit(self):
         # 1. Load Master Dataset
         if os.path.exists(DATA_PATH):
-            self.df = pd.read_csv(DATA_PATH)
-            with open(DATA_PATH, "rb") as f:
-                self.dataset_hash = hashlib.sha256(f.read()).hexdigest()
+            self.df = load_corpus()
         else:
             raise FileNotFoundError(f"Missing master database at {DATA_PATH}")
+
+        # 1b. CORPUS IDENTITY.
+        #
+        # This was sha256 of the CSV's raw bytes. That value is embedded in every Fact's
+        # lineage and in every Merkle-signed Cabinet briefing, so it is what makes "the
+        # briefing you are reading is the briefing that was signed" checkable rather
+        # than merely asserted -- and it assumed a FILE.
+        #
+        # Once projects live in Postgres and officers onboard new ones there is no file
+        # to hash, and hashing whatever SELECT * returned would move the value on row
+        # reordering or a dtype coercion. A briefing signed on Tuesday would fail
+        # verification on Wednesday: a cryptographic guarantee silently degraded into a
+        # timestamp, with nothing in the output to reveal it.
+        #
+        # The corpus is therefore identified by an RFC 6962 Merkle root over canonically
+        # serialised ROWS -- a content address that is identical whether the rows came
+        # from this CSV, from Postgres, or from a Parquet export, and that changes if and
+        # only if the data changes. See analytics_engine/corpus_provenance.py.
+        self.corpus = build_snapshot(self.df, source="csv-bootstrap")
+        self.dataset_hash = self.corpus.corpus_root
+        self.corpus_version = self.corpus.corpus_version
 
         # 2. Load Monsoon Dataset
         if os.path.exists(MONSOON_PATH):
