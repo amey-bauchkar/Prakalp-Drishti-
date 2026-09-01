@@ -195,6 +195,31 @@ class SatyaKavachEngine:
             esc_cr = calc_10cc["statutory_allowed_escalation_cr"]
             total_allowed = round(orig_c + esc_cr, 2)
             excess_claim = round(max(0.0, rev_c - total_allowed), 2)
+            
+            # ----------------------------------------------------
+            # Forensic Suspicion Score Calculation (0-100)
+            # ----------------------------------------------------
+            # 1. Boundary Proximity Penalty (Max 60 points)
+            # Evasion margin is between 0.01 (19.99%) and 2.00 (18.00%)
+            proximity_score = max(0.0, (2.0 - evasion_margin) / 2.0 * 60.0)
+            
+            # 2. Statutory 10CC Deviation Penalty (Max 40 points)
+            # Penalize if excess claim is substantial relative to original cost
+            excess_ratio = (excess_claim / max(1.0, orig_c))
+            deviation_score = min(40.0, (excess_ratio / 0.15) * 40.0)
+            
+            total_suspicion_score = min(100, int(proximity_score + deviation_score))
+            
+            # Assign Severity Label
+            if total_suspicion_score >= 85:
+                suspicion_level = "CRITICAL"
+                suspicion_driver = f"Unjustified Claim & 0.0{int(evasion_margin*100)}pp from CCEA" if excess_claim > 0 else f"0.0{int(evasion_margin*100)}pp from CCEA boundary"
+            elif total_suspicion_score >= 65:
+                suspicion_level = "HIGH"
+                suspicion_driver = f"High statutory deviation" if deviation_score > proximity_score else f"Threshold hovering"
+            else:
+                suspicion_level = "ELEVATED"
+                suspicion_driver = "Irregular reporting pattern"
 
             flagged_list.append({
                 "project_id": pid,
@@ -216,6 +241,9 @@ class SatyaKavachEngine:
                 "sanction_year": s_year,
                 "classification": "THRESHOLD_PROXIMITY",
                 "classification_label": "CCEA Threshold Proximity (18.0%–19.99%)",
+                "suspicion_score": total_suspicion_score,
+                "suspicion_level": suspicion_level,
+                "suspicion_driver": suspicion_driver,
             })
 
         return {

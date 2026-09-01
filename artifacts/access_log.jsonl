@@ -2441,3 +2441,7 @@
 {"ts": "2026-09-01T22:38:54", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-09-01T22:38:54", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
 {"ts": "2026-09-01T22:38:54", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-02T01:42:57", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-09-02T01:43:01", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-02T01:43:06", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-09-02T01:43:16", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
