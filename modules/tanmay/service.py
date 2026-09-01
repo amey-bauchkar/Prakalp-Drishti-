@@ -18,8 +18,8 @@ from analytics_engine.state_resolution import resolve_state
 logger = logging.getLogger("prakalp.satya_kavach")
 
 DATA_PATH = os.path.join("paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
-WPI_PATH = os.path.join("paimana_extracted", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv")
-LABOR_PATH = os.path.join("paimana_extracted", "CONSTRUCTION_LABOR_WAGE_INDEX.csv")
+WPI_PATH = os.path.join("paimana_extracted", "advanced_macro", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv")
+LABOR_PATH = os.path.join("paimana_extracted", "remaining_macro", "CONSTRUCTION_LABOR_WAGE_INDEX_2005_2026.csv")
 API_PROJECTS_PATH = os.path.join("paimana_extracted", "API_ALL_PROJECTS.csv")
 
 
@@ -38,38 +38,54 @@ class SatyaKavachEngine:
         self._load_data()
 
     def _load_macro_indices(self):
-        """Loads historical WPI commodity series and labor wage index."""
+        """Loads authentic historical WPI commodity series and labor wage index."""
         try:
-            if os.path.exists(WPI_PATH):
-                w_df = pd.read_csv(WPI_PATH)
-                for _, r in w_df.iterrows():
-                    yr = int(r["Year"])
-                    self.wpi_by_year[yr] = {
-                        "steel": float(r.get("Steel_WPI_2011_Base", 100.0)),
-                        "cement": float(r.get("Cement_WPI_2011_Base", 100.0)),
-                        "fuel": float(r.get("Bitumen_Fuel_WPI_2011_Base", 100.0)),
-                        "other": float(r.get("Composite_Construction_WPI", 100.0)),
-                    }
+            wpi_candidates = [
+                WPI_PATH,
+                os.path.join("paimana_extracted", "WPI_CONSTRUCTION_INDEX_HISTORICAL.csv"),
+            ]
+            for p in wpi_candidates:
+                if os.path.exists(p):
+                    w_df = pd.read_csv(p)
+                    for _, r in w_df.iterrows():
+                        yr = int(r["Year"])
+                        self.wpi_by_year[yr] = {
+                            "steel": float(r.get("WPI_Iron_Steel_Structural", r.get("Steel_WPI_2011_Base", 100.0))),
+                            "cement": float(r.get("WPI_Cement_Lime_Plaster", r.get("Cement_WPI_2011_Base", 100.0))),
+                            "fuel": float(r.get("WPI_Fuel_Bitumen_HighSpeedDiesel", r.get("Bitumen_Fuel_WPI_2011_Base", 100.0))),
+                            "other": float(r.get("WPI_Construction_Basket", r.get("Composite_Construction_WPI", 100.0))),
+                        }
+                    break
 
-            if os.path.exists(LABOR_PATH):
-                l_df = pd.read_csv(LABOR_PATH)
-                for _, r in l_df.iterrows():
-                    yr = int(r["Year"])
-                    self.labor_by_year[yr] = float(r.get("Labor_Wage_Index_2010_Base", 100.0))
+            labor_candidates = [
+                LABOR_PATH,
+                os.path.join("paimana_extracted", "CONSTRUCTION_LABOR_WAGE_INDEX.csv"),
+            ]
+            for p in labor_candidates:
+                if os.path.exists(p):
+                    l_df = pd.read_csv(p)
+                    for _, r in l_df.iterrows():
+                        yr = int(r["Year"])
+                        self.labor_by_year[yr] = float(r.get("Labor_Wage_Index_2010_Base", 100.0))
+                    break
         except Exception as e:
             logger.warning(f"Macro indices load warning: {e}")
 
     def _load_data(self):
         """Loads master projects and snapshot monthly progression."""
         try:
-            # 1. Master Projects Database
-            if os.path.exists(DATA_PATH):
-                self.df = pd.read_csv(DATA_PATH, low_memory=False)
-            else:
-                for alt_path in ["master_projects.csv", "paimana_extracted/MASTER_PROJECTS_DATASET.csv"]:
-                    if os.path.exists(alt_path):
-                        self.df = pd.read_csv(alt_path, low_memory=False)
-                        break
+            # 1. Master Projects Database via dynamic seam
+            try:
+                from analytics_engine.corpus_source import load_corpus
+                self.df = load_corpus()
+            except Exception:
+                if os.path.exists(DATA_PATH):
+                    self.df = pd.read_csv(DATA_PATH, low_memory=False)
+                else:
+                    for alt_path in ["master_projects.csv", "paimana_extracted/MASTER_PROJECTS_DATASET.csv"]:
+                        if os.path.exists(alt_path):
+                            self.df = pd.read_csv(alt_path, low_memory=False)
+                            break
 
             if self.df is not None and not self.df.empty:
                 self._sanitize_dataframe()
@@ -172,7 +188,14 @@ class SatyaKavachEngine:
             orig_c = float(r["OriginalCost"])
             rev_c = float(r["RevisedCostEffective"])
             ov_pct = float(r["OverrunPct"])
+            s_year = int(r.get("SanctionYear", 2018))
             evasion_margin = round(20.0 - ov_pct, 2)
+            calc_10cc = self._calculate_10cc_cap(orig_c, s_year)
+
+            esc_cr = calc_10cc["statutory_allowed_escalation_cr"]
+            total_allowed = round(orig_c + esc_cr, 2)
+            excess_claim = round(max(0.0, rev_c - total_allowed), 2)
+
             flagged_list.append({
                 "project_id": pid,
                 "project_name": str(r.get("ProjectName", f"Project {pid}")),
@@ -185,6 +208,12 @@ class SatyaKavachEngine:
                 "overrun_pct": ov_pct,
                 "evasion_margin_pct": evasion_margin,
                 "distance_to_boundary_pp": evasion_margin,
+                "statutory_10cc_escalation_cr": esc_cr,
+                "total_allowed_10cc_cost_cr": total_allowed,
+                "statutory_10cc_cap_cr": total_allowed,
+                "statutory_10cc_cap_pct": calc_10cc["cap_pct_of_original_cost"],
+                "excess_unjustified_cr": excess_claim,
+                "sanction_year": s_year,
                 "classification": "THRESHOLD_PROXIMITY",
                 "classification_label": "CCEA Threshold Proximity (18.0%–19.99%)",
             })

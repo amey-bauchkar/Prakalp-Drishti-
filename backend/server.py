@@ -30,6 +30,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
+
+from analytics_engine.corpus_source import load_corpus, is_database_configured
+from analytics_engine.geocode import class_info as _geo_class
 GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
 IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
 STATIC_DIR = os.path.join(BASE_DIR, "frontend", "dist")
@@ -64,9 +67,19 @@ projects_df = None
 @app.on_event("startup")
 def load_in_memory_cache():
     global projects_cache, projects_df
-    print("Loading 2,207 projects into ultra-fast in-memory cache...")
-    if os.path.exists(DATA_PATH):
-        projects_df = pd.read_csv(DATA_PATH)
+    print("Loading the project corpus into the in-memory cache...")
+
+    # Read through the corpus seam, NOT pd.read_csv(DATA_PATH).
+    #
+    # This endpoint set (/api/health, /api/projects, /api/projects/{id}) previously
+    # loaded the CSV directly while every analytics engine loaded Postgres. The result
+    # was a split brain: a project onboarded through /api/ingest appeared in the
+    # forecasts, the graph and the LP, but NOT in the project list, and /api/health kept
+    # reporting the pre-ingestion count. Two sources of truth for "which projects exist"
+    # is the same defect class as a duplicated vocabulary -- it does not error, it just
+    # quietly disagrees with itself.
+    if os.path.exists(DATA_PATH) or is_database_configured():
+        projects_df = load_corpus()
         projects_df["OriginalCost"] = pd.to_numeric(projects_df["OriginalCost"], errors="coerce").fillna(500.0)
         projects_df["RevisedCost"] = pd.to_numeric(projects_df["RevisedCost"], errors="coerce").fillna(projects_df["OriginalCost"])
         projects_df["DELAYED_TIME"] = pd.to_numeric(projects_df["DELAYED_TIME"], errors="coerce").fillna(0.0)
@@ -74,15 +87,29 @@ def load_in_memory_cache():
         
         # Compute real schedule delay from official milestone dates
         def _first_coord(*vals):
-            """First value that is a real number, treating 0.0 as valid."""
+            """
+            First value that is a real, FINITE number, treating 0.0 as valid.
+
+            The finiteness check matters as much as the 0.0 handling: NaN is a float,
+            so `isinstance(nan, float)` passes and the old version returned nan
+            unchanged. That reaches the map layer as invalid JSON and, for latitude or
+            longitude, would place a pin nowhere at all. Postgres NULL for an
+            un-recorded coordinate or delay arrives as exactly that NaN.
+            """
+            import math as _math
             for v in vals:
                 if isinstance(v, (int, float)) and not isinstance(v, bool):
-                    return float(v)
+                    f = float(v)
+                    if _math.isfinite(f):
+                        return f
+                    continue
                 if isinstance(v, str):
                     try:
-                        return float(v)
+                        f = float(v)
                     except ValueError:
                         continue
+                    if _math.isfinite(f):
+                        return f
             return 0.0
 
         def _calc_delay(row):
@@ -90,9 +117,13 @@ def load_in_memory_cache():
             rev_dt = pd.to_datetime(row.get("RevisedDate"), errors="coerce", dayfirst=True)
             if pd.notna(orig_dt) and pd.notna(rev_dt) and rev_dt > orig_dt:
                 return round(max(0.0, (rev_dt - orig_dt).days / 30.4375), 1)
-            onboard = float(row.get("OnboardingDelay", 0.0) or 0.0)
-            raw_delay = float(row.get("DELAYED_TIME", 0.0) or 0.0)
-            return round(max(onboard, raw_delay), 1)
+            # `x or 0.0` is NOT a safe default here: NaN is TRUTHY in Python, so it
+            # short-circuits to nan instead of 0.0. Harmless while the corpus came from
+            # a CSV where these columns are int64 with no nulls; the moment a project is
+            # onboarded with no delay recorded, Postgres stores NULL -> NaN and a raw
+            # NaN reaches the map layer as invalid JSON.
+            return round(max(_first_coord(row.get("OnboardingDelay")),
+                             _first_coord(row.get("DELAYED_TIME"))), 1)
 
         # Load the EO catalogue. `satellite_status` below was being derived from
         # the agency's own reported progress, which is circular -- see the note
@@ -158,6 +189,20 @@ def load_in_memory_cache():
                 "location_is_approximate": eo.get("geocode_confidence") in
                                            (None, "NONE", "LOW"),
 
+                # The error radius is SERVED, not inferred client-side from the
+                # precision string. The map needs to draw the actual uncertainty, and a
+                # second copy of the radius table in JSX would drift from the one in
+                # eo_viewport.py -- the same duplication that let nine of eleven sector
+                # keys match nothing. One table, served.
+                #
+                # serve_imagery False means the coordinate locates an administrative
+                # unit rather than a site: a 200 km state centroid is not a pin, and the
+                # map draws the area instead of pretending to know the works.
+                "geocode_error_radius_m": _geo_class(
+                    eo.get("geocode_precision")).get("error_radius_m"),
+                "geocode_serves_imagery": bool(
+                    _geo_class(eo.get("geocode_precision")).get("serve")),
+
                 # Satellite verdict from the EO catalogue, NOT from the claim.
                 #
                 # This read:
@@ -203,7 +248,10 @@ for member in MEMBERS:
 # The tiered satellite router lives beside amey's but owns its own prefix
 # (/api/eo) because it is a cross-cutting access-control surface rather than a
 # member module -- it serves the public Nagrik tier as well as the audit tier.
-for aux in ("modules.amey.satellite_router",):
+# The ingestion router (/api/ingest) is likewise cross-cutting: it writes the corpus
+# every member module reads, and answers 503 when no database is configured.
+for aux in ("modules.amey.satellite_router",
+            "modules.ingest.router"):
     try:
         _m = __import__(aux, fromlist=["router"])
         app.include_router(_m.router)

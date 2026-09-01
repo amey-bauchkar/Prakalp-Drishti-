@@ -22,6 +22,8 @@ from datetime import datetime
 import hashlib
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
+from analytics_engine.eo_geospatial import eo_readiness
 from typing import Dict, Any, Optional
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -127,7 +129,7 @@ class SatelliteFusionEngine:
 
     def _load_data(self):
         if os.path.exists(DATA_PATH):
-            self.df = pd.read_csv(DATA_PATH)
+            self.df = load_corpus()
         
         # Latitude drives ground-sample-distance, which drives the ROI radius in
         # pixels. Without it the mask would be sized off the catalogue's
@@ -149,6 +151,35 @@ class SatelliteFusionEngine:
                 for item in cat_list:
                     pid = str(item.get("project_id", ""))
                     self.catalog[pid] = item
+
+    def _corpus_identity(self, pid: str) -> Dict[str, Any]:
+        """Project identity from the corpus, for anything the satellite bake predates.
+
+        Returns None-valued fields rather than invented ones when the project is not
+        in the corpus either: an unknown project has no name, and saying so is the
+        only honest option on an audit surface.
+        """
+        blank = {"project_name": None, "sector": None, "state": None, "agency": None}
+        if self.df is None:
+            return blank
+        try:
+            row = self.df[self.df["ProjectId"].astype(str) == str(pid)]
+            if row.empty:
+                return blank
+            r = row.iloc[0]
+            def _s(v):
+                if v is None or (isinstance(v, float) and v != v):
+                    return None
+                t = str(v).strip()
+                return t or None
+            return {
+                "project_name": _s(r.get("ProjectName")),
+                "sector": _s(r.get("SectorName")),
+                "state": _s(r.get("StateName")),
+                "agency": _s(r.get("COMPANYNAME")),
+            }
+        except Exception:
+            return blank
 
     def _precision_metrics(self, pid: str) -> Dict[str, Any]:
         """Run the pinpoint change detector for one project, memoised.
@@ -247,6 +278,9 @@ class SatelliteFusionEngine:
         
         has_before = os.path.exists(before_file)
         has_after = os.path.exists(after_file)
+        # Defined here, beside the flags it derives from: the first consumer is ~15
+        # lines below and referenced it before assignment when it lived further down.
+        dual_epoch = has_before and has_after
         
         claimed = float(cat_entry.get("claimed_progress_pct", 50.0))
         
@@ -259,8 +293,35 @@ class SatelliteFusionEngine:
         status = cat_entry.get("audit_status", "EO_UNAVAILABLE")
         action = cat_entry.get("statutory_recommendation", "STANDARD_PHYSICAL_INSPECTION")
         severity = cat_entry.get("audit_severity", "LOW")
-        surface_change = float(cat_entry.get("surface_change_pct", 0.0))
-        dissimilarity = cat_entry.get("mean_dissimilarity", 0.0)
+        # Dissimilarity and registration shift are measurements over an image PAIR.
+        # With no pair they are not zero, they are absent. A 0.0 sub-pixel registration
+        # shift in particular asserts that two images aligned perfectly -- images that
+        # were never fetched.
+        dissimilarity = cat_entry.get("mean_dissimilarity") if dual_epoch else None
+
+        # ── NO IMAGERY MEANS NO MEASUREMENT ─────────────────────────────────────
+        # A project with no BEFORE/AFTER tiles previously reported
+        # surface_change_pct = 0.0, plus a baseline_vintage of "2014-02" and a
+        # current_vintage naming the ESRI live mosaic. Every one of those is a claim
+        # about imagery that does not exist.
+        #
+        # 0.0 is the dangerous one: it reads as "we looked and nothing has been built",
+        # which is a finding, when the truth is "we have not looked". Against a project
+        # claiming 50% progress that is the shape of a fraud signal, and it would be
+        # fabricated -- the exact failure this module's sibling refuses when it declines
+        # to emit an InSAR coherence with no Sentinel-1 scene behind it.
+        #
+        # Its neighbour project_footprint_change_pct already returns None in this case.
+        # These three now match it. A newly onboarded project is the normal way to reach
+        # this branch, so it is a first-class state, not an edge case.
+        surface_change = (float(cat_entry.get("surface_change_pct", 0.0))
+                          if dual_epoch else None)
+
+        # eo_unreliable_reason was null exactly when eo_verdict_reliable was false --
+        # the field was empty at the only moment it was needed.
+        unreliable_reason = cat_entry.get("eo_unreliable_reason")
+        if not dual_epoch and not unreliable_reason:
+            unreliable_reason = "NO_BASELINE_IMAGERY"
 
         # Precision-CV provenance fields (written by
         # satellite_pipeline/batch_precision_change_detection.py). These carry the
@@ -272,12 +333,21 @@ class SatelliteFusionEngine:
         geocode_confidence = cat_entry.get("geocode_confidence", "NONE")
         eo_reliable = bool(cat_entry.get("eo_verdict_reliable", False))
 
+        # Identity comes from the CORPUS when the catalogue has no entry for this
+        # project, which is the normal state for anything onboarded after the
+        # satellite bake. The previous defaults invented a plausible project:
+        # "Infrastructure Asset / Roads & Highways / National / Central Agency".
+        # Project 999888 is a Railways corridor, and the EO panel described it as a
+        # road. Placeholder identity is worse than a blank one -- it is wrong in a
+        # way the reader cannot detect, on the screen that exists to verify claims.
+        ident = self._corpus_identity(pid)
+
         return {
             "project_id": pid,
-            "project_name": cat_entry.get("project_name", "Infrastructure Asset"),
-            "sector": cat_entry.get("sector", "Roads & Highways"),
-            "state": cat_entry.get("state", "National"),
-            "agency": cat_entry.get("agency", "Central Agency"),
+            "project_name": cat_entry.get("project_name") or ident.get("project_name"),
+            "sector": cat_entry.get("sector") or ident.get("sector"),
+            "state": cat_entry.get("state") or ident.get("state"),
+            "agency": cat_entry.get("agency") or ident.get("agency"),
             "claimed_progress_pct": claimed,
             "audit_status": status,
             "statutory_recommendation": action,
@@ -293,16 +363,17 @@ class SatelliteFusionEngine:
             "change_percentile_in_sector": cat_entry.get("change_percentile_in_sector"),
             "asset_geometry": cat_entry.get("asset_geometry", "POINT"),
             "change_boxes": change_boxes,
-            "change_box_count": len(change_boxes),
-            "mean_dissimilarity": cat_entry.get("mean_dissimilarity", 0.0),
-            "registration_shift_px": cat_entry.get("registration_shift_px", 0.0),
+            "change_box_count": len(change_boxes) if dual_epoch else None,
+            "mean_dissimilarity": dissimilarity,
+            "registration_shift_px": (cat_entry.get("registration_shift_px")
+                                      if dual_epoch else None),
             "registration_method": cat_entry.get("registration_method", "none"),
             # --- geolocation trust ---
             "geocode_precision": geocode_precision,
             "geocode_confidence": geocode_confidence,
             "geocode_confidence_note": cat_entry.get("geocode_confidence_note", ""),
             "eo_verdict_reliable": eo_reliable,
-            "eo_unreliable_reason": cat_entry.get("eo_unreliable_reason"),
+            "eo_unreliable_reason": unreliable_reason,
             # "(Sub-meter)" removed: measured GSD is 2.08-2.35 m/px, so the
             # parenthetical overstated the sensor by about 3x on every record
             # this engine has ever served.
@@ -310,7 +381,7 @@ class SatelliteFusionEngine:
                        "(2.08-2.35 m/px measured)"),
             "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg" if has_before else None,
             "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg" if has_after else None,
-            "has_dual_epoch_coverage": has_before and has_after,
+            "has_dual_epoch_coverage": dual_epoch,
             # Was hardcoded to 0.8 m, which is wrong by roughly 3x and made every
             # metre-denominated figure downstream wrong with it. The true value is
             # the Web Mercator ground sample distance at this project's own
@@ -320,8 +391,13 @@ class SatelliteFusionEngine:
             # of these were. Release 10 is Wayback 2014-02-20, and release 93
             # does not exist -- the after-epoch came from the live basemap via
             # a silent fallback. See EPOCH_BASIS in eo_geospatial.py.
-            "baseline_vintage": "2014-02",
-            "current_vintage": "<=2026-08 (ESRI live mosaic, fetch-bounded)",
+            # Vintages describe imagery that was actually fetched. With no tiles there
+            # is nothing to date, so naming an epoch would assert provenance for a scene
+            # that was never captured for this project.
+            "baseline_vintage": "2014-02" if dual_epoch else None,
+            "current_vintage": ("<=2026-08 (ESRI live mosaic, fetch-bounded)"
+                                if dual_epoch else None),
+            "eo_readiness": eo_readiness(dual_epoch, unreliable_reason),
             "audit_hash": hashlib.sha256(
                 f"{pid}:{claimed}:{surface_change}:{status}".encode("utf-8")).hexdigest()
         }

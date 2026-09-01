@@ -21,6 +21,7 @@ import networkx as nx
 from typing import Any, Dict, Optional
 
 from analytics_engine.contracts import DependencyNode, DependencyEdge, DependencySubGraph
+from analytics_engine.corpus_source import load_corpus
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -44,7 +45,7 @@ class SetuGraphEngine:
 
     def _build_network(self):
         # 1. Load Data
-        self.df = pd.read_csv(DATA_PATH)
+        self.df = load_corpus()
         self.df["OriginalCost"] = pd.to_numeric(self.df["OriginalCost"], errors="coerce").fillna(500.0)
         self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
         self.df["DELAYED_TIME"] = pd.to_numeric(self.df["DELAYED_TIME"], errors="coerce").fillna(0.0)

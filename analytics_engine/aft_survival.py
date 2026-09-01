@@ -83,6 +83,7 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
 from scipy import optimize
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -136,7 +137,7 @@ def _entity_map() -> Dict[str, str]:
 
 
 def load_frame() -> pd.DataFrame:
-    df = pd.read_csv(DATA_PATH)
+    df = load_corpus()
 
     df["OriginalCost"] = pd.to_numeric(df["OriginalCost"], errors="coerce").fillna(500.0)
     df["PhysicalProgress"] = pd.to_numeric(df["PhysicalProgress"], errors="coerce").fillna(0.0)

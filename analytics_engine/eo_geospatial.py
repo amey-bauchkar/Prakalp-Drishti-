@@ -1169,3 +1169,56 @@ def sovereign_verdict(
                    "equally consistent with grading that did not progress. Not a "
                    "finding either way.".format(n)),
     }
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 7. OPTICAL EO READINESS CONTRACT
+# ══════════════════════════════════════════════════════════════════════════
+
+def eo_readiness(dual_epoch: bool,
+                 unreliable_reason: Optional[str] = None) -> Dict[str, Any]:
+    """The optical chain's contract for a project, with every field honestly empty
+    when there is no imagery behind it.
+
+    Mirrors sar_readiness() deliberately. A project onboarded through /api/ingest has
+    no BEFORE/AFTER tiles in the curated corpus, and the honest answer is that no
+    measurement exists -- not that the measurement is zero. surface_change_pct
+    previously returned 0.0 in this state, which reads as "we looked and nothing has
+    been built" rather than "we have not looked", and against a project claiming
+    progress that is the shape of a fraud signal with nothing behind it.
+
+    The tag is NOT "pending orbital pass". There is no orbital tasking here: the
+    imagery is an ESRI basemap mosaic, not a satellite this system can point. Naming
+    a pass would promise an acquisition nobody has scheduled. What is actually
+    pending is a basemap refresh over the site.
+    """
+    if dual_epoch:
+        return {
+            "eo_available": True,
+            "reason": None,
+            "awaiting": None,
+            "contract_version": "1.0",
+        }
+    return {
+        "eo_available": False,
+        "reason": unreliable_reason or "NO_BASELINE_IMAGERY",
+        "detail": ("No dual-epoch tiles exist for this project in the curated corpus. "
+                   "Newly onboarded projects reach this state normally; it is not an "
+                   "error."),
+        "awaiting": "basemap_refresh",
+        "not_awaiting": ("orbital_pass -- the sensor is an ESRI basemap mosaic, not a "
+                         "taskable satellite, so no acquisition is scheduled"),
+        "withheld_products": {
+            "surface_change_pct": None,
+            "baseline_vintage": None,
+            "current_vintage": None,
+            "project_footprint_change_pct": None,
+            "construction_stage": None,
+            "sovereign_verdict": None,
+        },
+        "alternative_evidence": ("Site inspection or drone imagery may be recorded "
+                                 "separately; it is not blended into the optical "
+                                 "change figure, which is a different sensor with no "
+                                 "dual-epoch registration."),
+        "contract_version": "1.0",
+    }

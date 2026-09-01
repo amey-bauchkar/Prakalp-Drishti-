@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@amey/*": ["./amey/*"],
+      "@tanmay/*": ["./tanmay/*"],
+      "@parth/*": ["./parth/*"],
+      "@janhavi/*": ["./janhavi/*"],
+      "@aditya/*": ["./aditya/*"]
+    }
+  }
+}

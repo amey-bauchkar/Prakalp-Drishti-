@@ -1,31 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-/*  PRAKALP-DRISHTI — SOVEREIGN INSTITUTIONAL DESIGN SYSTEM
- *  ────────────────────────────────────────────────────────────────────────
- *  A ministry decision terminal, not a SaaS dashboard. Three rules drive
- *  every token below:
- *
- *  1. STRUCTURE IS DRAWN WITH HAIRLINES, NOT SHADOWS.
- *     Radii collapse to 0-4px and elevation is reserved for true overlays.
- *     Floating rounded cards read as consumer software; a dense grid of
- *     1px rules reads as an instrument.
- *
- *  2. COLOUR CARRIES STATE, NEVER DECORATION.
- *     Semantic hues appear as 3px status rules and small marks against a
- *     near-neutral wash. The audit that preceded this rewrite counted 132
- *     pastel -50 fills doing purely ornamental work.
- *
- *  3. NUMBERS ARE TYPESET AS DATA.
- *     Every figure is tabular-nums monospace so columns align and digits
- *     stop reflowing as values update.
- *
- *  Note on the gov-* block: 138 utility usages across the app referenced
- *  tokens (gov-border, gov-muted, gov-surface, gov-accent and their
- *  variants) that were never defined, so Tailwind emitted nothing for them
- *  and borders silently fell back to currentColor while "muted" text
- *  rendered at full strength. They are defined here and mapped onto the new
- *  scale, which is why the whole application changes character at once.
- */
+/*  PRAKALP-DRISHTI — SOVEREIGN INSTITUTIONAL DESIGN SYSTEM */
 
 const ink = {
   900: '#071320',
@@ -40,6 +15,7 @@ const ink = {
 };
 
 export default {
+  darkMode: ["class"],
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
@@ -48,6 +24,7 @@ export default {
     './parth/**/*.{js,ts,jsx,tsx}',
     './janhavi/**/*.{js,ts,jsx,tsx}',
     './aditya/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@tremor/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -94,16 +71,6 @@ export default {
         'gov-muted-dark': '#46586B',
         'gov-muted-light': '#9AA8B6',
 
-        /* ── Semantic palettes, retuned in place ──────────────────────
-           The audit counted 132 `-50` pastel fills across 29 files doing
-           decorative rather than informational work. Rather than rewrite
-           every call site, the light steps of the palettes those fills draw
-           from are pulled down to a near-paper tint and the dark steps are
-           deepened for contrast. A status block therefore keeps its meaning
-           and its markup, but stops shouting: hue now lives in the border
-           and the label, not in a large saturated field.
-           Steps 300-500 are left near stock so charts and marks keep their
-           legibility. */
         amber: {
           50: '#FDF8EE', 100: '#F8EFD9', 200: '#EADFC0', 300: '#DCC48A',
           400: '#C99A38', 500: '#B57F14', 600: '#A9680A', 700: '#8A5308',
@@ -133,12 +100,75 @@ export default {
         'gov-danger': '#A81F2D',
         'gov-blue': '#17557F',
         'gov-blue-light': '#EDF3F8',
+
+        // Shadcn UI Colors
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        
+        // Tremor Colors
+        tremor: {
+          brand: {
+            faint: "#eff6ff",
+            muted: "#bfdbfe",
+            subtle: "#60a5fa",
+            DEFAULT: "#3b82f6",
+            emphasis: "#1d4ed8",
+            inverted: "#ffffff",
+          },
+          background: {
+            muted: "#f9fafb",
+            subtle: "#f3f4f6",
+            DEFAULT: "#ffffff",
+            emphasis: "#374151",
+          },
+          border: {
+            DEFAULT: "#e5e7eb",
+          },
+          ring: {
+            DEFAULT: "#e5e7eb",
+          },
+          content: {
+            subtle: "#9ca3af",
+            DEFAULT: "#6b7280",
+            emphasis: "#374151",
+            strong: "#111827",
+            inverted: "#ffffff",
+          },
+        },
       },
 
       fontFamily: {
-        /* The application advertises air-gapped operation, so every stack
-           degrades to fonts already present on a government workstation.
-           The webfonts are an enhancement, never a dependency. */
         sans: ['"Inter"', '"Segoe UI"', 'system-ui', '"Noto Sans"', 'sans-serif'],
         heading: ['"Plus Jakarta Sans"', '"Inter"', '"Segoe UI"', 'system-ui', 'sans-serif'],
         mono: ['"Plus Jakarta Sans"', '"Inter"', '"Segoe UI"', 'system-ui', 'sans-serif'],
@@ -158,21 +188,17 @@ export default {
         'metric-lg': ['31px', { lineHeight: '1.04', letterSpacing: '-0.025em' }],
       },
 
-      /* Sharp by default. 4px is the ceiling for anything that holds data. */
       borderRadius: {
         none: '0',
-        sm: '2px',
+        sm: 'calc(var(--radius) - 4px)',
         DEFAULT: '3px',
-        md: '4px',
-        lg: '5px',
+        md: 'calc(var(--radius) - 2px)',
+        lg: 'var(--radius)',
         xl: '6px',
         '2xl': '6px',
         '3xl': '8px',
       },
 
-      /* Elevation is near-zero by design: structure is drawn with hairlines.
-         `soft` and `xs` were referenced 18 times without ever being defined,
-         so they are declared here rather than left as silent no-ops. */
       boxShadow: {
         none: 'none',
         xs: '0 1px 0 rgba(11,29,46,0.03)',
@@ -183,6 +209,10 @@ export default {
         menu: '0 12px 32px -8px rgba(7,19,32,0.28)',
         'parchment-glow': '0 1px 0 rgba(11,29,46,0.04)',
         rail: 'inset 3px 0 0 currentColor',
+        // Tremor
+        "tremor-input": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "tremor-card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "tremor-dropdown": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
       },
 
       dropShadow: { xs: '0 1px 0 rgba(11,29,46,0.06)' },
@@ -192,5 +222,34 @@ export default {
       letterSpacing: { institutional: '0.09em' },
     },
   },
+  safelist: [
+    {
+      pattern:
+        /^(bg-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(border-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+      variants: ["hover", "ui-selected"],
+    },
+    {
+      pattern:
+        /^(ring-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+    {
+      pattern:
+        /^(stroke-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+    {
+      pattern:
+        /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+    },
+  ],
   plugins: [require('tailwindcss-animate')],
 };
