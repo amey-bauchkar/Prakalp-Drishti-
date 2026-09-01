@@ -15,11 +15,15 @@ class AgencyScorer:
 
     def _load_and_clean_data(self):
         try:
-            self.df = pd.read_csv(self.data_path)
-        except Exception as e:
-            print(f"[ERROR] Failed to load dataset: {e}")
-            self.df = pd.DataFrame()
-            return
+            from analytics_engine.corpus_source import load_corpus
+            self.df = load_corpus()
+        except Exception:
+            try:
+                self.df = pd.read_csv(self.data_path)
+            except Exception as e:
+                print(f"[ERROR] Failed to load dataset: {e}")
+                self.df = pd.DataFrame()
+                return
 
         required_cols = ['COMPANYNAME', 'OriginalCost', 'RevisedCost', 'OriginalEndDate', 'RevisedDate', 'PhysicalProgress', 'Expenditure']
         for col in required_cols:

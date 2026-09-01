@@ -56,6 +56,7 @@ from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
@@ -85,7 +86,7 @@ def _load_entity_map() -> Dict[str, str]:
 
 def build_labelled_frame() -> pd.DataFrame:
     """Rows where schedule slippage is actually observed."""
-    df = pd.read_csv(DATA_PATH)
+    df = load_corpus()
     ent = _load_entity_map()
 
     orig = pd.to_datetime(df["OriginalEndDate"], errors="coerce", dayfirst=True)

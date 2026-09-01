@@ -22,6 +22,7 @@ from datetime import datetime
 import hashlib
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
 from typing import Dict, Any, Optional
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -127,7 +128,7 @@ class SatelliteFusionEngine:
 
     def _load_data(self):
         if os.path.exists(DATA_PATH):
-            self.df = pd.read_csv(DATA_PATH)
+            self.df = load_corpus()
         
         # Latitude drives ground-sample-distance, which drives the ROI radius in
         # pixels. Without it the mask would be sized off the catalogue's

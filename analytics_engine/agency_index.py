@@ -10,6 +10,7 @@ import json
 import hashlib
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
 from typing import List, Dict, Any
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -121,7 +122,7 @@ class AgencyIndexEngine:
         if not os.path.exists(DATA_PATH):
             return
 
-        self.df = pd.read_csv(DATA_PATH)
+        self.df = load_corpus()
         self.df["OriginalCost"] = pd.to_numeric(self.df["OriginalCost"], errors="coerce").fillna(500.0)
         self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
         self.df["PhysicalProgress"] = pd.to_numeric(self.df["PhysicalProgress"], errors="coerce").fillna(25.0)

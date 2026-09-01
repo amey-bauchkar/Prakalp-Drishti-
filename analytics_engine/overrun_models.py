@@ -56,6 +56,7 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+from analytics_engine.corpus_source import load_corpus
 # Importable as a package module AND runnable as a script: the direct-script form
 # has the file's own directory on sys.path but not the repository root, so the
 # absolute package import fails. Fall back to the sibling module in that case.
@@ -204,7 +205,7 @@ def _load_external() -> Dict[str, object]:
 
 def build_frame() -> pd.DataFrame:
     """Assemble features and both targets. Leaky columns are never read as features."""
-    df = pd.read_csv(DATA_PATH)
+    df = load_corpus()
     ent = _entity_map()
     ext = _load_external()
 
@@ -779,7 +780,7 @@ def evaluate_lead_time(threshold_pct: float = 15.0) -> dict:
         return {"available": False, "reason": "Model artifact not fitted"}
 
     frame = _frame_cached()
-    df = pd.read_csv(DATA_PATH)
+    df = load_corpus()
     sanc = pd.to_datetime(df["SanctionDate"], errors="coerce", dayfirst=True)
     rev = pd.to_datetime(df["RevisedDate"], errors="coerce", dayfirst=True)
     lead = pd.DataFrame({

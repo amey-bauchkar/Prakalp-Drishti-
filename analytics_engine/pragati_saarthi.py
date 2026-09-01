@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 from analytics_engine.contracts import Fact, Uncertainty, LineageRef, CabinetBriefing
+from analytics_engine.merkle import build_tree, mth_leaf, verify_inclusion_proof
 from analytics_engine.kaal_chakra import get_kaal_chakra_engine
 from analytics_engine.setu_graph import get_setu_graph_engine
 from analytics_engine.vitta_vyuha import get_vitta_vyuha_engine, AllocationRequest
@@ -20,74 +21,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRIEFING_ARCHIVE_DIR = os.path.join(BASE_DIR, "artifacts", "briefings")
 
 
-# ── RFC 6962 MERKLE CONSTRUCTION ─────────────────────────────────────────────
-# Two defects in the previous tree, both of which weaken exactly the property a
-# CAG reviewer relies on -- "this root proves these facts":
+# ── MERKLE CONSTRUCTION ──────────────────────────────────────────────────────
+# The RFC 6962 primitives moved to analytics_engine/merkle.py so this engine and the
+# corpus content address (corpus_provenance.py) share ONE implementation. Two Merkle
+# trees in one system is two places for a defect to hide, and an auditor would have to
+# read both to trust either.
 #
-#   1. NO DOMAIN SEPARATION. Leaves were sha256(data) and internal nodes were
-#      sha256(left:right), drawn from the same hash domain. An attacker able to
-#      choose fact strings could therefore present an internal node as though it
-#      were a leaf. RFC 6962 s2.1 prefixes every leaf with 0x00 and every internal
-#      node with 0x01 so the two families can never collide.
-#
-#   2. ODD-NODE DUPLICATION. The last node on an odd level was hashed against
-#      itself (right = left). That is CVE-2012-2459: two different leaf sets can
-#      yield an identical root, so a matching root stops proving anything. RFC 6962
-#      splits at the largest power of two below n instead, which is unambiguous for
-#      every n and needs no duplication.
-#
-# The WIRE FORMAT IS UNCHANGED -- proofs remain [{"hash": <64-hex>, "position":
-# "left"|"right"}] and roots remain 64 hex chars -- so archived briefings, the
-# Pydantic contracts and the frontend verifier all keep working. Only the hashing
-# domain and the odd-level rule changed.
-_LEAF_PREFIX = b"\x00"
-_NODE_PREFIX = b"\x01"
-
-
-def _mth_leaf(data: str) -> str:
-    """RFC 6962 leaf hash: SHA-256(0x00 || data)."""
-    return hashlib.sha256(_LEAF_PREFIX + data.encode("utf-8")).hexdigest()
-
-
-def _mth_node(left_hex: str, right_hex: str) -> str:
-    """RFC 6962 internal node: SHA-256(0x01 || left || right) over the raw digests."""
-    return hashlib.sha256(
-        _NODE_PREFIX + bytes.fromhex(left_hex) + bytes.fromhex(right_hex)
-    ).hexdigest()
-
-
-def _split_point(n: int) -> int:
-    """k = the largest power of two strictly less than n (RFC 6962 s2.1)."""
-    k = 1
-    while k * 2 < n:
-        k *= 2
-    return k
-
-
-def _mth(leaf_hashes: List[str]) -> str:
-    """Merkle Tree Hash over already-hashed leaves."""
-    n = len(leaf_hashes)
-    if n == 1:
-        return leaf_hashes[0]
-    k = _split_point(n)
-    return _mth_node(_mth(leaf_hashes[:k]), _mth(leaf_hashes[k:]))
-
-
-def _mth_path(m: int, leaf_hashes: List[str]) -> List[Dict[str, str]]:
-    """
-    RFC 6962 s2.1.1 inclusion path for leaf index m, ordered deepest sibling first
-    so the verifier can fold it straight from the leaf upward. "position" names the
-    side the SIBLING sits on.
-    """
-    n = len(leaf_hashes)
-    if n == 1:
-        return []
-    k = _split_point(n)
-    if m < k:
-        return _mth_path(m, leaf_hashes[:k]) + [
-            {"hash": _mth(leaf_hashes[k:]), "position": "right"}]
-    return _mth_path(m - k, leaf_hashes[k:]) + [
-        {"hash": _mth(leaf_hashes[:k]), "position": "left"}]
+# Behaviour is unchanged: 0x00-prefixed leaves, 0x01-prefixed internal nodes, split at
+# the largest power of two (no odd-node duplication), and a verifier that fails closed.
 
 
 class PragatiSaarthiEngine:
@@ -101,48 +42,14 @@ class PragatiSaarthiEngine:
         Builds an RFC 6962 Merkle Tree from canonical fact strings.
         Returns: (merkle_root_hash, {leaf_hash: [ {hash: sibling, position: 'left'|'right'} ]})
         """
-        if not leaves:
-            # RFC 6962: MTH({}) = SHA-256() -- the hash of the empty string.
-            return hashlib.sha256(b"").hexdigest(), {}
-
-        leaf_hashes = [_mth_leaf(leaf) for leaf in leaves]
-        merkle_root = _mth(leaf_hashes)
-
-        proofs: Dict[str, List[Dict[str, str]]] = {}
-        for leaf_idx, leaf_h in enumerate(leaf_hashes):
-            proofs[leaf_h] = _mth_path(leaf_idx, leaf_hashes)
-
-        return merkle_root, proofs
+        return build_tree(leaves)
 
     @staticmethod
     def verify_merkle_proof(leaf_str_or_hash: str, proof: List[Dict[str, str]], expected_root: str) -> bool:
-        """
-        Cryptographically verifies whether a given leaf belongs to the expected Merkle root.
-        Recomputes the root step-by-step from the leaf + positional siblings.
-
-        Fails closed: a malformed proof (non-hex sibling, wrong length, wrong type) is a
-        verification FAILURE, never an exception. The tamper path must return False
-        rather than 500, because this is the endpoint an auditor points at a briefing
-        they already suspect.
-        """
-        try:
-            leaf_str_or_hash = str(leaf_str_or_hash)
-            if len(leaf_str_or_hash) == 64 and all(c in '0123456789abcdefABCDEF' for c in leaf_str_or_hash):
-                curr_hash = leaf_str_or_hash.lower()
-            else:
-                curr_hash = _mth_leaf(leaf_str_or_hash)
-
-            for step in proof:
-                sibling = str(step.get("hash", step.get("sibling", ""))).lower()
-                position = step.get("position", "right")
-                if position == "left":
-                    curr_hash = _mth_node(sibling, curr_hash)
-                else:
-                    curr_hash = _mth_node(curr_hash, sibling)
-
-            return curr_hash.lower() == str(expected_root).lower()
-        except (ValueError, TypeError, AttributeError):
-            return False
+        """Verify a leaf's inclusion against the expected root. Fails closed on a
+        malformed proof -- this is the endpoint an auditor points at a briefing they
+        already suspect, so it must return False rather than 500."""
+        return verify_inclusion_proof(leaf_str_or_hash, proof, expected_root)
 
     def generate_cabinet_briefing(self, focus_project_id: str = "400188") -> CabinetBriefing:
         # 1. Gather Engine Artifacts
@@ -201,7 +108,7 @@ class PragatiSaarthiEngine:
         for idx, (fid, fact) in enumerate(audit_facts.items()):
             if fact.lineage and idx < len(fact_leaves):
                 leaf_str = fact_leaves[idx]
-                leaf_h = _mth_leaf(leaf_str)
+                leaf_h = mth_leaf(leaf_str)
                 leaf_proof = proofs.get(leaf_h, [])
                 fact.lineage.merkle_root = merkle_root
                 fact.lineage.merkle_proof = leaf_proof

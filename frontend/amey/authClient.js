@@ -111,6 +111,40 @@ export async function apiFetch(path, options = {}) {
            error: res.ok ? null : (data?.detail || `Request failed (${res.status})`) };
 }
 
+/**
+ * Authenticated multipart upload. Same return shape as apiFetch.
+ *
+ * A separate function because apiFetch sets Content-Type: application/json whenever a
+ * body is present. For FormData that is actively wrong — the browser must set the
+ * header itself so it can append the multipart boundary, and forcing a JSON content
+ * type produces a request the server cannot parse. Deleting the header afterwards does
+ * not help either; it has to never be set.
+ */
+export async function apiUpload(path, formData) {
+  const session = getSession();
+  const headers = {};
+  if (session?.token) headers.Authorization = `Bearer ${session.token}`;
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { method: 'POST', headers, body: formData });
+  } catch {
+    return { ok: false, status: 0, data: null, networkError: true,
+             error: 'Cannot reach the API. Please ensure the backend server is running.' };
+  }
+
+  if (res.status === 401) {
+    clearSession();
+    return { ok: false, status: 401, data: null, unauthorized: true,
+             error: 'Your session has expired. Please sign in again.' };
+  }
+
+  const data = await res.json().catch(() => null);
+  return { ok: res.ok, status: res.status, data,
+           forbidden: res.status === 403,
+           error: res.ok ? null : (data?.detail?.reason || data?.detail || `Upload failed (${res.status})`) };
+}
+
 export { API_BASE };
 
 

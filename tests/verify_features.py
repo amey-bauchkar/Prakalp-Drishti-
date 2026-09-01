@@ -8,6 +8,10 @@ output satisfies the invariant it claims, not if it returns HTTP 200.
 import atexit, json, math, os, re, subprocess, sys, time, urllib.request, urllib.error
 from datetime import datetime
 
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+
 B = "http://127.0.0.1:8000"
 RESULTS = []   # (feature, check, ok, detail)
 SERVER_PROC = None
@@ -416,8 +420,28 @@ if s == 200:
           not any(str(r.get("state", "")).lower() == "nan" for r in rows), "")
     check(F, "capex values numeric", all(isinstance(r.get("revised_cost_cr"), (int, float)) for r in rows), "")
 s, d = call("/api/health")
-check(F, "health reports full corpus", (d or {}).get("total_projects_cached") == 2207,
-      str((d or {}).get("total_projects_cached")))
+# The corpus is DYNAMIC now: officers onboard projects through /api/ingest, so a
+# hardcoded 2207 asserts the bootstrap size rather than correctness, and goes red the
+# first time the system is used as designed. What must actually hold is that
+# /api/health agrees with the corpus the ENGINES are reading — the two used to diverge
+# silently, with health frozen at the pre-ingestion count while forecasts already
+# included the new projects.
+try:
+    # backend.config FIRST: it is what loads .env, and therefore what makes
+    # DATABASE_URL visible. Importing corpus_source without it resolves to the CSV
+    # bootstrap while the server under test is on Postgres, and the check then compares
+    # two different corpora and blames the server for the difference.
+    import backend.config  # noqa: F401
+    from analytics_engine.corpus_source import load_corpus as _lc
+    _true_rows = len(_lc())
+except Exception:
+    _true_rows = None
+_reported = (d or {}).get("total_projects_cached")
+check(F, "health agrees with the live corpus",
+      _reported == _true_rows if _true_rows is not None else _reported == 2207,
+      f"health={_reported} corpus={_true_rows}")
+check(F, "corpus is at least the 2,207-project bootstrap",
+      isinstance(_reported, int) and _reported >= 2207, str(_reported))
 
 # ─────────────────────────────────────────────────────────────────────────
 # 17. SECURITY PERIMETER  (headers, rate limiting, traversal, LLM guard)
@@ -575,7 +599,7 @@ F = "ARTHA-NIVARAN"
 s, d = call("/api/parth/portfolio")
 check(F, "portfolio endpoint responds 200", s == 200, f"status={s}")
 if s == 200 and d.get("available"):
-    check(F, "ingests all 2,207 projects", d.get("total_projects") == 2207,
+    check(F, "ingests all 2,207 projects", (d.get("total_projects") or 0) >= 2207,
           str(d.get("total_projects")))
     check(F, "reports 225 raw COMPANYNAME strings",
           d.get("raw_company_name_strings") == 225, str(d.get("raw_company_name_strings")))

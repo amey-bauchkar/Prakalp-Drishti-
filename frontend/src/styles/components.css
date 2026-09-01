@@ -521,6 +521,26 @@
   .engine-tab.active .engine-tab-desc { color: #8DA2B5; }
   .engine-tab.active .engine-tab-icon { color: var(--gold); border-color: #24425C; background: #0F2B42; }
 
+  /* Drop target for the monthly CUF. Keyboard users never touch it -- the visible
+     "Choose file" button drives the same hidden input -- so it is presentation only
+     and carries no interactive role. */
+  .dropzone {
+    border: 1.5px dashed var(--line-field);
+    border-radius: 4px;
+    background: var(--surface-2);
+    padding: 26px 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--ink-soft);
+    transition: background 130ms ease, border-color 130ms ease;
+  }
+  .dropzone.is-dragging {
+    border-color: var(--saffron);
+    background: var(--saffron-wash);
+  }
+
   .engine-tab-icon {
     display: flex; align-items: center; justify-content: center;
     width: 26px; height: 26px; flex-shrink: 0;
