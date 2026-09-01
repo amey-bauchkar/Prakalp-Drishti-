@@ -74,14 +74,18 @@ class SatyaKavachEngine:
     def _load_data(self):
         """Loads master projects and snapshot monthly progression."""
         try:
-            # 1. Master Projects Database
-            if os.path.exists(DATA_PATH):
-                self.df = pd.read_csv(DATA_PATH, low_memory=False)
-            else:
-                for alt_path in ["master_projects.csv", "paimana_extracted/MASTER_PROJECTS_DATASET.csv"]:
-                    if os.path.exists(alt_path):
-                        self.df = pd.read_csv(alt_path, low_memory=False)
-                        break
+            # 1. Master Projects Database via dynamic seam
+            try:
+                from analytics_engine.corpus_source import load_corpus
+                self.df = load_corpus()
+            except Exception:
+                if os.path.exists(DATA_PATH):
+                    self.df = pd.read_csv(DATA_PATH, low_memory=False)
+                else:
+                    for alt_path in ["master_projects.csv", "paimana_extracted/MASTER_PROJECTS_DATASET.csv"]:
+                        if os.path.exists(alt_path):
+                            self.df = pd.read_csv(alt_path, low_memory=False)
+                            break
 
             if self.df is not None and not self.df.empty:
                 self._sanitize_dataframe()
