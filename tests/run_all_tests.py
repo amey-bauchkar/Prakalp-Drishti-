@@ -38,6 +38,7 @@ TESTS = [
     "test_corpus_schema.py",
     "test_corpus_source.py",
     "test_ingestion.py",
+    "test_eo_honesty.py",
 ]
 
 # pytest modules and debug scripts are run separately, not by this runner.

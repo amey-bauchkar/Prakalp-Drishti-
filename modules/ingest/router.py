@@ -37,6 +37,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from analytics_engine import corpus_repository as repo
 from analytics_engine.corpus_provenance import SOURCE_COLUMNS, build_snapshot
 from analytics_engine.corpus_source import corpus_source_name, rebuild_view
+from analytics_engine.geocode import (
+    STATE_SOURCES, all_classes, classify as classify_geocode,
+)
 from analytics_engine.ingestion import (
     REQUIRED_COLUMNS as REQUIRED_FIELDS,
     EntityResolver, load_sector_vocabulary, parse_cuf, to_revision, validate_rows,
@@ -85,6 +88,19 @@ class ProjectRow(BaseModel):
     OnboardingDelay: Optional[float] = None
     Remarks: Optional[str] = Field(default=None, max_length=4000)
 
+    # ── GEOCODE ENRICHMENT (migration 0005) ─────────────────────────────────
+    # Deliberately NOT corpus columns. validate_rows() projects onto SOURCE_COLUMNS
+    # and drops these, so they cannot reach the Merkle leaf and cannot change the
+    # corpus root -- which would invalidate every corpus_version already sealed.
+    Latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    Longitude: Optional[float] = Field(default=None, ge=-180, le=180)
+
+    # An operator-typed state must never be mistaken for ministry-reported geography:
+    # is_reported_state() gates the statutory 10% NER capital floor, and it accepts any
+    # non-empty string. Defaulting to operator_entered keeps a typed state out of the
+    # floor basis unless someone deliberately asserts otherwise.
+    StateSource: Optional[str] = Field(default="operator_entered")
+
 
 class OnboardRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -108,7 +124,8 @@ def _require_database() -> None:
 
 
 def _ingest_job(rows: List[Dict[str, Any]], source: str,
-                actor: Optional[str]) -> Any:
+                actor: Optional[str],
+                geocodes: Optional[List[Dict[str, Any]]] = None) -> Any:
     """Background work: write, rebuild the snapshot, seal a new corpus_version."""
 
     def _run(job: Job) -> Dict[str, Any]:
@@ -118,6 +135,17 @@ def _ingest_job(rows: List[Dict[str, Any]], source: str,
             records.append(to_revision(row, prev_hash=prev,
                                        ingest_source=source, recorded_by=actor))
         written = repo.insert_revisions(records)
+
+        # Geocode is written AFTER the revisions, and its failure is reported without
+        # failing the ingest: a project that landed in the ledger without its map pin is
+        # recoverable, but a rollback that discarded an accepted corpus revision would
+        # not be. The counts are surfaced so the discrepancy is visible.
+        geo_written, geo_error = 0, None
+        if geocodes:
+            try:
+                geo_written = repo.insert_geocode(geocodes)
+            except Exception as exc:
+                geo_error = f"{type(exc).__name__}: {exc}"
 
         # Rebuild the in-memory corpus, then seal the version its root describes. Order
         # matters: the root must be computed from what the database now holds, not from
@@ -132,6 +160,8 @@ def _ingest_job(rows: List[Dict[str, Any]], source: str,
         )
         return {
             "rows_written": written,
+            "geocodes_written": geo_written,
+            "geocode_error": geo_error,
             "corpus_version": version,
             "corpus_root": view.corpus_root,
             "row_count": view.snapshot.row_count,
@@ -167,9 +197,21 @@ def vocabulary(user: dict = Depends(require("read_analytics"))):
     renders whatever the server says.
     """
     resolver = EntityResolver()
+    states = []
+    try:
+        import pandas as _pd
+        from analytics_engine.ingestion import CSV_PATH as _CSV
+        states = sorted({str(s).strip() for s in
+                         _pd.read_csv(_CSV, usecols=["StateName"])["StateName"].dropna().unique()
+                         if str(s).strip()})
+    except Exception:
+        states = []
     return {
         "sectors": sorted(load_sector_vocabulary()),
         "agencies": sorted(resolver.known_raw_names()),
+        "states": states,
+        "state_sources": list(STATE_SOURCES),
+        "geocode_classes": all_classes(),
         "required_fields": list(REQUIRED_FIELDS),
     }
 
@@ -191,9 +233,16 @@ def validate_only(req: OnboardRequest, user: dict = Depends(require("read_analyt
         resolver=EntityResolver(),
         known_project_ids=known,
     )
+    first = req.projects[0]
+    geo = classify_geocode(
+        latitude=first.Latitude, longitude=first.Longitude,
+        state_name=first.StateName, state_source=first.StateSource or "operator_entered",
+    )
+
     return {
-        "valid": report.ok,
+        "valid": report.ok and geo.get("valid", True),
         "checked_against_corpus": known is not None,
+        "geocode": geo,
         **report.as_dict(),
     }
 
@@ -221,13 +270,41 @@ def onboard_projects(req: OnboardRequest, user: dict = Depends(require("allocate
         })
 
     actor = user.get("username") if isinstance(user, dict) else None
+
+    # One geocode row per accepted project. classify() decides what the input is allowed
+    # to claim: an explicit coordinate is site-precise, a bare state is a 200 km
+    # STATE_CENTROID_MATCH that will not back an EO frame, and the state_source tag
+    # keeps operator-typed geography out of the statutory NER floor basis.
+    geocodes = []
+    by_id = {int(p.ProjectId): p for p in req.projects}
+    for row in report.accepted:
+        p = by_id.get(int(row["ProjectId"]))
+        if p is None:
+            continue
+        g = classify_geocode(latitude=p.Latitude, longitude=p.Longitude,
+                             state_name=p.StateName,
+                             state_source=p.StateSource or "operator_entered")
+        if not g.get("valid"):
+            continue
+        geocodes.append({
+            "project_id": int(p.ProjectId),
+            "latitude": g.get("latitude"), "longitude": g.get("longitude"),
+            "geocode_class": g["geocode_class"],
+            "error_radius_m": g["error_radius_m"],
+            "state_name": g.get("state_name"),
+            "state_source": g["state_source"],
+            "recorded_by": actor,
+            "source_note": "onboarding form",
+        })
+
     job = registry.submit("onboard_projects",
-                          _ingest_job(report.accepted, "api", actor),
+                          _ingest_job(report.accepted, "api", actor, geocodes),
                           submitted_by=actor)
     return {
         "accepted": True,
         "job_id": job.job_id,
         "rows_accepted": len(report.accepted),
+        "geocodes_queued": len(geocodes),
         "status_url": f"/api/ingest/jobs/{job.job_id}",
     }
 

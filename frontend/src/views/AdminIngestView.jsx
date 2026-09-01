@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle, CheckCircle2, ClipboardList, Database, FileUp, History,
-  Loader2, PlusCircle, ShieldAlert, UploadCloud,
+  Loader2, MapPin, PlusCircle, ShieldAlert, UploadCloud,
 } from 'lucide-react';
 
 import LoginGate, { useSession } from '../../amey/LoginGate.jsx';
@@ -40,6 +40,7 @@ const TABS = [
 const EMPTY_FORM = {
   ProjectId: '', ProjectName: '', SectorName: '', LineMinistry: '',
   COMPANYNAME: '', OriginalCost: '', SanctionDate: '', OriginalEndDate: '',
+  StateName: '', Latitude: '', Longitude: '',
 };
 
 function Hash({ value }) {
@@ -150,6 +151,40 @@ function ValidationReport({ report }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── Geocode precision, as the server ruled it ───────────────────────────── */
+function GeocodePreview({ geo }) {
+  if (!geo) return null;
+
+  if (!geo.valid) {
+    return (
+      <div className="note note-critical" role="alert">
+        <ShieldAlert size={14} aria-hidden="true" />
+        <span>{geo.error}</span>
+      </div>
+    );
+  }
+
+  const km = geo.error_radius_m >= 1000
+    ? `±${Math.round(geo.error_radius_m / 1000)} km`
+    : `±${geo.error_radius_m} m`;
+
+  return (
+    <div className={`note ${geo.serve_imagery ? 'note-ok' : 'note-warn'}`} role="status">
+      <MapPin size={14} aria-hidden="true" />
+      <span>
+        <strong>{geo.geocode_class}</strong> · {km} · tier <em>{geo.tier}</em>
+        <span className="block mt-1">{geo.display_note}</span>
+        {!geo.counts_toward_ner_floor && (
+          <span className="block mt-1 microlabel-strong">
+            Excluded from the statutory 10% NER capital floor — that constraint binds
+            only on ministry-reported geography.
+          </span>
+        )}
+      </span>
     </div>
   );
 }
@@ -341,6 +376,12 @@ function OnboardTab({ vocab, canWrite }) {
     OriginalCost: Number(form.OriginalCost) || 0,
     SanctionDate: form.SanctionDate || null,
     OriginalEndDate: form.OriginalEndDate || null,
+    StateName: form.StateName || null,
+    Latitude: form.Latitude === '' ? null : Number(form.Latitude),
+    Longitude: form.Longitude === '' ? null : Number(form.Longitude),
+    // Always operator_entered from this form. A form cannot assert that the ministry
+    // reported something, and that distinction gates a statutory funding floor.
+    StateSource: 'operator_entered',
   }), [form]);
 
   const complete = form.ProjectId && form.ProjectName && form.SectorName
@@ -458,6 +499,33 @@ function OnboardTab({ vocab, canWrite }) {
 
         <div className="hairgrid hairgrid-2 gap-4">
           <label className="block">
+            <span className="microlabel-strong">State</span>
+            <select className="field" value={form.StateName} onChange={set('StateName')}>
+              <option value="">Not specified</option>
+              {(vocab.states || []).map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <span className="notation">
+              Recorded as <code>operator_entered</code>. It will render on the map but
+              will <strong>not</strong> count toward the statutory NER floor.
+            </span>
+          </label>
+
+          <div className="hairgrid hairgrid-2 gap-3">
+            <label className="block">
+              <span className="microlabel-strong">Latitude</span>
+              <input className="field" type="number" step="0.000001" min="-90" max="90"
+                     value={form.Latitude} onChange={set('Latitude')} placeholder="e.g. 18.520430" />
+            </label>
+            <label className="block">
+              <span className="microlabel-strong">Longitude</span>
+              <input className="field" type="number" step="0.000001" min="-180" max="180"
+                     value={form.Longitude} onChange={set('Longitude')} placeholder="e.g. 73.856744" />
+            </label>
+          </div>
+        </div>
+
+        <div className="hairgrid hairgrid-2 gap-4">
+          <label className="block">
             <span className="microlabel-strong">Sanction Date</span>
             <input className="field" type="date" value={form.SanctionDate} onChange={set('SanctionDate')} />
           </label>
@@ -474,6 +542,7 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
         )}
         {!checking && <ValidationReport report={preview} />}
+        {!checking && <GeocodePreview geo={preview?.geocode} />}
         {submitError && (
           <div className="note note-critical" role="alert">
             <ShieldAlert size={14} aria-hidden="true" />

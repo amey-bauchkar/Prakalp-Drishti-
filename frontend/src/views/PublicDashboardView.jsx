@@ -160,7 +160,7 @@ export default function PublicDashboardView() {
           <div className="flex items-center gap-3">
             <div className="panel p-3 bg-white/[0.05] border-white/15 text-right">
               <div className="text-[9.5px] uppercase tracking-wider text-ink-300 font-bold">Monitored Portfolio</div>
-              <div className="text-[19px] font-heading font-extrabold text-white leading-tight">₹31.4L Cr Capex</div>
+              <div className="text-[19px] font-heading font-extrabold text-white leading-tight">₹47.4L Cr Capex</div>
             </div>
           </div>
         </div>
@@ -366,7 +366,37 @@ function PublicMetadataTab({
                 // approximate location is drawn hollow and dashed and says so
                 // in the popup.
                 const approx = p.location_is_approximate === true;
+
+                // An UNUSABLE tier is not a pin at all. A state centroid carries a
+                // 200 km error and a national centroid 800 km: at that scale the
+                // coordinate names an administrative unit, not the works. Drawing it
+                // as a dot -- even a dashed one -- still asserts a point location the
+                // data cannot support, so the true uncertainty is drawn as an area and
+                // the reader can see how little is actually known.
+                //
+                // The radius is SERVED by the API from the single class table in
+                // eo_viewport.py. Deriving it here from the precision string would be a
+                // second copy of that table, and the two would drift.
+                const radiusM = Number(p.geocode_error_radius_m);
+                const showUncertainty = p.geocode_serves_imagery === false
+                  && Number.isFinite(radiusM) && radiusM > 0;
+
                 return (
+                  <React.Fragment key={`geo-${p.project_id}`}>
+                  {showUncertainty && (
+                    <Circle
+                      center={[lat, lon]}
+                      radius={radiusM}
+                      pathOptions={{
+                        color: pStat.color,
+                        fillColor: pStat.color,
+                        fillOpacity: 0.04,
+                        weight: 1,
+                        dashArray: '4 6',
+                      }}
+                      interactive={false}
+                    />
+                  )}
                   <CircleMarker
                     key={p.project_id}
                     center={[lat, lon]}
@@ -394,6 +424,13 @@ function PublicMetadataTab({
                             {' '}{String(p.geocode_precision || '').toLowerCase().includes('state')
                               ? 'state' : 'national'}{' '}centroid, not a surveyed
                             site coordinate.
+                            {Number.isFinite(Number(p.geocode_error_radius_m)) && (
+                              <span className="block mt-0.5">
+                                Uncertainty ±{Math.round(Number(p.geocode_error_radius_m) / 1000)} km
+                                {p.geocode_serves_imagery === false
+                                  && ' — satellite verification is withheld at this precision.'}
+                              </span>
+                            )}
                           </div>
                         )}
                         <button
@@ -405,6 +442,7 @@ function PublicMetadataTab({
                       </div>
                     </Popup>
                   </CircleMarker>
+                  </React.Fragment>
                 );
               })}
             </MapContainer>

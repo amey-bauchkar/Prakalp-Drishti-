@@ -32,6 +32,7 @@ from fastapi.responses import FileResponse
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 
 from analytics_engine.corpus_source import load_corpus, is_database_configured
+from analytics_engine.geocode import class_info as _geo_class
 GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_2207_PROJECTS_GEOREFERENCED.json")
 IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "project_imagery")
 STATIC_DIR = os.path.join(BASE_DIR, "frontend", "dist")
@@ -187,6 +188,20 @@ def load_in_memory_cache():
                 "geocode_confidence": eo.get("geocode_confidence", "NONE"),
                 "location_is_approximate": eo.get("geocode_confidence") in
                                            (None, "NONE", "LOW"),
+
+                # The error radius is SERVED, not inferred client-side from the
+                # precision string. The map needs to draw the actual uncertainty, and a
+                # second copy of the radius table in JSX would drift from the one in
+                # eo_viewport.py -- the same duplication that let nine of eleven sector
+                # keys match nothing. One table, served.
+                #
+                # serve_imagery False means the coordinate locates an administrative
+                # unit rather than a site: a 200 km state centroid is not a pin, and the
+                # map draws the area instead of pretending to know the works.
+                "geocode_error_radius_m": _geo_class(
+                    eo.get("geocode_precision")).get("error_radius_m"),
+                "geocode_serves_imagery": bool(
+                    _geo_class(eo.get("geocode_precision")).get("serve")),
 
                 # Satellite verdict from the EO catalogue, NOT from the claim.
                 #

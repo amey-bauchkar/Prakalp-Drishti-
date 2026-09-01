@@ -198,3 +198,64 @@ def current_corpus_version() -> Optional[int]:
             cur.execute("select max(corpus_version) from corpus_snapshots")
             row = cur.fetchone()
             return int(row[0]) if row and row[0] is not None else None
+
+
+# ---------------------------------------------------------------------------------
+# Geocode (migration 0005)
+# ---------------------------------------------------------------------------------
+
+def insert_geocode(records: Sequence[Dict[str, Any]]) -> int:
+    """
+    Append geocode rows. Separate from the corpus ledger on purpose.
+
+    Geometry is enrichment ABOUT a project, not corpus content -- putting latitude into
+    SOURCE_COLUMNS would change the Merkle root and invalidate every corpus_version
+    already sealed. This table versions independently.
+    """
+    if not records:
+        return 0
+    sql = (
+        'insert into project_geocode '
+        '(project_id, latitude, longitude, geocode_class, error_radius_m, '
+        ' state_name, state_source, recorded_by, source_note) '
+        'values (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    )
+    rows = [(
+        r.get("project_id"), r.get("latitude"), r.get("longitude"),
+        r.get("geocode_class"), r.get("error_radius_m"),
+        r.get("state_name"), r.get("state_source"),
+        r.get("recorded_by"), r.get("source_note"),
+    ) for r in records]
+
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.executemany(sql, rows)
+        conn.commit()
+    return len(rows)
+
+
+def geocode_for(project_id: Any) -> Optional[Dict[str, Any]]:
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select latitude, longitude, geocode_class, error_radius_m, "
+                "state_name, state_source, recorded_at "
+                "from project_geocode_current where project_id = %s",
+                (int(project_id),),
+            )
+            row = cur.fetchone()
+    if not row:
+        return None
+    return {"latitude": float(row[0]) if row[0] is not None else None,
+            "longitude": float(row[1]) if row[1] is not None else None,
+            "geocode_class": row[2], "error_radius_m": row[3],
+            "state_name": row[4], "state_source": row[5],
+            "recorded_at": str(row[6])}
+
+
+def ner_eligible_states() -> Dict[str, str]:
+    """project_id -> state, for the ONLY geography the NER floor may bind on."""
+    with _connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute("select project_id, state_name from ner_floor_eligible_geography")
+            return {str(r[0]): r[1] for r in cur.fetchall()}
