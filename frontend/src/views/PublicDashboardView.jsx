@@ -128,7 +128,7 @@ export default function PublicDashboardView() {
           <span className="sep">/</span>
           <span>RTI ACT §4 PROACTIVE DISCLOSURE</span>
           <span className="sep">/</span>
-          <span>1,981 ACTIVE PROJECTS · 2,207 CORPUS</span>
+          <span>2,043 ONGOING · 2,207 SEALED CORPUS · ₹47.44L CR</span>
         </span>
         <span className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

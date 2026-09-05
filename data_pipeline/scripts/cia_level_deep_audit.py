@@ -347,7 +347,7 @@ def run_cia_audit():
     if not errors:
         print(f"🎉 CIA-LEVEL DEEP FORENSIC AUDIT: 100% PASS ACROSS ALL SYSTEMS ({elapsed:.1f}s)")
         print("  • Master Database: 2,207 / 2,207 Projects Validated")
-        print("  • High-Res Satellite Imagery: 4,414 / 4,414 Images Verified (800x800 px sub-meter, Real CV Deltas)")
+        print("  • High-Res Satellite Imagery: 4,414 / 4,414 Images Verified (800x800 px at 2.08-2.35 m/px measured GSD, Real CV Deltas)")
         print("  • KAAL-CHAKRA: 2,207 / 2,207 Monotone Quantile Forecasts (True Delay Shock Response)")
         print("  • SETU-GRAPH: 2,207 Sub-DAGs Strictly Acyclic & Float Propagation Verified")
         print("  • VITTA-VYUHA: 100% Optimal LP Solves & HiGHS Dual Shadow Prices (Closure Error < 5%)")

@@ -1793,14 +1793,24 @@ for _ep in ("/api/tanmay/gaming-analysis", "/api/tanmay/bunching-histogram",
         check(F, f"{_ep} carries no NaN or Infinity",
               "NaN" not in json.dumps(_d) and "Infinity" not in json.dumps(_d), "")
 
+# An unknown id must produce 404 -- not 500, and emphatically not 200.
+#
+# This assertion used to read `s_ != 500`, which passed while /api/amey/forecast/000000
+# returned HTTP 200 carrying a full, Merkle-signed forecast for a DIFFERENT project
+# (KAAL-CHAKRA fell back to df.iloc[[0]]; SETU-GRAPH to the first DAG node). The test
+# was named "fails closed" but only checked "did not crash", so the most damaging
+# defect in the repository sat inside a green suite. Assert the status we actually
+# require.
 for _ep in ("/api/parth/agency/__nope__/projects",
             "/api/aditya/contractors/__nope__",
             "/api/aditya/governance/combined-risk-profile/000000",
             "/api/amey/forecast/000000",
-            "/api/amey/satellite/000000"):
+            "/api/amey/dependencies/000000",
+            "/api/amey/satellite/000000",
+            "/api/amey/copilot/000000"):
     s_, _ = call(_ep, tok=ADMIN)
-    check(F, f"unknown id on {_ep.rsplit('/', 2)[-2]} fails closed, not 500",
-          s_ != 500, f"status={s_}")
+    check(F, f"unknown id on {_ep.rsplit('/', 2)[-2]} fails closed with 404",
+          s_ == 404, f"status={s_} (200 = wrong project served; 500 = unhandled)")
 
 # ── the test runner cannot silently skip a test file ─────────────────────
 try:

@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import {
   FileText, Link2, ShieldCheck, Eye, MessageSquare, CheckCircle2,
   Building2, Printer, ArrowLeft, ExternalLink, Send, ChevronRight,
-  HelpCircle, Shield, Info, Clock, AlertCircle
+  HelpCircle, Shield, Info, Clock, AlertCircle, AlertTriangle
 } from 'lucide-react';
 
 export const POLICY_TABS = [
@@ -437,35 +437,50 @@ export default function PoliciesView() {
               </div>
 
               {submittedReceipt ? (
-                <div className="p-6 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-900 font-bold text-base">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                    Grievance Registered Successfully
+                <div className="p-6 bg-amber-50 border border-amber-300 rounded-xl space-y-4">
+                  <div className="flex items-center gap-2 text-amber-900 font-bold text-base">
+                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                    Demonstration only — no grievance has been filed
                   </div>
-                  <p className="text-xs sm:text-sm text-emerald-950">
-                    Your grievance has been dispatched to the MoSPI Project Monitoring Division. An automated acknowledgment has been generated:
+                  <p className="text-xs sm:text-sm text-amber-950">
+                    This prototype illustrates how a CPGRAMS-interoperable intake would capture a
+                    grievance against a monitored project. <strong>Nothing was transmitted to MoSPI
+                    or to any government system.</strong> The reference below was generated in your
+                    browser and stored only in this browser's local storage.
                   </p>
-                  <div className="bg-white p-4 rounded-xl border border-emerald-200 font-mono text-xs sm:text-[13px] space-y-1.5 shadow-2xs">
-                    <div><strong className="text-slate-700">Tracking Token:</strong> <span className="text-emerald-700 font-bold text-sm">{submittedReceipt.trackingId}</span></div>
+                  <div className="bg-white p-4 rounded-xl border border-amber-200 font-mono text-xs sm:text-[13px] space-y-1.5 shadow-2xs">
+                    <div><strong className="text-slate-700">Local demo reference:</strong> <span className="text-amber-800 font-bold text-sm">{submittedReceipt.trackingId}</span> <span className="text-slate-400">(not a government tracking number)</span></div>
                     <div><strong className="text-slate-700">Timestamp:</strong> {new Date(submittedReceipt.timestamp).toLocaleString('en-IN')}</div>
                     <div><strong className="text-slate-700">Category:</strong> {submittedReceipt.category}</div>
                     {submittedReceipt.projectId && <div><strong className="text-slate-700">Project Reference:</strong> #{submittedReceipt.projectId}</div>}
                     <div><strong className="text-slate-700">Complainant:</strong> {submittedReceipt.name} ({submittedReceipt.email})</div>
                   </div>
-                  <div className="text-xs text-slate-600">
-                    You may track this token through the central CPGRAMS portal (<a href="https://pgportal.gov.in" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">pgportal.gov.in</a>) or reference it in communications with the MoSPI Nodal Officer.
+                  <div className="text-xs text-slate-700">
+                    <strong>To file a real grievance</strong>, use the Government of India's central
+                    CPGRAMS portal at <a href="https://pgportal.gov.in" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">pgportal.gov.in</a>.
+                    That portal issues the official tracking number; this page cannot.
                   </div>
                   <button
                     onClick={() => setSubmittedReceipt(null)}
                     className="px-4 py-2 bg-[#0060B6] text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
                   >
-                    Submit Another Feedback / Grievance
+                    Try the demonstration form again
                   </button>
                 </div>
               ) : (
                 <>
+                  <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 border border-amber-300 rounded-xl">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    <p className="text-xs sm:text-[13px] leading-relaxed text-amber-950">
+                      <strong>Demonstration interface — this form does not file a grievance.</strong>{' '}
+                      It shows how a CPGRAMS-interoperable intake would work. Nothing you enter is
+                      transmitted to MoSPI or any government system; it stays in this browser.
+                      To file a real grievance, use{' '}
+                      <a href="https://pgportal.gov.in" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-bold">pgportal.gov.in</a>.
+                    </p>
+                  </div>
                   <p className="text-xs sm:text-[13px] leading-relaxed text-slate-600">
-                    Citizens, contractors, and public auditors may register grievances regarding physical progress discrepancies, geocoding inaccuracies, or statutory environmental clearance bottlenecks.
+                    In a deployed system, citizens, contractors, and public auditors would register grievances here regarding physical progress discrepancies, geocoding inaccuracies, or statutory environmental clearance bottlenecks.
                   </p>
 
                   <form onSubmit={handleFormSubmit} className="space-y-4 bg-slate-50 p-5 sm:p-6 rounded-xl border border-slate-200">

@@ -13,8 +13,21 @@ from analytics_engine.corpus_provenance import (
 )
 
 def main():
-    pwd = urllib.parse.quote_plus('Tripspahilaamey@1305')
-    db_url = f'postgresql://postgres.azcimafzkniyygwyaone:{pwd}@aws-0-ap-south-1.pooler.supabase.com:5432/postgres'
+    # The connection string is read from the environment and never stored here.
+    # An earlier revision hardcoded a live Supabase password in this file, which
+    # put a production credential into git history. Credentials belong in .env
+    # (gitignored) or the deployment secret store -- never in a tracked file.
+    from backend.config import _load_dotenv
+    _load_dotenv()
+    db_url = os.getenv("DATABASE_URL", "").strip()
+    if not db_url:
+        raise SystemExit(
+            "DATABASE_URL is not set.\n"
+            "Set it in .env (which is gitignored) or export it before running:\n"
+            "  DATABASE_URL=postgresql://<user>:<password>@<host>:5432/postgres\n"
+            "This script refuses to run without it rather than falling back to a "
+            "credential baked into source."
+        )
 
     csv_path = 'paimana_extracted/PAIMANA_MASTER_PROJECTS_DATABASE.csv'
     df = pd.read_csv(csv_path)

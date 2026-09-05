@@ -170,13 +170,32 @@ if absent and ENGINE.df is not None:
 # text for "Infrastructure Asset" and matched the COMMENT explaining its removal -- the
 # same false positive the corpus-seam scanner hit, and the sort of finding that trains
 # people to ignore a failing check.
-_unknown = ENGINE.get_satellite_audit("000000")
-check("an unknown project gets NO invented identity",
-      _unknown.get("project_name") is None and _unknown.get("sector") is None,
-      f"name={_unknown.get('project_name')!r} sector={_unknown.get('sector')!r}")
-check("an unknown project gets no invented measurements",
-      all(_unknown.get(f) is None for f in MEASUREMENT_FIELDS if f in _unknown),
-      "a project that does not exist cannot have been measured")
+#
+# The contract here was TIGHTENED. It used to be "an unknown project returns a payload
+# whose identity and measurement fields are all null", which this engine satisfied. But
+# serving a 200 with a null-filled body still invites a caller to render an unknown
+# asset as an audited one -- and the same class of fallback elsewhere (KAAL-CHAKRA's
+# df.iloc[[0]], SETU-GRAPH's first DAG node) was returning a DIFFERENT project's data
+# under the requested id. The engine now refuses outright, and the router maps the
+# refusal to HTTP 404. Refusing is strictly stronger than nulling, so assert the refusal.
+_refused = False
+_leaked = None
+try:
+    _leaked = ENGINE.get_satellite_audit("000000")
+except KeyError:
+    _refused = True
+check("an unknown project is REFUSED, not served a null-filled payload",
+      _refused,
+      f"returned a payload instead of raising: name={(_leaked or {}).get('project_name')!r}")
+if not _refused and _leaked is not None:
+    # Fall back to the previous, weaker assertions so a regression still reports
+    # precisely what leaked rather than only that the refusal was skipped.
+    check("an unknown project gets NO invented identity",
+          _leaked.get("project_name") is None and _leaked.get("sector") is None,
+          f"name={_leaked.get('project_name')!r} sector={_leaked.get('sector')!r}")
+    check("an unknown project gets no invented measurements",
+          all(_leaked.get(f) is None for f in MEASUREMENT_FIELDS if f in _leaked),
+          "a project that does not exist cannot have been measured")
 
 
 # ---------------------------------------------------------------------------------

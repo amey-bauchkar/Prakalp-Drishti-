@@ -1,7 +1,7 @@
 # 🛰️ PRAKALP-DRISHTI (प्रकल्प-दृष्टि)
 ### Autonomous Infrastructure Intelligence & Sovereign Decision Cockpit
 **Smart India Hackathon 2026** | **Ministry of Statistics and Programme Implementation (MoSPI)**
-*Central Sector Mega-Projects Portfolio: 2,207 Projects | ₹31.4 Lakh Crore Public Capex*
+*Central Sector Mega-Projects Portfolio: 2,207 Projects | ₹47.44 Lakh Crore Public Capex*
 
 [![CI](https://github.com/amey-bauchkar/Prakalp-Drishti-/actions/workflows/ci.yml/badge.svg)](https://github.com/amey-bauchkar/Prakalp-Drishti-/actions/workflows/ci.yml)
 [![System Health](https://img.shields.io/badge/System%20Health-100%25%20Operational-emerald?style=flat-square)](http://127.0.0.1:8000/api/health)
@@ -28,7 +28,7 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 │                                  PRAKALP-DRISHTI ENTERPRISE ARCHITECTURE                               │
 ├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                                        │
-│   [ 2,207 Central Sector Projects (₹31.4 Lakh Cr) ] ───► In-Memory Vector & Column Store (<2.5ms)      │
+│   [ 2,207 Central Sector Projects (₹47.44 Lakh Cr) ] ──► In-Memory Vector & Column Store (<2.5ms)      │
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH & VARSHA    │      │ 3. VITTA-VYUHA           │   │

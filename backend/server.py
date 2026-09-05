@@ -20,8 +20,9 @@ if BACKEND_DIR not in sys.path:
 
 from analytics_engine.state_resolution import resolve_state
 
-from fastapi import FastAPI, Query, HTTPException, Depends
+from fastapi import FastAPI, Query, HTTPException, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from backend import config
 from backend.security import (
     security_headers_middleware, rate_limit_middleware, sanitize_id,
@@ -59,6 +60,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+# The full corpus listing is ~1.8 MB of JSON, and the dashboard requests it on mount.
+# On venue Wi-Fi that is the difference between a demo that renders and one that
+# stalls while a judge watches. JSON compresses roughly 10:1.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # In-Memory Cache on Startup
 projects_cache = []
@@ -313,6 +319,7 @@ def health_check():
 
 @app.get("/api/projects")
 def get_projects(
+    response: Response,
     sector: Optional[str] = None,
     state: Optional[str] = None,
     min_cost: Optional[float] = None,
@@ -325,6 +332,13 @@ def get_projects(
         results = [p for p in results if p["state"].lower() == state.lower()]
     if min_cost is not None:
         results = [p for p in results if p["revised_cost_cr"] >= min_cost]
+    # The corpus changes only on ingestion, so a short browser cache stops the
+    # dashboard re-pulling ~1.8 MB on every mount. `private` + Vary: Authorization
+    # rather than `public`: if this listing is ever role-scoped, a shared cache must
+    # not hand one role's view to another.
+    response.headers["Cache-Control"] = "private, max-age=120"
+    # GZipMiddleware appends Accept-Encoding to Vary itself; only Authorization here.
+    response.headers["Vary"] = "Authorization"
     return results[:limit]
 
 @app.get("/api/projects/{project_id}")

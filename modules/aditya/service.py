@@ -36,7 +36,11 @@ class EOAuditorEngine:
         return {
             "module": "EO-AUDITOR",
             "module_lead": "Aditya",
-            "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter Resolution ~0.8m)",
+            # "Sub-meter Resolution ~0.8m" removed. Measured ground sample distance on
+            # these Web Mercator tiles is 2.08-2.35 m/px, and CLAIMS.md lists sub-metre
+            # detection as REFUSED. This endpoint was serving the refused claim next to
+            # the corrected one in the same response.
+            "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (2.08-2.35 m/px measured)",
             "dual_epoch_vintages": "2018-02 (Baseline) vs 2023-01 (Current)",
             "total_georeferenced_coverage": total_coverage,
             "verified_on_track_count": len(verified_on_track),

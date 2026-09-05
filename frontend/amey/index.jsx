@@ -8,6 +8,33 @@ import {
 import LoginGate from './LoginGate';
 
 export default function AmeyMasterView() {
+  // Portfolio headline figures are READ FROM THE LIVE API, never typed here.
+  //
+  // These four numbers were previously hardcoded as 1,981 / Rs 42.78L Cr, which
+  // matched neither /api/health (2,209 / Rs 47.61L Cr) nor the sealed corpus
+  // (2,207 / Rs 47.44L Cr) nor the README. Three reachable figures for one portfolio
+  // is the kind of contradiction a reviewer finds by opening a second tab.
+  //
+  // The fallback below is the SEALED corpus baseline (Merkle root e659bf58...), used
+  // only when the API cannot be reached, and labelled as such by `live` state.
+  const SEALED = { projects: '2,207', capex: '₹47.44L Cr' };
+  const [portfolio, setPortfolio] = React.useState(SEALED);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('/api/health')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((h) => {
+        if (cancelled || !h || typeof h.total_projects_cached !== 'number') return;
+        setPortfolio({
+          projects: h.total_projects_cached.toLocaleString('en-IN'),
+          capex: `₹${(h.total_portfolio_capex_cr / 1e5).toFixed(2)}L Cr`,
+        });
+      })
+      .catch(() => { /* keep the sealed baseline; never invent a number */ });
+    return () => { cancelled = true; };
+  }, []);
+
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -165,8 +192,8 @@ export default function AmeyMasterView() {
             {/* Bottom Centered 4-Metric Strip (MoSPI April 2026 Flash Report Aligned) */}
             <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-3xl w-full mx-auto grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/12 pb-1 gap-y-3 sm:gap-y-0">
               {[
-                { v: '1,981', k: 'Active Ongoing Projects' },
-                { v: '₹42.78L Cr', k: 'Revised Project Cost' },
+                { v: portfolio.projects, k: 'Monitored Projects' },
+                { v: portfolio.capex, k: 'Sanctioned Portfolio Capex' },
                 { v: '22', k: 'Infrastructure Sectors' },
                 { v: '17', k: 'Central Ministries' },
               ].map((m) => (
@@ -210,8 +237,8 @@ export default function AmeyMasterView() {
 
               <div className="lg:col-span-5 border-y lg:border-y-0 lg:border-x border-gov-gold-border/90 py-3 lg:py-0 lg:px-7">
                 <p className="text-[13.5px] sm:text-[14px] text-text-secondary leading-relaxed font-sans">
-                  Predictive decision support across <strong>1,981 active infrastructure projects</strong> (₹42.78L Cr) 
-                  anchored to MoSPI's April 2026 reporting, calibrated on a <strong>2,207-project master corpus</strong> 
+                  Predictive decision support across <strong>2,043 ongoing infrastructure projects</strong> (₹45.64L Cr)
+                  anchored to MoSPI's April 2026 reporting, calibrated on a <strong>2,207-project master corpus</strong>
                   to eliminate outcome-censoring bias in completion forecasting.
                 </p>
               </div>
@@ -221,7 +248,7 @@ export default function AmeyMasterView() {
                   Statutory PAIMANA Repository
                 </div>
                 <div className="text-[11.5px] text-text-secondary mt-1 font-sans">
-                  Active Monitoring: 1,981 Projects (&ge; ₹150 Cr)
+                  Active Monitoring: 2,043 Projects (&ge; ₹150 Cr)
                 </div>
                 <div className="text-[10px] text-gov-saffron-dark font-bold uppercase tracking-widest mt-1">
                   DIID / IPMD Division · MoSPI
@@ -288,11 +315,11 @@ export default function AmeyMasterView() {
                 {/* Corpus Pill Breakdown */}
                 <div className="grid grid-cols-3 gap-2.5 pt-2 font-sans">
                   <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
-                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">1,981</div>
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">2,043</div>
                     <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Active Ongoing</div>
                   </div>
                   <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
-                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">+ 226</div>
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">+ 164</div>
                     <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Completed Labels</div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">

@@ -109,7 +109,7 @@ served by KAAL-CHAKRA's conformal intervals instead.
 | **Air-gap operation** | Runs with no outbound network. `GROQ_API_KEY` blank is the sovereign default; the copilot answers from locally computed Merkle-signed facts. |
 | **RBAC** | `viewer` / `analyst` / `admin` hierarchy, enforced by decorator. |
 | **Test suite** | 476/476 assertions, 11/11 suites, enforced in GitHub Actions CI on every push. |
-| **Persistence** | **In-memory pandas — there is no database.** Correct at 2,207 projects; a production MoSPI deployment ingesting continuously would need one. Stated rather than implied. |
+| **Persistence** | **Split write/read paths.** Writes go to **Supabase PostgreSQL (ap-south-1, Mumbai)** — schema migrations `0001`–`0006`, append-only triggers, `REVOKE`-enforced immutability, RLS as defence-in-depth, and a `prev_hash` row chain. Reads are served from an **in-memory pandas frame** rebuilt from that database at startup, which is what delivers the <10 ms query latency. Both paths meet at one seam, `analytics_engine/corpus_source.py`. **The read path is single-process and holds the whole corpus in RAM** — correct at 2,207 rows, but a continuously-ingesting national deployment would need a shared cache or a columnar store. Three services still bypass the seam and read the CSV directly; they are pinned in `tests/test_corpus_source.py::KNOWN_BYPASSES` rather than left undocumented. *(An earlier revision of this row read "there is no database", which predated the PostgreSQL integration.)* |
 
 ---
 

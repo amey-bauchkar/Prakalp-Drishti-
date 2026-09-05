@@ -370,7 +370,11 @@ class SetuGraphEngine:
     def get_k_hop_subgraph(self, project_id: str, k: int = 2, delay_shock_months: float = 0.0) -> DependencySubGraph:
         pid = str(project_id)
         if pid not in self.dag:
-            pid = list(self.dag.nodes())[0]
+            # Was: pid = list(self.dag.nodes())[0] -- an unknown id silently returned
+            # an arbitrary other project's contagion subgraph, locked capital and
+            # Shapley criticality. Same class of defect as the KAAL-CHAKRA fallback:
+            # a confident answer about the wrong asset. Fail closed; router -> 404.
+            raise KeyError(f"Project '{project_id}' not found in dependency graph")
 
         # Extract k-hop neighborhood (both predecessors and successors)
         nodes_set = {pid}

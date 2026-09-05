@@ -159,17 +159,43 @@ def _project_context(pid: str) -> Dict[str, Any]:
 # SIGNED URLS
 # ══════════════════════════════════════════════════════════════════════════
 
+def _signing_key() -> bytes:
+    """The HMAC key for signed imagery URLs, or a hard failure.
+
+    This previously fell back to the literal "prakalp-dev-secret" when
+    PRAKALP_SECRET_KEY was unset -- and config.SECRET_KEY defaults to "", so any
+    deployment that forgot the variable signed with a constant published in this
+    repository. That makes signed URLs forgeable by anyone who has read the source,
+    which defeats the redaction policy these signatures exist to enforce.
+
+    There is no safe default for a signing key. Refuse instead of inventing one.
+    """
+    key = (getattr(config, "SECRET_KEY", "") or "").strip()
+    if not key:
+        raise RuntimeError(
+            "PRAKALP_SECRET_KEY is not configured; imagery URL signing is disabled. "
+            "Set it in .env before serving signed tiles."
+        )
+    return key.encode()
+
+
 def _sign(path: str, expires: int, subject: str) -> str:
-    key = (getattr(config, "SECRET_KEY", "") or "prakalp-dev-secret").encode()
     msg = f"{path}|{expires}|{subject}".encode()
-    return hmac.new(key, msg, hashlib.sha256).hexdigest()[:40]
+    return hmac.new(_signing_key(), msg, hashlib.sha256).hexdigest()[:40]
 
 
 def verify_signature(path: str, expires: int, subject: str, sig: str) -> Tuple[bool, str]:
-    """Constant-time signature check with an explicit expiry reason."""
+    """Constant-time signature check with an explicit expiry reason.
+
+    Fails closed when no signing key is configured: an unsigned deployment must
+    reject signed links rather than accept anything.
+    """
     if time.time() > expires:
         return False, "link expired"
-    expected = _sign(path, expires, subject)
+    try:
+        expected = _sign(path, expires, subject)
+    except RuntimeError:
+        return False, "signing key not configured"
     if not hmac.compare_digest(expected, sig or ""):
         return False, "signature mismatch"
     return True, "ok"

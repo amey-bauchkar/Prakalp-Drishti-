@@ -89,7 +89,10 @@ def _stage_for(pid, before, after, eo_payload, cat):
         from analytics_engine.stage_classifier import classify_stage
         return classify_stage(
             before, after, eo_payload,
-            claimed_progress_pct=float(cat.get("claimed_progress_pct") or 0.0),
+            # Passed through unset rather than coerced to 0.0: an absent claim is not
+            # a claim of zero progress. derive_stage_label() already treats None as
+            # "no claim to compare against" (stage_classifier.py:327).
+            claimed_progress_pct=cat.get("claimed_progress_pct"),
             project_id=str(pid),
         )
     except Exception as e:
@@ -180,6 +183,26 @@ class SatelliteFusionEngine:
             }
         except Exception:
             return blank
+
+    def _corpus_progress(self, pid: str) -> Optional[float]:
+        """Reported physical progress from the corpus, or None if unknown.
+
+        The catalogue predates some projects, and an absent entry used to default to
+        a hardcoded 50.0 -- a fabricated midpoint served from an engine whose whole
+        contract is that it does not invent numbers. The corpus carries the real
+        statutory figure for every project it holds; where it does not hold the
+        project, the honest value is None.
+        """
+        if self.df is None:
+            return None
+        try:
+            row = self.df[self.df["ProjectId"].astype(str) == str(pid)]
+            if row.empty:
+                return None
+            v = pd.to_numeric(row.iloc[0].get("PhysicalProgress"), errors="coerce")
+            return None if v != v else float(v)   # NaN-safe
+        except Exception:
+            return None
 
     def _precision_metrics(self, pid: str) -> Dict[str, Any]:
         """Run the pinpoint change detector for one project, memoised.
@@ -287,8 +310,15 @@ class SatelliteFusionEngine:
         # lines below and referenced it before assignment when it lived further down.
         dual_epoch = has_before and has_after
         
-        claimed = float(cat_entry.get("claimed_progress_pct", 50.0))
-        
+        # Was: float(cat_entry.get("claimed_progress_pct", 50.0)) -- an uncatalogued
+        # project was served a fabricated 50%. Prefer the catalogue, fall back to the
+        # corpus's real statutory figure, and report None when neither knows.
+        _claimed_raw = cat_entry.get("claimed_progress_pct")
+        if _claimed_raw is None:
+            _claimed_raw = self._corpus_progress(pid)
+        claimed = float(_claimed_raw) if _claimed_raw is not None else None
+
+
         # There is deliberately no "observed progress %" here. Surface change and
         # reported progress correlate at 0.007 across the site-level corpus, so imagery
         # cannot support a completion figure; the previous one only looked plausible
@@ -346,6 +376,14 @@ class SatelliteFusionEngine:
         # road. Placeholder identity is worse than a blank one -- it is wrong in a
         # way the reader cannot detect, on the screen that exists to verify claims.
         ident = self._corpus_identity(pid)
+
+        # Neither the satellite catalogue nor the corpus has heard of this project.
+        # Returning a payload of nulls with a fabricated progress figure invited the
+        # reader to treat an unknown asset as an audited one. Fail closed; router -> 404.
+        if not cat_entry and ident.get("project_name") is None:
+            raise KeyError(
+                f"Project '{pid}' not found in satellite catalog or master corpus"
+            )
 
         return {
             "project_id": pid,

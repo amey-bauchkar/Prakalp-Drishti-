@@ -39,6 +39,9 @@ def get_project_forecast(project_id: str):
     try:
         engine = get_kaal_chakra_engine()
         return engine.forecast_project(project_id)
+    except KeyError:
+        raise HTTPException(status_code=404,
+                            detail=f"Project '{project_id}' not found in the corpus.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -47,6 +50,9 @@ def get_project_dependencies(project_id: str, k: int = Query(default=2, ge=1, le
     try:
         engine = get_setu_graph_engine()
         return engine.get_k_hop_subgraph(project_id, k=k)
+    except KeyError:
+        raise HTTPException(status_code=404,
+                            detail=f"Project '{project_id}' not found in the dependency graph.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -64,6 +70,9 @@ def get_cabinet_briefing(project_id: str, user: dict = Depends(require("read_bri
     try:
         engine = get_pragati_saarthi_engine()
         return engine.generate_cabinet_briefing(project_id)
+    except KeyError:
+        raise HTTPException(status_code=404,
+                            detail=f"Project '{project_id}' not found in the corpus.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -196,6 +205,10 @@ def get_satellite_audit(project_id: str):
     try:
         engine = get_satellite_fusion_engine()
         return engine.get_satellite_audit(project_id)
+    except KeyError:
+        raise HTTPException(status_code=404,
+                            detail=f"Project '{project_id}' not found in the satellite catalog "
+                                   f"or master corpus.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -212,6 +225,9 @@ def get_pmo_copilot_brief(project_id: str):
     try:
         engine = get_pmo_copilot_engine()
         return engine.query_copilot(project_id)
+    except KeyError:
+        raise HTTPException(status_code=404,
+                            detail=f"Project '{project_id}' not found in the corpus.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

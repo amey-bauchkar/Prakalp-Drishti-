@@ -158,6 +158,13 @@ class KaalChakraEngine:
         has_cost_revision = self.df["RevisedCost"] > self.df["OriginalCost"] * 1.01
         has_text_reason = self.df["RevisedCostReason"].astype(str).str.strip().isin(["", "nan", "None"]) == False
         self.df["IsRebaselined"] = has_cost_revision | has_text_reason
+        # NAMING CAVEAT, STATED WHERE IT IS COMPUTED: this is a 3-level SEVERITY TIER,
+        # not a tally of actual baseline-reset events. The corpus records no reset
+        # history, so no such tally can be derived from it.
+        #   0 = no revision detected
+        #   1 = rebaselined
+        #   2 = rebaselined AND true cost overrun > 50%
+        # Do not describe a value of 2 as "reset twice" -- it means "reset, severely".
         self.df["BaselineResetCount"] = np.where(self.df["IsRebaselined"], np.where(self.df["TrueCostOverrunPerc"] > 50, 2, 1), 0)
 
         # Parse Dates
@@ -242,9 +249,14 @@ class KaalChakraEngine:
     def forecast_project(self, project_id: str, delay_shock_months: float = 0.0) -> ProjectForecast:
         row = self.df[self.df["ProjectId"].astype(str) == str(project_id)]
         if row.empty:
-            # Fallback to first project if not found
-            row = self.df.iloc[[0]]
-        
+            # This previously fell back to self.df.iloc[[0]], which meant an unknown
+            # project id returned a CONFIDENT forecast for a DIFFERENT project -- a
+            # silent wrong answer carrying a Merkle-signed fact block. In a system
+            # whose premise is verifiability, a wrong answer is strictly worse than
+            # an error. Fail closed; the router maps this to HTTP 404.
+            raise KeyError(f"Project '{project_id}' not found in master corpus")
+
+
         p = row.iloc[0]
         pid = str(p["ProjectId"])
         pname = str(p["ProjectName"])
