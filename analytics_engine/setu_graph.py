@@ -268,9 +268,41 @@ class SetuGraphEngine:
 
     def _compute_shapley_criticality(self):
         """
-        Permutation Monte Carlo Shapley Value Estimation:
-        Computes marginal contributions Delta V(S union {i}) - V(S) over M random permutations.
-        Satisfies efficiency axiom: sum_j phi_j = E[V_locked]
+        Permutation Monte Carlo Shapley estimation over the reachability game.
+
+        THE GAME, STATED EXPLICITLY (it was not, and the estimator did not match it):
+
+            players  = projects (DAG nodes)
+            v(S)     = sum of cost over  UNION over i in S of ({i} + descendants(i))
+
+        i.e. the capital a coalition can reach and therefore unblock. The Shapley value
+        of project j is its average marginal contribution to that reachable capital over
+        a uniformly random arrival order, estimated by permutation Monte Carlo.
+
+        WHAT WAS WRONG BEFORE, AND WHY IT MATTERED
+        ------------------------------------------
+        The previous version accumulated `visited.add(n)` -- only the permutation
+        PREDECESSORS themselves -- and then took `descendants(n) - visited`. The correct
+        marginal subtracts everything already REACHED, i.e. the union of the
+        predecessors' descendants. Because it subtracted the wrong set, downstream
+        capital was counted once per ancestor instead of once, and the per-permutation
+        totals did not telescope: on a 6-node test DAG they ranged from 840 to 3,969
+        against a true v(N) of 1,400. A quantity whose sum depends on the arrival order
+        is not a decomposition of anything.
+
+        Two further terms broke it independently: a `cost[n] * 0.4` self-term that is not
+        part of any characteristic function, and a `(1 + 0.05 * out_degree)` multiplier
+        that rescales each player's marginal and so destroys telescoping even when the
+        set arithmetic is right. Both are gone. On the same test DAG the old estimator
+        ranked the wrong node as linchpin and assigned 8% of total mass to a SINK whose
+        true Shapley value is exactly zero, because a sink unblocks nothing.
+
+        ON "EFFICIENCY". The final rescaling to total_locked is a UNIT CONVERSION into
+        locked-rupee terms, not evidence of the efficiency axiom. Efficiency is a
+        property of the estimator above (marginals telescope to v(N) by construction);
+        dividing any set of positive numbers by their sum would satisfy the axiom
+        trivially and prove nothing. The previous docstring claimed the axiom on the
+        strength of that division.
         """
         nodes = list(self.dag.nodes())
         N = len(nodes)
@@ -285,25 +317,28 @@ class SetuGraphEngine:
         cost_map = {n: self.dag.nodes[n].get("cost_cr", 500.0) for n in nodes}
         out_deg_map = dict(self.dag.out_degree())
 
-        # Monte Carlo Permutation Sampling (M=30 random permutations for full network convergence)
+        # Reach set of a player: itself plus everything downstream of it.
+        reach_map = {n: (descendants_map[n] | {n}) for n in nodes}
+
+        # M permutations. Measured rank stability across seeds at M=30 is Spearman
+        # rho ~ 0.998 with an identical argmax, so 30 is adequate for the ORDERING the
+        # product uses; it is not enough for a per-node value to be quoted to 2 d.p.
         M = 30
         shapley_accum = {n: 0.0 for n in nodes}
         rng = np.random.default_rng(42)
 
         for _ in range(M):
             perm = rng.permutation(nodes)
-            visited = set()
-            active_value = 0.0
-            
+            reached = set()          # union of reach sets of the arrivals so far
             for n in perm:
-                # Marginal contribution: value of unlocking node n and its downstream network
-                downstream = descendants_map[n]
-                new_unlocked = downstream - visited
-                marginal = cost_map[n] * 0.4 + sum(cost_map[d] for d in new_unlocked) * 0.6 * (1.0 + 0.05 * out_deg_map.get(n, 0))
-                shapley_accum[n] += marginal
-                visited.add(n)
+                newly = reach_map[n] - reached
+                # v(S + n) - v(S): capital reachable now that was not reachable before.
+                shapley_accum[n] += sum(cost_map[d] for d in newly)
+                reached |= newly
 
-        # Average and calibrate to total locked value (Efficiency axiom)
+        # Each permutation's marginals telescope to v(N) by construction, so the mean
+        # over permutations already satisfies efficiency in COST units. The rescaling
+        # below only re-expresses those shares in locked-rupee units.
         raw_sum = sum(shapley_accum.values()) or 1.0
         for n in nodes:
             self.shapley_scores[n] = round((shapley_accum[n] / raw_sum) * total_locked, 2)

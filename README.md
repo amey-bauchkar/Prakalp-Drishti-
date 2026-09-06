@@ -92,7 +92,7 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 * **Rockafellar-Uryasev Tail Risk ($\text{CVaR}_{90}$)**: Balances expected completion yield against extreme tail disruption via risk tolerance dial $\kappa \in [0, 1]$:
   $$\max \quad (1 - \kappa) \cdot \mathbb{E}[\text{Yield}] - \kappa \cdot \text{CVaR}_{90}(\text{Capital at Risk})$$
 * **Statutory 10% NER Floor**: Hard linear constraint guaranteeing minimum 10% capital allocation to North-Eastern states regardless of macro budget shocks.
-* **Dual Shadow Prices**: Discloses marginal economic multipliers ($\pi_{\text{budget}} = +0.699$, indicating yield gain per additional ₹1 Cr allocated).
+* **Dual Shadow Prices**: Discloses the marginal economic multiplier $\pi_{\text{budget}}$ — yield gain per additional ₹1 Cr. **A shadow price is only meaningful at a stated budget**, and this one falls as the pool grows, exactly as diminishing returns require: at $\kappa = 0.5$, $\pi_{\text{budget}} = 2.233$ at ₹2,000 Cr, $1.216$ at ₹10,000 Cr, $0.773$ at ₹20,000 Cr, $0.432$ at ₹34,000 Cr, and **$0.000$ once the pool exceeds ≈₹34,919 Cr**, where absorptive capacity binds before the budget does and the marginal rupee buys nothing. Complementary slackness is therefore satisfied exactly: $\pi > 0$ if and only if the budget constraint is tight.
 
 ### 4. 🛰️ PRATIBIMB-EO & NASA-IBM PRITHVI FOUNDATION MODEL
 * **Dual-Epoch Optical Comparison**: Synchronized visual swipe comparison between Baseline ($T_0$) and Current ($T_1$) satellite imagery.

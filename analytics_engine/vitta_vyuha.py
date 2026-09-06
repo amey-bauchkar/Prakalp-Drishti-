@@ -342,13 +342,32 @@ class VittaVyuhaEngine:
             allocations_raw += x_raw[t*N:(t+1)*N]
 
         # Exact Mathematical Shadow Prices from HiGHS Dual Lagrange Multipliers
-        if res_lp.success and hasattr(res_lp, "ineqlin") and res_lp.ineqlin is not None:
+        # A shadow price is either the LP's dual or it is nothing. The previous fallback
+        # synthesised one -- clip(mean(effective_yield) * 1.15, 0.45, 2.80) for the budget
+        # and a literal 0.850 for the NER floor -- and served it under this very comment
+        # about "exact Lagrange multipliers". A fabricated dual is worse than a missing
+        # one: it is unfalsifiable at a glance and it is the number an officer would
+        # reallocate capital on. If the dual is unavailable, say so.
+        #
+        # abs() is deliberate and correct, not a sign bug: scipy minimises with A_ub x <= b,
+        # so marginals for a binding <= row are <= 0, and the conventional positive shadow
+        # price is their magnitude. Complementary slackness is preserved either way -- a
+        # slack constraint returns exactly 0.0, which is verified in tests.
+        pi_budget = None
+        pi_ner = None
+        if res_lp.success and getattr(res_lp, "ineqlin", None) is not None:
             marginals = res_lp.ineqlin.marginals
-            pi_budget = round(float(abs(marginals[0])), 3) if len(marginals) > 0 else 0.850
-            pi_ner = round(float(abs(marginals[1])), 3) if (len(marginals) > 1 and req.enforce_ner_floor) else 0.0
-        else:
-            pi_budget = round(float(np.clip(np.mean(effective_yield) * 1.15, 0.45, 2.80)), 3)
-            pi_ner = 0.850 if req.enforce_ner_floor else 0.0
+            if len(marginals) > 0:
+                pi_budget = round(float(abs(marginals[0])), 3)
+            if len(marginals) > 1 and req.enforce_ner_floor:
+                pi_ner = round(float(abs(marginals[1])), 3)
+            elif not req.enforce_ner_floor:
+                pi_ner = 0.0
+        duals_available = pi_budget is not None
+        if pi_budget is None:
+            pi_budget = 0.0
+        if pi_ner is None:
+            pi_ner = 0.0
 
         # Compute Yield and CVaR
         total_allocated = float(np.sum(allocations_raw))
@@ -369,7 +388,14 @@ class VittaVyuhaEngine:
         portfolio_risk = float(np.sum(allocations_raw * risk_normalized) / max(total_allocated, 1.0))
         cvar_loss = float(round(portfolio_risk * 100.0, 1))
 
-        # Exact Duality Gap / Linearization Closure Error Diagnostic
+        # SOLVER-AGREEMENT DIAGNOSTIC (deliberately NOT called a duality gap).
+        #
+        # Every decision variable is continuous (integrality is all-zero), so milp() and
+        # linprog() solve the SAME linear program. An LP satisfying Slater's condition has
+        # ZERO duality gap by strong duality -- there is no gap here to measure, and the
+        # earlier label "Exact Duality Gap" asserted a quantity that cannot be non-zero.
+        # What this actually measures is whether the two HiGHS entry points agree on the
+        # optimal objective, which is a useful numerical check and nothing more.
         if res_lp.success and abs(res_lp.fun) > 1e-3:
             raw_duality_gap = abs(res_lp.fun - milp_obj) / abs(res_lp.fun) * 100.0
             closure_error = round(float(raw_duality_gap), 2)

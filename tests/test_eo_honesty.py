@@ -88,6 +88,30 @@ IMAGERY_DIR = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
                            "project_imagery")
 
 
+def _ensure_synthetic_uncovered_project():
+    """Add one in-memory project that is REAL to the corpus but has NO tile files.
+
+    Injected into the engine's frame only (never written to disk or to the database),
+    so the invariant "no imagery => no measurement" is exercised on every run
+    regardless of how complete the baked imagery happens to be.
+    """
+    import pandas as pd
+    if ENGINE.df is None or ENGINE.df.empty:
+        return None
+    pid = "999001"
+    while (os.path.exists(os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg"))
+           or os.path.exists(os.path.join(IMAGERY_DIR, f"{pid}_AFTER.jpg"))
+           or pid in ENGINE.catalog
+           or pid in set(ENGINE.df["ProjectId"].astype(str))):
+        pid = str(int(pid) + 1)
+    row = ENGINE.df.iloc[[0]].copy()
+    row["ProjectId"] = pid
+    row["ProjectName"] = "Synthetic Uncovered Test Project"
+    row["SectorName"] = "Railways"
+    ENGINE.df = pd.concat([ENGINE.df, row], ignore_index=True)
+    return pid
+
+
 def find_project(with_imagery: bool):
     """
     A project id that does / does not have dual-epoch coverage.
@@ -101,6 +125,19 @@ def find_project(with_imagery: bool):
     if ENGINE.df is not None:
         ids = [str(p) for p in ENGINE.df["ProjectId"].tolist()]
     ids = list(dict.fromkeys(ids + list(ENGINE.catalog.keys())))
+
+    # The no-imagery case must be CONSTRUCTED, never scavenged from the corpus.
+    #
+    # This search previously relied on some real project happening to lack tile files.
+    # That held only while two demo rows sat in the database; once every one of the
+    # 2,207 corpus projects had a baked BEFORE/AFTER pair, `with_imagery=False` had zero
+    # candidates and the whole no-imagery invariant silently stopped being tested. A
+    # suite that stops exercising an invariant without failing is worse than one that
+    # fails, so the case is now synthesised deterministically.
+    if not with_imagery:
+        _synth = _ensure_synthetic_uncovered_project()
+        if _synth is not None:
+            ids = [_synth] + ids
 
     for pid in ids:
         has_files = (os.path.exists(os.path.join(IMAGERY_DIR, f"{pid}_BEFORE.jpg"))

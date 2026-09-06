@@ -1,3 +1,22 @@
+> ## ⛔ SUPERSEDED DOCUMENT — DO NOT QUOTE
+>
+> This file predates the claims ledger and contains figures that have since been
+> **withdrawn as unsupported**. In particular:
+>
+> * **`p < 0.001` for the 20% bunching test does not exist.** No p-value is computed
+>   anywhere in the codebase. The live measurement is a bin-mass ratio of **1.65×
+>   (28 vs 17 projects), 95% CI [0.90, 3.01]** — an interval that spans 1.0, so the
+>   signal is **not statistically significant**. The `1.49×` figure here is also stale.
+> * Any statement here that bunching **"proves"** rent-seeking, gaming or
+>   misrepresentation is **retracted**. The engine reports a screening indicator for
+>   audit triage and explicitly refuses to allege intent.
+> * Satellite claims here (sub-metre, NDVI/NDBI, SAR) are **refused** in
+>   [`CLAIMS.md`](../CLAIMS.md) §3 — measured GSD is 2.08–2.35 m/px on RGB-only tiles.
+>
+> **[`CLAIMS.md`](../CLAIMS.md) is authoritative. Where this file disagrees, it is wrong.**
+
+---
+
 # **Rigorous Red-Teaming, Econometric Audit, and Strategic Stress-Test of "PRAKALP-DRISHTI"**
 
 ## **Executive Prologue**

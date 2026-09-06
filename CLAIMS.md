@@ -19,10 +19,10 @@ Last reconciled: 2026-08-31 · Tests: 476/476 assertions, 11/11 suites.
 | Claim | Procedure | Measured result | Evidence |
 |:---|:---|:---|:---|
 | **Log-logistic AFT survival model** | Penalised MLE with right-censoring, `scipy` L-BFGS-B. Group effects under a Normal(0, τ²) prior; τ chosen by 5-fold CV held-out log-likelihood | 2,148 projects — **160 observed completions, 1,988 right-censored** (7.4% event rate). τ = 0.2, σ = 0.332, baseline multiplier 3.47× planned | [`aft_survival.py`](analytics_engine/aft_survival.py), [`aft_survival.json`](artifacts/aft_survival.json) |
-| **Conformalised quantile intervals (P10–P95)** | Split-conformal CQR (Romano, Patterson & Candès, NeurIPS 2019). Disjoint 900/450/450 train/calibration/test | **93.3% measured coverage** on 450 held-out projects (84.7% uncalibrated). Q = 5.185 months | [`conformal_calibration.py`](analytics_engine/conformal_calibration.py) |
+| **Split-conformal interval on schedule slippage** | Split-conformal CQR (Romano, Patterson & Candès, NeurIPS 2019). Disjoint 900/450/450 train/calibration/test. Score `max(q̂₀.₀₅−y, y−q̂₀.₉₅)`; finite-sample rank ⌈(n+1)(1−α)⌉ | **93.3% measured coverage** on 450 held-out projects (84.7% uncalibrated). Q = 5.185 months. **Scope: see §4a — this number belongs to the slippage interval, not to the served P10–P95 fan** | [`conformal_calibration.py`](analytics_engine/conformal_calibration.py) |
 | **Cost-overrun predictor** | Gradient boosting, **chronological** train/test split, 5-year maturity gate, 12 leakage columns excluded | MAE 16.24 vs 22.41 naive. **R² = −0.044** — see §4 | [`overrun_models.py`](analytics_engine/overrun_models.py) |
-| **Two-stage stochastic LP** | HiGHS simplex via `scipy.optimize.milp` with `integrality=0`. CVaR₉₀ by Rockafellar–Uryasev auxiliary variables | Exact duals extracted; κ dial provably changes the objective (asserted in tests) | [`vitta_vyuha.py`](analytics_engine/vitta_vyuha.py) |
-| **Shapley criticality** | Permutation Monte Carlo over the dependency DAG, seeded (`default_rng(42)`) | Baked to Parquet, deterministic across runs | [`setu_graph.py`](analytics_engine/setu_graph.py) |
+| **Two-stage stochastic LP** | HiGHS simplex via `scipy.optimize.milp` with `integrality=0`. CVaR₉₀ by Rockafellar–Uryasev auxiliary variables | Duals taken from a `linprog(method="highs")` solve of the same program. **Complementary slackness verified** at κ = 0.5: π_budget > 0 exactly when the budget binds (2.233 at ₹2,000 Cr → 1.216 at ₹10,000 Cr → 0.773 at ₹20,000 Cr → 0.000 once the pool passes ≈₹34,919 Cr and absorptive capacity binds instead). No dual is ever synthesised — if the LP fails, none is reported | [`vitta_vyuha.py`](analytics_engine/vitta_vyuha.py) |
+| **Shapley criticality** | Permutation Monte Carlo Shapley over the reachability game **v(S) = Σ cost over ⋃(descendants(i) ∪ {i}) for i ∈ S**, seeded (`default_rng(42)`), M = 30 | Marginals telescope to v(N) by construction; verified **exactly equal to enumerated Shapley** (max error 0.00e+00) on a 6-node test DAG, and isolated projects receive exactly their own cost. Raw v(N) = ₹47.44 L Cr (the full portfolio), rescaled to ₹23.97 L Cr locked. Rank-stable across seeds at M=30 (Spearman ρ ≈ 0.998, identical argmax vs M=2000) | [`setu_graph.py`](analytics_engine/setu_graph.py) |
 
 ### What the AFT fit does *not* establish
 
@@ -97,6 +97,61 @@ and explanation** in the console; they are not load-bearing for this prediction.
 **`slip_months` is not served at all.** Chronologically it loses to a train-mean baseline
 by 53–191% at every maturity gate. Shipping it would be indefensible. Schedule risk is
 served by KAAL-CHAKRA's conformal intervals instead.
+
+---
+
+## 4a. WHAT THE 93.3% COVERAGE NUMBER DOES AND DOES NOT COVER
+
+The measured coverage belongs to **one specific interval on one specific target**, and it
+does **not** transfer to the P10/P50/P80/P95 fan the cockpit renders. Stated plainly
+because the two were previously described as the same thing:
+
+| | Calibrated object | Served fan |
+|:---|:---|:---|
+| Target | `slip_months` = RevisedDate − OriginalEndDate | completion **duration from sanction** |
+| Estimator | two gradient-boosting quantile regressors, q̂₀.₀₅ / q̂₀.₉₅ | log-logistic quantile `median · (p/(1−p))^γ` |
+| Correction | `±Q`, Q = 5.185 months, conformal rank ⌈(n+1)(1−α)⌉ | `[−Q, 0, 0.55·Q, +Q] × rem_uncertainty_scale` |
+| Coverage | **93.3%, measured on 450 held-out projects** | **not measured, and not measurable** |
+
+The fan is a *conformally-informed* widening: it borrows the calibrated magnitude Q
+instead of the hand-picked `[−3, 0, 4.5, 9]` it replaced, which is a real improvement.
+But the `0.55` coefficient on P80 is an engineering choice, `rem_uncertainty_scale` is a
+progress-dependent multiplier the calibration never saw, and the quantile function is a
+different estimator on a different target. **A coverage figure for the fan cannot be
+produced at all**, because the corpus records no actual completion date for an ongoing
+project — which is the same censoring fact that motivates the AFT model in the first
+place.
+
+So: quote 93.3% for the slippage interval. Do **not** attach it to a P10–P95 date fan.
+
+---
+
+## 4b. THE 20% BUNCHING SIGNAL IS NOT STATISTICALLY SIGNIFICANT
+
+`SATYA-KAVACH` reports a boundary bin-mass ratio at the CCEA 20% re-appraisal threshold.
+Measured on the live corpus:
+
+| Quantity | Value |
+|:---|:---|
+| Revisions in **[18%, 20%)** | **28** |
+| Revisions in **[20%, 22%)** | **17** |
+| Ratio | **1.65×** |
+| **95% confidence interval** | **[0.90, 3.01]** |
+| Active revised population | 1,183 |
+
+**The interval contains 1.0.** At n = 45 across the two bins, a 1.65× ratio is not
+distinguishable from chance at the 5% level. The engine already returns the CI and
+already labels the finding *"a screening indicator, not evidence of intentional
+manipulation"* — but the landing page renders `1.65×` as a headline finding without it,
+and that is the version a judge will see first.
+
+Correct phrasing: *"1.65× more revisions land just below the Cabinet threshold than just
+above (28 vs 17), 95% CI [0.90, 3.01] — suggestive, not significant, and offered as an
+audit-triage trigger rather than a finding."*
+
+Any claim of `p < 0.001` for this test is **withdrawn**: it appeared in a superseded
+deck, it is not computed anywhere in the code, and it is arithmetically impossible
+alongside a CI that spans 1.0.
 
 ---
 

@@ -418,12 +418,14 @@ export default function AmeyMasterView() {
                   <span>Featured Empirical Finding</span>
                 </div>
                 <h2 className="font-heading font-extrabold text-[22px] sm:text-[26px] leading-tight text-white">
-                  Statistically Significant Bunching Detected at the 20% CCEA Boundary
+                  Cost Revisions Cluster Just Below the 20% CCEA Boundary
                 </h2>
                 <p className="text-slate-300 text-[13.5px] sm:text-[14px] leading-relaxed max-w-2xl font-sans">
-                  The McCrary density discontinuity test reveals a 1.65× artificial concentration in cost revisions 
-                  at 18.0%–19.9%, just below the threshold that triggers mandatory Cabinet Committee review. 
-                  28 mega-projects with ₹95,217 Crore in capital exposure exhibit this avoidance signal.
+                  1.65× more revisions land in 18.0%–19.9% than in 20.0%–21.9%, just below the threshold
+                  that triggers mandatory Cabinet Committee review — 28 projects against 17.
+                  At that sample size the 95% confidence interval is [0.90, 3.01], which spans 1.0, so this is
+                  a <strong className="text-amber-200">screening signal for audit triage, not a significant
+                  finding and not an allegation</strong>.
                 </p>
                 <div className="pt-1.5">
                   <Link
@@ -439,8 +441,9 @@ export default function AmeyMasterView() {
               <div className="lg:col-span-4 flex justify-center lg:justify-end">
                 <div className="border border-white/15 bg-white/[0.04] rounded-2xl p-5 text-center w-full max-w-xs">
                   <div className="text-[44px] sm:text-[50px] font-extrabold text-white font-heading leading-none tracking-tight">1.65×</div>
-                  <div className="text-[13px] font-bold text-slate-200 mt-1.5 font-sans">McCrary Discontinuity Ratio</div>
-                  <div className="text-[11.5px] text-amber-300 mt-1 font-sans font-medium">p &lt; 0.001 · Statistically Significant</div>
+                  <div className="text-[13px] font-bold text-slate-200 mt-1.5 font-sans">Boundary Bin-Mass Ratio</div>
+                  <div className="text-[11.5px] text-amber-300 mt-1 font-sans font-medium">95% CI [0.90, 3.01] · n = 28 vs 17</div>
+                  <div className="text-[10.5px] text-slate-400 mt-0.5 font-sans">not significant at 5% — triage signal</div>
                 </div>
               </div>
             </div>
