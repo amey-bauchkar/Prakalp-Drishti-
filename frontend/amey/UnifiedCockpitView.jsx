@@ -132,8 +132,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               step="1"
               value={delayShock}
               onChange={(e) => setDelayShock(e.target.value)}
-              onMouseUp={runSimulation}
-              onTouchEnd={runSimulation}
+              onMouseUp={() => runSimulation()}
+              onTouchEnd={() => runSimulation()}
               className="accent-gov-saffron"
             />
           </div>
@@ -160,8 +160,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               step="1000"
               value={budgetPool}
               onChange={(e) => setBudgetPool(e.target.value)}
-              onMouseUp={runSimulation}
-              onTouchEnd={runSimulation}
+              onMouseUp={() => runSimulation()}
+              onTouchEnd={() => runSimulation()}
               className=""
             />
           </div>
@@ -189,8 +189,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
               step="0.05"
               value={riskKappa}
               onChange={(e) => setRiskKappa(e.target.value)}
-              onMouseUp={runSimulation}
-              onTouchEnd={runSimulation}
+              onMouseUp={() => runSimulation()}
+              onTouchEnd={() => runSimulation()}
               className=""
             />
           </div>
@@ -329,7 +329,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '618402', onSel
                   <span className="text-[20px] font-black text-gov-navy font-mono block">
                     {cr(alloc?.total_allocated_cr)}
                   </span>
-                  <span className="text-[11px] text-emerald-700 font-bold block mt-1 font-sans"> Physical Yield Boost: +{alloc?.expected_completion_yield}%
+                  <span className="text-[11px] text-emerald-700 font-bold block mt-1 font-sans"> Completion Propensity: {alloc?.portfolio_completion_propensity_perc}%
                   </span>
                 </div>
               </div>
