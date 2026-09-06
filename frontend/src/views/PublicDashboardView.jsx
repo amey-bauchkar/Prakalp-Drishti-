@@ -274,13 +274,28 @@ function PublicMetadataTab({
   const status = activeProject ? getProjectStatus(activeProject) : null;
   const progressPct = Math.min(100, Math.max(0, Number(activeProject?.progress_perc || 0)));
 
-  // Filter projects that have georeferenced coordinates for Map
+  // Filter projects that have georeferenced coordinates for Map.
+  // NATIONAL_CENTROID_MATCH projects are placed at India's geographic center
+  // (~22.5°N, 78.5°E) because they have no real location data. Drawing them
+  // as pins creates a misleading cluster in Madhya Pradesh, so they are
+  // excluded from the map and counted separately.
   const mappedProjects = useMemo(() => {
     return projects.filter((p) => {
       const lat = Number(p.latitude);
       const lon = Number(p.longitude);
-      return Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon) || (lat === 0 && lon === 0)) return false;
+      if (p.geocode_precision === 'NATIONAL_CENTROID_MATCH') return false;
+      return true;
     });
+  }, [projects]);
+
+  const unmappedCount = useMemo(() => {
+    return projects.filter((p) => {
+      const lat = Number(p.latitude);
+      const lon = Number(p.longitude);
+      const hasCoord = Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0);
+      return !hasCoord || p.geocode_precision === 'NATIONAL_CENTROID_MATCH';
+    }).length;
   }, [projects]);
 
   // Handle directory scroll to load more
@@ -512,10 +527,16 @@ function PublicMetadataTab({
               <MapPin className="w-3.5 h-3.5 text-[#0060B6]" />
               Pan-India Geographic Distribution ({mappedProjects.length.toLocaleString('en-IN')} Georeferenced Sites)
             </span>
-            <div className="flex items-center gap-2.5 text-[10px] font-mono">
+            <div className="flex items-center gap-2.5 text-[10px] font-mono flex-wrap">
               <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-600" /> On Track</span>
               <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-600" /> Monitored</span>
               <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-600" /> Delayed</span>
+              {unmappedCount > 0 && (
+                <span className="inline-flex items-center gap-1 text-slate-500 border-l border-slate-300 pl-2.5 ml-0.5">
+                  <HelpCircle className="w-3 h-3" />
+                  {unmappedCount} projects have no precise location
+                </span>
+              )}
             </div>
           </div>
 
