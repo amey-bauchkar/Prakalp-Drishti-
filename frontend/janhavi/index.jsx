@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   CloudRain, Droplets, Sun, Calendar, AlertTriangle, Sliders, RefreshCw, Search,
   Filter, BarChart3, Compass, Layers, ArrowUpRight, TrendingDown, Building2,
   MapPin, Clock, ShieldCheck, CheckCircle2, Info, ArrowRight, ChevronRight
 } from 'lucide-react';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 320, damping: 24 }
+  }
+};
 
 export default function VarshaSpeedView() {
   const [anomaly, setAnomaly] = useState(0.0);
@@ -130,9 +148,14 @@ export default function VarshaSpeedView() {
   };
 
   return (
-    <div className="space-y-8 font-sans">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-8 font-sans"
+    >
       {/* ═══════ MODULE HERO (SOVEREIGN INSTITUTIONAL DOSSIER) ═══════ */}
-      <section className="panel p-4 sm:p-6">
+      <motion.section variants={itemVariants} className="panel p-4 sm:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-8 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron-light text-gov-saffron-dark border border-gov-gold-border text-[11px] font-bold uppercase tracking-wider font-mono">
@@ -159,11 +182,11 @@ export default function VarshaSpeedView() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════ STAT STRIP ═══════ */}
       {impactData?.national_summary && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="panel p-4">
             <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Working Window</div>
             <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{impactData.national_summary.average_working_window_months} mo/yr</div>
@@ -184,11 +207,11 @@ export default function VarshaSpeedView() {
             <div className="text-[20px] font-black text-rose-600 mt-2 truncate font-heading">{impactData.national_summary.most_vulnerable_state}</div>
             <div className="text-[12px] text-text-muted mt-1 font-medium">Highest weather impact</div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Module Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
+      <motion.div variants={itemVariants} className="flex items-center gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('simulation')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${
@@ -217,15 +240,25 @@ export default function VarshaSpeedView() {
               : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
           }`}
         >
-          <span>Project Climate Exposure</span>
+          <span>Corpus Project Impacts</span>
         </button>
-      </div>
+      </motion.div>
+
+      {/* Animated Tab Switcher Container */}
+      <AnimatePresence mode="wait">
 
       {/* ------------------------------------------------------------- */}
       {/* TAB 1: WORKING-WINDOW SIMULATOR */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'simulation' && (
-        <div className="space-y-6">
+        <motion.div
+          key="simulation"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: "easeInOut" }}
+          className="space-y-6"
+        >
           {/* Interactive Slider & Scenario Bar */}
           <div className="bg-gov-navy text-white p-7 sm:p-8 rounded-3xl border border-slate-700/80 shadow-elevated space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -260,95 +293,105 @@ export default function VarshaSpeedView() {
                 Normal LPA (0%)
               </button>
               <button
-                onClick={() => { setAnomaly(15.0); fetchMonsoonImpact(15.0); }}
-                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === 15 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
+                onClick={() => { setAnomaly(10.0); fetchMonsoonImpact(10.0); }}
+                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === 10 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
               >
-                Moderate Excess (+15%)
+                +10% Excess Monsoon (2019)
               </button>
               <button
-                onClick={() => { setAnomaly(25.0); fetchMonsoonImpact(25.0); }}
-                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === 25 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
+                onClick={() => { setAnomaly(20.0); fetchMonsoonImpact(20.0); }}
+                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === 20 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
               >
-                2023 Heavy Flood (+25%)
+                +20% Severe Flood Season
               </button>
               <button
-                onClick={() => { setAnomaly(-20.0); fetchMonsoonImpact(-20.0); }}
-                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === -20 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
+                onClick={() => { setAnomaly(-15.0); fetchMonsoonImpact(-15.0); }}
+                className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition ${anomaly === -15 ? 'bg-gov-saffron text-white shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20 border border-white/15'}`}
               >
-                2009 Severe Drought (-20%)
+                -15% Drought / Delayed Monsoon (2014)
               </button>
             </div>
 
-            <div className="relative pt-2">
+            {/* Slider Bar */}
+            <div className="space-y-2 pt-2">
               <input
                 type="range"
-                min="-50"
-                max="50"
-                step="5"
+                min="-30"
+                max="30"
+                step="1"
                 value={anomaly}
                 onChange={handleSliderChange}
-                className="w-full accent-gov-saffron cursor-pointer h-2.5 bg-slate-800 rounded-lg"
+                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-gov-saffron"
               />
-
-              <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-2 font-mono">
-                <span className="text-left">-50% Extreme Drought</span>
-                <span className="text-center">-25% Deficient</span>
-                <span className={`text-center font-black transition-colors ${anomaly === 0 ? 'text-gov-saffron-light' : 'text-slate-400'}`}>0% Normal LPA</span>
-                <span className="text-center">+25% Heavy Flood</span>
-                <span className="text-right">+50% Extreme Inundation</span>
+              <div className="flex justify-between text-[11px] font-mono text-slate-400 font-bold">
+                <span>-30% (Extreme Deficit)</span>
+                <span>-15%</span>
+                <span className="text-white">0% (Normal LPA)</span>
+                <span>+15%</span>
+                <span>+30% (Extreme Monsoon)</span>
               </div>
             </div>
-
-            {impactData?.scenario_interpretation && (
-              <div className="p-4 rounded-2xl bg-white/10 border border-white/15 flex items-start gap-2.5 text-[13px] text-slate-200">
-                <Info className="w-4 h-4 text-gov-saffron shrink-0 mt-0.5" />
-                <span><strong>Scenario Assessment:</strong> {impactData.scenario_interpretation}</span>
-              </div>
-            )}
           </div>
 
-          {/* Filters & Search */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto no-scrollbar pb-1 sm:pb-0">
-              <span className="text-xs text-text-muted font-bold flex items-center gap-1 mr-1">
-                <Filter className="w-3.5 h-3.5" /> Region:
-              </span>
-              {['ALL', 'North-East', 'North', 'South', 'East', 'West', 'Central'].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRegionFilter(r)}
-                  className={`text-xs px-3.5 py-1.5 rounded-xl font-bold transition whitespace-nowrap ${
-                    regionFilter === r
-                      ? 'bg-gov-navy text-white shadow-sm'
-                      : 'bg-white text-text-secondary hover:bg-slate-50 border border-border-default'
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-
+          {/* Search, Filter and Region Selector Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 panel p-4 bg-slate-50 border border-slate-200">
+            {/* Search Input */}
             <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-text-muted" />
+              <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search state or terrain..."
+                placeholder="Search state name..."
                 value={stateSearchTerm}
                 onChange={(e) => setStateSearchTerm(e.target.value)}
-                className="w-full bg-white border border-border-default text-gov-navy pl-10 pr-8 py-2 rounded-xl text-xs outline-none focus:border-gov-navy shadow-sm"
+                className="w-full pl-9 pr-4 py-2 bg-white border border-border-default rounded-xl text-xs font-bold text-gov-navy placeholder:text-text-muted outline-none focus:border-gov-navy transition shadow-xs"
               />
               {stateSearchTerm && (
                 <button
                   onClick={() => setStateSearchTerm('')}
-                  className="absolute right-2.5 top-2.5 text-xs text-text-muted hover:text-gov-navy font-bold"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-text-muted hover:text-gov-navy"
                 >
                   ✕
                 </button>
               )}
             </div>
+
+            {/* Region Filter Chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar pb-1 sm:pb-0">
+              <span className="text-[11px] font-bold text-text-muted uppercase mr-1 flex items-center gap-1">
+                <Filter className="w-3 h-3" /> Region:
+              </span>
+              {['ALL', 'NORTHEAST', 'HIMALAYAN', 'COASTAL', 'EASTERN', 'WESTERN', 'NORTHERN', 'SOUTHERN', 'CENTRAL'].map((reg) => (
+                <button
+                  key={reg}
+                  onClick={() => setRegionFilter(reg)}
+                  className={`text-[11px] px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap ${
+                    regionFilter === reg
+                      ? 'bg-gov-navy text-white shadow-xs'
+                      : 'bg-white text-text-secondary border border-border-default hover:border-gov-navy hover:text-gov-navy'
+                  }`}
+                >
+                  {reg}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* State Working Window Grid */}
+          {/* Results Count and Reset Header */}
+          <div className="flex items-center justify-between px-1 text-xs text-text-muted font-bold">
+            <span>
+              Showing {filteredStates.length} of {impactData?.state_impact_records?.length || 30} Monitored States &amp; UTs
+            </span>
+            {(stateSearchTerm || regionFilter !== 'ALL') && (
+              <button
+                onClick={() => { setStateSearchTerm(''); setRegionFilter('ALL'); }}
+                className="text-gov-saffron hover:underline flex items-center gap-1 font-bold"
+              >
+                <RefreshCw className="w-3 h-3" /> Reset Filters
+              </button>
+            )}
+          </div>
+
+          {/* State Impact Grid */}
           {filteredStates.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredStates.map((rec, idx) => {
@@ -394,7 +437,6 @@ export default function VarshaSpeedView() {
                       </div>
                     </div>
 
-                    {/* Progress bar representing work window */}
                     <div className="space-y-1.5 pt-1">
                       <div className="flex justify-between text-[10.5px] text-text-muted font-mono font-bold">
                         <span>Working Months</span>
@@ -436,14 +478,21 @@ export default function VarshaSpeedView() {
               </button>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* ------------------------------------------------------------- */}
       {/* TAB 2: HISTORICAL 20-YEAR IMD DEPARTURES */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'historical' && (
-        <div className="panel p-4 sm:p-5 space-y-6">
+        <motion.div
+          key="historical"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: "easeInOut" }}
+          className="panel p-4 sm:p-5 space-y-6"
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-default pb-4">
             <div>
               <h3 className="font-heading font-extrabold text-[18px] text-gov-navy">20-Year IMD Monsoon Departure Explorer (2005–2025)</h3>
@@ -504,7 +553,6 @@ export default function VarshaSpeedView() {
               
               <div className="grid grid-cols-7 sm:grid-cols-11 md:grid-cols-21 gap-1.5 items-end h-48 bg-slate-50 p-5 rounded-2xl border border-slate-200">
                 {timelineData.timeline.map((item) => {
-                  const isPositive = item.departure_pct >= 0;
                   const heightPct = Math.min(100, Math.abs(item.departure_pct) * 2 + 10);
                   return (
                     <div key={item.year} className="flex flex-col items-center justify-end h-full group relative">
@@ -514,10 +562,12 @@ export default function VarshaSpeedView() {
                       </div>
 
                       <div
-                        className={`w-full rounded-t transition-all ${
-                          isPositive
-                            ? item.departure_pct >= 20 ? 'bg-rose-500' : 'bg-gov-saffron'
-                            : item.departure_pct <= -20 ? 'bg-amber-500' : 'bg-blue-600'
+                        className={`w-full rounded-t-lg transition-all ${
+                          item.departure_pct >= 20
+                            ? 'bg-rose-500'
+                            : item.departure_pct <= -20
+                            ? 'bg-amber-500'
+                            : 'bg-gov-saffron'
                         }`}
                         style={{ height: `${heightPct}%` }}
                       ></div>
@@ -535,14 +585,21 @@ export default function VarshaSpeedView() {
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* ------------------------------------------------------------- */}
       {/* TAB 3: PROJECT-LEVEL CLIMATE AUDITOR */}
       {/* ------------------------------------------------------------- */}
       {activeTab === 'projects' && (
-        <div className="panel p-4 sm:p-5 space-y-6">
+        <motion.div
+          key="projects"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: "easeInOut" }}
+          className="panel p-4 sm:p-5 space-y-6"
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-default pb-4">
             <div>
               <h3 className="font-heading font-extrabold text-[18px] text-gov-navy">Project-Level Climate Exposure &amp; Schedule Multiplier Audit</h3>
@@ -552,51 +609,40 @@ export default function VarshaSpeedView() {
             {/* Search & Sector Filter */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               <div className="relative w-full sm:w-64">
-                <Search className="w-4 h-4 absolute left-3.5 top-2.5 text-text-muted" />
+                <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search project or state..."
                   value={projectSearchTerm}
                   onChange={(e) => setProjectSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 border border-border-default text-gov-navy pl-10 pr-8 py-2 rounded-xl text-xs outline-none focus:border-gov-navy shadow-sm"
+                  className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-border-default rounded-xl text-xs font-bold text-gov-navy placeholder:text-text-muted outline-none focus:border-gov-navy"
                 />
-                {projectSearchTerm && (
-                  <button
-                    onClick={() => setProjectSearchTerm('')}
-                    className="absolute right-2.5 top-2.5 text-xs text-text-muted hover:text-gov-navy font-bold"
-                  >
-                    ✕
-                  </button>
-                )}
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <span className="text-xs font-bold text-gov-navy">Sector:</span>
-                <select
-                  value={sectorFilter}
-                  onChange={(e) => setSectorFilter(e.target.value)}
-                  className="bg-slate-50 text-gov-navy border border-border-default px-3.5 py-2 rounded-xl text-xs font-bold outline-none shadow-sm w-full sm:w-auto"
-                >
-                  <option value="ALL">All Sectors</option>
-                  <option value="Road">Roads &amp; Highways</option>
-                  <option value="Rail">Railways</option>
-                  <option value="Power">Power</option>
-                  <option value="Petroleum">Petroleum &amp; Gas</option>
-                  <option value="Aviation">Civil Aviation</option>
-                </select>
-              </div>
+              <select
+                value={sectorFilter}
+                onChange={(e) => setSectorFilter(e.target.value)}
+                className="bg-slate-50 text-gov-navy border border-border-default px-3 py-1.5 rounded-xl text-xs font-bold outline-none focus:border-gov-navy"
+              >
+                <option value="ALL">All Sectors</option>
+                <option value="ROAD">Road Transport &amp; Highways</option>
+                <option value="RAIL">Railways</option>
+                <option value="POWER">Power &amp; Renewable</option>
+                <option value="PETROLEUM">Petroleum</option>
+                <option value="WATER">Water Resources</option>
+              </select>
             </div>
           </div>
 
-          {/* Project List Table */}
+          {/* Projects Table */}
           <div className="overflow-x-auto">
-            <table className="data-table">
+            <table className="ledger">
               <thead>
                 <tr>
-                  <th>Project &amp; ID</th>
+                  <th>Project Name &amp; ID</th>
                   <th>Sector &amp; State</th>
-                  <th className="num">Cost (₹ Cr)</th>
-                  <th>Weather Downtime</th>
+                  <th className="num">Sanctioned Cost</th>
+                  <th>Lost Weather Days</th>
                   <th className="text-center">Schedule Stretch</th>
                   <th>Climate Recommendation</th>
                 </tr>
@@ -632,11 +678,12 @@ export default function VarshaSpeedView() {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Methodology */}
-      <section className="panel p-5 sm:p-6">
+      <motion.section variants={itemVariants} className="panel p-5 sm:p-6">
         <h3 className="text-[17px] font-heading font-extrabold text-gov-navy mb-3">Methodology</h3>
         <p className="text-[14px] text-text-secondary leading-relaxed max-w-3xl font-sans">
           20-year empirical IMD state-level rainfall departure dataset (2005–2025, 630 state-years). 
@@ -644,7 +691,7 @@ export default function VarshaSpeedView() {
           Working-window compression and schedule stretch multipliers are computed using Weibull 
           survival regression models pegged to historical monsoon patterns.
         </p>
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

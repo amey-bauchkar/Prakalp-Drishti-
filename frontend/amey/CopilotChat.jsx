@@ -1,23 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, ShieldCheck, ShieldAlert, Cpu, Loader2, Database, Fingerprint } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, ShieldCheck, ShieldAlert, Cpu, Loader2, Database, Fingerprint, Sparkles, MessageSquare } from 'lucide-react';
 import { apiFetch } from './authClient';
 
 /**
  * PMO Copilot — conversational surface over the Fact layer.
  *
- * The important part of this component is what it renders ALONGSIDE the answer.
- * The backend always retrieves deterministically and only optionally lets a
- * cloud model phrase the result, rejecting any generated text containing a
- * figure the retrieval layer did not vouch for. That distinction is a
- * governance property, not an implementation detail, so every reply states
- * which mode produced it:
- *
- *   verified + phrased  — LLM prose, every figure matched against the fact set
- *   verified (offline)  — assembled from facts, no outbound call made
- *   guard rejected      — a generation was discarded; showing the fact answer
- *
- * An officer must never have to guess whether the sentence in front of them
- * came from a model or from the ledger.
+ * Every figure carries a SHA-256 Merkle inclusion proof.
+ * Grounded strictly on verified project facts.
  */
 
 const SUGGESTIONS = [
@@ -29,19 +19,27 @@ const SUGGESTIONS = [
 
 const MODE_META = {
   llm_phrasing_over_verified_facts: {
-    cls: 'tag tag-ok', Icon: ShieldCheck, label: 'Verified · phrased',
+    badgeCls: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+    Icon: ShieldCheck,
+    label: 'Verified · phrased',
     help: 'Generated prose. Every figure was matched against the cryptographically verified fact set before display.',
   },
   deterministic: {
-    cls: 'tag', Icon: Database, label: 'Verified · offline',
+    badgeCls: 'bg-slate-500/10 text-slate-300 border border-slate-500/20',
+    Icon: Database,
+    label: 'Verified · offline',
     help: 'Assembled directly from Merkle-signed facts. No outbound request was made.',
   },
   deterministic_fallback: {
-    cls: 'tag tag-warn', Icon: Database, label: 'Verified · offline (fallback)',
+    badgeCls: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
+    Icon: Database,
+    label: 'Verified · offline (fallback)',
     help: 'The language model was unreachable, so the fact-assembled answer is shown instead.',
   },
   deterministic_guard_tripped: {
-    cls: 'tag tag-critical', Icon: ShieldAlert, label: 'Generation rejected',
+    badgeCls: 'bg-rose-500/10 text-rose-300 border border-rose-500/20',
+    Icon: ShieldAlert,
+    label: 'Generation rejected',
     help: 'The model produced a figure absent from the verified facts. It was discarded and the fact answer shown.',
   },
 };
@@ -74,121 +72,150 @@ export default function CopilotChat({ projectId }) {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="text-[10px] uppercase tracking-institutional font-extrabold text-gov-accent flex items-center gap-1.5">
-          <Cpu className="w-3.5 h-3.5" />
-          Ask the PMO Copilot
-        </span>
-        <span className="text-[9.5px] font-mono text-ink-200">
-          grounded on project #{projectId}
+    <div className="space-y-3.5 font-sans">
+      {/* Copilot Header Strip */}
+      <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-400">
+            <Sparkles className="w-3 h-3" />
+          </div>
+          <span className="text-[11px] uppercase tracking-wider font-extrabold text-amber-400 font-mono">
+            PMO Decision Copilot
+          </span>
+        </div>
+        <span className="text-[10px] font-mono text-slate-400 bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
+          Fact Grounded #{projectId}
         </span>
       </div>
 
-      {/* Suggestion chips */}
+      {/* Suggestion Prompt Chips */}
       {turns.length === 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {SUGGESTIONS.map((s) => (
-            <button
-              key={s.label}
-              onClick={() => send(s.q)}
-              disabled={busy}
-              className="text-[10px] font-semibold px-2 py-1 rounded-sm border border-white/20 bg-white/[0.06] text-ink-100 hover:bg-white/[0.12] hover:border-gov-accent transition-colors disabled:opacity-40"
-            >
-              {s.label}
-            </button>
-          ))}
+        <div className="space-y-1.5">
+          <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">
+            Suggested Queries:
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s.label}
+                onClick={() => send(s.q)}
+                disabled={busy}
+                className="text-[10.5px] font-medium px-2.5 py-1.5 rounded-lg border border-white/10 bg-white/[0.04] text-slate-200 hover:bg-white/[0.08] hover:border-amber-400/40 hover:text-amber-300 transition-all text-left disabled:opacity-40 cursor-pointer shadow-xs"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Transcript */}
+      {/* Transcript Conversation Flow */}
       {turns.length > 0 && (
-        <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-          {turns.map((t, i) => {
-            if (t.role === 'user') {
+        <div className="space-y-3 max-h-72 overflow-y-auto pr-1 text-slate-200 scrollbar-thin scrollbar-thumb-slate-700">
+          <AnimatePresence initial={false}>
+            {turns.map((t, i) => {
+              if (t.role === 'user') {
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex justify-end"
+                  >
+                    <div className="text-[12px] text-slate-100 bg-amber-500/20 border border-amber-500/30 rounded-xl rounded-tr-xs px-3.5 py-2 max-w-[85%] shadow-xs">
+                      {t.text}
+                    </div>
+                  </motion.div>
+                );
+              }
+              if (t.role === 'error') {
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-[11.5px] text-rose-200 bg-rose-500/10 border border-rose-500/20 rounded-xl px-3.5 py-2"
+                  >
+                    {t.text}
+                  </motion.div>
+                );
+              }
+
+              const d = t.payload || {};
+              const meta = MODE_META[d.llm?.mode] || MODE_META.deterministic;
+              const { Icon } = meta;
+              const prose = d.answer_llm || d.answer;
+
               return (
-                <div key={i} className="text-[12px] text-white bg-white/[0.09] border-l-2 border-gov-accent rounded-sm px-3 py-2">
-                  {t.text}
-                </div>
-              );
-            }
-            if (t.role === 'error') {
-              return (
-                <div key={i} className="text-[11.5px] text-rose-200 bg-rose-500/10 border-l-2 border-rose-400 rounded-sm px-3 py-2">
-                  {t.text}
-                </div>
-              );
-            }
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.24 }}
+                  className="bg-white/[0.04] border border-white/10 rounded-xl p-3.5 space-y-2.5 shadow-sm"
+                >
+                  <p className="text-[12.5px] text-slate-100 leading-relaxed font-sans">{prose}</p>
 
-            const d = t.payload || {};
-            const meta = MODE_META[d.llm?.mode] || MODE_META.deterministic;
-            const { Icon } = meta;
-            const prose = d.answer_llm || d.answer;
-
-            return (
-              <div key={i} className="bg-white/[0.05] border border-white/10 rounded-sm px-3 py-2.5 space-y-2">
-                <p className="text-[12.5px] text-slate-100 leading-relaxed">{prose}</p>
-
-                <div className="flex items-center gap-2 flex-wrap pt-1.5 border-t border-white/10">
-                  <span className={meta.cls} title={meta.help}>
-                    <Icon className="w-3 h-3" />
-                    {meta.label}
-                  </span>
-
-                  {d.llm?.model && (
-                    <span className="text-[9px] font-mono text-ink-200">{d.llm.model}</span>
-                  )}
-
-                  {/* Merkle fact badges: click to see the lineage behind a figure. */}
-                  {(d.cited_fact_ids || []).slice(0, 4).map((fid) => (
-                    <span
-                      key={fid}
-                      title={`Fact ${fid} carries a SHA-256 Merkle inclusion proof`}
-                      className="tag tag-authority cursor-help"
-                    >
-                      <Fingerprint className="w-2.5 h-2.5" />
-                      {String(fid).replace(/^fact_/, '').slice(0, 18)}
+                  <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-white/10">
+                    <span className={`inline-flex items-center gap-1 text-[9.5px] font-mono font-bold px-2 py-0.5 rounded ${meta.badgeCls}`} title={meta.help}>
+                      <Icon className="w-3 h-3" />
+                      {meta.label}
                     </span>
-                  ))}
-                </div>
 
-                {/* When a generation is rejected, say so in the open rather than
-                    quietly serving the fallback as if nothing happened. */}
-                {d.llm?.mode === 'deterministic_guard_tripped' && (
-                  <p className="text-[10px] text-rose-200/90 leading-snug">
-                    Blocked figures: <span className="font-mono">{(d.llm.unverified_figures || []).join(', ')}</span>
-                    {' — '}not present in the verified fact set. Showing the fact-assembled answer.
-                  </p>
-                )}
-              </div>
-            );
-          })}
+                    {d.llm?.model && (
+                      <span className="text-[9.5px] font-mono text-slate-400 bg-black/20 px-1.5 py-0.5 rounded border border-white/5">{d.llm.model}</span>
+                    )}
+
+                    {/* Merkle fact badges */}
+                    {(d.cited_fact_ids || []).slice(0, 4).map((fid) => (
+                      <span
+                        key={fid}
+                        title={`Fact ${fid} carries a SHA-256 Merkle inclusion proof`}
+                        className="inline-flex items-center gap-1 text-[9.5px] font-mono text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded cursor-help"
+                      >
+                        <Fingerprint className="w-2.5 h-2.5" />
+                        {String(fid).replace(/^fact_/, '').slice(0, 18)}
+                      </span>
+                    ))}
+                  </div>
+
+                  {d.llm?.mode === 'deterministic_guard_tripped' && (
+                    <p className="text-[10px] text-rose-300/90 leading-snug font-sans">
+                      Blocked unverified figures: <span className="font-mono text-rose-200">{(d.llm.unverified_figures || []).join(', ')}</span>. Fact fallback rendered.
+                    </p>
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
           {busy && (
-            <div className="flex items-center gap-2 text-[11px] text-ink-200 px-3 py-2">
+            <div className="flex items-center gap-2 text-[11.5px] text-amber-300 px-3 py-2 bg-amber-400/5 rounded-lg border border-amber-400/10">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Retrieving verified facts…
+              Retrieving cryptographic facts &amp; evaluating proofs…
             </div>
           )}
           <div ref={endRef} />
         </div>
       )}
 
-      {/* Composer */}
-      <div className="flex items-center gap-2">
+      {/* Input Composer */}
+      <div className="flex items-center gap-2 pt-1">
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
           placeholder={`Ask anything about project #${projectId}…`}
-          className="flex-1 min-w-0 text-[11.5px] bg-ink-900/70 text-white border border-white/20 rounded-sm px-2.5 py-1.5 focus:outline-none focus:border-gov-accent placeholder:text-ink-200"
+          className="flex-1 min-w-0 text-[12px] bg-black/40 text-white border border-white/15 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 placeholder:text-slate-400 font-sans"
         />
         <button
           onClick={() => send()}
           disabled={busy || !draft.trim()}
-          className="shrink-0 bg-gov-accent text-gov-navy-dark hover:bg-gov-accent-hover disabled:opacity-40 disabled:cursor-not-allowed py-1.5 px-3 rounded-sm text-[10.5px] font-extrabold uppercase tracking-institutional flex items-center gap-1.5 transition-colors"
+          className="shrink-0 bg-amber-500 hover:bg-amber-400 text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed py-2 px-3.5 rounded-lg text-[11px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
         >
-          <Send className="w-3 h-3" />
-          Send
+          <Send className="w-3.5 h-3.5" />
+          <span>Ask</span>
         </button>
       </div>
     </div>

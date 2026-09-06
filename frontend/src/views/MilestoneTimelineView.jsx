@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle, CalendarDays, CheckCircle2, Eye, EyeOff, Loader2,
   PlusCircle, Satellite, ShieldAlert, Info,
@@ -6,6 +7,23 @@ import {
 
 import LoginGate, { useSession } from '../../amey/LoginGate.jsx';
 import { apiFetch } from '../../amey/authClient.js';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 320, damping: 24 }
+  }
+};
 
 /**
  * KAAL-DARPAN — statutory progress reports bound to dated satellite observations.
@@ -326,8 +344,13 @@ function TimelineInner({ projectId }) {
   const counts = data?.verdict_counts || {};
 
   return (
-    <div className="space-y-5 font-sans">
-      <header className="command-header p-5 sm:p-6">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-5 font-sans"
+    >
+      <motion.header variants={itemVariants} className="command-header p-5 sm:p-6">
         <div className="space-y-2 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
             <CalendarDays className="w-3.5 h-3.5 text-white" aria-hidden="true" />
@@ -342,7 +365,7 @@ function TimelineInner({ projectId }) {
             satellite-derived completion figure, which this corpus cannot support.
           </p>
         </div>
-      </header>
+      </motion.header>
 
       <div className="panel">
         <div className="panel-head">
@@ -522,7 +545,7 @@ function TimelineInner({ projectId }) {
           </form>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
 

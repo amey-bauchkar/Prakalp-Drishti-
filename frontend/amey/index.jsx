@@ -1,11 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   ShieldCheck, AlertTriangle, TrendingUp, Cpu, Database, Award, ArrowRight,
   Sparkles, Layers, FileText, CheckCircle2, ChevronRight, Activity, Clock,
   DollarSign, GitBranch, CloudRain, Scale, Compass, ChevronLeft, Lock
 } from 'lucide-react';
 import LoginGate from './LoginGate';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  }
+};
 
 export default function AmeyMasterView() {
   // Portfolio headline figures are READ FROM THE LIVE API, never typed here.
@@ -106,11 +124,16 @@ export default function AmeyMasterView() {
   ];
 
   return (
-    <div className="font-sans space-y-8 sm:space-y-12">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="font-sans space-y-8 sm:space-y-12"
+    >
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 1: FRAMED SOVEREIGN BLUE HERO BOX (PAGE 1)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
+        <motion.section variants={itemVariants} id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
             {/* High-Fidelity Transparent 3D Isometric Extruded Model of India (Right-Aligned) */}
             <div className="absolute -right-16 sm:-right-10 lg:-right-4 xl:right-2 top-1/2 -translate-y-1/2 w-[420px] sm:w-[560px] lg:w-[700px] xl:w-[760px] h-[130%] sm:h-[145%] lg:h-[155%] pointer-events-none flex items-center justify-end overflow-hidden z-0 select-none">
@@ -208,12 +231,12 @@ export default function AmeyMasterView() {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 2: NATIONAL MANDATE & STATUTORY GOVERNANCE (PAGE 2)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-2" className="py-6 sm:py-10 space-y-6">
+        <motion.section variants={itemVariants} id="slide-2" className="py-6 sm:py-10 space-y-6">
           {/* Top Parchment Ribbon */}
           <div className="card-parchment-gold p-6 sm:p-7 relative overflow-hidden rounded-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -341,12 +364,12 @@ export default function AmeyMasterView() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 3: FIVE ANALYTICAL PROGRAMMES (PAGE 3)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-3" className="py-6 sm:py-10 space-y-6">
+        <motion.section variants={itemVariants} id="slide-3" className="py-6 sm:py-10 space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <div className="text-[11px] font-bold uppercase tracking-widest text-gov-saffron">
               Independent Analytical Engines
@@ -404,12 +427,12 @@ export default function AmeyMasterView() {
               );
             })}
           </div>
-        </section>
+        </motion.section>
 
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 4: EMPIRICAL FINDINGS & OFFICIAL BULLETINS (PAGE 4)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-4" className="py-6 sm:py-10 space-y-6">
+        <motion.section variants={itemVariants} id="slide-4" className="py-6 sm:py-10 space-y-6">
           {/* McCrary Density Card */}
           <div className="command-header p-6 sm:p-8 text-white relative overflow-hidden rounded-2xl shadow-lg">
             <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -511,12 +534,12 @@ export default function AmeyMasterView() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 5: DECISION HUB ENTRY & SOVEREIGN PARTNERS (PAGE 5)
             ═══════════════════════════════════════════════════════════════ */}
-        <section id="slide-5" className="py-6 sm:py-10 space-y-6">
+        <motion.section variants={itemVariants} id="slide-5" className="py-6 sm:py-10 space-y-6">
           {/* Decision Hub Action Banner */}
           <div className="command-header p-7 sm:p-9 lg:p-10 text-white relative overflow-hidden rounded-2xl shadow-lg">
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -570,7 +593,7 @@ export default function AmeyMasterView() {
               ))}
             </div>
           </div>
-        </section>
-      </div>
+        </motion.section>
+      </motion.div>
   );
 }

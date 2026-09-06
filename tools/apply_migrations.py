@@ -54,12 +54,13 @@ create table if not exists schema_migrations (
 
 
 def _load_env() -> None:
-    """Read .env if python-dotenv is present; otherwise rely on the real environment."""
+    """Read .env if python-dotenv is present; otherwise rely on backend.config parser."""
+    if BASE_DIR not in sys.path:
+        sys.path.insert(0, BASE_DIR)
     try:
-        from dotenv import load_dotenv
-    except ImportError:
-        return
-    load_dotenv(os.path.join(BASE_DIR, ".env"))
+        import backend.config  # noqa: F401
+    except Exception:
+        pass
 
 
 def main() -> int:
@@ -89,12 +90,15 @@ def main() -> int:
         return 2
 
     try:
-        import psycopg2
+        import psycopg as pg_driver
     except ImportError:
-        print("psycopg2 is required:  pip install psycopg2-binary", file=sys.stderr)
-        return 2
+        try:
+            import psycopg2 as pg_driver
+        except ImportError:
+            print("psycopg is required:  pip install psycopg", file=sys.stderr)
+            return 2
 
-    conn = psycopg2.connect(db_url)
+    conn = pg_driver.connect(db_url)
     conn.autocommit = False
     try:
         with conn.cursor() as cur:

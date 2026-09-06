@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility, ExternalLink } from 'lucide-react';
 
 import AmeyMasterView from '../amey/index.jsx';
@@ -14,6 +15,7 @@ import PoliciesView from './views/PoliciesView.jsx';
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
+import SmoothScrollProvider from './components/SmoothScrollProvider.jsx';
 
 
 
@@ -519,68 +521,86 @@ function NotFoundView() {
     </div>
   );
 }
-
 /* ─── Protected Route Wrapper for Government / Decision Support ── */
 function ProtectedRoute({ children }) {
   return <LoginGate>{children}</LoginGate>;
+}
+
+/* ─── Animated Route Transitions ─────────────────────────────── */
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="w-full"
+      >
+        <Routes location={location}>
+          {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
+          <Route path="/" element={<AmeyMasterView />} />
+          <Route path="/nagrik" element={<PublicDashboardView />} />
+          <Route path="/admin/ingest" element={<AdminIngestView />} />
+          <Route path="/admin/timeline" element={<MilestoneTimelineView />} />
+          <Route path="/policies" element={<PoliciesView />} />
+          <Route path="/public" element={<Navigate to="/nagrik" replace />} />
+          <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
+
+          {/* ── Tier 2: Government Official & Analytical Engines (Gated by LoginGate) ── */}
+          <Route
+            path="/decision-hub"
+            element={
+              <ProtectedRoute>
+                <DecisionHubView />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── Direct Engine Routes -> Redirect into Authenticated Decision Hub ── */}
+          <Route path="/satya-kavach" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+          <Route path="/artha-nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+          <Route path="/setu-varsha" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+          <Route path="/karya-dakshata" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
+
+          {/* ── Legacy per-developer paths -> Redirect into Authenticated Decision Hub ── */}
+          <Route path="/tanmay" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+          <Route path="/anumati" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
+          <Route path="/parth" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+          <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+          <Route path="/janhavi" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+          <Route path="/aditya" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+          <Route path="/soham" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
+          <Route path="/eo-auditor" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<NotFoundView />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
 }
 
 /* ─── Main Application Shell ─────────────────────────────────── */
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
-        {/* WCAG 2.4.1 Bypass Blocks. The utility bar and header carry ~40 focusable
-            controls; without this a keyboard or screen-reader operator tabs through
-            all of them on every route change before reaching the analysis. */}
-        <a href="#main-content" className="skip-to-content">Skip to main content</a>
+      <SmoothScrollProvider>
+        <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
+          {/* WCAG 2.4.1 Bypass Blocks */}
+          <a href="#main-content" className="skip-to-content">Skip to main content</a>
 
-        <InstitutionalHeader />
+          <InstitutionalHeader />
 
-        <main id="main-content" tabIndex={-1} className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
-          <Routes>
-            {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
-            <Route path="/" element={<AmeyMasterView />} />
-            <Route path="/nagrik" element={<PublicDashboardView />} />
-            <Route path="/admin/ingest" element={<AdminIngestView />} />
-            <Route path="/admin/timeline" element={<MilestoneTimelineView />} />
-            <Route path="/policies" element={<PoliciesView />} />
-            <Route path="/public" element={<Navigate to="/nagrik" replace />} />
-            <Route path="/public-dashboard" element={<Navigate to="/nagrik" replace />} />
+          <main id="main-content" tabIndex={-1} className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
+            <AnimatedRoutes />
+          </main>
 
-            {/* ── Tier 2: Government Official & Analytical Engines (Gated by LoginGate) ── */}
-            <Route
-              path="/decision-hub"
-              element={
-                <ProtectedRoute>
-                  <DecisionHubView />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ── Direct Engine Routes -> Redirect into Authenticated Decision Hub ── */}
-            <Route path="/satya-kavach" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
-            <Route path="/artha-nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
-            <Route path="/setu-varsha" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
-            <Route path="/karya-dakshata" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
-
-            {/* ── Legacy per-developer paths -> Redirect into Authenticated Decision Hub ── */}
-            <Route path="/tanmay" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
-            <Route path="/anumati" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
-            <Route path="/parth" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
-            <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
-            <Route path="/janhavi" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
-            <Route path="/aditya" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
-            <Route path="/soham" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
-            <Route path="/eo-auditor" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
-
-            {/* Catch-all */}
-            <Route path="*" element={<NotFoundView />} />
-          </Routes>
-        </main>
-
-        <InstitutionalFooter />
-      </div>
+          <InstitutionalFooter />
+        </div>
+      </SmoothScrollProvider>
     </BrowserRouter>
   );
 }

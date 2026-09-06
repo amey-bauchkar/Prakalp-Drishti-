@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiFetch } from './authClient';
-import { DollarSign, Sliders, ShieldAlert, TrendingUp, CheckCircle2, Zap, BarChart2, Layers } from 'lucide-react';
+import { DollarSign, Sliders, ShieldAlert, TrendingUp, CheckCircle2, Zap, BarChart2, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, Metric, Text, BadgeDelta, Flex, Grid } from "@tremor/react";
 
@@ -12,8 +12,13 @@ export default function VittaVyuhaView() {
   const [loading, setLoading] = useState(false);
   const [denied, setDenied] = useState(null);
 
+  const [hasExecuted, setHasExecuted] = useState(false);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
+
   const runAllocation = useCallback(async (b, k, ner) => {
     setLoading(true);
+    setHasExecuted(true);
     try {
       const res = await apiFetch('/api/amey/allocate', {
         method: 'POST',
@@ -24,7 +29,7 @@ export default function VittaVyuhaView() {
           agency_absorption_multiplier: 1.25,
         }),
       });
-      if (res.ok) { setData(res.data); setDenied(null); }
+      if (res.ok) { setData(res.data); setDenied(null); setPage(1); }
       else { setData(null); setDenied(res.error); }
     } catch (e) {
       console.error(e);
@@ -33,12 +38,14 @@ export default function VittaVyuhaView() {
     }
   }, []);
 
+  // When parameters change and user has already executed once, auto-recalculate
   useEffect(() => {
+    if (!hasExecuted) return;
     const timeout = setTimeout(() => {
       runAllocation(budget, riskKappa, enforceNer);
-    }, 150);
+    }, 200);
     return () => clearTimeout(timeout);
-  }, [budget, riskKappa, enforceNer, runAllocation]);
+  }, [budget, riskKappa, enforceNer, hasExecuted, runAllocation]);
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -77,7 +84,7 @@ export default function VittaVyuhaView() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 shrink-0 w-full lg:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full lg:w-auto z-10">
           {denied && !loading && (
             <div className="bg-rose-500/20 border border-rose-500/50 p-3 rounded-lg flex items-start gap-2 backdrop-blur-sm max-w-xs">
               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
@@ -99,6 +106,15 @@ export default function VittaVyuhaView() {
               </div>
             </div>
           )}
+
+          <button
+            onClick={() => runAllocation(budget, riskKappa, enforceNer)}
+            disabled={loading}
+            className="w-full sm:w-auto min-w-[270px] bg-slate-100 hover:bg-emerald-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-emerald-600 font-extrabold py-3.5 px-6 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-emerald-500/25 cursor-pointer disabled:opacity-50 group"
+          >
+            <DollarSign className="w-4 h-4 text-emerald-600 group-hover:text-white transition-colors" />
+            <span>{loading ? 'Optimizing Linear Program…' : 'Optimize Capital Allocation'}</span>
+          </button>
         </div>
       </motion.div>
 
@@ -108,88 +124,144 @@ export default function VittaVyuhaView() {
         animate="visible"
         className="space-y-6"
       >
-        {/* Interactive Controls Bar */}
-        <motion.div variants={itemVariants}>
-          <Card className="shadow-sm border-slate-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Budget Pool Slider */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <DollarSign className="w-4 h-4 text-emerald-600" />
-                    Capital Envelope
-                  </span>
-                  <span className="font-mono font-black text-lg text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-                    ₹{budget.toLocaleString()} Cr
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="5000"
-                  max="50000"
-                  step="1000"
-                  value={budget}
-                  onChange={(e) => setBudget(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                />
-                <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                  <span>₹5,000 Cr</span>
-                  <span>₹50,000 Cr</span>
-                </div>
-              </div>
-
-              {/* Risk Dial Slider (Kappa) */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <Sliders className="w-4 h-4 text-amber-500" />
-                    Risk Parameter (κ)
-                  </span>
-                  <span className="font-mono font-black text-sm text-amber-700 bg-amber-50 px-2 py-1.5 rounded-md border border-amber-100">
-                    {riskKappa < 0.35 ? 'Max Velocity' : riskKappa > 0.70 ? 'Risk Averse' : 'Neutral'} (κ={riskKappa.toFixed(2)})
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.0"
-                  max="1.0"
-                  step="0.05"
-                  value={riskKappa}
-                  onChange={(e) => setRiskKappa(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                />
-                <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                  <span>Velocity (0.0)</span>
-                  <span>Averse (1.0)</span>
-                </div>
-              </div>
-
-              {/* Statutory NER 10% Floor Toggle */}
-              <div className="flex flex-col justify-between space-y-3">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldAlert className="w-4 h-4 text-purple-600" />
-                  Statutory Mandates
-                </span>
-                <label className={`flex items-center justify-between p-3.5 rounded-xl border-2 cursor-pointer transition-all shadow-sm ${enforceNer ? 'bg-purple-50 border-purple-500' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
-                  <div className="flex flex-col gap-0.5">
-                    <span className={`font-bold text-sm ${enforceNer ? 'text-purple-900' : 'text-slate-700'}`}>10% North-East Quota</span>
-                    <span className="text-[10px] text-slate-500 font-medium">Enforce legal minimum allocation floor</span>
+        {/* Interactive Controls Bar - Visible after optimization */}
+        {data && (
+          <motion.div variants={itemVariants}>
+            <Card className="shadow-sm border-slate-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Budget Pool Slider */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <DollarSign className="w-4 h-4 text-emerald-600" />
+                      Capital Envelope
+                    </span>
+                    <span className="font-mono font-black text-lg text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+                      ₹{budget.toLocaleString()} Cr
+                    </span>
                   </div>
-                  <div className={`w-10 h-6 rounded-full p-1 transition-colors ${enforceNer ? 'bg-purple-600' : 'bg-slate-300'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${enforceNer ? 'translate-x-4' : 'translate-x-0'}`} />
-                  </div>
-                  {/* Visually hidden actual checkbox to keep form accessibility */}
                   <input
-                    type="checkbox"
-                    checked={enforceNer}
-                    onChange={(e) => setEnforceNer(e.target.checked)}
-                    className="hidden"
+                    type="range"
+                    min="5000"
+                    max="50000"
+                    step="1000"
+                    value={budget}
+                    onChange={(e) => setBudget(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                   />
-                </label>
+                  <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                    <span>₹5,000 Cr</span>
+                    <span>₹50,000 Cr</span>
+                  </div>
+                </div>
+
+                {/* Risk Dial Slider (Kappa) */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sliders className="w-4 h-4 text-amber-500" />
+                      Risk Parameter (κ)
+                    </span>
+                    <span className="font-mono font-black text-sm text-amber-700 bg-amber-50 px-2 py-1.5 rounded-md border border-amber-100">
+                      {riskKappa < 0.35 ? 'Max Velocity' : riskKappa > 0.70 ? 'Risk Averse' : 'Neutral'} (κ={riskKappa.toFixed(2)})
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.0"
+                    max="1.0"
+                    step="0.05"
+                    value={riskKappa}
+                    onChange={(e) => setRiskKappa(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  />
+                  <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                    <span>Velocity (0.0)</span>
+                    <span>Averse (1.0)</span>
+                  </div>
+                </div>
+
+                {/* Statutory NER 10% Floor Toggle */}
+                <div className="flex flex-col justify-between space-y-3">
+                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldAlert className="w-4 h-4 text-purple-600" />
+                    Statutory Mandates
+                  </span>
+                  <label className={`flex items-center justify-between p-3.5 rounded-xl border-2 cursor-pointer transition-all shadow-sm ${enforceNer ? 'bg-purple-50 border-purple-500' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
+                    <div className="flex flex-col gap-0.5">
+                      <span className={`font-bold text-sm ${enforceNer ? 'text-purple-900' : 'text-slate-700'}`}>10% North-East Quota</span>
+                      <span className="text-[10px] text-slate-500 font-medium">Enforce legal minimum allocation floor</span>
+                    </div>
+                    <div className={`w-10 h-6 rounded-full p-1 transition-colors ${enforceNer ? 'bg-purple-600' : 'bg-slate-300'}`}>
+                      <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${enforceNer ? 'translate-x-4' : 'translate-x-0'}`} />
+                    </div>
+                    {/* Visually hidden actual checkbox to keep form accessibility */}
+                    <input
+                      type="checkbox"
+                      checked={enforceNer}
+                      onChange={(e) => setEnforceNer(e.target.checked)}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[360px]">
+            <div className="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">Solving Simplex Linear Program…</p>
+              <p className="text-xs text-slate-500">Balancing marginal yield, risk parameter κ, and 10% North-East statutory reserve</p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State Hero */}
+        {!data && !loading && (
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[440px]">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-xs">
+              <DollarSign className="w-8 h-8" />
+            </div>
+            <div className="max-w-md space-y-2">
+              <h3 className="text-xl font-bold text-slate-800">
+                Ready to Optimize Capital Reallocation
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Click <strong className="text-slate-700">"OPTIMIZE CAPITAL ALLOCATION"</strong> in the header above to compute the globally optimal simplex budget distribution across the 2,207 project portfolio.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-2">
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">Multi-Knapsack LP Solver</h4>
+                <p className="text-[11px] text-slate-500 leading-tight">Solves multi-constraint simplex optimization in &lt;10ms</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-100/60 text-purple-700 flex items-center justify-center">
+                  <ShieldAlert className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">10% NER Statutory Floor</h4>
+                <p className="text-[11px] text-slate-500 leading-tight">Guarantees mandatory North-Eastern capital ringfencing</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">Risk Dial (κ) Containment</h4>
+                <p className="text-[11px] text-slate-500 leading-tight">Fine-tune capital velocity against variance penalty</p>
               </div>
             </div>
-          </Card>
-        </motion.div>
+          </div>
+        )}
 
         {data && (
           <div className="space-y-6">
@@ -210,21 +282,20 @@ export default function VittaVyuhaView() {
                 </Card>
 
                 {/* Metric 2 */}
-                <Card className="shadow-sm border-slate-200 flex flex-col justify-between bg-white relative overflow-hidden">
-                  <div className={`absolute top-0 left-0 w-1 h-full ${data.ner_floor_met ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                  <div className="pl-2">
+                <Card className="shadow-sm border-slate-200 flex flex-col justify-between bg-white">
+                  <div>
                     <Text className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">North-East Region Share</Text>
                     <Metric className="font-mono text-3xl font-black text-slate-800">₹{data.ner_allocated_cr.toLocaleString()}</Metric>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-slate-100 pl-2">
-                    <div className="flex items-center gap-2">
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md font-mono ${
                         data.ner_floor_met
                           ? 'text-emerald-800 bg-emerald-50 border border-emerald-200'
                           : 'text-rose-800 bg-rose-50 border border-rose-200'}`}>
                         {data.ner_share_perc.toFixed(1)}% Share
                       </span>
-                      <span className="text-[10px] text-slate-500 font-medium truncate">
+                      <span className="text-[11px] text-slate-600 font-semibold">
                         {data.ner_floor_met ? 'Statutory 10% Quota Met' : 'Quota Deficit'}
                       </span>
                     </div>
@@ -289,7 +360,7 @@ export default function VittaVyuhaView() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 bg-white">
-                      {data.allocations.map((alloc) => (
+                      {data.allocations.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((alloc) => (
                         <tr key={alloc.project_id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-4 py-3 min-w-[200px] max-w-[250px] whitespace-normal">
                             <div className="font-bold text-slate-800 line-clamp-2" title={alloc.project_name}>{alloc.project_name}</div>
@@ -326,6 +397,36 @@ export default function VittaVyuhaView() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {data.allocations.length > 0 && (
+                  <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 font-medium">
+                    <div>
+                      Showing <span className="font-bold text-slate-800">{(page - 1) * PAGE_SIZE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(page * PAGE_SIZE, data.allocations.length)}</span> of <span className="font-bold text-slate-800">{data.allocations.length}</span> projects (10 visible at once)
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-slate-700 transition-colors cursor-pointer shadow-xs"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>Previous</span>
+                      </button>
+                      <div className="flex items-center gap-1 px-3 py-1 font-mono font-bold text-slate-800 bg-white border border-slate-200 rounded-lg shadow-xs">
+                        Page {page} of {Math.ceil(data.allocations.length / PAGE_SIZE) || 1}
+                      </div>
+                      <button
+                        onClick={() => setPage(p => Math.min(Math.ceil(data.allocations.length / PAGE_SIZE), p + 1))}
+                        disabled={page >= Math.ceil(data.allocations.length / PAGE_SIZE)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-slate-700 transition-colors cursor-pointer shadow-xs"
+                      >
+                        <span>Next</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </Card>
             </motion.div>
           </div>

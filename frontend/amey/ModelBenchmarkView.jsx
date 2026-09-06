@@ -62,26 +62,28 @@ function formatFeatureName(rawFeature) {
 export default function ModelBenchmarkView() {
   const [bench, setBench] = useState(null);
   const [queue, setQueue] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [queueDenied, setQueueDenied] = useState(null);
   const [leadTime, setLeadTime] = useState(null);
 
-  useEffect(() => {
-    let dead = false;
-    Promise.all([
-      fetch(`${API}/api/amey/benchmark`).then((r) => r.json()).catch(() => null),
-      apiFetch('/api/amey/early-warning?limit=12'),
-      fetch(`${API}/api/amey/lead-time`).then((r) => r.json()).catch(() => null),
-    ]).then(([b, q, lt]) => {
-      if (dead) return;
-      setBench(b);
-      setQueue(q.ok ? q.data : null);
-      setQueueDenied(q.ok ? null : q.error);
-      setLeadTime(lt);
+  const runBenchmarkEvaluation = async () => {
+    setLoading(true);
+    try {
+      const [bRes, qRes, ltRes] = await Promise.all([
+        fetch(`${API}/api/amey/benchmark`).then((r) => r.json()).catch(() => null),
+        apiFetch('/api/amey/early-warning?limit=12'),
+        fetch(`${API}/api/amey/lead-time`).then((r) => r.json()).catch(() => null),
+      ]);
+      setBench(bRes);
+      setQueue(qRes.ok ? qRes.data : null);
+      setQueueDenied(qRes.ok ? null : qRes.error);
+      setLeadTime(ltRes);
+    } catch (e) {
+      console.error(e);
+    } finally {
       setLoading(false);
-    });
-    return () => { dead = true; };
-  }, []);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -96,27 +98,6 @@ export default function ModelBenchmarkView() {
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
 
-  if (loading) {
-    return (
-      <div className="panel p-10 text-center space-y-3">
-        <FlaskConical className="w-10 h-10 text-amber-500 animate-spin mx-auto" />
-        <p className="text-gov-navy font-bold text-base">Loading empirical model benchmarks and early-warning analytics…</p>
-        <p className="text-xs text-slate-500">Evaluating AI performance against 2,207 historical project baselines</p>
-      </div>
-    );
-  }
-
-  if (!bench || bench.available === false) {
-    return (
-      <div className="panel p-6">
-        <div className="note note-warn flex items-start gap-3">
-          <FlaskConical className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
-          <span><strong>Benchmarks not yet fitted.</strong> {bench?.reason}</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8 font-sans pb-12">
       {/* ── 1. Top Header ── */}
@@ -124,7 +105,7 @@ export default function ModelBenchmarkView() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden"
+        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
       >
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
           <FlaskConical className="w-48 h-48 text-amber-500" />
@@ -142,14 +123,92 @@ export default function ModelBenchmarkView() {
             Mathematical proof that PRAKALP-DRISHTI’s AI models significantly outperform conventional static sector averages. Validates <strong>why</strong> the AI works, <strong>how early</strong> it detects failure, and <strong>which real-world factors</strong> drive delays.
           </p>
 
-          <div className="pt-3">
+          <div className="pt-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/50 border border-slate-600 text-xs text-slate-300 font-mono">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               Evaluated on <strong>2,207 Master Project Corpus</strong> (25% held-out test split)
             </span>
           </div>
         </div>
+
+        {/* Header Trigger Button */}
+        <div className="shrink-0 w-full lg:w-auto relative z-10">
+          <button
+            onClick={runBenchmarkEvaluation}
+            disabled={loading}
+            className="w-full lg:w-auto min-w-[270px] bg-slate-100 hover:bg-amber-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-amber-600 font-extrabold py-3.5 px-6 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-amber-500/25 cursor-pointer disabled:opacity-50 group"
+          >
+            <FlaskConical className="w-4 h-4 text-amber-600 group-hover:text-white transition-colors" />
+            <span>{loading ? 'Evaluating Baselines…' : 'Evaluate Empirical Models'}</span>
+          </button>
+        </div>
       </motion.div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[360px]">
+          <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-600 animate-spin" />
+          <div className="space-y-1">
+            <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">Running Empirical Model Benchmarks…</p>
+            <p className="text-xs text-slate-500">Evaluating OLS Linear Regression, Sector Baselines, SHAP values, and Early Warning Radars</p>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State Hero */}
+      {!bench && !loading && (
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[440px]">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-xs">
+            <FlaskConical className="w-8 h-8" />
+          </div>
+          <div className="max-w-md space-y-2">
+            <h3 className="text-xl font-bold text-slate-800">
+              Ready to Evaluate Empirical Models
+            </h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Click <strong className="text-slate-700">"EVALUATE EMPIRICAL MODELS"</strong> to benchmark LightGBM against baseline regression across 2,207 projects, compute SHAP explainability matrices, and load early-warning radar cues.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-2">
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
+                <BarChart2 className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">Statistical Validation</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Quantifies MAE / RMSE reductions vs traditional sector formulas</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-purple-100/60 text-purple-700 flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">SHAP Feature Attribution</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Deconstructs individual feature contributions to cost overruns</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">Early Warning Radar</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Screens 12 priority assets facing imminent critical escalation</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {bench && bench.available === false && (
+        <div className="panel p-6">
+          <div className="note note-warn flex items-start gap-3">
+            <FlaskConical className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+            <span><strong>Benchmarks not yet fitted.</strong> {bench?.reason}</span>
+          </div>
+        </div>
+      )}
+
+      {bench && bench.available !== false && (
+        <>
 
       {/* ── 2. Three Key At-A-Glance Executive Takeaways ── */}
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -165,18 +224,14 @@ export default function ModelBenchmarkView() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          {/* Animated Glowing Card */}
-          <div className="relative h-full rounded-2xl p-[2px] overflow-hidden group">
-            <div className="absolute inset-[-100%] bg-[conic-gradient(from_90deg_at_50%_50%,#f59e0b_0%,#fbbf24_50%,#fcd34d_100%)] animate-[spin_4s_linear_infinite] opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-            <Card className="relative h-full z-10 border-none shadow-md bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">Advance Warning Horizon</span>
-                <Clock className="w-5 h-5 text-amber-500" />
-              </div>
-              <Metric className="text-slate-900 font-heading">108 Months Early</Metric>
-              <Text className="mt-2 text-sm text-slate-600">Median lead time from initial sanction to official parliamentary delay declaration.</Text>
-            </Card>
-          </div>
+          <Card className="h-full border-t-4 border-t-amber-500 shadow-md">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">Advance Warning Horizon</span>
+              <Clock className="w-5 h-5 text-amber-500" />
+            </div>
+            <Metric className="text-slate-900 font-heading">108 Months Early</Metric>
+            <Text className="mt-2 text-sm text-slate-600">Median lead time from initial sanction to official parliamentary delay declaration.</Text>
+          </Card>
         </motion.div>
 
         <motion.div variants={itemVariants}>
@@ -535,6 +590,8 @@ export default function ModelBenchmarkView() {
             </AnimatePresence>
           </div>
         </motion.div>
+      )}
+      </>
       )}
     </div>
   );

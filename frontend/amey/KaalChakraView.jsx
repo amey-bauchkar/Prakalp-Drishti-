@@ -3,8 +3,8 @@ import { Clock, AlertTriangle, ShieldCheck, CheckCircle2, Search, Sparkles, Sate
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Metric, Text, ProgressBar, BadgeDelta, Flex, Grid } from "@tremor/react";
 
-export default function KaalChakraView({ selectedProjectId = "618402", onSelectProject }) {
-  const [projectId, setProjectId] = useState(selectedProjectId);
+export default function KaalChakraView({ selectedProjectId = "", onSelectProject }) {
+  const [projectId, setProjectId] = useState(selectedProjectId || "");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -13,11 +13,13 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
   const [showDropdown, setShowDropdown] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(null);
 
-  const fetchForecast = async (id) => {
+  const fetchForecast = async (id = projectId) => {
+    const cleanId = String(id || projectId).trim();
+    if (!cleanId) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/amey/forecast/${id}`);
+      const res = await fetch(`/api/amey/forecast/${cleanId}`);
       if (!res.ok) throw new Error("Failed to fetch forecast data");
       const json = await res.json();
       setData(json);
@@ -29,9 +31,12 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
     }
   };
 
+  // Sync with prop when selected externally
   useEffect(() => {
-    fetchForecast(projectId);
-  }, [projectId]);
+    if (selectedProjectId && selectedProjectId !== projectId) {
+      setProjectId(selectedProjectId);
+    }
+  }, [selectedProjectId]);
 
   useEffect(() => {
     fetch('/api/projects?limit=2207')
@@ -43,12 +48,19 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
   }, []);
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchInput.trim()) {
-      setProjectId(searchInput.trim());
-      if (onSelectProject) onSelectProject(searchInput.trim());
-      setShowDropdown(false);
-    }
+    if (e) e.preventDefault();
+    const query = searchInput.trim();
+    if (!query) return;
+    const match = projectList.find(
+      p => String(p.project_id) === query || (p.project_name && p.project_name.toLowerCase() === query.toLowerCase())
+    ) || filteredProjects[0];
+
+    const targetId = match ? String(match.project_id) : query;
+    setProjectId(targetId);
+    if (match) setSearchInput(match.project_name);
+    if (onSelectProject) onSelectProject(targetId);
+    setShowDropdown(false);
+    fetchForecast(targetId);
   };
 
   const filteredProjects = projectList.filter(p => {
@@ -56,7 +68,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
     const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
     const search = (searchInput || "").toLowerCase();
     return idStr.includes(search) || nameStr.includes(search);
-  }).slice(0, 8);
+  }).slice(0, 100);
 
   // Calculate proportional timeline positions based on actual dates
   const calculatePositions = (forecast) => {
@@ -115,7 +127,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-gov-navy-hover shadow-lg border border-slate-700/50"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-gov-navy-hover shadow-lg border border-slate-700/50 relative z-50"
       >
         <div className="space-y-3 max-w-2xl">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
@@ -132,7 +144,7 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
 
         {/* Quick Project Lookup - Autocomplete */}
         <div className="relative w-full lg:w-96 shrink-0 z-50">
-          <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_15px_rgba(251,191,36,0.1)] focus-within:shadow-[0_0_25px_rgba(251,191,36,0.3)] transition-all">
+          <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm transition-all">
             <input
               type="text"
               placeholder="Search by Name or MoSPI Code..."
@@ -147,49 +159,113 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center rounded-lg text-sm font-bold transition-all h-11 px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 hover:scale-105 shadow-[0_0_15px_rgba(245,158,11,0.5)] gap-2 shrink-0"
+              disabled={loading}
+              className="inline-flex items-center justify-center rounded-lg text-xs font-bold font-mono uppercase tracking-wider transition-all h-11 px-4 py-2 bg-slate-100 hover:bg-amber-500 text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-amber-500 gap-1.5 shrink-0 cursor-pointer shadow-xs disabled:opacity-50"
             >
-              <Search className="w-4 h-4" />
-              <span>Analyze</span>
+              <Search className="w-3.5 h-3.5" />
+              <span>{loading ? 'Analyzing…' : 'Analyze'}</span>
             </button>
           </form>
 
           {showDropdown && searchInput && filteredProjects.length > 0 && (
             <motion.div 
-              initial={{ opacity: 0, y: -10 }} 
+              initial={{ opacity: 0, y: -6 }} 
               animate={{ opacity: 1, y: 0 }} 
-              className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-[100] max-h-80 flex flex-col"
             >
-              {filteredProjects.map((p) => (
-                <div 
-                  key={p.project_id} 
-                  onClick={() => {
-                    setSearchInput(p.project_id);
-                    setProjectId(p.project_id);
-                    if (onSelectProject) onSelectProject(p.project_id);
-                    setShowDropdown(false);
-                  }}
-                  className="p-3 border-b border-slate-800/50 hover:bg-amber-500/10 cursor-pointer transition-colors flex flex-col gap-1"
-                >
-                  <span className="text-sm font-bold text-slate-200 line-clamp-1">{p.project_name}</span>
-                  <div className="flex gap-2 text-[10px] uppercase font-mono text-slate-500">
-                    <span className="text-amber-500">ID: {p.project_id}</span>
-                    <span>{p.sector}</span>
+              <div className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+                {filteredProjects.map((p) => (
+                  <div 
+                    key={p.project_id} 
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      setSearchInput(p.project_name);
+                      setProjectId(p.project_id);
+                      if (onSelectProject) onSelectProject(p.project_id);
+                      setShowDropdown(false);
+                      fetchForecast(p.project_id);
+                    }}
+                    className="p-3.5 hover:bg-slate-800/90 cursor-pointer transition-colors flex flex-col gap-1 text-left"
+                  >
+                    <span className="text-sm font-bold text-slate-100 line-clamp-1">{p.project_name}</span>
+                    <div className="flex items-center gap-2 text-[11px] font-mono">
+                      <span className="text-amber-400 font-bold">ID: {p.project_id}</span>
+                      <span className="text-slate-500">·</span>
+                      <span className="text-slate-400 font-medium truncate">{p.sector}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </motion.div>
           )}
         </div>
       </motion.div>
 
+      {/* ═══════════════════════════════════════════════════════════════
+          2. INITIAL EMPTY STATE (WHEN NOT SIMULATED YET)
+          ═══════════════════════════════════════════════════════════════ */}
+      {!data && !loading && !error && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[460px]"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-sm">
+            <Clock className="w-8 h-8 text-amber-600" />
+          </div>
+          
+          <div className="space-y-2 max-w-lg">
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans tracking-tight">
+              Ready to Forecast Project Timeline
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-sans">
+              Enter a project ID or select from the dossier catalog above, then click <strong>"Analyze"</strong> to calculate realistic completion bounds (P10, P50, P80, P95) and assess satellite timeline consistency.
+            </p>
+          </div>
+
+          {/* 3 Executive Capability Feature Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-2">
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-amber-200 transition-colors">
+              <div className="flex items-center gap-1.5 text-amber-600 font-mono text-[11px] font-bold uppercase">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Survival Conformal</span>
+              </div>
+              <p className="text-[11.5px] text-slate-600 leading-snug">
+                Kaplan-Meier survival model with probabilistic P10–P95 completion brackets.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
+              <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-bold uppercase">
+                <Satellite className="w-3.5 h-3.5" />
+                <span>EO Consistency</span>
+              </div>
+              <p className="text-[11.5px] text-slate-600 leading-snug">
+                Cross-references on-ground satellite progress with official contractor claims.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-emerald-200 transition-colors">
+              <div className="flex items-center gap-1.5 text-emerald-600 font-mono text-[11px] font-bold uppercase">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Contagion Radius</span>
+              </div>
+              <p className="text-[11.5px] text-slate-600 leading-snug">
+                Quantifies upstream delay transfer and downstream cascade vulnerability.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {loading && (
         <motion.div 
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="p-12 text-center text-slate-500 font-medium text-sm flex flex-col items-center"
+          className="p-12 text-center text-slate-500 font-medium text-sm flex flex-col items-center bg-white rounded-2xl border border-slate-200/80 min-h-[400px] justify-center"
         >
           <Clock className="w-8 h-8 text-amber-500 animate-spin mb-4" /> 
-          <p>Calculating Realistic Timeline Forecast &amp; Confidence Bounds...</p>
+          <p className="font-bold text-slate-900">Calculating Realistic Timeline Forecast &amp; Confidence Bounds...</p>
+          <span className="text-xs text-slate-400 font-mono mt-1">Simulating Project #{projectId}</span>
         </motion.div>
       )}
 
@@ -266,35 +342,28 @@ export default function KaalChakraView({ selectedProjectId = "618402", onSelectP
                 </Card>
               </Grid>
 
-              {/* Target Met Confidence Gauge - CRAZY AESTHETIC */}
-              <div className="relative rounded-2xl p-[2px] overflow-hidden group mb-6">
-                {/* Animated gradient border */}
-                <div className="absolute inset-[-100%] bg-[conic-gradient(from_90deg_at_50%_50%,#34d399_0%,#fbbf24_50%,#f43f5e_100%)] animate-[spin_4s_linear_infinite] opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute inset-[2px] bg-slate-900 rounded-2xl z-0" />
+              {/* Target Met Confidence Gauge */}
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-4 mb-6 shadow-sm">
+                <Flex>
+                  <Text className="text-slate-300 font-semibold text-xs uppercase tracking-widest">Official Target Met Prob</Text>
+                  <Text className={`font-mono font-bold text-lg ${data.prob_target_met_official > 0.5 ? "text-emerald-400" : "text-rose-400"}`}>
+                    {(data.prob_target_met_official * 100).toFixed(1)}%
+                  </Text>
+                </Flex>
                 
-                <div className="relative z-10 p-5 space-y-4 rounded-2xl overflow-hidden bg-slate-900/90 backdrop-blur-sm">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                  <Flex>
-                    <Text className="text-slate-300 font-semibold text-xs uppercase tracking-widest">Official Target Met Prob</Text>
-                    <Text className="text-emerald-400 font-mono font-bold text-lg drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]">
-                      {(data.prob_target_met_official * 100).toFixed(1)}%
-                    </Text>
-                  </Flex>
-                  
-                  <div className="relative h-2.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${data.prob_target_met_official * 100}%` }}
-                      transition={{ duration: 1.5, ease: "easeOut", type: "spring" }}
-                      className={`absolute top-0 left-0 h-full ${data.prob_target_met_official > 0.5 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" : "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)]"}`}
-                    />
-                  </div>
-                  
-                  <p className="text-[11px] text-slate-400 leading-snug flex items-center justify-between">
-                    <span>Target Date:</span> 
-                    <strong className="text-white font-mono bg-white/10 px-2 py-0.5 rounded shadow-inner border border-white/5">{data.revised_end_date}</strong>
-                  </p>
+                <div className="relative h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${data.prob_target_met_official * 100}%` }}
+                    transition={{ duration: 1.5, ease: "easeOut", type: "spring" }}
+                    className={`absolute top-0 left-0 h-full ${data.prob_target_met_official > 0.5 ? "bg-emerald-500" : "bg-rose-500"}`}
+                  />
                 </div>
+                
+                <p className="text-[11px] text-slate-400 leading-snug flex items-center justify-between">
+                  <span>Target Date:</span> 
+                  <strong className="text-white font-mono bg-white/10 px-2 py-0.5 rounded border border-white/10">{data.revised_end_date}</strong>
+                </p>
               </div>
             </Card>
 

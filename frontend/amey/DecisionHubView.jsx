@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock, GitBranch, DollarSign, FileText, Building2, Sparkles,
   FlaskConical, Search, Layers, Compass, ShieldCheck, ChevronRight,
@@ -104,7 +105,7 @@ export default function DecisionHubView() {
   return (
     <LoginGate>
       <div className="space-y-4 pb-20">
-        {/* ── Console masthead + live dossier telemetry ───────────────── */}
+        {/* ── Console masthead telemetry ───────────────── */}
         <div className="telemetry justify-between">
           <span className="flex items-center gap-2 flex-wrap">
             <b>DECISION INTELLIGENCE CONSOLE</b>
@@ -113,10 +114,9 @@ export default function DecisionHubView() {
             <span className="sep">/</span>
             <span>2,207 PROJECTS</span>
           </span>
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>ACTIVE DOSSIER</span>
-            <b>#{selectedProjectId}</b>
+          <span className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">SYSTEM OPERATIONAL</span>
           </span>
         </div>
 
@@ -231,25 +231,36 @@ export default function DecisionHubView() {
 
           {/* ══ Wide Content Area on the Right (Flex-1) ══ */}
           <main className="flex-1 min-w-0 space-y-6 w-full">
-            {activeEngine === 'unified_cockpit' && (
-              <UnifiedCockpitView selectedProjectId={selectedProjectId} onSelectProject={(id) => setSelectedProjectId(id)} />
-            )}
-            {activeEngine === 'kaal_chakra' && (
-              <KaalChakraView selectedProjectId={selectedProjectId} onSelectProject={(id) => setSelectedProjectId(id)} />
-            )}
-            {activeEngine === 'vitta_vyuha' && <VittaVyuhaView />}
-            {activeEngine === 'pragati_saarthi' && <PragatiSaarthiView selectedProjectId={selectedProjectId} />}
-            {activeEngine === 'benchmark' && <ModelBenchmarkView />}
-            {activeEngine === 'agency_index' && (
-              <div className="space-y-6">
-                <GeocodePrecisionPanel />
-                <AgencyIndexView />
-              </div>
-            )}
-            {activeEngine === 'satya_kavach' && <SatyaKavachView />}
-            {activeEngine === 'artha_nivaran' && <ArthaNivaranView />}
-            {activeEngine === 'setu_varsha' && <SetuVarshaView selectedProjectId={selectedProjectId} />}
-            {activeEngine === 'karya_dakshata' && <KaryaDakshataSimulator />}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeEngine}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+                className="w-full"
+              >
+                {activeEngine === 'unified_cockpit' && (
+                  <UnifiedCockpitView selectedProjectId={selectedProjectId} onSelectProject={(id) => setSelectedProjectId(id)} />
+                )}
+                {activeEngine === 'kaal_chakra' && (
+                  <KaalChakraView selectedProjectId={selectedProjectId} onSelectProject={(id) => setSelectedProjectId(id)} />
+                )}
+                {activeEngine === 'vitta_vyuha' && <VittaVyuhaView />}
+                {activeEngine === 'pragati_saarthi' && <PragatiSaarthiView selectedProjectId={selectedProjectId} />}
+                {activeEngine === 'benchmark' && <ModelBenchmarkView />}
+                {activeEngine === 'agency_index' && (
+                  <div className="space-y-6">
+                    <GeocodePrecisionPanel />
+                    <AgencyIndexView />
+                  </div>
+                )}
+                {activeEngine === 'satya_kavach' && <SatyaKavachView />}
+                {activeEngine === 'artha_nivaran' && <ArthaNivaranView />}
+                {activeEngine === 'setu_varsha' && <SetuVarshaView selectedProjectId={selectedProjectId} />}
+                {activeEngine === 'karya_dakshata' && <KaryaDakshataSimulator />}
+              </motion.div>
+            </AnimatePresence>
           </main>
         </div>
       </div>
