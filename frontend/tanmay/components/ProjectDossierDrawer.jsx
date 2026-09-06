@@ -88,6 +88,7 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
 
             <button
               onClick={onClose}
+              aria-label="Close dossier drawer"
               className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 transition-colors"
             >
               <X className="w-5 h-5" />
