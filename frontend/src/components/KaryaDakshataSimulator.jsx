@@ -1,353 +1,677 @@
-import React, { useState, useEffect } from 'react';
-import { Building2, AlertTriangle, TrendingUp, Clock, Calculator, ShieldCheck, Activity, BarChart3, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Building2, AlertTriangle, TrendingUp, Clock, Calculator, ShieldCheck, 
+  Activity, BarChart3, ArrowRight, DollarSign, RefreshCw, CheckCircle2, 
+  Layers, AlertCircle, Sparkles, FileText, Compass, ExternalLink, ShieldAlert,
+  Sliders, Gauge, History, FileSpreadsheet, Cpu, CheckSquare, Scale, Award
+} from 'lucide-react';
+import { Card, Metric, BadgeDelta, Flex, ProgressBar } from '@tremor/react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 import LoginGate from '../../amey/LoginGate.jsx';
 
-const KaryaDakshataSimulator = () => {
-    const [agencies, setAgencies] = useState([]);
-    const [selectedAgency, setSelectedAgency] = useState("");
-    const [baseCost, setBaseCost] = useState(500);
-    const [baseTime, setBaseTime] = useState(1000);
-    
-    const [result, setResult] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+export default function KaryaDakshataSimulator() {
+  const [agencies, setAgencies] = useState([]);
+  const [selectedAgency, setSelectedAgency] = useState("");
+  const [baseCost, setBaseCost] = useState("");
+  const [baseTime, setBaseTime] = useState("");
+  
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    // Fetch agencies on mount
-    useEffect(() => {
-        fetch('/api/karya-dakshata/agencies')
-            .then(res => res.json())
-            .then(data => {
-                if (data.agencies) {
-                    setAgencies(data.agencies);
-                    if (data.agencies.length > 0 && !selectedAgency) setSelectedAgency(data.agencies[0].name);
-                }
-            })
-            .catch(err => console.error("Failed to load agencies", err));
-    }, []);
-
-    // Global project selection sync
-    useEffect(() => {
-        const handleSelect = (e) => {
-            if (e.detail) {
-                const pid = String(e.detail);
-                fetch(`/api/projects/${pid}`)
-                    .then(r => r.ok ? r.json() : null)
-                    .then(p => {
-                        if (p) {
-                            if (p.company) setSelectedAgency(p.company);
-                            if (p.original_cost_cr) setBaseCost(p.original_cost_cr);
-                            if (p.delayed_months) setBaseTime(Math.max(365, Math.round((p.delayed_months || 12) * 30.4)));
-                        }
-                    })
-                    .catch(() => {});
-            }
-        };
-        window.addEventListener('prakalp:selectProject', handleSelect);
-        return () => window.removeEventListener('prakalp:selectProject', handleSelect);
-    }, []);
-
-    const runSimulation = async () => {
-        setLoading(true);
-        setError(null);
-        setResult(null);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 800));
-            const response = await fetch('/api/karya-dakshata/simulate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    agency_name: selectedAgency,
-                    base_cost_cr: parseFloat(baseCost),
-                    base_time_days: parseFloat(baseTime)
-                })
-            });
-            if (!response.ok) throw new Error("API Error");
-            const data = await response.json();
-            setResult(data);
-        } catch (err) {
-            setError(err.message);
+  // Fetch agencies on mount
+  useEffect(() => {
+    fetch('/api/karya-dakshata/agencies')
+      .then(res => res.json())
+      .then(data => {
+        if (data.agencies && Array.isArray(data.agencies)) {
+          setAgencies(data.agencies);
         }
-        setLoading(false);
-    };
+      })
+      .catch(err => console.error("Failed to load agencies", err));
+  }, []);
 
-    const getScoreColor = (score) => {
-        if (score >= 80) return "text-emerald-500";
-        if (score >= 50) return "text-amber-500";
-        return "text-rose-500";
+  // Global project selection sync
+  useEffect(() => {
+    const handleSelect = (e) => {
+      if (e.detail) {
+        const pid = String(e.detail);
+        fetch(`/api/projects/${pid}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(p => {
+            if (p) {
+              if (p.company) setSelectedAgency(p.company);
+              if (p.original_cost_cr) setBaseCost(p.original_cost_cr);
+              if (p.delayed_months) setBaseTime(Math.max(365, Math.round((p.delayed_months || 24) * 30.4)));
+            }
+          })
+          .catch(() => {});
+      }
     };
+    window.addEventListener('prakalp:selectProject', handleSelect);
+    return () => window.removeEventListener('prakalp:selectProject', handleSelect);
+  }, []);
 
-    const getScoreText = (score) => {
-        if (score >= 80) return "High Reliability";
-        if (score >= 50) return "Moderate Risk";
-        return "High Risk of Overrun";
-    };
+  const runSimulation = useCallback(async () => {
+    if (!selectedAgency) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/karya-dakshata/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agency_name: selectedAgency,
+          base_cost_cr: parseFloat(baseCost) || 500,
+          base_time_days: parseFloat(baseTime) || 730
+        })
+      });
+      if (!response.ok) throw new Error("Simulation endpoint error");
+      const data = await response.json();
+      setResult(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedAgency, baseCost, baseTime]);
 
-    return (
-        <LoginGate>
-            <div className="space-y-8 font-sans max-w-6xl mx-auto">
-            {/* ═══════════════════════════════════════════════════════════════
-                TOP BANNER (SOVEREIGN INSTITUTIONAL COMMAND HEADER)
-                ═══════════════════════════════════════════════════════════════ */}
-            <div className="command-header p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                <div className="space-y-2 max-w-2xl relative z-10">
-                    <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
-                        <Activity className="w-3.5 h-3.5 text-white" />
-                        <span>KARYA-DAKSHATA · AGENCY EXECUTION SIMULATOR</span>
+  const selectedAgencyObj = agencies.find(a => a.name === selectedAgency);
+
+  const getScoreColor = (score) => {
+    if (score >= 80) return "text-emerald-600";
+    if (score >= 50) return "text-blue-600";
+    return "text-rose-600";
+  };
+
+  const getScoreBadge = (score) => {
+    if (score >= 80) {
+      return { label: "High Reliability", bg: "bg-emerald-50 text-emerald-800 border-emerald-200" };
+    }
+    if (score >= 50) {
+      return { label: "Moderate Risk", bg: "bg-blue-50 text-blue-800 border-blue-200" };
+    }
+    return { label: "High Overrun Risk", bg: "bg-rose-50 text-rose-800 border-rose-200" };
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { type: "spring", stiffness: 300, damping: 24 } 
+    }
+  };
+
+  const costEscalationPct = result && result.Base_Cost_Cr > 0
+    ? (((result.True_Expected_Cost_Cr - result.Base_Cost_Cr) / result.Base_Cost_Cr) * 100).toFixed(1)
+    : "0.0";
+
+  const timeDelayDays = result
+    ? Math.max(0, Math.round(result.True_Expected_Timeline_Days - result.Base_Timeline_Days))
+    : 0;
+
+  const costChartData = result ? [
+    { name: 'Proposed Budget', value: result.Base_Cost_Cr },
+    { name: 'AI De-Biased Expected', value: result.True_Expected_Cost_Cr }
+  ] : [];
+
+  const timeChartData = result ? [
+    { name: 'Proposed Timeline', value: result.Base_Timeline_Days },
+    { name: 'AI De-Biased Expected', value: result.True_Expected_Timeline_Days }
+  ] : [];
+
+  return (
+    <LoginGate>
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="space-y-6 font-sans pb-10"
+      >
+        {/* ═══════════════════════════════════════════════════════════════
+            1. SOVEREIGN COMMAND HEADER (KARYA-DAKSHATA MASTHEAD)
+            ═══════════════════════════════════════════════════════════════ */}
+        <motion.div 
+          variants={itemVariants}
+          className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/60 shadow-xl text-white relative overflow-hidden"
+        >
+          {/* Subtle Ambient Background Glows */}
+          <div className="absolute -right-20 -top-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="space-y-2.5 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-mono font-bold tracking-wider uppercase">
+                <Activity className="w-3.5 h-3.5 text-blue-400" />
+                <span>KARYA-DAKSHATA · कार्य-दक्षता // AGENCY DE-BIASING ENGINE</span>
+              </div>
+              
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
+                <span>EXECUTION RELIABILITY SIMULATOR</span>
+                <span className="text-xs px-2.5 py-1 rounded-md bg-white/10 text-slate-300 font-mono font-normal">
+                  {agencies.length} AGENCIES CATALOGUED
+                </span>
+              </h1>
+              
+              <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-xl">
+                AI-driven empirical de-biasing of optimistic project proposals using multi-year agency track records, historical completion velocities, and cost/schedule variance distributions.
+              </p>
+            </div>
+
+            {/* Live Agency Telemetry Badge */}
+            <div className="flex items-center gap-4 bg-black/40 px-5 py-3.5 rounded-xl border border-white/15 backdrop-blur-md shrink-0 shadow-inner">
+              <div className="p-2.5 bg-blue-500/20 rounded-lg border border-blue-500/30 text-blue-400">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-slate-400 block font-mono tracking-wider">Active Agency</span>
+                <span className="text-base font-black text-white font-mono truncate block max-w-[200px]">
+                  {selectedAgency || 'None Selected'}
+                </span>
+                <span className="text-[10px] font-mono text-blue-300 block">
+                  {selectedAgencyObj 
+                    ? `${selectedAgencyObj.projects || selectedAgencyObj.project_count || selectedAgencyObj.total_projects || 0} Historical Projects` 
+                    : 'Choose from dropdown'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            2. MAIN PROPOSAL CONFIGURATION & TELEMETRY SECTION
+            ═══════════════════════════════════════════════════════════════ */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* ══ Left Column: Proposal Configuration Studio ══ */}
+          <motion.div variants={itemVariants} className="lg:col-span-4 flex flex-col">
+            <div className="bg-white rounded-2xl border border-slate-200/90 border-t-4 border-t-blue-600 shadow-sm p-6 space-y-6 flex-1 flex flex-col justify-between">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <Calculator className="w-4 h-4 text-blue-600" />
+                    <h3 className="font-extrabold text-sm uppercase tracking-wider text-slate-900 font-mono">
+                      Proposal Inputs
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold">
+                    Parameter Setup
+                  </span>
+                </div>
+
+                {/* Implementing Agency Selector */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                    Implementing Agency
+                  </label>
+                  <select 
+                    value={selectedAgency} 
+                    onChange={(e) => setSelectedAgency(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none text-xs font-bold text-slate-900 transition-all font-sans cursor-pointer"
+                  >
+                    <option value="" disabled>Select Agency...</option>
+                    {agencies.map(a => {
+                      const count = a.projects ?? a.project_count ?? a.total_projects ?? 0;
+                      return (
+                        <option key={a.name} value={a.name}>
+                          {a.name} ({count} projects)
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                {/* Proposed Budget */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                      Proposed Budget (₹ Cr)
+                    </label>
+                    <span className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${
+                      baseCost 
+                        ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
+                        : 'text-slate-400 bg-slate-100 border-slate-200'
+                    }`}>
+                      {baseCost ? `₹${Number(baseCost).toLocaleString()} Cr` : 'Not Set'}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-bold font-mono text-xs">
+                      ₹
                     </div>
-                    <h2 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
-                        EXECUTION RELIABILITY SIMULATOR
-                    </h2>
-                    <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
-                        AI-driven de-biasing of optimistic project estimates using historical agency track records and empirical execution velocities.
+                    <input 
+                      type="number" 
+                      min="1"
+                      step="10"
+                      placeholder="e.g. 500"
+                      value={baseCost} 
+                      onChange={(e) => setBaseCost(e.target.value)}
+                      className="w-full pl-8 p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none font-mono font-bold text-xs text-slate-900 placeholder:text-slate-400 placeholder:font-normal"
+                    />
+                  </div>
+                  {/* Budget Presets */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {[100, 500, 2500, 10000].map((crVal) => (
+                      <button
+                        key={crVal}
+                        type="button"
+                        onClick={() => setBaseCost(crVal)}
+                        className={`text-[10.5px] font-mono px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-semibold ${
+                          Number(baseCost) === crVal
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
+                        }`}
+                      >
+                        ₹{crVal.toLocaleString()} Cr
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Proposed Timeline */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
+                      Proposed Timeline (Days)
+                    </label>
+                    <span className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${
+                      baseTime 
+                        ? 'text-blue-700 bg-blue-50 border-blue-200' 
+                        : 'text-slate-400 bg-slate-100 border-slate-200'
+                    }`}>
+                      {baseTime ? `${Number(baseTime)} Days (${(Number(baseTime) / 365).toFixed(1)} Yrs)` : 'Not Set'}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <Clock className="w-3.5 h-3.5" />
+                    </div>
+                    <input 
+                      type="number" 
+                      min="30"
+                      step="30"
+                      placeholder="e.g. 730"
+                      value={baseTime} 
+                      onChange={(e) => setBaseTime(e.target.value)}
+                      className="w-full pl-9 p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none font-mono font-bold text-xs text-slate-900 placeholder:text-slate-400 placeholder:font-normal"
+                    />
+                  </div>
+                  {/* Timeline Presets */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {[
+                      { label: '1 Yr', days: 365 },
+                      { label: '2 Yrs', days: 730 },
+                      { label: '3 Yrs', days: 1095 },
+                      { label: '5 Yrs', days: 1825 }
+                    ].map((p) => (
+                      <button
+                        key={p.days}
+                        type="button"
+                        onClick={() => setBaseTime(p.days)}
+                        className={`text-[10.5px] font-mono px-2.5 py-1 rounded-lg border transition-all cursor-pointer font-semibold ${
+                          Number(baseTime) === p.days
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Simulation Button */}
+              <button 
+                onClick={runSimulation}
+                disabled={loading || !selectedAgency || !baseCost || !baseTime}
+                className="w-full bg-slate-100 hover:bg-blue-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-blue-600 font-extrabold py-3.5 px-4 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-blue-500/25 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-4 group"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin text-blue-600 group-hover:text-white" />
+                    <span>De-Biasing Estimates…</span>
+                  </>
+                ) : (
+                  <>
+                    <BarChart3 className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" />
+                    <span>Run De-Biasing Engine</span>
+                    <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+
+          {/* ══ Right Column: De-Biased Results Docket / Initial State ══ */}
+          <motion.div variants={itemVariants} className="lg:col-span-8 flex flex-col">
+            
+            {/* Error Banner */}
+            {error && (
+              <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2.5 mb-4">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>Simulation Error: {error}</span>
+              </div>
+            )}
+
+            {/* Default Initial State: Ready to Simulate */}
+            {!result && !loading && !error && (
+              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 flex-1 min-h-[460px]">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+                  <Activity className="w-8 h-8 text-blue-600" />
+                </div>
+                
+                <div className="space-y-2 max-w-lg">
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans tracking-tight">
+                    Ready to De-Bias Project Proposal
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-sans">
+                    Select an agency and configure the proposed budget and duration. Click <strong>"Run De-Biasing Engine"</strong> to compute empirical variance, expected cost escalation, and schedule slippage based on historical track records.
+                  </p>
+                </div>
+
+                {/* 3 Executive Capability Feature Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl pt-2">
+                  <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
+                    <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-bold uppercase">
+                      <History className="w-3.5 h-3.5" />
+                      <span>Historical Variance</span>
+                    </div>
+                    <p className="text-[11.5px] text-slate-600 leading-snug">
+                      Analyzes 10+ years of agency cost overruns and completion velocities.
                     </p>
-                </div>
-            </div>
+                  </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Input Panel */}
-                <div className="lg:col-span-4 space-y-6">
-                    <div className="panel p-4 sm:p-5">
-                        <h2 className="font-heading font-extrabold text-[19px] text-gov-navy mb-5 flex items-center gap-2.5">
-                            <Calculator className="w-5 h-5 text-gov-saffron" />
-                            <span>Proposal Inputs</span>
-                        </h2>
-                        
-                        <div className="space-y-5">
-                            <div>
-                                <label className="block text-[12.5px] font-bold text-gov-navy mb-2">Implementing Agency</label>
-                                <select 
-                                    value={selectedAgency} 
-                                    onChange={(e) => setSelectedAgency(e.target.value)}
-                                    className="w-full p-3 rounded-xl border border-border-default bg-slate-50 focus:ring-2 focus:ring-gov-navy focus:border-transparent outline-none transition-all text-[13.5px] font-bold text-gov-navy"
-                                >
-                                    {agencies.map(a => (
-                                        <option key={a.name} value={a.name}>
-                                            {a.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-[12.5px] font-bold text-gov-navy mb-2">Proposed Budget (₹ Cr)</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                        <span className="text-slate-400 font-bold font-mono">₹</span>
-                                    </div>
-                                    <input 
-                                        type="number" 
-                                        value={baseCost} 
-                                        onChange={(e) => setBaseCost(e.target.value)}
-                                        className="w-full pl-9 p-3 rounded-xl border border-border-default bg-slate-50 focus:ring-2 focus:ring-gov-navy outline-none font-mono font-bold text-[14px]"
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label className="block text-[12.5px] font-bold text-gov-navy mb-2">Proposed Timeline (Days)</label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                        <Clock className="w-4 h-4 text-slate-400" />
-                                    </div>
-                                    <input 
-                                        type="number" 
-                                        value={baseTime} 
-                                        onChange={(e) => setBaseTime(e.target.value)}
-                                        className="w-full pl-10 p-3 rounded-xl border border-border-default bg-slate-50 focus:ring-2 focus:ring-gov-navy outline-none font-mono font-bold text-[14px]"
-                                    />
-                                </div>
-                            </div>
-
-                            <button 
-                                onClick={runSimulation}
-                                disabled={loading || !selectedAgency}
-                                className="btn-saffron-pill w-full justify-center py-3.5 text-xs font-bold uppercase tracking-wider shadow-md active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        <span>Analyzing Track Record...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <BarChart3 className="w-4 h-4" />
-                                        <span>RUN DE-BIASING ENGINE</span>
-                                    </>
-                                )}
-                            </button>
-                        </div>
+                  <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
+                    <div className="flex items-center gap-1.5 text-cyan-600 font-mono text-[11px] font-bold uppercase">
+                      <Gauge className="w-3.5 h-3.5" />
+                      <span>Reliability Score</span>
                     </div>
+                    <p className="text-[11.5px] text-slate-600 leading-snug">
+                      Calculates empirical reliability score (0–100) and delivery variance.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-emerald-200 transition-colors">
+                    <div className="flex items-center gap-1.5 text-emerald-600 font-mono text-[11px] font-bold uppercase">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Reserve Buffer</span>
+                    </div>
+                    <p className="text-[11.5px] text-slate-600 leading-snug">
+                      Recommends statutory capital buffer and 90-day milestone audit checks.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && (
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-12 text-center flex flex-col items-center justify-center space-y-4 flex-1 min-h-[460px]">
+                <div className="w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                <div className="space-y-1">
+                  <h4 className="font-bold text-sm text-slate-900">Running Monte Carlo De-Biasing Simulations…</h4>
+                  <p className="text-xs text-slate-400 font-mono">Querying historical delivery variances for {selectedAgency}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Result Docket (Agency Health & Comparative Charts) */}
+            {result && !loading && (
+              <div className="space-y-6 flex-1 flex flex-col justify-between">
+                
+                {/* Agency Health & Reliability Score Header Card */}
+                <div className="bg-white rounded-2xl border border-slate-200/90 border-t-4 border-t-blue-600 shadow-sm p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div className="space-y-2">
+                      <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-700 uppercase tracking-wider font-mono">
+                        <Building2 className="w-3 h-3 text-blue-600" />
+                        <span>Agency Execution Track Record ({result.sample_size_projects || selectedAgencyObj?.projects || 'Corpus'} Projects)</span>
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-sans">
+                        {result.Agency}
+                      </h2>
+                      <div className="flex items-center gap-3 flex-wrap text-xs text-slate-600 pt-1">
+                        <span className="inline-flex items-center gap-1 font-medium">
+                          <TrendingUp className="w-3.5 h-3.5 text-rose-500" />
+                          <span>Avg Cost Variance: <strong className="text-slate-900 font-mono">+{result.Historical_Cost_Variance_Avg}%</strong></span>
+                        </span>
+                        <span>•</span>
+                        <span className="inline-flex items-center gap-1 font-medium">
+                          <Clock className="w-3.5 h-3.5 text-blue-500" />
+                          <span>Avg Schedule Delay: <strong className="text-slate-900 font-mono">+{result.Historical_Delay_Avg} Mo</strong></span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Reliability Score Gauge Badge */}
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 flex flex-col items-center justify-center shrink-0 min-w-[140px]">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block mb-1">
+                        Reliability Score
+                      </span>
+                      <span className={`text-3xl font-black font-mono tracking-tight ${getScoreColor(result.Reliability_Score)}`}>
+                        {Number(result.Reliability_Score).toFixed(1)}
+                      </span>
+                      <span className={`mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded border ${getScoreBadge(result.Reliability_Score).bg}`}>
+                        {getScoreBadge(result.Reliability_Score).label}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Results Panel */}
-                <div className="lg:col-span-8">
-                    {!result && !loading && !error && (
-                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center text-center p-8 panel">
-                            <div className="w-16 h-16 bg-gov-saffron-light text-gov-saffron-dark rounded-2xl flex items-center justify-center mb-4 border border-gov-gold-border">
-                                <Activity className="w-8 h-8 text-gov-saffron" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gov-navy font-heading mb-2">Ready to Simulate</h3>
-                            <p className="text-text-secondary text-[14px] max-w-md">Select an agency and enter project parameters to calculate the true expected timeline and cost based on historical performance.</p>
+                {/* Comparative Telemetry Cards (Cost & Timeline) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                  
+                  {/* True Expected Cost Card */}
+                  <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-4 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-0.5 font-mono tracking-wider">
+                            True Expected Cost
+                          </span>
+                          <div className="text-2xl font-black text-rose-600 font-mono">
+                            ₹{Number(result.True_Expected_Cost_Cr).toLocaleString('en-IN')} <span className="text-sm text-rose-400">Cr</span>
+                          </div>
+                          <div className="text-xs text-slate-400 mt-0.5 font-mono">
+                            Proposed: <span className="line-through">₹{Number(result.Base_Cost_Cr).toLocaleString('en-IN')} Cr</span>
+                          </div>
                         </div>
-                    )}
+                        <span className="font-mono text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                          +{costEscalationPct}% Escalation
+                        </span>
+                      </div>
+                    </div>
 
-                    {error && (
-                        <div className="note note-critical flex items-center gap-3">
-                            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
-                            <span className="font-bold">Engine Error: {error}</span>
+                    {/* Comparative Bar Visualization */}
+                    <div className="h-36 w-full pt-2">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={costChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                          <Tooltip 
+                            formatter={(val) => [`₹${Number(val).toLocaleString('en-IN')} Cr`, 'Cost']}
+                            contentStyle={{ borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px' }} 
+                          />
+                          <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                            {costChartData.map((entry, index) => (
+                              <Cell key={`cost-cell-${index}`} fill={index === 0 ? '#94a3b8' : '#e11d48'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* True Expected Timeline Card */}
+                  <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-4 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-0.5 font-mono tracking-wider">
+                            True Expected Timeline
+                          </span>
+                          <div className="text-2xl font-black text-blue-600 font-mono">
+                            {Math.round(result.True_Expected_Timeline_Days)} <span className="text-sm text-blue-400">Days</span>
+                          </div>
+                          <div className="text-xs text-slate-400 mt-0.5 font-mono">
+                            Proposed: <span className="line-through">{Math.round(result.Base_Timeline_Days)} Days</span>
+                          </div>
                         </div>
-                    )}
+                        <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                          +{timeDelayDays} Days Slippage
+                        </span>
+                      </div>
+                    </div>
 
-                    {loading && (
-                        <div className="h-full min-h-[420px] flex flex-col items-center justify-center space-y-4 panel">
-                            <div className="relative w-16 h-16">
-                                <div className="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
-                                <div className="absolute inset-0 border-4 border-gov-saffron border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                            <div className="text-gov-navy font-bold text-lg font-heading animate-pulse">Running Monte Carlo Simulations...</div>
-                            <div className="text-xs text-text-muted font-mono">Querying 10+ years of {selectedAgency} historical data</div>
-                        </div>
-                    )}
-
-                    {result && !loading && (
-                        <div className="space-y-6">
-                            {/* Score & Header Card */}
-                            <div className="panel p-4 sm:p-5 relative overflow-hidden">
-                                <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                                    <div className="flex-1 space-y-2">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-sm text-xs font-bold text-gov-navy uppercase tracking-wider font-mono">
-                                            <Building2 className="w-3.5 h-3.5 text-gov-saffron" />
-                                            <span>Agency Profile</span>
-                                        </div>
-                                        <h2 className="text-2xl sm:text-3xl font-extrabold text-gov-navy leading-tight font-heading">
-                                            {result.Agency}
-                                        </h2>
-                                        <p className="text-text-secondary text-[13.5px] flex items-center gap-2 font-sans pt-1">
-                                            <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                                            <span>Historical Variance: <strong className="text-gov-navy font-mono">{result.Historical_Cost_Variance_Avg} Cost, {result.Historical_Delay_Avg} Delay</strong></span>
-                                        </p>
-                                    </div>
-                                    
-                                    {/* Score Gauge */}
-                                    <div className="flex flex-col items-center shrink-0 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                        <div className="relative flex items-center justify-center w-28 h-28">
-                                            <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                                                <circle className="text-slate-200 stroke-current" strokeWidth="8" cx="50" cy="50" r="40" fill="transparent"></circle>
-                                                <circle 
-                                                    className={`${getScoreColor(result.Reliability_Score)} stroke-current transition-all duration-1000 ease-out`} 
-                                                    strokeWidth="8" 
-                                                    strokeLinecap="round" 
-                                                    cx="50" 
-                                                    cy="50" 
-                                                    r="40" 
-                                                    fill="transparent" 
-                                                    strokeDasharray="251.2" 
-                                                    strokeDashoffset={251.2 - (251.2 * result.Reliability_Score) / 100}
-                                                ></circle>
-                                            </svg>
-                                            <div className="absolute flex flex-col items-center justify-center">
-                                                <span className={`text-3xl font-black font-mono tracking-tighter ${getScoreColor(result.Reliability_Score)}`}>
-                                                    {Number(result.Reliability_Score).toFixed(1)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <span className={`mt-2 font-bold text-xs ${getScoreColor(result.Reliability_Score)}`}>{getScoreText(result.Reliability_Score)}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Charts Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Cost Comparison */}
-                                <div className="panel p-4 sm:p-5">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h3 className="text-text-muted font-bold text-xs uppercase tracking-wider font-mono">Expected Cost</h3>
-                                            <div className="text-2xl sm:text-3xl font-black text-rose-600 font-mono mt-1">₹{result.True_Expected_Cost_Cr} <span className="text-base text-rose-400 font-bold">Cr</span></div>
-                                            <div className="text-xs text-text-muted mt-1 line-through decoration-slate-400 font-mono">Proposed: ₹{result.Base_Cost_Cr} Cr</div>
-                                        </div>
-                                        <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-200">
-                                            <TrendingUp className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="h-44 w-full mt-4">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={[
-                                                { name: 'Proposed', value: result.Base_Cost_Cr },
-                                                { name: 'AI Expected', value: result.True_Expected_Cost_Cr }
-                                            ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12, fontWeight: 600}} />
-                                                <YAxis axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 11}} />
-                                                <Tooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)'}} />
-                                                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                                                    {
-                                                        [0,1].map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={index === 0 ? '#94a3b8' : '#e11d48'} />
-                                                        ))
-                                                    }
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
-
-                                {/* Timeline Comparison */}
-                                <div className="panel p-4 sm:p-5">
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div>
-                                            <h3 className="text-text-muted font-bold text-xs uppercase tracking-wider font-mono">Expected Timeline</h3>
-                                            <div className="text-2xl sm:text-3xl font-black text-amber-600 font-mono mt-1">{result.True_Expected_Timeline_Days} <span className="text-base text-amber-500 font-bold">Days</span></div>
-                                            <div className="text-xs text-text-muted mt-1 line-through decoration-slate-400 font-mono">Proposed: {result.Base_Timeline_Days} Days</div>
-                                        </div>
-                                        <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-200">
-                                            <Clock className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="h-44 w-full mt-4">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={[
-                                                { name: 'Proposed', value: result.Base_Timeline_Days },
-                                                { name: 'AI Expected', value: result.True_Expected_Timeline_Days }
-                                            ]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} layout="vertical">
-                                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
-                                                <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 11}} />
-                                                <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12, fontWeight: 600}} width={95} />
-                                                <Tooltip cursor={{fill: '#f3f4f6'}} contentStyle={{borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)'}} />
-                                                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={26}>
-                                                    {
-                                                        [0,1].map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={index === 0 ? '#94a3b8' : '#d97706'} />
-                                                        ))
-                                                    }
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {/* Insight Banner */}
-                            <div className="bg-gov-navy text-white rounded-3xl p-6 sm:p-7 flex items-center gap-4 shadow-elevated border border-slate-700/80">
-                                <ShieldCheck className="w-8 h-8 text-emerald-400 shrink-0" />
-                                <div className="space-y-1">
-                                    <h4 className="font-extrabold text-[16px] text-white font-heading">AI Recommendation</h4>
-                                    <p className="text-slate-300 text-[13.5px] leading-relaxed font-sans">
-                                        Based on a reliability score of {Number(result.Reliability_Score).toFixed(1)}, we recommend buffering the budget by an additional {result.Historical_Cost_Variance_Avg} and establishing strict milestone checkpoints every 90 days.
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
-                    )}
+                    {/* Comparative Bar Visualization */}
+                    <div className="h-36 w-full pt-2">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={timeChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
+                          <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                          <Tooltip 
+                            formatter={(val) => [`${Math.round(val)} Days (${(val / 365).toFixed(1)} Yrs)`, 'Timeline']}
+                            contentStyle={{ borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px' }} 
+                          />
+                          <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                            {timeChartData.map((entry, index) => (
+                              <Cell key={`time-cell-${index}`} fill={index === 0 ? '#94a3b8' : '#2563eb'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
                 </div>
-            </div>
+
+              </div>
+            )}
+          </motion.div>
         </div>
-      </LoginGate>
-    );
-};
 
-export default KaryaDakshataSimulator;
+        {/* ═══════════════════════════════════════════════════════════════
+            3. FULL-WIDTH SOVEREIGN STATUTORY DIRECTIVE WARRANT
+            ═══════════════════════════════════════════════════════════════ */}
+        {result && !loading && (
+          <motion.div 
+            variants={itemVariants}
+            className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-2xl p-6 sm:p-8 text-white relative overflow-hidden"
+          >
+            {/* Ambient Background Aura */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-6">
+              {/* Header Strip */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg shadow-emerald-950/50">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                        STATUTORY ENFORCEMENT DIRECTIVE
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        MoSPI / CPWD Standard OM Calibrated
+                      </span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black text-white font-sans tracking-tight mt-1">
+                      Fiduciary De-Biasing & Risk Mitigation Protocol
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
+                    <Scale className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Enforceable Mandate</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* 4 Sovereign Metric Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
+                    1. Mandated Capital Reserve
+                  </span>
+                  <div className="text-xl font-black text-emerald-400 font-mono">
+                    +₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono block">
+                    +{costEscalationPct}% Statutory Contingency
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
+                    2. Expected Schedule Drift
+                  </span>
+                  <div className="text-xl font-black text-blue-400 font-mono">
+                    +{timeDelayDays} Days
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono block">
+                    +{(timeDelayDays / 30.4375).toFixed(1)} Months Empirical Slippage
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
+                    3. Milestone Audit Cadence
+                  </span>
+                  <div className="text-xl font-black text-amber-400 font-mono">
+                    90-Day Review
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono block">
+                    Mandatory On-Site Physical Inspection
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
+                    4. Performance Classification
+                  </span>
+                  <div className="text-xl font-black text-purple-400 font-mono truncate">
+                    {result.performance_tier ? result.performance_tier.replace(/_/g, ' ') : 'TIER 2 WATCHLIST'}
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono block">
+                    Score {Number(result.Reliability_Score).toFixed(1)} / 100
+                  </span>
+                </div>
+              </div>
+
+              {/* Rationale & Action Plan */}
+              <div className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold font-mono text-emerald-400 uppercase">
+                  <Award className="w-3.5 h-3.5" />
+                  <span>Fiduciary Decision Rationale</span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                  {result.basis || `Re-priced at ${result.Agency}'s measured delivery multiple across ${result.sample_size_projects || 'all'} historical projects: historical cost variance +${result.Historical_Cost_Variance_Avg}%, average schedule slippage +${result.Historical_Delay_Avg} months.`} The sanctioning authority is directed to ring-fence a dedicated capital contingency buffer of <strong>₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr</strong> and enforce CPWD Clause 10CC price adjustment caps with mandatory 90-day progress milestones.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+      </motion.div>
+    </LoginGate>
+  );
+}
+
+

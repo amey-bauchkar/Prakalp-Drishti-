@@ -43,10 +43,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
     }
   };
 
-  useEffect(() => {
-    fetchBriefing(projectId);
-  }, [projectId]);
-
+  // Removed auto-fetch on mount to require explicit user action
   useEffect(() => {
     fetch('/api/projects?limit=2207')
       .then(res => res.json())
@@ -57,12 +54,18 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
   }, []);
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchInput.trim()) {
-      setProjectId(searchInput.trim());
-      if (onSelectProject) onSelectProject(searchInput.trim());
-      setShowDropdown(false);
-    }
+    if (e) e.preventDefault();
+    const query = (searchInput || "").trim();
+    if (!query) return;
+    const match = projectList.find(
+      p => String(p.project_id) === query || (p.project_name && p.project_name.toLowerCase() === query.toLowerCase())
+    ) || filteredProjects[0];
+    const targetId = match ? String(match.project_id) : query;
+    setProjectId(targetId);
+    if (match) setSearchInput(match.project_name);
+    if (onSelectProject) onSelectProject(targetId);
+    setShowDropdown(false);
+    fetchBriefing(targetId);
   };
 
   const filteredProjects = projectList.filter(p => {
@@ -70,7 +73,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
     const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
     const search = (searchInput || "").toLowerCase();
     return idStr.includes(search) || nameStr.includes(search);
-  }).slice(0, 8);
+  }).slice(0, 100);
 
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
@@ -105,10 +108,10 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-50">
           {/* Quick Project Lookup - Autocomplete */}
           <div className="relative w-full sm:w-80 shrink-0">
-            <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_15px_rgba(251,191,36,0.1)] focus-within:shadow-[0_0_25px_rgba(251,191,36,0.3)] transition-all">
+            <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm focus-within:border-amber-400/50 transition-all">
               <input
                 type="text"
-                placeholder="Search by Name or MoSPI Code."
+                placeholder="Search by Name or MoSPI Code…"
                 value={searchInput}
                 onChange={(e) => {
                   setSearchInput(e.target.value);
@@ -120,40 +123,45 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               />
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-lg text-sm font-bold transition-all h-11 px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 hover:scale-105 shadow-[0_0_15px_rgba(245,158,11,0.5)] gap-2 shrink-0"
+                disabled={loading}
+                className="inline-flex items-center justify-center rounded-lg text-xs font-bold transition-all h-11 px-4 py-2 bg-slate-100 hover:bg-amber-500 text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-amber-500 gap-1.5 shrink-0 cursor-pointer uppercase tracking-wider font-mono shadow-xs disabled:opacity-50"
               >
-                <Search className="w-4 h-4" />
-                <span>Analyze</span>
+                <Search className="w-3.5 h-3.5" />
+                <span>{loading ? 'Compiling…' : 'Generate'}</span>
               </button>
             </form>
 
             <AnimatePresence>
               {showDropdown && searchInput && filteredProjects.length > 0 && (
                 <motion.div 
-                  initial={{ opacity: 0, y: -10 }} 
+                  initial={{ opacity: 0, y: -6 }} 
                   animate={{ opacity: 1, y: 0 }} 
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto"
+                  exit={{ opacity: 0, y: -6 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-[100] max-h-80 flex flex-col"
                 >
-                  {filteredProjects.map((p) => (
-                    <div 
-                      key={p.project_id} 
-                      onMouseDown={(e) => { e.preventDefault(); }} // prevent blur before click
-                      onClick={() => {
-                        setSearchInput(p.project_id);
-                        setProjectId(p.project_id);
-                        if (onSelectProject) onSelectProject(p.project_id);
-                        setShowDropdown(false);
-                      }}
-                      className="p-3 border-b border-slate-800/50 hover:bg-amber-500/10 cursor-pointer transition-colors flex flex-col gap-1"
-                    >
-                      <span className="text-sm font-bold text-slate-200 line-clamp-1">{p.project_name}</span>
-                      <div className="flex gap-2 text-[10px] uppercase font-mono text-slate-500">
-                        <span className="text-amber-500">ID: {p.project_id}</span>
-                        <span>{p.sector}</span>
+                  <div className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+                    {filteredProjects.map((p) => (
+                      <div 
+                        key={p.project_id} 
+                        onMouseDown={(e) => { e.preventDefault(); }} // prevent blur before click
+                        onClick={() => {
+                          setSearchInput(p.project_name);
+                          setProjectId(p.project_id);
+                          if (onSelectProject) onSelectProject(p.project_id);
+                          setShowDropdown(false);
+                          fetchBriefing(p.project_id);
+                        }}
+                        className="p-3.5 hover:bg-slate-800/90 cursor-pointer transition-colors flex flex-col gap-1 text-left"
+                      >
+                        <span className="text-sm font-bold text-slate-100 line-clamp-1">{p.project_name}</span>
+                        <div className="flex items-center gap-2 text-[11px] font-mono">
+                          <span className="text-amber-400 font-bold">ID: {p.project_id}</span>
+                          <span className="text-slate-500">·</span>
+                          <span className="text-slate-400 font-medium truncate">{p.sector}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -187,15 +195,62 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
       </motion.div>
 
       {loading && (
-        <div className="p-12 text-center text-text-muted font-bold text-sm panel">
-          <FileText className="w-8 h-8 text-gov-saffron animate-spin mx-auto mb-2" /> Preparing Fact-Verified Executive Briefing Note...
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[360px]">
+          <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-600 animate-spin" />
+          <div className="space-y-1">
+            <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">Compiling Fact-Verified Cabinet Briefing…</p>
+            <p className="text-xs text-slate-500">Synthesizing bilingual policy briefs and generating SHA-256 Merkle inclusion proofs</p>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State Hero */}
+      {!data && !loading && (
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[440px]">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-xs">
+            <FileText className="w-8 h-8" />
+          </div>
+          <div className="max-w-md space-y-2">
+            <h3 className="text-xl font-bold text-slate-800">
+              Ready to Compile Cabinet Briefing
+            </h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Enter any MoSPI project ID or select from autocomplete in the search bar above, then click <strong className="text-slate-700">"Generate"</strong> to synthesize bilingual executive notes with zero-hallucination audit traces.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-2">
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">SHA-256 Merkle Inclusion</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Cryptographic tamper detection across timeline records</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-100/60 text-blue-700 flex items-center justify-center">
+                <Globe className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">Bilingual Policy Synthesis</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Simultaneous English and Rajbhasha Hindi briefs</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
+                <Database className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700">Fact Verification Trace</h4>
+              <p className="text-[11px] text-slate-500 leading-tight">Interactive drawer linking facts to source records</p>
+            </div>
+          </div>
         </div>
       )}
 
       {denied && !loading && (
-        <div className="note note-critical">
-          {denied}
-          <span className="block font-normal mt-1">Cabinet briefings require the ministry officer or administrator role.</span>
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+          <strong>{denied}</strong>
+          <span className="block mt-1 text-rose-600">Cabinet briefings require the ministry officer or administrator role.</span>
         </div>
       )}
 

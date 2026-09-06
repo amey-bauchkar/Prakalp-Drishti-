@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText, Link2, ShieldCheck, Eye, MessageSquare, CheckCircle2,
   Building2, Printer, ArrowLeft, ExternalLink, Send, ChevronRight,
   HelpCircle, Shield, Info, Clock, AlertCircle, AlertTriangle
 } from 'lucide-react';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 320, damping: 24 }
+  }
+};
 
 export const POLICY_TABS = [
   { id: 'disclaimer', label: 'Website Policies & Disclaimer', subtitle: 'MoSPI Charter, OCMS Data & CAG Disclaimer', icon: FileText },
@@ -69,9 +87,14 @@ export default function PoliciesView() {
   const currentTabMeta = POLICY_TABS.find(t => t.id === tab) || POLICY_TABS[0];
 
   return (
-    <div className="py-6 sm:py-8 max-w-[1440px] mx-auto space-y-6">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="py-6 sm:py-8 max-w-[1440px] mx-auto space-y-6"
+    >
       {/* Top Breadcrumb & Action Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
           <Link to="/" className="text-[#0060B6] hover:underline font-bold flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -96,12 +119,12 @@ export default function PoliciesView() {
             GIGW 3.0 Certified
           </span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Container Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Navigation Sidebar (Span 4) */}
-        <aside className="lg:col-span-4 space-y-4">
+        <motion.aside variants={itemVariants} className="lg:col-span-4 space-y-4">
           <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
             <div className="bg-[#071320] text-white p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-white p-1 flex items-center justify-center shrink-0">
@@ -173,10 +196,19 @@ export default function PoliciesView() {
               <div><strong>Email:</strong> grievance-pmd@mospi.gov.in</div>
             </div>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Right Content View (Span 8) */}
         <main className="lg:col-span-8 bg-white rounded-xl border border-slate-200 p-6 sm:p-9 shadow-xs text-slate-700 leading-relaxed font-sans">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              className="space-y-6"
+            >
           {/* 1. Website Policies & Disclaimer */}
           {tab === 'disclaimer' && (
             <div className="space-y-6">
@@ -578,8 +610,10 @@ export default function PoliciesView() {
               )}
             </div>
           )}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
-    </div>
+    </motion.div>
   );
 }

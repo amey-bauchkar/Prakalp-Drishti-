@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Scale, Gavel } from 'lucide-react';
 
 import SolvencyDirectory from '../../parth/index.jsx';
@@ -56,7 +57,17 @@ export default function ArthaNivaranView() {
           })}
         </nav>
 
-        {tab === 'solvency' ? <SolvencyDirectory /> : <NivaranLitigationView />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: "easeInOut" }}
+          >
+            {tab === 'solvency' ? <SolvencyDirectory /> : <NivaranLitigationView />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </LoginGate>
   );

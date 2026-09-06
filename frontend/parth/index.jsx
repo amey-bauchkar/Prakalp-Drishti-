@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp, Search, Building2, X, AlertTriangle, Info,
   Landmark, ShieldQuestion, Layers, CheckCircle2, HelpCircle,
@@ -7,6 +8,23 @@ import {
 } from 'lucide-react';
 
 const API = 'http://127.0.0.1:8000';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.04 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 320, damping: 24 }
+  }
+};
 
 /**
  * ARTHA-NIVARAN — Contractor 360 (Solvency Matrix)
@@ -130,9 +148,14 @@ export default function ArthaNetraView() {
   const dd = summary.financial_delay_differential || {};
 
   return (
-    <div className="space-y-6 font-sans pb-12">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      className="space-y-6 font-sans pb-12"
+    >
       {/* ── Header Banner ── */}
-      <div className="command-header p-5 sm:p-6">
+      <motion.div variants={itemVariants} className="command-header p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent mb-2">
@@ -160,10 +183,10 @@ export default function ArthaNetraView() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Key Takeaway Orientation Box ── */}
-      <div className="note note-info flex items-start gap-3 bg-azure-50/70 border-azure-200 p-3.5 rounded-sm">
+      <motion.div variants={itemVariants} className="note note-info flex items-start gap-3 bg-azure-50/70 border-azure-200 p-3.5 rounded-sm">
         <Info className="w-4 h-4 text-azure shrink-0 mt-0.5" />
         <div className="text-[12px] leading-relaxed text-gov-navy">
           <strong>How to read this matrix:</strong> Projects assigned to heavily indebted contractors (Debt-to-Equity &gt; 2.0x) experience on average{' '}
@@ -172,10 +195,10 @@ export default function ArthaNetraView() {
           </strong>{' '}
           of extra schedule slippage due to contractor working-capital bottlenecks. Click any category card below to filter the directory.
         </div>
-      </div>
+      </motion.div>
 
       {/* ── 3 High-Impact Macro KPI Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Card 1: Total Portfolio */}
         <div className="panel p-4 bg-gov-surface border border-gov-border rounded-sm">
           <div className="text-[10px] font-bold text-gov-muted uppercase tracking-wider font-heading">
@@ -219,7 +242,7 @@ export default function ArthaNetraView() {
               : 'Computed across 2,207 projects'}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Interactive Solvency Tiers (Clickable Filters) ── */}
       <div className="space-y-2.5">
@@ -473,165 +496,175 @@ export default function ArthaNetraView() {
       </div>
 
       {/* ── Polished Agency Project Drilldown Modal ── */}
-      {drill && (
-        <div
-          className="fixed inset-0 z-50 bg-ink-900/60 backdrop-blur-2xs flex items-start justify-center p-4 overflow-y-auto"
-          onClick={() => setDrill(null)}
-        >
-          <div
-            className="panel w-full max-w-5xl mt-8 shadow-2xl rounded-sm overflow-hidden bg-white border border-gov-border"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {drill && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-50 bg-ink-900/60 backdrop-blur-2xs flex items-start justify-center p-4 overflow-y-auto"
+            onClick={() => setDrill(null)}
           >
-            {/* Modal Head */}
-            <div className="panel-head p-4 bg-gov-navy text-white flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Landmark className="w-5 h-5 text-gov-accent shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="font-heading font-extrabold text-[16px] text-white truncate">
-                    {drill.agency.agency_name}
-                  </h3>
-                  <div className="text-[11px] text-ink-200">
-                    Executing Agency Project Register &amp; Solvency Breakdown
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 16 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 16 }}
+              transition={{ type: "spring", stiffness: 350, damping: 26 }}
+              className="panel w-full max-w-5xl mt-8 shadow-2xl rounded-sm overflow-hidden bg-white border border-gov-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Head */}
+              <div className="panel-head p-4 bg-gov-navy text-white flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Landmark className="w-5 h-5 text-gov-accent shrink-0" />
+                  <div className="min-w-0">
+                    <h3 className="font-heading font-extrabold text-[16px] text-white truncate">
+                      {drill.agency.agency_name}
+                    </h3>
+                    <div className="text-[11px] text-ink-200">
+                      Executing Agency Project Register &amp; Solvency Breakdown
+                    </div>
                   </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded border ${
+                    TIER_META[drill.agency.solvency_tier]?.badge || 'bg-slate-100 text-slate-800'
+                  }`}>
+                    {TIER_META[drill.agency.solvency_tier]?.label || drill.agency.solvency_tier_label}
+                  </span>
+                  <button
+                    onClick={() => setDrill(null)}
+                    className="text-ink-200 hover:text-white p-1 rounded hover:bg-white/10 cursor-pointer"
+                    title="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded border ${
-                  TIER_META[drill.agency.solvency_tier]?.badge || 'bg-slate-100 text-slate-800'
-                }`}>
-                  {TIER_META[drill.agency.solvency_tier]?.label || drill.agency.solvency_tier_label}
+              {/* Plain-English Takeaway Banner */}
+              <div className="p-3 bg-blue-50/70 border-b border-blue-200 text-xs flex items-center justify-between flex-wrap gap-2 text-gov-navy">
+                <div>
+                  <strong>Financial Health Verdict:</strong>{' '}
+                  {drill.agency.solvency_tier === 'HIGH_LEVERAGE_STRESS' ? (
+                    <span className="text-rose-800 font-semibold">
+                      Carries high debt relative to capital (D/E: {drill.agency.debt_to_equity?.toFixed(2)}x). Vulnerable to contractor liquidity bottlenecks and milestone delays.
+                    </span>
+                  ) : drill.agency.solvency_tier === 'PRIME_CASH_RICH' ? (
+                    <span className="text-emerald-800 font-semibold">
+                      Solid balance sheet with healthy liquidity reserves. Low financial delivery risk.
+                    </span>
+                  ) : drill.agency.solvency_tier === 'SOVEREIGN_DIRECT_BUDGET_LINE' ? (
+                    <span className="text-blue-800 font-semibold">
+                      Funded directly from Central/State budgetary treasury allocations (no corporate debt default risk).
+                    </span>
+                  ) : (
+                    <span className="text-slate-800 font-semibold">
+                      Operates with manageable borrowing within normal investment-grade thresholds.
+                    </span>
+                  )}
+                </div>
+                <div className="text-[11px] font-mono text-gov-muted">
+                  Altman Z: <strong>{drill.agency.altman_z_score != null ? drill.agency.altman_z_score.toFixed(2) : '—'}</strong>
+                </div>
+              </div>
+
+              {/* 4 Stat Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gov-border border-b border-gov-border">
+                <div className="p-3 bg-white">
+                  <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Active Projects</span>
+                  <span className="text-[16px] font-heading font-extrabold text-gov-navy">{drill.agency.project_count}</span>
+                </div>
+                <div className="p-3 bg-white">
+                  <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Total Portfolio Capex</span>
+                  <span className="text-[16px] font-heading font-extrabold text-gov-navy">{cr(drill.agency.total_capex_cr)}</span>
+                </div>
+                <div className="p-3 bg-white">
+                  <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Average Cost Overrun</span>
+                  <span className="text-[16px] font-heading font-extrabold text-gov-navy">{num(drill.agency.mean_cost_overrun_pct, 1, '%')}</span>
+                </div>
+                <div className="p-3 bg-white">
+                  <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Debt / Equity Ratio</span>
+                  <span className="text-[16px] font-heading font-extrabold text-gov-navy">
+                    {drill.agency.debt_to_equity == null ? '—' : `${drill.agency.debt_to_equity.toFixed(2)}x`}
+                  </span>
+                </div>
+              </div>
+
+              {/* Projects Table */}
+              <div className="overflow-x-auto max-h-[440px]">
+                {drill.loading ? (
+                  <div className="p-8 text-center text-xs text-gov-muted space-y-2">
+                    <div className="w-5 h-5 border-2 border-[#0060B6] border-t-transparent rounded-full animate-spin mx-auto" />
+                    <div>Loading projects for {drill.agency.agency_name}…</div>
+                  </div>
+                ) : (
+                  <table className="ledger w-full">
+                    <thead className="sticky top-0 bg-gov-surface-2 z-10">
+                      <tr>
+                        <th>Project Name &amp; ID</th>
+                        <th>Sector</th>
+                        <th className="num">Sanctioned</th>
+                        <th className="num">Revised</th>
+                        <th className="num">Cost Overrun</th>
+                        <th className="num">Delay</th>
+                        <th className="num">Progress</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {drill.projects.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="p-6 text-center text-xs text-gov-muted">
+                            No project records found under this agency.
+                          </td>
+                        </tr>
+                      ) : (
+                        drill.projects.map((p) => (
+                          <tr key={p.project_id} className="hover:bg-blue-50/20">
+                            <td>
+                              <div className="font-semibold text-gov-navy text-[11.5px] leading-tight font-heading">
+                                {p.project_name}
+                              </div>
+                              <span className="text-[10px] font-mono text-gov-muted">#{p.project_id}</span>
+                            </td>
+                            <td className="text-[11px] text-gov-navy">{p.sector}</td>
+                            <td className="num font-mono">{cr(p.sanctioned_cr)}</td>
+                            <td className="num font-mono font-bold text-gov-navy">{cr(p.revised_cr)}</td>
+                            <td className={`num font-bold ${p.cost_overrun_pct > 30 ? 'text-rose-700' : 'text-gov-navy'}`}>
+                              {num(p.cost_overrun_pct, 1, '%')}
+                            </td>
+                            <td className={`num ${p.slip_months > 12 ? 'text-amber-800 font-bold' : ''}`}>
+                              {num(p.slip_months, 0, ' mo')}
+                            </td>
+                            <td className="num font-bold text-gov-navy">
+                              {num(p.physical_progress_pct, 0, '%')}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-3 bg-gov-surface-2 border-t border-gov-border flex items-center justify-between text-xs">
+                <span className="text-gov-muted font-sans">
+                  {drill.projects.length} project records loaded from MoSPI database
                 </span>
                 <button
                   onClick={() => setDrill(null)}
-                  className="text-ink-200 hover:text-white p-1 rounded hover:bg-white/10 cursor-pointer"
-                  title="Close"
+                  className="px-3 py-1.5 bg-gov-surface hover:bg-gov-surface-3 border border-gov-border rounded-xs text-gov-navy font-bold cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  Close Register
                 </button>
               </div>
-            </div>
-
-            {/* Plain-English Takeaway Banner */}
-            <div className="p-3 bg-blue-50/70 border-b border-blue-200 text-xs flex items-center justify-between flex-wrap gap-2 text-gov-navy">
-              <div>
-                <strong>Financial Health Verdict:</strong>{' '}
-                {drill.agency.solvency_tier === 'HIGH_LEVERAGE_STRESS' ? (
-                  <span className="text-rose-800 font-semibold">
-                    Carries high debt relative to capital (D/E: {drill.agency.debt_to_equity?.toFixed(2)}x). Vulnerable to contractor liquidity bottlenecks and milestone delays.
-                  </span>
-                ) : drill.agency.solvency_tier === 'PRIME_CASH_RICH' ? (
-                  <span className="text-emerald-800 font-semibold">
-                    Solid balance sheet with healthy liquidity reserves. Low financial delivery risk.
-                  </span>
-                ) : drill.agency.solvency_tier === 'SOVEREIGN_DIRECT_BUDGET_LINE' ? (
-                  <span className="text-blue-800 font-semibold">
-                    Funded directly from Central/State budgetary treasury allocations (no corporate debt default risk).
-                  </span>
-                ) : (
-                  <span className="text-slate-800 font-semibold">
-                    Operates with manageable borrowing within normal investment-grade thresholds.
-                  </span>
-                )}
-              </div>
-              <div className="text-[11px] font-mono text-gov-muted">
-                Altman Z: <strong>{drill.agency.altman_z_score != null ? drill.agency.altman_z_score.toFixed(2) : '—'}</strong>
-              </div>
-            </div>
-
-            {/* 4 Stat Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gov-border border-b border-gov-border">
-              <div className="p-3 bg-white">
-                <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Active Projects</span>
-                <span className="text-[16px] font-heading font-extrabold text-gov-navy">{drill.agency.project_count}</span>
-              </div>
-              <div className="p-3 bg-white">
-                <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Total Portfolio Capex</span>
-                <span className="text-[16px] font-heading font-extrabold text-gov-navy">{cr(drill.agency.total_capex_cr)}</span>
-              </div>
-              <div className="p-3 bg-white">
-                <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Average Cost Overrun</span>
-                <span className="text-[16px] font-heading font-extrabold text-gov-navy">{num(drill.agency.mean_cost_overrun_pct, 1, '%')}</span>
-              </div>
-              <div className="p-3 bg-white">
-                <span className="text-[10px] font-bold text-gov-muted uppercase font-heading block">Debt / Equity Ratio</span>
-                <span className="text-[16px] font-heading font-extrabold text-gov-navy">
-                  {drill.agency.debt_to_equity == null ? '—' : `${drill.agency.debt_to_equity.toFixed(2)}x`}
-                </span>
-              </div>
-            </div>
-
-            {/* Projects Table */}
-            <div className="overflow-x-auto max-h-[440px]">
-              {drill.loading ? (
-                <div className="p-8 text-center text-xs text-gov-muted space-y-2">
-                  <div className="w-5 h-5 border-2 border-[#0060B6] border-t-transparent rounded-full animate-spin mx-auto" />
-                  <div>Loading projects for {drill.agency.agency_name}…</div>
-                </div>
-              ) : (
-                <table className="ledger w-full">
-                  <thead className="sticky top-0 bg-gov-surface-2 z-10">
-                    <tr>
-                      <th>Project Name &amp; ID</th>
-                      <th>Sector</th>
-                      <th className="num">Sanctioned</th>
-                      <th className="num">Revised</th>
-                      <th className="num">Cost Overrun</th>
-                      <th className="num">Delay</th>
-                      <th className="num">Progress</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {drill.projects.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="p-6 text-center text-xs text-gov-muted">
-                          No project records found under this agency.
-                        </td>
-                      </tr>
-                    ) : (
-                      drill.projects.map((p) => (
-                        <tr key={p.project_id} className="hover:bg-blue-50/20">
-                          <td>
-                            <div className="font-semibold text-gov-navy text-[11.5px] leading-tight font-heading">
-                              {p.project_name}
-                            </div>
-                            <span className="text-[10px] font-mono text-gov-muted">#{p.project_id}</span>
-                          </td>
-                          <td className="text-[11px] text-gov-navy">{p.sector}</td>
-                          <td className="num font-mono">{cr(p.sanctioned_cr)}</td>
-                          <td className="num font-mono font-bold text-gov-navy">{cr(p.revised_cr)}</td>
-                          <td className={`num font-bold ${p.cost_overrun_pct > 30 ? 'text-rose-700' : 'text-gov-navy'}`}>
-                            {num(p.cost_overrun_pct, 1, '%')}
-                          </td>
-                          <td className={`num ${p.slip_months > 12 ? 'text-amber-800 font-bold' : ''}`}>
-                            {num(p.slip_months, 0, ' mo')}
-                          </td>
-                          <td className="num font-bold text-gov-navy">
-                            {num(p.physical_progress_pct, 0, '%')}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-3 bg-gov-surface-2 border-t border-gov-border flex items-center justify-between text-xs">
-              <span className="text-gov-muted font-sans">
-                {drill.projects.length} project records loaded from MoSPI database
-              </span>
-              <button
-                onClick={() => setDrill(null)}
-                className="px-3 py-1.5 bg-gov-surface hover:bg-gov-surface-3 border border-gov-border rounded-xs text-gov-navy font-bold cursor-pointer"
-              >
-                Close Register
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
