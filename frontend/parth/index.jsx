@@ -264,57 +264,122 @@ export default function ArthaNetraView() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {Object.entries(dist).map(([key, v]) => {
-            const meta = TIER_META[key] || TIER_META.UNRATED;
-            const isSelected = tierFilter === key;
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
+          {/* Column 1: 3 categories */}
+          <div className="flex flex-col gap-3 h-full">
+            {Object.entries(dist).slice(0, 3).map(([key, v]) => {
+              const meta = TIER_META[key] || TIER_META.UNRATED;
+              const isSelected = tierFilter === key;
 
-            return (
-              <div
-                key={key}
-                onClick={() => setTierFilter(isSelected ? '' : key)}
-                className={`panel p-3.5 border-l-4 ${meta.border} cursor-pointer transition-all duration-150 rounded-xs select-none ${
-                  isSelected
-                    ? 'ring-2 ring-[#0060B6] shadow-sm bg-blue-50/40 border-gov-navy'
-                    : 'hover:bg-gov-surface-2 bg-gov-surface border-gov-border'
-                }`}
-                title={`Click to filter directory by ${meta.label}`}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className={`w-2 h-2 rounded-full ${meta.dot} shrink-0`} />
-                    <span className="font-heading font-bold text-[12px] text-gov-navy truncate">
-                      {meta.label}
-                    </span>
+              return (
+                <div
+                  key={key}
+                  onClick={() => setTierFilter(isSelected ? '' : key)}
+                  className={`panel p-3.5 border-l-4 ${meta.border} cursor-pointer transition-all duration-150 rounded-xs select-none flex-1 flex flex-col justify-between ${
+                    isSelected
+                      ? 'ring-2 ring-[#0060B6] shadow-sm bg-blue-50/40 border-gov-navy'
+                      : 'hover:bg-gov-surface-2 bg-gov-surface border-gov-border'
+                  }`}
+                  title={`Click to filter directory by ${meta.label}`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className={`w-2 h-2 rounded-full ${meta.dot} shrink-0`} />
+                        <span className="font-heading font-bold text-[12px] text-gov-navy truncate">
+                          {meta.label}
+                        </span>
+                      </div>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${meta.badge}`}>
+                        {v.agency_count} Bodies
+                      </span>
+                    </div>
+
+                    <p className="text-[10.5px] text-gov-muted leading-snug mb-2.5">
+                      {meta.desc}
+                    </p>
                   </div>
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${meta.badge}`}>
-                    {v.agency_count} Bodies
-                  </span>
-                </div>
 
-                <p className="text-[10.5px] text-gov-muted line-clamp-2 leading-snug mb-2.5">
-                  {meta.desc}
-                </p>
+                  <div className="mt-auto pt-2 border-t border-gov-border/60">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-heading font-extrabold text-gov-navy">
+                        {cr(v.capex_cr)}
+                      </span>
+                      <span className="font-mono text-gov-muted text-[10.5px]">
+                        {v.capex_share_pct}% portfolio
+                      </span>
+                    </div>
 
-                <div className="pt-2 border-t border-gov-border/60 flex items-center justify-between text-[11px]">
-                  <span className="font-heading font-extrabold text-gov-navy">
-                    {cr(v.capex_cr)}
-                  </span>
-                  <span className="font-mono text-gov-muted text-[10.5px]">
-                    {v.capex_share_pct}% portfolio
-                  </span>
+                    {/* Visual Progress Line */}
+                    <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden mt-1.5">
+                      <div
+                        className={`${meta.dot} h-full rounded-full transition-all duration-300`}
+                        style={{ width: `${Math.min(100, Math.max(8, v.capex_share_pct))}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* Visual Progress Line */}
-                <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden mt-1.5">
-                  <div
-                    className={`${meta.dot} h-full rounded-full transition-all duration-300`}
-                    style={{ width: `${Math.min(100, Math.max(8, v.capex_share_pct))}%` }}
-                  />
+          {/* Column 2: 2 categories filling the entire column area */}
+          <div className="flex flex-col gap-3 h-full">
+            {Object.entries(dist).slice(3).map(([key, v]) => {
+              const meta = TIER_META[key] || TIER_META.UNRATED;
+              const isSelected = tierFilter === key;
+
+              return (
+                <div
+                  key={key}
+                  onClick={() => setTierFilter(isSelected ? '' : key)}
+                  className={`panel p-4 border-l-4 ${meta.border} cursor-pointer transition-all duration-150 rounded-xs select-none flex-1 flex flex-col justify-between ${
+                    isSelected
+                      ? 'ring-2 ring-[#0060B6] shadow-sm bg-blue-50/40 border-gov-navy'
+                      : 'hover:bg-gov-surface-2 bg-gov-surface border-gov-border'
+                  }`}
+                  title={`Click to filter directory by ${meta.label}`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`w-2.5 h-2.5 rounded-full ${meta.dot} shrink-0`} />
+                        <span className="font-heading font-bold text-[12.5px] text-gov-navy truncate">
+                          {meta.label}
+                        </span>
+                      </div>
+                      <span className={`text-[10.5px] font-bold px-2 py-0.5 rounded border ${meta.badge}`}>
+                        {v.agency_count} Bodies
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-gov-muted leading-relaxed mb-3">
+                      {meta.desc}
+                    </p>
+                  </div>
+
+                  <div className="mt-auto pt-2.5 border-t border-gov-border/60">
+                    <div className="flex items-center justify-between text-[11.5px]">
+                      <span className="font-heading font-extrabold text-gov-navy">
+                        {cr(v.capex_cr)}
+                      </span>
+                      <span className="font-mono text-gov-muted text-[11px]">
+                        {v.capex_share_pct}% portfolio
+                      </span>
+                    </div>
+
+                    {/* Visual Progress Line */}
+                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-2">
+                      <div
+                        className={`${meta.dot} h-full rounded-full transition-all duration-300`}
+                        style={{ width: `${Math.min(100, Math.max(8, v.capex_share_pct))}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 

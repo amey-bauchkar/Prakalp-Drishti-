@@ -4,6 +4,7 @@ import {
   Clock, ShieldAlert, Building2, RefreshCw, FileText, ArrowRight, Copy, Check
 } from 'lucide-react';
 import LoginGate from '../amey/LoginGate.jsx';
+import ClearanceStagesInfoGuide from '../src/components/ClearanceStagesInfoGuide';
 
 export default function AnumatiView() {
   const [projects, setProjects] = useState([]);
@@ -157,6 +158,9 @@ export default function AnumatiView() {
             </div>
           )}
         </div>
+
+        {/* ═══════ CLEARANCE STAGES INSTITUTIONAL GUIDE ═══════ */}
+        <ClearanceStagesInfoGuide />
 
         {loading ? (
           <div className="bg-white rounded-2xl p-12 text-center text-slate-500 font-medium border border-slate-200 flex items-center justify-center gap-3">

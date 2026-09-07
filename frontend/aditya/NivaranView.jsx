@@ -5,6 +5,7 @@ import {
   Info, ShieldCheck, Check, ChevronDown, ChevronUp, Layers, HelpCircle
 } from 'lucide-react';
 import LoginGate from '../amey/LoginGate.jsx';
+import FlaggedContractClauses from './src/components/FlaggedContractClauses.jsx';
 
 export default function NivaranView() {
   const [projects, setProjects] = useState([]);
@@ -363,98 +364,12 @@ export default function NivaranView() {
                   Click any clause below to inspect the verbatim contract wording, legal implications, and suggested amendments.
                 </p>
 
-                {/* Compact Accordion List */}
-                <div className="space-y-2.5 max-h-[520px] overflow-y-auto pr-1">
-                  {niv?.flagged_clauses && niv.flagged_clauses.length > 0 ? (
-                    niv.flagged_clauses.map((clause, idx) => {
-                      const isExpanded = expandedClause === idx;
-                      const isCrit = clause.severity === 'CRITICAL';
-                      const isHigh = clause.severity === 'HIGH';
-
-                      return (
-                        <div
-                          key={idx}
-                          className={`rounded-xs border transition-all duration-150 overflow-hidden ${
-                            isExpanded 
-                              ? 'border-[#0060B6] bg-gov-surface shadow-xs' 
-                              : 'border-gov-border bg-gov-surface hover:bg-gov-surface-2'
-                          }`}
-                        >
-                          {/* Accordion Summary Row (Always Visible) */}
-                          <div
-                            onClick={() => setExpandedClause(isExpanded ? -1 : idx)}
-                            className="p-3 flex items-center justify-between gap-3 cursor-pointer select-none"
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                              <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-black uppercase shrink-0 border ${
-                                isCrit ? 'bg-red-100 text-red-700 border-red-200' :
-                                isHigh ? 'bg-amber-100 text-amber-800 border-amber-200' :
-                                'bg-blue-100 text-blue-800 border-blue-200'
-                              }`}>
-                                {clause.severity}
-                              </span>
-
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-mono text-[10px] font-bold text-indigo-900 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-100">
-                                    {clause.category || clause.clause_id}
-                                  </span>
-                                  <h4 className="font-heading font-bold text-[12.5px] text-gov-navy truncate">
-                                    {clause.clause_title}
-                                  </h4>
-                                </div>
-                                {!isExpanded && (
-                                  <div className="text-[11px] text-gov-muted truncate mt-0.5">
-                                    {clause.risk_reason || clause.legal_risk_reason}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            <button className="text-gov-muted hover:text-gov-navy p-1">
-                              {isExpanded ? <ChevronUp className="w-4 h-4 text-[#0060B6]" /> : <ChevronDown className="w-4 h-4" />}
-                            </button>
-                          </div>
-
-                          {/* Accordion Expanded Details */}
-                          {isExpanded && (
-                            <div className="px-3.5 pb-3.5 pt-1 space-y-2.5 border-t border-gov-border/60 bg-gov-surface-2/40 text-xs">
-                              {/* Verbatim snippet */}
-                              <div>
-                                <span className="text-[9.5px] font-bold uppercase tracking-wider text-gov-muted font-heading block mb-1">
-                                  Contract Agreement Wording:
-                                </span>
-                                <p className="text-[11.5px] text-slate-800 font-sans italic bg-white p-2.5 rounded-xs border border-gov-border">
-                                  "{clause.snippet || clause.detected_text}"
-                                </p>
-                              </div>
-
-                              {/* Legal Ramification */}
-                              <div className="text-[11.5px] text-gov-navy leading-relaxed">
-                                <strong className="text-slate-900 font-heading">Legal Ramification: </strong>
-                                {clause.risk_reason || clause.legal_risk_reason}
-                              </div>
-
-                              {/* Recommended Amendment */}
-                              {(clause.suggested_amendment || clause.recommended_amendment) && (
-                                <div className="text-[11px] text-emerald-800 bg-emerald-50/80 p-2.5 rounded-xs border border-emerald-200 font-medium flex items-start gap-2">
-                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                                  <div>
-                                    <strong className="font-heading">Recommended Amendment: </strong>
-                                    {clause.suggested_amendment || clause.recommended_amendment}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="p-8 text-center text-gov-muted text-xs">
-                      No high-risk clauses identified in current standard agreement.
-                    </div>
-                  )}
+                {/* Clean Refactored Flagged Contract Clauses Accordion */}
+                <div className="max-h-[540px] overflow-y-auto pr-1">
+                  <FlaggedContractClauses
+                    clauses={niv?.flagged_clauses || []}
+                    initialExpandedIndex={0}
+                  />
                 </div>
               </div>
 

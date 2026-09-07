@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Metric, Text, Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from '@tremor/react';
-import { ShieldAlert, AlertTriangle, FileText, CheckCircle2, Trees, Search, Filter, RefreshCw, ChevronLeft, ChevronRight, Landmark } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, FileText, CheckCircle2, Trees, Search, Filter, RefreshCw, ChevronLeft, ChevronRight, Landmark, ChevronDown, ChevronUp, Clock, RotateCcw, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ClearanceStagesInfoGuide from '../../src/components/ClearanceStagesInfoGuide';
 
 export default function AnumatiClearancesView() {
   const [data, setData] = useState(null);
@@ -12,6 +13,7 @@ export default function AnumatiClearancesView() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [expandedProjectId, setExpandedProjectId] = useState(null);
 
   useEffect(() => {
     fetchClearances();
@@ -96,6 +98,9 @@ export default function AnumatiClearancesView() {
         </Card>
       </div>
 
+      {/* Institutional Clearance Stages Guide */}
+      <ClearanceStagesInfoGuide />
+
       {/* Directory Card */}
       <Card className="p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-md bg-white space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
@@ -154,6 +159,7 @@ export default function AnumatiClearancesView() {
                 <TableHeaderCell className="py-3 px-3">Bottleneck Authority</TableHeaderCell>
                 <TableHeaderCell className="py-3 px-3 text-right">Forest Area (ha)</TableHeaderCell>
                 <TableHeaderCell className="py-3 px-3 text-center">PMO Escalation</TableHeaderCell>
+                <TableHeaderCell className="py-3 px-3 text-center">Stage Checklist</TableHeaderCell>
               </TableRow>
             </TableHead>
 
@@ -163,7 +169,8 @@ export default function AnumatiClearancesView() {
                 const rsi = p.regulatory_stagnation_index || 0;
 
                 return (
-                  <TableRow key={p.project_id || idx} className="hover:bg-slate-50 transition-colors">
+                  <React.Fragment key={p.project_id || idx}>
+                    <TableRow className="hover:bg-slate-50 transition-colors">
                     <TableCell className="py-3.5 px-3">
                       <div className="space-y-0.5 max-w-[260px]">
                         <span className="font-mono text-[10px] text-slate-400 block font-bold">#{p.project_id}</span>
@@ -224,7 +231,86 @@ export default function AnumatiClearancesView() {
                         <span className="text-[10px] font-mono text-slate-400">Normal</span>
                       )}
                     </TableCell>
+
+                    <TableCell className="py-3.5 px-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedProjectId(expandedProjectId === p.project_id ? null : p.project_id)}
+                        className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-[10.5px] font-bold inline-flex items-center gap-1 transition-colors border border-slate-200"
+                        title="View detailed statutory clearance checklist"
+                      >
+                        <span>{p.stage_breakdown?.length || 0} Stages</span>
+                        {expandedProjectId === p.project_id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+                    </TableCell>
                   </TableRow>
+
+                  {expandedProjectId === p.project_id && (
+                    <TableRow className="bg-slate-50/80">
+                      <TableCell colSpan={7} className="p-4 border-b border-slate-200">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-700">
+                            <span className="flex items-center gap-1.5">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                              STATUTORY STAGE CHECKLIST — #{p.project_id}
+                            </span>
+                            <span className="text-slate-500 font-normal">
+                              PARIVESH SLA Benchmark vs Actual Elapsed Time
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                            {(p.stage_breakdown || []).map((st, sIdx) => {
+                              const isStag = st.is_stagnated;
+                              const ratio = Number(st.stagnation_ratio || (st.days_pending / Math.max(st.benchmark_days, 1))).toFixed(1);
+                              const percent = Math.min(100, Math.round((st.days_pending / Math.max(st.benchmark_days, 1)) * 100));
+
+                              return (
+                                <div
+                                  key={st.stage_code || sIdx}
+                                  className={`p-3 rounded-xl border text-xs transition-all ${
+                                    isStag ? 'bg-rose-50/80 border-rose-200 text-rose-950' : 'bg-white border-slate-200 text-slate-900 shadow-2xs'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between gap-1">
+                                    <span className="font-bold text-[11px] block leading-tight text-slate-900">{st.stage_name}</span>
+                                    <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold shrink-0 ${
+                                      isStag ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
+                                    }`}>
+                                      RSI {ratio}×
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-slate-500 truncate mt-0.5" title={st.department}>{st.department}</p>
+                                  
+                                  <div className="flex items-center justify-between font-mono text-[10px] text-slate-700 mt-2">
+                                    <span>{st.days_pending}d / {st.benchmark_days}d SLA</span>
+                                    <span className={isStag ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold'}>
+                                      {isStag ? 'Stagnated' : 'On Track'}
+                                    </span>
+                                  </div>
+
+                                  <div className="mt-1.5 w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${isStag ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                                      style={{ width: `${percent}%` }}
+                                    />
+                                  </div>
+
+                                  {st.paperwork_loopback_detected && (
+                                    <div className="mt-2 text-[9.5px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1">
+                                      <RotateCcw className="w-2.5 h-2.5 shrink-0" />
+                                      <span>Loopback: Central-State Query Bounce</span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  </React.Fragment>
                 );
               })}
             </TableBody>

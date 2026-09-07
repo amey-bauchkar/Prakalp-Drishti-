@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
 import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
+import ClearanceStagesInfoGuide from '../components/ClearanceStagesInfoGuide';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -1414,6 +1415,103 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 /* ═════════════════════════════════════════════════════════════════════════════
    TAB 3: ENVIRONMENTAL & STATUTORY CLEARANCE STATUS (ANUMATI)
    ═════════════════════════════════════════════════════════════════════════════ */
+function PublicStageChecklist({ stages }) {
+  const [expanded, setExpanded] = useState(false);
+  if (!stages || stages.length === 0) return null;
+
+  const displayStages = expanded ? stages : stages.slice(0, 3);
+  const hasMore = stages.length > 3;
+
+  return (
+    <div className="space-y-2 pt-2 border-t border-zinc-200/80">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-mono uppercase text-zinc-500 font-bold tracking-wider">
+          Statutory Stage Checklist ({stages.length})
+        </span>
+        {hasMore && (
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="text-[10px] font-bold text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            {expanded ? 'Show Less' : `+${stages.length - 3} More Stages`}
+          </button>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        {displayStages.map((st, sIdx) => {
+          const isStag = st.is_stagnated;
+          const ratio = Number(st.stagnation_ratio || (st.days_pending / Math.max(st.benchmark_days, 1))).toFixed(1);
+          const percent = Math.min(100, Math.round((st.days_pending / Math.max(st.benchmark_days, 1)) * 100));
+
+          return (
+            <div
+              key={st.stage_code || sIdx}
+              className={`p-2.5 rounded-lg border text-xs transition-all ${
+                isStag
+                  ? 'bg-rose-50/70 border-rose-200 text-rose-950'
+                  : 'bg-white border-zinc-200 text-zinc-900 shadow-2xs'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${
+                    isStag ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                  }`}>
+                    {isStag ? <AlertCircle className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-[11px] leading-tight text-zinc-900 flex items-center gap-1.5 flex-wrap">
+                      <span>{st.stage_name}</span>
+                      {st.paperwork_loopback_detected && (
+                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                          <RotateCcw className="w-2.5 h-2.5" /> Loopback
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-zinc-500 truncate mt-0.5" title={st.department}>
+                      {st.department || 'Statutory Review Authority'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                  <div className="font-mono font-bold text-[10.5px] text-zinc-900">
+                    {st.days_pending}d <span className="text-[9.5px] font-normal text-zinc-500">/ {st.benchmark_days}d SLA</span>
+                  </div>
+                  <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-mono font-bold mt-0.5 ${
+                    isStag
+                      ? 'bg-rose-100 text-rose-800'
+                      : 'bg-emerald-100 text-emerald-800'
+                  }`}>
+                    RSI {ratio}×
+                  </span>
+                </div>
+              </div>
+
+              {/* SLA Consumption Progress Bar */}
+              <div className="mt-2 pt-1.5 border-t border-zinc-100/80 flex items-center gap-2">
+                <div className="flex-1 bg-zinc-100 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      isStag ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-emerald-500'
+                    }`}
+                    style={{ width: `${Math.min(100, percent)}%` }}
+                  />
+                </div>
+                <span className="text-[9px] font-mono text-zinc-500 shrink-0 font-semibold">
+                  {percent}% SLA consumed
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function PublicClearancesTab() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1450,6 +1548,9 @@ function PublicClearancesTab() {
 
   return (
     <div className="space-y-6">
+      {/* Educational & Institutional Clearance Stages Guide */}
+      <ClearanceStagesInfoGuide />
+
       {/* Top Banner */}
       <div className="flex items-start gap-3 p-4 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-900 text-xs shadow-2xs">
         <Landmark className="w-4 h-4 text-zinc-800 shrink-0 mt-0.5" />
@@ -1615,28 +1716,8 @@ function PublicClearancesTab() {
                     </div>
                   </div>
 
-                  {/* Stage checklist chips */}
-                  {stages.length > 0 && (
-                    <div className="space-y-1.5 pt-1">
-                      <span className="text-[10px] font-mono uppercase text-zinc-500 font-bold tracking-wider block">Stage Checklist</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {stages.map((st) => (
-                          <span
-                            key={st.stage_code}
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[9px] font-mono ${
-                              st.is_stagnated 
-                                ? 'bg-rose-50 text-rose-800 border-rose-300' 
-                                : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                            }`}
-                            title={st.last_query_date || st.stage_name}
-                          >
-                            {st.is_stagnated ? <AlertCircle className="w-3 h-3 shrink-0" /> : <Check className="w-3 h-3 shrink-0" />}
-                            <span className="truncate max-w-[140px]">{st.stage_name}</span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Expanded Stage Checklist */}
+                  <PublicStageChecklist stages={stages} />
                 </div>
               );
             })}
