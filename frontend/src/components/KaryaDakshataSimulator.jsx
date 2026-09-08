@@ -568,37 +568,36 @@ export default function KaryaDakshataSimulator() {
         {result && !loading && (
           <motion.div 
             variants={itemVariants}
-            className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border-2 border-emerald-500/40 shadow-2xl p-6 sm:p-8 text-white relative overflow-hidden"
+            className="rounded-2xl bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy border border-slate-700/70 border-l-4 border-l-amber-400 shadow-xl p-6 sm:p-8 text-white relative overflow-hidden"
           >
-            {/* Ambient Background Aura */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+            {/* Subtle Texture Overlay */}
+            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden" />
 
             <div className="relative z-10 space-y-6">
               {/* Header Strip */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/10">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg shadow-emerald-950/50">
-                    <ShieldCheck className="w-6 h-6" />
+                  <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <ShieldCheck className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded border border-emerald-500/30">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-mono font-extrabold uppercase tracking-institutional text-amber-400 border-l-2 border-amber-400">
                         STATUTORY ENFORCEMENT DIRECTIVE
                       </span>
-                      <span className="text-[10px] font-mono text-slate-400">
+                      <span className="text-[10.5px] font-mono text-slate-300">
                         MoSPI / CPWD Standard OM Calibrated
                       </span>
                     </div>
-                    <h3 className="text-lg sm:text-xl font-black text-white font-sans tracking-tight mt-1">
-                      Fiduciary De-Biasing & Risk Mitigation Protocol
+                    <h3 className="text-xl sm:text-2xl font-black text-white font-heading tracking-tight mt-1">
+                      Fiduciary De-Biasing &amp; Risk Mitigation Protocol
                     </h3>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
-                    <Scale className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-black/40 border border-white/20 text-xs font-mono text-white shadow-inner font-bold">
+                    <Scale className="w-3.5 h-3.5 text-amber-400" />
                     <span>Enforceable Mandate</span>
                   </span>
                 </div>
@@ -606,64 +605,73 @@ export default function KaryaDakshataSimulator() {
 
               {/* 4 Sovereign Metric Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
-                    1. Mandated Capital Reserve
-                  </span>
-                  <div className="text-xl font-black text-emerald-400 font-mono">
-                    +₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr
+                <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
+                    <span>1. Mandated Capital Reserve</span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono block">
+                  <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
+                    +₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} <span className="text-sm font-bold text-slate-400">Cr</span>
+                  </div>
+                  <span className="text-xs text-slate-300 font-mono block">
                     +{costEscalationPct}% Statutory Contingency
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
-                    2. Expected Schedule Drift
-                  </span>
-                  <div className="text-xl font-black text-blue-400 font-mono">
-                    +{timeDelayDays} Days
+                <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
+                    <span>2. Expected Schedule Drift</span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono block">
+                  <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
+                    +{timeDelayDays} <span className="text-sm font-bold text-slate-400">Days</span>
+                  </div>
+                  <span className="text-xs text-slate-300 font-mono block">
                     +{(timeDelayDays / 30.4375).toFixed(1)} Months Empirical Slippage
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
-                    3. Milestone Audit Cadence
-                  </span>
-                  <div className="text-xl font-black text-amber-400 font-mono">
+                <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
+                    <span>3. Milestone Audit Cadence</span>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
                     90-Day Review
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono block">
-                    Mandatory On-Site Physical Inspection
+                  <span className="text-xs text-slate-300 font-mono block">
+                    Mandatory On-Site Inspection
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/90 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block">
-                    4. Performance Classification
-                  </span>
-                  <div className="text-xl font-black text-purple-400 font-mono truncate">
+                <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
+                  <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
+                    <span>4. Performance Class</span>
+                  </div>
+                  <div className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight truncate">
                     {result.performance_tier ? result.performance_tier.replace(/_/g, ' ') : 'TIER 2 WATCHLIST'}
                   </div>
-                  <span className="text-[11px] text-slate-400 font-mono block">
-                    Score {Number(result.Reliability_Score).toFixed(1)} / 100
+                  <span className="text-xs text-slate-300 font-mono block">
+                    Reliability Index: {Number(result.Reliability_Score).toFixed(1)} / 100
                   </span>
                 </div>
               </div>
 
               {/* Rationale & Action Plan */}
-              <div className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold font-mono text-emerald-400 uppercase">
-                  <Award className="w-3.5 h-3.5" />
-                  <span>Fiduciary Decision Rationale</span>
+              <div className="p-5 rounded-xl bg-black/50 border border-white/15 backdrop-blur-sm space-y-3 shadow-inner">
+                <div className="flex items-center gap-2 text-xs font-bold font-mono text-amber-400 uppercase tracking-wider">
+                  <FileText className="w-4 h-4 text-amber-400" />
+                  <span>Fiduciary Decision Rationale &amp; Compliance Mandate</span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
-                  {result.basis || `Re-priced at ${result.Agency}'s measured delivery multiple across ${result.sample_size_projects || 'all'} historical projects: historical cost variance +${result.Historical_Cost_Variance_Avg}%, average schedule slippage +${result.Historical_Delay_Avg} months.`} The sanctioning authority is directed to ring-fence a dedicated capital contingency buffer of <strong>₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr</strong> and enforce CPWD Clause 10CC price adjustment caps with mandatory 90-day progress milestones.
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                  {result.basis || `Re-priced at ${result.Agency}'s measured delivery multiple across ${result.sample_size_projects || 'all'} historical projects: historical cost variance +${result.Historical_Cost_Variance_Avg}%, average schedule slippage +${result.Historical_Delay_Avg} months.`} The sanctioning authority is directed to ring-fence a dedicated capital contingency buffer of <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/15">₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr</strong> and enforce CPWD Clause 10CC price adjustment caps with mandatory 90-day progress milestones.
                 </p>
+                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-slate-400">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    <span>Statutory Reference: MoSPI RCF Guideline Annexure-IV · CPWD Works Manual 2019</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-slate-200 text-[10px] font-bold">
+                    OFFICIAL DIRECTIVE
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>
