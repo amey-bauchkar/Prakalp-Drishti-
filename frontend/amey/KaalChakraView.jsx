@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Clock, AlertTriangle, ShieldCheck, CheckCircle2, Search, Sparkles, Satellite, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Metric, Text, ProgressBar, BadgeDelta, Flex, Grid } from "@tremor/react";
@@ -63,12 +63,48 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
     fetchForecast(targetId);
   };
 
-  const filteredProjects = projectList.filter(p => {
-    const idStr = p.project_id ? String(p.project_id) : "";
-    const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
-    const search = (searchInput || "").toLowerCase();
-    return idStr.includes(search) || nameStr.includes(search);
-  }).slice(0, 100);
+  const filteredProjects = useMemo(() => {
+    const query = (searchInput || "").trim().toLowerCase();
+    if (!query) {
+      return [...projectList]
+        .sort((a, b) => (a.project_name || "").localeCompare(b.project_name || ""))
+        .slice(0, 100);
+    }
+    return [...projectList]
+      .filter(p => {
+        const idStr = p.project_id ? String(p.project_id) : "";
+        const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
+        return idStr.includes(query) || nameStr.includes(query);
+      })
+      .sort((a, b) => {
+        const aId = String(a.project_id || "").toLowerCase();
+        const bId = String(b.project_id || "").toLowerCase();
+        const aName = (a.project_name || "").toLowerCase();
+        const bName = (b.project_name || "").toLowerCase();
+
+        // 1. Exact ID starts with query
+        const aIdStarts = aId.startsWith(query);
+        const bIdStarts = bId.startsWith(query);
+        if (aIdStarts && !bIdStarts) return -1;
+        if (!aIdStarts && bIdStarts) return 1;
+
+        // 2. Name starts with query (prioritize "P" for "patna", "polavaram", etc.)
+        const aStarts = aName.startsWith(query);
+        const bStarts = bName.startsWith(query);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        // 3. Word in name starts with query
+        const aWordStarts = aName.split(/\s+/).some(w => w.startsWith(query));
+        const bWordStarts = bName.split(/\s+/).some(w => w.startsWith(query));
+        if (aWordStarts && !bWordStarts) return -1;
+        if (!aWordStarts && bWordStarts) return 1;
+
+        // 4. Alphabetical sort
+        return (a.project_name || "").localeCompare(b.project_name || "");
+      })
+      .slice(0, 100);
+  }, [projectList, searchInput]);
 
   // Calculate proportional timeline positions based on actual dates
   const calculatePositions = (forecast) => {
@@ -127,7 +163,7 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-gov-navy-hover shadow-lg border border-slate-700/50 relative z-50"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-gov-navy-hover shadow-lg border border-slate-700/50 relative z-20"
       >
         <div className="space-y-3 max-w-2xl">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
@@ -143,7 +179,7 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
         </div>
 
         {/* Quick Project Lookup - Autocomplete */}
-        <div className="relative w-full lg:w-96 shrink-0 z-50">
+        <div className="relative w-full lg:w-96 shrink-0 z-30">
           <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm transition-all">
             <input
               type="text"
@@ -171,9 +207,9 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
             <motion.div 
               initial={{ opacity: 0, y: -6 }} 
               animate={{ opacity: 1, y: 0 }} 
-              className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-[100] max-h-80 flex flex-col"
+              className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-40 max-h-80 flex flex-col"
             >
-              <div className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+              <div data-lenis-prevent className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
                 {filteredProjects.map((p) => (
                   <div 
                     key={p.project_id} 

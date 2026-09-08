@@ -148,61 +148,62 @@ export default function PublicDashboardView() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 font-sans pb-24 max-w-7xl mx-auto text-zinc-900"
+      className="space-y-6 font-sans pb-24 max-w-7xl mx-auto text-slate-900"
     >
-      {/* ── Swiss Minimalist Telemetry Strip ── */}
+      {/* ── Sovereign Institutional Telemetry Strip ── */}
       <motion.div 
         variants={itemVariants} 
-        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-zinc-950 text-[11px] font-mono text-zinc-300 shadow-2xs border border-zinc-800"
+        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-[#071320] text-[11px] font-mono text-slate-300 shadow-2xs border border-[#102A40]"
       >
         <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="flex items-center gap-1.5 text-zinc-100 font-bold uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className="flex items-center gap-1.5 text-white font-bold uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             NAGRIK TRANSPARENCY
           </span>
-          <span className="text-zinc-700">/</span>
-          <span className="text-zinc-400">RTI ACT §4 MANDATE</span>
-          <span className="text-zinc-700">/</span>
-          <span className="text-emerald-400 font-medium">2,207 SEALED PROJECTS · ₹47.44L CR</span>
+          <span className="text-[#24425C] font-bold">/</span>
+          <span className="text-slate-400 font-semibold">RTI ACT §4 MANDATE</span>
+          <span className="text-[#24425C] font-bold">/</span>
+          <span className="text-white font-bold">2,207 SEALED PROJECTS · ₹47.44L CR</span>
         </div>
-        <div className="flex items-center gap-2 bg-zinc-900 px-2.5 py-0.5 rounded border border-zinc-800 text-xs">
-          <span className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">DOSSIER:</span>
-          <span className="font-bold text-zinc-100 font-mono">#{selectedProjectId}</span>
+        <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-0.5 rounded border border-slate-700/80 text-xs">
+          <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">DOSSIER:</span>
+          <span className="font-bold text-amber-400 font-mono">#{selectedProjectId}</span>
         </div>
       </motion.div>
 
-      {/* ── Minimalist Swiss Editorial Header ── */}
+      {/* ── Sovereign Institutional Command Header ── */}
       <motion.div 
         variants={itemVariants} 
-        className="relative overflow-hidden rounded-xl bg-white border border-zinc-200/90 shadow-2xs p-6 sm:p-8"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy border border-slate-700/60 shadow-xl text-white p-6 sm:p-8 z-20"
       >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2.5 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 text-[11px] font-mono font-bold uppercase tracking-wider">
-              <ShieldCheck className="w-3.5 h-3.5 text-zinc-900" />
-              <span>CITIZEN CHARTER · OPEN DATA INITIATIVE</span>
+            <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span>CITIZEN CHARTER · OPEN DATA INITIATIVE · RTI ACT §4(1)(B)</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-zinc-950 tracking-[-0.03em] leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold font-heading text-white tracking-tight leading-tight">
               Public Infrastructure Transparency &amp; Oversight
             </h1>
-            <p className="text-sm text-zinc-600 leading-relaxed max-w-2xl">
+            <p className="text-sm text-slate-300 leading-relaxed max-w-2xl font-sans">
               Proactive public disclosure for Central Sector Mega-Projects under Section 4(1)(b) of the Right to Information Act, 2005. Inspect geocoded site locations, CCEA sanctioned vs revised capex baselines, physical milestones, and statutory environmental clearances in real time.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="p-4 rounded-lg bg-zinc-50 border border-zinc-200/80 text-right min-w-[170px]">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold">Total Monitored Capex</div>
-              <div className="text-2xl font-extrabold text-zinc-950 font-mono mt-0.5">₹47.44L Cr</div>
-              <div className="text-[11px] text-emerald-700 flex items-center justify-end gap-1 mt-1 font-mono font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> 2,207 Projects Audited
+          <div className="flex items-center gap-3 shrink-0 relative z-10">
+            <div className="p-4 rounded-xl bg-black/40 border border-white/20 backdrop-blur-md shadow-inner text-right min-w-[190px]">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">Total Monitored Capex</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono mt-0.5">₹47.44L Cr</div>
+              <div className="text-[11px] text-white flex items-center justify-end gap-1 mt-1 font-mono font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" /> 2,207 Projects Audited
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* ── Swiss Minimalist Segmented Tab Rail ── */}
+      {/* ── Sovereign Institutional Segmented Tab Rail ── */}
       <motion.nav 
         variants={itemVariants} 
         className="grid grid-cols-1 sm:grid-cols-3 gap-3" 
@@ -218,31 +219,31 @@ export default function PublicDashboardView() {
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center gap-3.5 p-4 rounded-xl border text-left transition-all duration-150 ${
+              className={`relative flex items-center gap-3.5 p-4 rounded-xl border text-left transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? 'bg-zinc-950 text-white border-zinc-950 shadow-sm'
-                  : 'bg-white border-zinc-200/80 hover:bg-zinc-50/80 hover:border-zinc-300'
+                  ? 'bg-gov-navy text-white border-gov-navy shadow-md ring-1 ring-amber-400/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-2xs'
               }`}
             >
               <div className={`p-2.5 rounded-lg shrink-0 ${
                 isActive 
-                  ? 'bg-zinc-800 text-white font-bold' 
-                  : 'bg-zinc-100 text-zinc-800 border border-zinc-200/60'
+                  ? 'bg-white/15 text-amber-400 border border-white/20 font-bold' 
+                  : 'bg-slate-100 text-gov-navy border border-slate-200'
               }`}>
                 <Icon className="w-4 h-4" strokeWidth={2} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className={`text-sm font-bold tracking-tight truncate ${isActive ? 'text-white' : 'text-zinc-900'}`}>
+                  <span className={`text-sm font-bold tracking-tight truncate font-heading ${isActive ? 'text-white' : 'text-gov-navy'}`}>
                     {tab.label}
                   </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                    isActive ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
+                    isActive ? 'bg-amber-400/20 text-amber-300 border-amber-400/30' : 'bg-slate-100 text-slate-600 border-slate-200'
                   }`}>
                     {tab.badge}
                   </span>
                 </div>
-                <p className={`text-xs truncate ${isActive ? 'text-zinc-400' : 'text-zinc-500'}`}>{tab.desc}</p>
+                <p className={`text-xs truncate ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>{tab.desc}</p>
               </div>
             </button>
           );
@@ -547,78 +548,78 @@ function PublicMetadataTab({
 
   return (
     <div className="space-y-6">
-      {/* ── Active Project Spotlight HUD Card (Swiss Editorial White) ── */}
+      {/* ── Active Project Spotlight HUD Card ── */}
       {activeProject && (
-        <div className="rounded-xl bg-white border border-zinc-200/90 p-6 shadow-2xs">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-5">
+        <div className="rounded-xl bg-white border border-slate-200 p-6 shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 rounded bg-zinc-950 text-white font-bold font-mono text-[11px]">
+                <span className="px-2.5 py-0.5 rounded bg-gov-navy text-amber-400 font-bold font-mono text-[11px] border border-sky-900 shadow-2xs">
                   #{activeProject.project_id}
                 </span>
-                <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 font-mono text-[11px] font-semibold">
+                <span className="px-2.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-mono text-[11px] font-semibold">
                   {activeProject.sector || 'Central Sector'}
                 </span>
-                <span className={`px-2 py-0.5 rounded border text-[11px] font-mono font-bold ${status.bgClass} ${status.borderClass}`}>
+                <span className={`px-2.5 py-0.5 rounded border text-[11px] font-mono font-bold ${status.bgClass} ${status.borderClass}`}>
                   {status.label}
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-950 tracking-[-0.02em]">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-gov-navy font-heading tracking-tight">
                 {activeProject.project_name}
               </h2>
             </div>
-            <div className="flex items-center gap-4 shrink-0 bg-zinc-50 p-3.5 rounded-lg border border-zinc-200/80">
+            <div className="flex items-center gap-4 shrink-0 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <div className="text-right">
-                <div className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold">Physical Progress</div>
-                <div className="text-2xl font-extrabold text-zinc-950 font-mono">{progressPct.toFixed(1)}%</div>
+                <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Physical Progress</div>
+                <div className="text-2xl font-extrabold text-gov-navy font-mono">{progressPct.toFixed(1)}%</div>
               </div>
-              <div className="w-12 h-12 rounded-lg border border-zinc-300 flex items-center justify-center p-1 bg-white">
-                <Activity className="w-5 h-5 text-zinc-900" />
+              <div className="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shadow-2xs">
+                <Activity className="w-5 h-5 text-gov-navy" />
               </div>
             </div>
           </div>
 
           {/* 4 Metric Cells in Spotlight HUD */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-5">
-            <div className="p-3.5 rounded-lg bg-zinc-50/80 border border-zinc-200/70">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Executing Agency</span>
-              <span className="text-sm font-bold text-zinc-900 truncate block mt-0.5">{activeProject.company || '—'}</span>
-              <span className="text-xs text-zinc-600 flex items-center gap-1 mt-1 font-medium">
-                <MapPin className="w-3 h-3 text-zinc-400" /> {activeProject.state || 'Pan-India'}
+            <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Executing Agency</span>
+              <span className="text-sm font-bold text-gov-navy truncate block mt-0.5">{activeProject.company || '—'}</span>
+              <span className="text-xs text-slate-600 flex items-center gap-1 mt-1 font-medium">
+                <MapPin className="w-3 h-3 text-slate-400" /> {activeProject.state || 'Pan-India'}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-zinc-50/80 border border-zinc-200/70">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Original Sanction Date</span>
-              <span className="text-sm font-bold text-zinc-900 font-mono block mt-0.5">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
-              <span className="text-xs text-zinc-500 mt-1 block">CCEA Approval Baseline</span>
+            <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Original Sanction Date</span>
+              <span className="text-sm font-bold text-gov-navy font-mono block mt-0.5">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
+              <span className="text-xs text-slate-500 mt-1 block">CCEA Approval Baseline</span>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-zinc-50/80 border border-zinc-200/70">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Target Completion</span>
-              <span className="text-sm font-bold text-zinc-900 font-mono block mt-0.5">{activeProject.target_date?.slice(0, 10) || '—'}</span>
-              <span className="text-xs text-zinc-500 mt-1 block">Revised MoSPI Target</span>
+            <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Target Completion</span>
+              <span className="text-sm font-bold text-gov-navy font-mono block mt-0.5">{activeProject.target_date?.slice(0, 10) || '—'}</span>
+              <span className="text-xs text-slate-500 mt-1 block">Revised MoSPI Target</span>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-zinc-50/80 border border-zinc-200/70">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Schedule Deviation</span>
+            <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Schedule Deviation</span>
               <span className={`text-sm font-bold font-mono block mt-0.5 ${Number(activeProject.delayed_months) > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
                 {Number(activeProject.delayed_months) > 0 ? `+${activeProject.delayed_months} Months Delay` : 'Nil Delay (On Track)'}
               </span>
-              <span className="text-xs text-zinc-500 mt-1 block">Against Approved Plan</span>
+              <span className="text-xs text-slate-500 mt-1 block">Against Approved Plan</span>
             </div>
           </div>
 
           {/* Progress Bar Line */}
-          <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center gap-3">
-            <span className="text-[10.5px] font-bold text-zinc-500 uppercase tracking-wider shrink-0 font-mono">Milestone Track</span>
-            <div className="flex-1 bg-zinc-100 h-2 rounded-full overflow-hidden relative border border-zinc-200">
+          <div className="mt-5 pt-4 border-t border-slate-200 flex items-center gap-3">
+            <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider shrink-0 font-mono">Milestone Track</span>
+            <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden relative border border-slate-200">
               <div
-                className="bg-zinc-950 h-full rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-gov-navy to-emerald-600 h-full rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="font-mono text-xs font-bold text-zinc-950 shrink-0">{progressPct.toFixed(1)}% Realized</span>
+            <span className="font-mono text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Realized</span>
           </div>
         </div>
       )}
@@ -795,6 +796,7 @@ function PublicMetadataTab({
 
           {/* Scrollable list with progressive expansion */}
           <div
+            data-lenis-prevent
             onScroll={handleDirScroll}
             className="flex-1 overflow-y-auto divide-y divide-zinc-100 scrollbar-thin"
           >

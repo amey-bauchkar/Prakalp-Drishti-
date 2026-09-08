@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, ShieldCheck, ShieldAlert, Cpu, Loader2, Database, Fingerprint, Sparkles, MessageSquare } from 'lucide-react';
+import { Send, ShieldCheck, ShieldAlert, Cpu, Loader2, Database, Fingerprint, Sparkles, MessageSquare, BookOpen } from 'lucide-react';
 import { apiFetch } from './authClient';
 
 /**
@@ -42,6 +42,36 @@ const MODE_META = {
     label: 'Generation rejected',
     help: 'The model produced a figure absent from the verified facts. It was discarded and the fact answer shown.',
   },
+  // General-knowledge answers carry NO Merkle provenance. The badge has to say
+  // so plainly: an amber "advisory" chip next to a statutory citation is the
+  // difference between guidance and a claim this system is vouching for.
+  llm_conversational: {
+    badgeCls: 'bg-violet-500/10 text-violet-300 border border-violet-500/20',
+    Icon: MessageSquare,
+    label: 'Conversational',
+    help: 'A greeting or capability question. No project figures are asserted and none are claimed to be verified.',
+  },
+  llm_general_knowledge: {
+    badgeCls: 'bg-sky-500/10 text-sky-300 border border-sky-500/20',
+    Icon: BookOpen,
+    label: 'General guidance · not provenanced',
+    help: 'Domain knowledge, not drawn from the MoSPI corpus and carrying no Merkle proof. Verify statutory citations before acting on them.',
+  },
+  general_guard_tripped: {
+    badgeCls: 'bg-rose-500/10 text-rose-300 border border-rose-500/20',
+    Icon: ShieldAlert,
+    label: 'Answer rejected',
+    help: 'A general answer asserted project-specific figures, which carry no provenance here. It was discarded.',
+  },
+};
+
+// Query-mode chip, shown alongside the provenance badge so a reviewer can see
+// WHY an answer was or was not grounded in the corpus.
+const QUERY_MODE_META = {
+  PROJECT_FACT_QUERY: { label: 'Project facts', cls: 'text-emerald-300/90 border-emerald-500/20' },
+  HYBRID_ANALYTICAL_QUERY: { label: 'Facts + statute', cls: 'text-amber-300/90 border-amber-500/20' },
+  GENERAL_QUERY: { label: 'General domain', cls: 'text-sky-300/90 border-sky-500/20' },
+  CONVERSATIONAL_QUERY: { label: 'Chat', cls: 'text-violet-300/90 border-violet-500/20' },
 };
 
 export default function CopilotChat({ projectId }) {
@@ -53,16 +83,39 @@ export default function CopilotChat({ projectId }) {
   useEffect(() => { setTurns([]); }, [projectId]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [turns, busy]);
 
+  // Prior turns, oldest first, in the shape the API expects. Only the text the
+  // user actually saw is replayed -- never the fact payload, which would balloon
+  // the request and re-send figures the server already holds.
+  const historyFor = (transcript) =>
+    transcript
+      .filter((t) => t.role === 'user' || t.role === 'copilot')
+      .map((t) => ({
+        role: t.role === 'user' ? 'user' : 'assistant',
+        content: t.role === 'user'
+          ? t.text
+          : (t.payload?.answer_llm || t.payload?.answer || ''),
+      }))
+      .filter((m) => m.content)
+      .slice(-8);
+
   const send = async (question) => {
     const q = (question ?? draft).trim();
     if (!q || busy) return;
     setDraft('');
     setBusy(true);
+
+    // Snapshot BEFORE appending this turn, so the history sent is the
+    // conversation that preceded the question rather than including it.
+    const history = historyFor(turns);
     setTurns((t) => [...t, { role: 'user', text: q }]);
 
     const res = await apiFetch('/api/amey/ask', {
       method: 'POST',
-      body: JSON.stringify({ question: q, project_id: String(projectId) }),
+      body: JSON.stringify({
+        question: q,
+        project_id: String(projectId),
+        history,
+      }),
     });
 
     setTurns((t) => [...t, res.ok
@@ -111,7 +164,7 @@ export default function CopilotChat({ projectId }) {
 
       {/* Transcript Conversation Flow */}
       {turns.length > 0 && (
-        <div className="space-y-3 max-h-72 overflow-y-auto pr-1 text-slate-200 scrollbar-thin scrollbar-thumb-slate-700">
+        <div data-lenis-prevent className="space-y-3 max-h-72 overflow-y-auto pr-1 text-slate-200 scrollbar-thin scrollbar-thumb-slate-700">
           <AnimatePresence initial={false}>
             {turns.map((t, i) => {
               if (t.role === 'user') {
@@ -156,13 +209,63 @@ export default function CopilotChat({ projectId }) {
                   transition={{ duration: 0.24 }}
                   className="bg-white/[0.04] border border-white/10 rounded-xl p-3.5 space-y-2.5 shadow-sm"
                 >
-                  <p className="text-[12.5px] text-slate-100 leading-relaxed font-sans">{prose}</p>
+                  {/* The model is asked for LABELLED lines (DIRECT ANSWER, EVIDENCE,
+                      STATUTORY BASIS...). Render those labels as headings so an
+                      executive can scan rather than read. */}
+                  <div
+                    dir={d.llm?.language?.rtl ? 'rtl' : 'ltr'}
+                    lang={d.llm?.language?.code || 'en'}
+                    className={`text-[12.5px] text-slate-100 font-sans space-y-1.5 ${
+                      d.llm?.language?.code && d.llm.language.code !== 'en'
+                        ? 'leading-[1.85]' : 'leading-relaxed'
+                    }`}
+                  >
+                    {String(prose || '').split('\n').filter((ln) => ln.trim()).map((line, li) => {
+                      const m = line.match(/^\s*\*{0,2}([A-Z][A-Z /&]{3,30})\*{0,2}\s*[—:-]\s*(.*)$/);
+                      return m ? (
+                        <p key={li}>
+                          <span className="text-[9.5px] font-mono font-bold tracking-wider text-amber-300/90 uppercase mr-1.5">
+                            {m[1].trim()}
+                          </span>
+                          {m[2]}
+                        </p>
+                      ) : <p key={li}>{line.replace(/^\s*[-*]\s+/, '· ')}</p>;
+                    })}
+                  </div>
+
+                  {/* An un-provenanced answer says so in the body, not only in a
+                      chip. A judge reading a statutory citation must not have to
+                      infer from a badge colour that nothing vouches for it. */}
+                  {d.llm?.provenanced === false && prose && (
+                    <p className="text-[10.5px] text-sky-300/80 bg-sky-500/[0.07] border border-sky-500/20 rounded-lg px-2.5 py-1.5 leading-snug">
+                      General domain guidance — not drawn from the MoSPI corpus and
+                      not Merkle-signed. Verify any statutory citation before acting.
+                    </p>
+                  )}
 
                   <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-white/10">
                     <span className={`inline-flex items-center gap-1 text-[9.5px] font-mono font-bold px-2 py-0.5 rounded ${meta.badgeCls}`} title={meta.help}>
                       <Icon className="w-3 h-3" />
                       {meta.label}
                     </span>
+
+                    {d.llm?.language && d.llm.language.code !== 'en' && (
+                      <span
+                        title={`Detected: ${d.llm.language.name} — ${d.llm.language.basis || ''}`}
+                        className="text-[9.5px] font-mono px-1.5 py-0.5 rounded border border-white/10 bg-black/20 text-slate-300"
+                      >
+                        {d.llm.language.native || d.llm.language.name}
+                      </span>
+                    )}
+
+                    {QUERY_MODE_META[d.routing?.mode] && (
+                      <span
+                        title={`Routed as ${d.routing.mode}`}
+                        className={`text-[9.5px] font-mono px-1.5 py-0.5 rounded border bg-black/20 ${QUERY_MODE_META[d.routing.mode].cls}`}
+                      >
+                        {QUERY_MODE_META[d.routing.mode].label}
+                      </span>
+                    )}
 
                     {d.llm?.model && (
                       <span className="text-[9.5px] font-mono text-slate-400 bg-black/20 px-1.5 py-0.5 rounded border border-white/5">{d.llm.model}</span>

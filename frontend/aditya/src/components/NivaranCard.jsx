@@ -124,7 +124,7 @@ export default function NivaranCard({ data, onRunCustomText }) {
               </button>
             </div>
 
-            <div className="space-y-4 overflow-y-auto pr-1">
+            <div data-lenis-prevent className="space-y-4 overflow-y-auto pr-1">
               {flagged_clauses.map((c, i) => (
                 <div key={i} className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
                   <div className="flex justify-between items-center">

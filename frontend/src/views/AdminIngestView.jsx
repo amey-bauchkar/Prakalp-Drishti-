@@ -85,7 +85,7 @@ function Hash({ value }) {
   );
 }
 
-/* ── Minimalist Swiss Corpus Provenance KPI Strip ────────────────────────── */
+/* ── Sovereign Institutional Corpus Provenance KPI Strip ─────────────────── */
 function CorpusBadge({ status }) {
   if (!status) return null;
   const live = status.database_configured;
@@ -93,75 +93,75 @@ function CorpusBadge({ status }) {
   return (
     <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
       {/* Tile 1 */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 p-4 shadow-2xs flex items-center gap-3.5 relative overflow-hidden group hover:border-zinc-300 transition-all">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-center gap-3.5 relative overflow-hidden group hover:border-slate-300 transition-all">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
           live ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'
         }`}>
           <Database size={18} />
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono">
             Corpus Repository
           </div>
-          <div className="text-sm font-extrabold text-zinc-950 truncate flex items-center gap-1.5 mt-0.5 font-sans">
+          <div className="text-sm font-extrabold text-gov-navy font-heading truncate flex items-center gap-1.5 mt-0.5">
             <span>{live ? 'PostgreSQL Core' : 'In-Memory Bootstrap'}</span>
             <span className={`w-1.5 h-1.5 rounded-full ${live ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
           </div>
-          <div className="text-[10.5px] text-zinc-500 font-mono truncate">
+          <div className="text-[10.5px] text-slate-500 font-mono truncate">
             {live ? 'Live ACID Database' : 'Read-Only CSV Snapshot'}
           </div>
         </div>
       </div>
 
       {/* Tile 2 */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 p-4 shadow-2xs flex items-center gap-3.5 relative overflow-hidden group hover:border-zinc-300 transition-all">
-        <div className="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-800 border border-zinc-200 flex items-center justify-center shrink-0">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-center gap-3.5 relative overflow-hidden group hover:border-slate-300 transition-all">
+        <div className="w-10 h-10 rounded-lg bg-slate-100 text-gov-navy border border-slate-200 flex items-center justify-center shrink-0">
           <ShieldCheck size={18} />
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono">
             Write Security
           </div>
-          <div className={`text-sm font-extrabold mt-0.5 font-sans truncate ${live ? 'text-emerald-700' : 'text-amber-800'}`}>
+          <div className={`text-sm font-extrabold mt-0.5 font-heading truncate ${live ? 'text-emerald-700' : 'text-amber-800'}`}>
             {live ? 'Ledger Active (202)' : 'Read-Only Mode (503)'}
           </div>
-          <div className="text-[10.5px] text-zinc-500 font-mono truncate">
+          <div className="text-[10.5px] text-slate-500 font-mono truncate">
             Role Gated · allocate_capital
           </div>
         </div>
       </div>
 
       {/* Tile 3 */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 p-4 shadow-2xs flex items-center gap-3.5 relative overflow-hidden group hover:border-zinc-300 transition-all">
-        <div className="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-800 border border-zinc-200 flex items-center justify-center shrink-0">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-center gap-3.5 relative overflow-hidden group hover:border-slate-300 transition-all">
+        <div className="w-10 h-10 rounded-lg bg-slate-100 text-gov-navy border border-slate-200 flex items-center justify-center shrink-0">
           <Layers size={18} />
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono">
             Batch Threshold
           </div>
-          <div className="text-sm font-extrabold text-zinc-950 font-mono mt-0.5">
-            {status.max_rows_per_batch?.toLocaleString('en-IN') || '10,000'} <span className="text-xs font-normal text-zinc-500">Rows</span>
+          <div className="text-sm font-extrabold text-gov-navy font-mono mt-0.5">
+            {status.max_rows_per_batch?.toLocaleString('en-IN') || '10,000'} <span className="text-xs font-normal text-slate-500">Rows</span>
           </div>
-          <div className="text-[10.5px] text-zinc-500 font-mono truncate">
+          <div className="text-[10.5px] text-slate-500 font-mono truncate">
             Atomic Fail-Closed Invariant
           </div>
         </div>
       </div>
 
       {/* Tile 4 */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 p-4 shadow-2xs flex items-center gap-3.5 relative overflow-hidden group hover:border-zinc-300 transition-all">
-        <div className="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-800 border border-zinc-200 flex items-center justify-center shrink-0">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex items-center gap-3.5 relative overflow-hidden group hover:border-slate-300 transition-all">
+        <div className="w-10 h-10 rounded-lg bg-slate-100 text-gov-navy border border-slate-200 flex items-center justify-center shrink-0">
           <HashIcon size={18} />
         </div>
         <div className="min-w-0">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 font-mono">
             Integrity Protocol
           </div>
-          <div className="text-sm font-extrabold text-zinc-950 font-mono mt-0.5">
+          <div className="text-sm font-extrabold text-gov-navy font-mono mt-0.5">
             RFC 6962 Merkle Tree
           </div>
-          <div className="text-[10.5px] text-zinc-500 font-mono truncate">
+          <div className="text-[10.5px] text-slate-500 font-mono truncate">
             SHA-256 Content Addressed
           </div>
         </div>
@@ -230,18 +230,18 @@ function ValidationReport({ report }) {
       )}
 
       {(report.errors || []).length > 0 && (
-        <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden shadow-2xs">
-          <div className="bg-zinc-50 px-4 py-2.5 border-b border-zinc-200 flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider font-bold text-zinc-900">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+          <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <span className="text-xs font-mono uppercase tracking-wider font-bold text-gov-navy">
               Specific Validation Failures
             </span>
-            <span className="text-[11px] font-mono text-zinc-500 font-bold">
+            <span className="text-[11px] font-mono text-slate-500 font-bold">
               {report.error_count || report.errors.length} Total Errors
             </span>
           </div>
           <div className="overflow-x-auto max-h-64">
             <table className="w-full text-left text-xs border-collapse font-sans">
-              <thead className="bg-zinc-100/80 border-b border-zinc-200 text-zinc-600 text-[10.5px] uppercase font-mono font-bold">
+              <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-[10.5px] uppercase font-mono font-bold">
                 <tr>
                   <th className="py-2.5 px-3.5">Row</th>
                   <th className="py-2.5 px-3.5">Project ID</th>
@@ -249,24 +249,24 @@ function ValidationReport({ report }) {
                   <th className="py-2.5 px-3.5">Rejection Cause</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-slate-100">
                 {report.errors.slice(0, 50).map((e, i) => (
-                  <tr key={i} className="hover:bg-zinc-50 transition-colors">
-                    <td className="py-2 px-3.5 font-mono text-zinc-600">#{e.row_index + 1}</td>
-                    <td className="py-2 px-3.5 font-mono font-bold text-zinc-950">{e.project_id ?? '—'}</td>
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-2 px-3.5 font-mono text-slate-600">#{e.row_index + 1}</td>
+                    <td className="py-2 px-3.5 font-mono font-bold text-gov-navy">{e.project_id ?? '—'}</td>
                     <td className="py-2 px-3.5">
                       <span className="inline-block px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-mono text-[10.5px] font-bold">
                         {e.field}
                       </span>
                     </td>
-                    <td className="py-2 px-3.5 text-zinc-700">{e.reason}</td>
+                    <td className="py-2 px-3.5 text-slate-700">{e.reason}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {report.error_count > 50 && (
-            <div className="p-2.5 bg-zinc-50 border-t border-zinc-200 text-center text-[11px] text-zinc-500 font-mono">
+            <div className="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[11px] text-slate-500 font-mono">
               Showing first 50 of {report.error_count} errors.
             </div>
           )}
@@ -296,21 +296,21 @@ function GeocodePreview({ geo }) {
   return (
     <div className={`p-4 rounded-xl border shadow-2xs flex items-start gap-3 ${
       geo.serve_imagery
-        ? 'bg-zinc-50 border-zinc-300 text-zinc-900'
+        ? 'bg-slate-50 border-slate-300 text-slate-900'
         : 'bg-amber-50 border-amber-200 text-amber-950'
     }`}>
-      <MapPin size={18} className={`shrink-0 mt-0.5 ${geo.serve_imagery ? 'text-zinc-800' : 'text-amber-600'}`} />
+      <MapPin size={18} className={`shrink-0 mt-0.5 ${geo.serve_imagery ? 'text-gov-navy' : 'text-amber-600'}`} />
       <div className="text-xs font-sans space-y-1">
         <div className="font-extrabold text-[13px] flex items-center gap-2 flex-wrap">
-          <span>Geocoded Resolution: {geo.geocode_class}</span>
-          <span className="px-2 py-0.5 rounded bg-white border border-zinc-200 text-[10px] font-mono font-bold">
+          <span className="text-gov-navy">Geocoded Resolution: {geo.geocode_class}</span>
+          <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono font-bold text-slate-800">
             Precision {km}
           </span>
-          <span className="px-2 py-0.5 rounded bg-white border border-zinc-200 text-[10px] font-mono font-bold uppercase">
+          <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono font-bold uppercase text-gov-navy">
             Tier {geo.tier}
           </span>
         </div>
-        <p className="text-[12px] text-zinc-600">{geo.display_note}</p>
+        <p className="text-[12px] text-slate-600">{geo.display_note}</p>
         {!geo.counts_toward_ner_floor && (
           <p className="text-[11px] font-bold text-amber-900 bg-amber-100/70 p-1.5 rounded border border-amber-300/60 mt-1">
             ⚠️ Operator-entered coordinate: Excluded from statutory 10% NER funding floor calculations.
@@ -327,9 +327,9 @@ function JobResult({ job }) {
 
   if (job.state === 'running' || job.state === 'queued') {
     return (
-      <div className="bg-zinc-100 border border-zinc-300 rounded-xl p-4 flex items-center gap-3 shadow-2xs">
-        <Loader2 size={18} className="animate-spin text-zinc-800" />
-        <span className="text-xs font-bold text-zinc-900 font-sans">
+      <div className="bg-slate-100 border border-slate-300 rounded-xl p-4 flex items-center gap-3 shadow-2xs">
+        <Loader2 size={18} className="animate-spin text-gov-navy" />
+        <span className="text-xs font-bold text-gov-navy font-sans">
           Appending batch to ledger, sealing Merkle tree &amp; refreshing RAM cache…
         </span>
       </div>
@@ -352,14 +352,14 @@ function JobResult({ job }) {
 
   const d = job.detail || {};
   return (
-    <div className="bg-zinc-950 text-white rounded-xl border border-zinc-800 p-5 sm:p-6 shadow-md space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-3.5">
+    <div className="bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy text-white rounded-xl border border-slate-700/60 p-5 sm:p-6 shadow-xl space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-700/60 pb-3.5">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400">
+          <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white">
             <CheckCircle2 size={18} />
           </div>
           <div>
-            <div className="text-[11px] font-mono uppercase tracking-widest text-emerald-400 font-bold">
+            <div className="text-[11px] font-mono uppercase tracking-widest text-slate-300 font-bold">
               Ledger Sealed
             </div>
             <h3 className="text-base sm:text-lg font-bold text-white font-mono">
@@ -367,24 +367,24 @@ function JobResult({ job }) {
             </h3>
           </div>
         </div>
-        <span className="px-3 py-1 rounded bg-zinc-900 text-zinc-300 border border-zinc-800 font-mono text-xs font-bold">
+        <span className="px-3 py-1 rounded bg-white/10 text-amber-300 border border-amber-400/30 font-mono text-xs font-bold">
           Immutable Status · Sealed
         </span>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800 text-center">
-          <div className="text-[10px] uppercase font-mono text-zinc-400 font-bold">Rows Ingested</div>
+        <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+          <div className="text-[10px] uppercase font-mono text-slate-400 font-bold">Rows Ingested</div>
           <div className="text-xl font-bold font-mono text-white mt-0.5">{d.rows_written}</div>
         </div>
-        <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800 text-center">
-          <div className="text-[10px] uppercase font-mono text-zinc-400 font-bold">Total Monitored</div>
-          <div className="text-xl font-bold font-mono text-emerald-400 mt-0.5">
+        <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+          <div className="text-[10px] uppercase font-mono text-slate-400 font-bold">Total Monitored</div>
+          <div className="text-xl font-bold font-mono text-white mt-0.5">
             {d.row_count?.toLocaleString('en-IN')}
           </div>
         </div>
-        <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800 text-center">
-          <div className="text-[10px] uppercase font-mono text-zinc-400 font-bold">Seal Duration</div>
+        <div className="bg-white/5 rounded-lg p-3 border border-white/10 text-center">
+          <div className="text-[10px] uppercase font-mono text-slate-400 font-bold">Seal Duration</div>
           <div className="text-xl font-bold font-mono text-amber-400 mt-0.5">
             {job.duration_s ?? '—'}s
           </div>
@@ -392,18 +392,18 @@ function JobResult({ job }) {
       </div>
 
       {d.imagery_fetched > 0 && (
-        <div className="bg-zinc-900 rounded-lg p-3 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
+        <div className="bg-emerald-950/40 rounded-lg p-3 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
           <Sparkles size={15} className="text-emerald-400" />
           <span><strong>Auto-Fetched EO Imagery:</strong> {d.imagery_fetched} project(s) received dual-epoch Sentinel tiles for ground-truth audit.</span>
         </div>
       )}
 
-      <div className="pt-2 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs text-zinc-300 font-mono">
-          <span className="text-zinc-400 font-bold">RFC 6962 Merkle Root:</span>
+      <div className="pt-2 border-t border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs text-slate-300 font-mono">
+          <span className="text-slate-400 font-bold">RFC 6962 Merkle Root:</span>
           <Hash value={d.corpus_root} />
         </div>
-        <span className="text-[10.5px] text-zinc-500 font-mono">
+        <span className="text-[10.5px] text-amber-300/80 font-mono">
           Cryptographically Grounded
         </span>
       </div>
@@ -441,61 +441,62 @@ function AdminIngestInner() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-6 font-sans pb-16 max-w-7xl mx-auto text-zinc-900"
+      className="space-y-6 font-sans pb-16 max-w-7xl mx-auto text-slate-900"
     >
-      {/* ── Swiss Minimalist Telemetry Strip ───────────────────────── */}
+      {/* ── Sovereign Institutional Telemetry Strip ───────────────────── */}
       <motion.div
         variants={itemVariants}
-        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-zinc-950 text-[11px] font-mono text-zinc-300 shadow-2xs border border-zinc-800"
+        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-[#071320] text-[11px] font-mono text-slate-300 shadow-2xs border border-[#102A40]"
       >
         <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="flex items-center gap-1.5 text-zinc-100 font-bold uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className="flex items-center gap-1.5 text-white font-bold uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             CORPUS ADMIN TERMINAL
           </span>
-          <span className="text-zinc-700">/</span>
-          <span className="text-zinc-400">APPEND-ONLY GOVERNANCE</span>
-          <span className="text-zinc-700">/</span>
-          <span className="text-emerald-400 font-medium">RFC 6962 MERKLE SEALED</span>
+          <span className="text-[#24425C] font-bold">/</span>
+          <span className="text-slate-400 font-semibold">APPEND-ONLY GOVERNANCE</span>
+          <span className="text-[#24425C] font-bold">/</span>
+          <span className="text-white font-bold">RFC 6962 MERKLE SEALED</span>
         </div>
-        <div className="flex items-center gap-2 bg-zinc-900 px-2.5 py-0.5 rounded border border-zinc-800 text-xs">
-          <span className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">SESSION:</span>
-          <span className="font-bold text-zinc-100 font-mono">{session?.user || 'admin'}</span>
+        <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-0.5 rounded border border-slate-700/80 text-xs">
+          <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">SESSION:</span>
+          <span className="font-bold text-amber-400 font-mono">{session?.user || 'admin'}</span>
         </div>
       </motion.div>
 
-      {/* ── Minimalist Swiss Command Header ───────────────────────── */}
+      {/* ── Sovereign Institutional Command Header ───────────────────── */}
       <motion.header
         variants={itemVariants}
-        className="bg-white text-zinc-900 p-6 sm:p-8 rounded-xl shadow-2xs border border-zinc-200/90"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy border border-slate-700/60 shadow-xl text-white p-6 sm:p-8 z-20"
       >
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded bg-zinc-100 border border-zinc-200 text-zinc-800 text-[11px] font-mono font-bold uppercase tracking-wider">
-              <ClipboardList className="w-3.5 h-3.5 text-zinc-900" aria-hidden="true" />
+            <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
+              <ClipboardList className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
               <span>CORPUS ADMINISTRATION &amp; LEDGER INGESTION</span>
             </div>
-            <h1 className="font-extrabold text-2xl sm:text-3xl lg:text-[32px] tracking-[-0.03em] text-zinc-950 leading-tight">
+            <h1 className="font-extrabold text-2xl sm:text-3xl lg:text-[32px] tracking-tight font-heading text-white leading-tight">
               Project Onboarding &amp; Monthly CUF Returns
             </h1>
-            <p className="text-sm text-zinc-600 leading-relaxed font-sans">
+            <p className="text-sm text-slate-300 leading-relaxed font-sans">
               Autonomous write surface for the national mega-project repository. Every ingested return undergoes server-side schema verification, agency canonicalization, and is sealed into a content-addressed Merkle tree snapshot.
             </p>
           </div>
 
           {/* Quick Authority Badge Card */}
-          <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-xs text-zinc-800 shrink-0 space-y-1.5 min-w-[240px]">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 font-bold flex items-center gap-1.5">
-              <ShieldCheck size={14} className="text-zinc-700" />
+          <div className="bg-black/40 border border-white/20 rounded-xl p-4 text-xs text-slate-200 shrink-0 space-y-1.5 min-w-[250px] backdrop-blur-md shadow-inner relative z-10">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-amber-400" />
               <span>Authority &amp; Role Gate</span>
             </div>
-            <div className="font-bold text-zinc-950 text-sm">
+            <div className="font-bold text-white text-sm font-heading">
               {session?.user || 'Official Reviewer'}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-zinc-600 font-mono">
+            <div className="flex items-center gap-2 text-[11px] text-slate-300 font-mono">
               <span>Capability:</span>
-              <span className={`px-2 py-0.5 rounded font-bold ${
-                canWrite ? 'bg-emerald-50 text-emerald-800 border border-emerald-300' : 'bg-amber-50 text-amber-800 border border-amber-300'
+              <span className={`px-2 py-0.5 rounded font-bold font-mono ${
+                canWrite ? 'bg-white/10 text-white border border-white/30' : 'bg-white/10 text-slate-300 border border-white/20'
               }`}>
                 {canWrite ? 'allocate_capital (Full Write)' : 'Read-Only Verification'}
               </span>
@@ -519,10 +520,10 @@ function AdminIngestInner() {
       )}
 
       {!canWrite && (
-        <motion.div variants={itemVariants} className="bg-zinc-100 border border-zinc-300 p-4 rounded-xl flex items-start gap-3 shadow-2xs">
-          <ShieldAlert size={18} className="text-zinc-600 shrink-0 mt-0.5" />
-          <div className="text-xs text-zinc-700 leading-relaxed font-sans">
-            <span className="font-bold text-zinc-900 text-[13px] block">Statutory Permission Notice</span>
+        <motion.div variants={itemVariants} className="bg-slate-100 border border-slate-300 p-4 rounded-xl flex items-start gap-3 shadow-2xs">
+          <ShieldAlert size={18} className="text-slate-600 shrink-0 mt-0.5" />
+          <div className="text-xs text-slate-700 leading-relaxed font-sans">
+            <span className="font-bold text-slate-900 text-[13px] block">Statutory Permission Notice</span>
             Your current login role enables validation previews but forbids modifying the corpus ledger. Changing the project denominator alters statutory CCEA and PIB thresholds across all 2,207 projects.
           </div>
         </motion.div>
@@ -535,7 +536,7 @@ function AdminIngestInner() {
         </motion.div>
       )}
 
-      {/* ── Segmented Navigation Tabs ─────────────────────────────────── */}
+      {/* ── Sovereign Institutional Segmented Navigation Tabs ─────────── */}
       <motion.nav
         variants={itemVariants}
         className="grid grid-cols-1 md:grid-cols-3 gap-3"
@@ -554,27 +555,27 @@ function AdminIngestInner() {
               onClick={() => setTab(t.id)}
               className={`flex items-start gap-3.5 p-4 rounded-xl transition-all cursor-pointer text-left border ${
                 active
-                  ? 'bg-zinc-950 text-white border-zinc-950 shadow-sm'
-                  : 'bg-white border-zinc-200/80 hover:bg-zinc-50/80 hover:border-zinc-300'
+                  ? 'bg-gov-navy text-white border-gov-navy shadow-md ring-1 ring-amber-400/20'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-2xs'
               }`}
             >
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                active ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-100 text-zinc-700'
+                active ? 'bg-white/15 text-amber-400 border border-white/20 font-bold' : 'bg-slate-100 text-gov-navy border border-slate-200'
               }`}>
                 <Icon size={16} />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className={`text-xs font-bold tracking-tight ${active ? 'text-white' : 'text-zinc-900'}`}>
+                  <span className={`text-xs font-bold tracking-tight font-heading ${active ? 'text-white' : 'text-gov-navy'}`}>
                     {t.label}
                   </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                    active ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-zinc-100 text-zinc-600 border-zinc-200'
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
+                    active ? 'bg-amber-400/20 text-amber-300 border-amber-400/30' : 'bg-slate-100 text-slate-600 border-slate-200'
                   }`}>
                     {t.badge}
                   </span>
                 </div>
-                <p className={`text-[11px] leading-snug mt-1 truncate ${active ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                <p className={`text-[11px] leading-snug mt-1 truncate ${active ? 'text-slate-300' : 'text-slate-500'}`}>
                   {t.desc}
                 </p>
               </div>
@@ -677,24 +678,24 @@ function OnboardTab({ vocab, canWrite }) {
   };
 
   return (
-    <form onSubmit={submit} className="bg-white rounded-xl border border-zinc-200/90 shadow-2xs overflow-hidden space-y-6 p-6 sm:p-8">
+    <form onSubmit={submit} className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden space-y-6 p-6 sm:p-8">
       {/* Form Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-5">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 text-xs font-mono text-zinc-700 font-bold uppercase tracking-wider">
-            <PlusCircle size={14} />
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-gov-navy font-bold uppercase tracking-wider">
+            <PlusCircle size={14} className="text-amber-500" />
             <span>Interactive Onboarding Form</span>
           </div>
-          <h2 className="text-xl font-bold text-zinc-950">
+          <h2 className="text-xl font-bold font-heading text-gov-navy">
             Register Mega-Project into the Central Ledger
           </h2>
-          <p className="text-xs text-zinc-500 font-sans">
+          <p className="text-xs text-slate-500 font-sans">
             All fields marked with an asterisk (<span className="text-rose-500 font-bold">*</span>) are enforced server-side.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-zinc-600 font-mono bg-zinc-50 px-3 py-1.5 rounded-lg border border-zinc-200">
-          <Database size={13} className="text-zinc-500" />
+        <div className="flex items-center gap-2 text-xs text-slate-600 font-mono bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+          <Database size={13} className="text-gov-navy" />
           <span>{vocab.sectors.length} Sectors · {vocab.agencies.length} Resolvable Entities</span>
         </div>
       </div>
@@ -703,15 +704,15 @@ function OnboardTab({ vocab, canWrite }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* ── Group 1: Identity & Mandate ── */}
-        <div className="bg-zinc-50/70 rounded-xl border border-zinc-200/80 p-5 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200 pb-2">
-            <Building2 size={14} className="text-zinc-700" />
+        <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-5 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-gov-navy uppercase tracking-wider border-b border-slate-200 pb-2">
+            <Building2 size={14} className="text-gov-navy" />
             <span>1. Project Identity &amp; Sector</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Project ID (MoSPI / OCMS) <span className="text-rose-500">*</span>
               </label>
               <input
@@ -722,19 +723,19 @@ function OnboardTab({ vocab, canWrite }) {
                 value={form.ProjectId}
                 onChange={set('ProjectId')}
                 placeholder="e.g. 706719"
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs text-slate-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Sector Name <span className="text-rose-500">*</span>
               </label>
               <select
                 required
                 value={form.SectorName}
                 onChange={set('SectorName')}
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs font-sans cursor-pointer"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs font-sans cursor-pointer text-slate-900"
               >
                 <option value="">Select Controlled Sector…</option>
                 {vocab.sectors.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -743,7 +744,7 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-800 mb-1">
+            <label className="block text-xs font-bold text-gov-navy mb-1">
               Project Name <span className="text-rose-500">*</span>
             </label>
             <input
@@ -753,12 +754,12 @@ function OnboardTab({ vocab, canWrite }) {
               value={form.ProjectName}
               onChange={set('ProjectName')}
               placeholder="e.g. Guwahati Ring Road Package 3 (Four-Laning)"
-              className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs text-slate-900 font-sans"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-800 mb-1">
+            <label className="block text-xs font-bold text-gov-navy mb-1">
               Line Ministry <span className="text-rose-500">*</span>
             </label>
             <input
@@ -768,20 +769,20 @@ function OnboardTab({ vocab, canWrite }) {
               value={form.LineMinistry}
               onChange={set('LineMinistry')}
               placeholder="e.g. Ministry of Road Transport and Highways"
-              className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs text-slate-900 font-sans"
             />
           </div>
         </div>
 
         {/* ── Group 2: Agency & Entity Resolution ── */}
-        <div className="bg-zinc-50/70 rounded-xl border border-zinc-200/80 p-5 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200 pb-2">
-            <ShieldCheck size={14} className="text-zinc-700" />
+        <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-5 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-gov-navy uppercase tracking-wider border-b border-slate-200 pb-2">
+            <ShieldCheck size={14} className="text-gov-navy" />
             <span>2. Executing Agency &amp; Resolution</span>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-800 mb-1">
+            <label className="block text-xs font-bold text-gov-navy mb-1">
               Executing Agency (COMPANYNAME) <span className="text-rose-500">*</span>
             </label>
             <input
@@ -792,22 +793,22 @@ function OnboardTab({ vocab, canWrite }) {
               value={form.COMPANYNAME}
               onChange={set('COMPANYNAME')}
               placeholder="Start typing e.g. NHAI, RVNL, NTPC, BHEL..."
-              className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs font-sans"
+              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs font-sans text-slate-900"
             />
             <datalist id="known-agencies">
               {vocab.agencies.map((a) => <option key={a} value={a} />)}
             </datalist>
-            <p className="text-[11px] text-zinc-500 mt-1.5 leading-relaxed">
+            <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
               Unresolved agencies are <strong>rejected &amp; queued for triage</strong> to avoid biased predictions. {vocab.agencies.length} canonical spellings loaded.
             </p>
           </div>
 
           <div className="pt-2">
-            <label className="block text-xs font-bold text-zinc-800 mb-1">
+            <label className="block text-xs font-bold text-gov-navy mb-1">
               Original Sanctioned Capex (₹ Crore) <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-bold font-mono">₹</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-mono">₹</span>
               <input
                 type="number"
                 min="0.01"
@@ -816,61 +817,61 @@ function OnboardTab({ vocab, canWrite }) {
                 value={form.OriginalCost}
                 onChange={set('OriginalCost')}
                 placeholder="1250.00"
-                className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono font-bold text-zinc-950 focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+                className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono font-bold text-gov-navy focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs"
               />
             </div>
           </div>
         </div>
 
         {/* ── Group 3: Lifecycle Dates ── */}
-        <div className="bg-zinc-50/70 rounded-xl border border-zinc-200/80 p-5 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200 pb-2">
-            <Calendar size={14} className="text-zinc-700" />
+        <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-5 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-gov-navy uppercase tracking-wider border-b border-slate-200 pb-2">
+            <Calendar size={14} className="text-gov-navy" />
             <span>3. Sanction &amp; Milestone Target Dates</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Sanction Date (CCEA / PIB)
               </label>
               <input
                 type="date"
                 value={form.SanctionDate}
                 onChange={set('SanctionDate')}
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs cursor-pointer"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs cursor-pointer text-slate-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Original Target Completion Date
               </label>
               <input
                 type="date"
                 value={form.OriginalEndDate}
                 onChange={set('OriginalEndDate')}
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs cursor-pointer"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs cursor-pointer text-slate-900"
               />
             </div>
           </div>
         </div>
 
         {/* ── Group 4: Geospatial & Coordinates ── */}
-        <div className="bg-zinc-50/70 rounded-xl border border-zinc-200/80 p-5 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-zinc-900 uppercase tracking-wider border-b border-zinc-200 pb-2">
-            <Compass size={14} className="text-zinc-700" />
+        <div className="bg-slate-50/70 rounded-xl border border-slate-200 p-5 space-y-4">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-gov-navy uppercase tracking-wider border-b border-slate-200 pb-2">
+            <Compass size={14} className="text-gov-navy" />
             <span>4. State &amp; Geospatial Coordinates</span>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-zinc-800 mb-1">
+            <label className="block text-xs font-bold text-gov-navy mb-1">
               State / Union Territory
             </label>
             <select
               value={form.StateName}
               onChange={set('StateName')}
-              className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs font-sans cursor-pointer"
+              className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs font-sans cursor-pointer text-slate-900"
             >
               <option value="">Not Specified (Multi-State / Linear)</option>
               {(vocab.states || []).map((s) => <option key={s} value={s}>{s}</option>)}
@@ -879,7 +880,7 @@ function OnboardTab({ vocab, canWrite }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Latitude (°N)
               </label>
               <input
@@ -890,12 +891,12 @@ function OnboardTab({ vocab, canWrite }) {
                 value={form.Latitude}
                 onChange={set('Latitude')}
                 placeholder="e.g. 26.144517"
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs text-slate-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-800 mb-1">
+              <label className="block text-xs font-bold text-gov-navy mb-1">
                 Longitude (°E)
               </label>
               <input
@@ -906,7 +907,7 @@ function OnboardTab({ vocab, canWrite }) {
                 value={form.Longitude}
                 onChange={set('Longitude')}
                 placeholder="e.g. 91.736236"
-                className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg font-mono focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950 outline-none shadow-2xs"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg font-mono focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs text-slate-900"
               />
             </div>
           </div>
@@ -915,9 +916,9 @@ function OnboardTab({ vocab, canWrite }) {
 
       {/* ── Real-time Pre-Flight Validation Preview ── */}
       {checking && (
-        <div className="bg-zinc-100 border border-zinc-300 rounded-xl p-3.5 flex items-center gap-3">
-          <Loader2 size={16} className="animate-spin text-zinc-800" />
-          <span className="text-xs text-zinc-900 font-mono">Running live server validator and geocode resolution engine…</span>
+        <div className="bg-slate-100 border border-slate-300 rounded-xl p-3.5 flex items-center gap-3">
+          <Loader2 size={16} className="animate-spin text-gov-navy" />
+          <span className="text-xs text-slate-900 font-mono">Running live server validator and geocode resolution engine…</span>
         </div>
       )}
 
@@ -937,8 +938,8 @@ function OnboardTab({ vocab, canWrite }) {
       <JobResult job={job} />
 
       {/* ── Submit & Action Buttons ── */}
-      <div className="pt-4 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-xs text-zinc-500 font-mono">
+      <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-slate-500 font-mono">
           {complete ? '✓ All required fields satisfied' : '⚠️ Complete all required fields (*) to enable submission'}
         </div>
 
@@ -946,7 +947,7 @@ function OnboardTab({ vocab, canWrite }) {
           <button
             type="button"
             onClick={() => { setForm(EMPTY_FORM); setPreview(null); setJob(null); setSubmitError(null); }}
-            className="px-4 py-2.5 rounded-lg border border-zinc-300 text-zinc-700 hover:bg-zinc-100 font-bold text-xs transition-colors cursor-pointer w-full sm:w-auto text-center shadow-2xs"
+            className="px-4 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs transition-colors cursor-pointer w-full sm:w-auto text-center shadow-2xs"
           >
             Reset Form
           </button>
@@ -954,7 +955,7 @@ function OnboardTab({ vocab, canWrite }) {
           <button
             type="submit"
             disabled={!complete || busy || !canWrite}
-            className="px-6 py-2.5 rounded-lg bg-zinc-950 hover:bg-black text-white text-xs font-bold tracking-wide uppercase flex items-center justify-center gap-2 shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer w-full sm:w-auto transition-colors"
+            className="px-6 py-2.5 rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 border border-sky-900 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer w-full sm:w-auto transition-colors"
           >
             {busy ? <Loader2 size={15} className="animate-spin text-white" /> : <PlusCircle size={15} />}
             <span>{busy ? 'Sealing into Merkle Tree…' : 'Onboard Project'}</span>
@@ -1009,17 +1010,17 @@ function CufTab({ canWrite }) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200/90 shadow-2xs p-6 sm:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-5">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-5">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 text-xs font-mono text-zinc-700 font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-gov-navy font-bold uppercase tracking-wider">
             <UploadCloud size={14} />
             <span>Monthly Flash Report Ingest</span>
           </div>
-          <h2 className="text-xl font-bold text-zinc-950">
+          <h2 className="text-xl font-bold text-gov-navy">
             Bulk MoSPI Common Upload Form (CUF) Ingestion
           </h2>
-          <p className="text-xs text-zinc-500 font-sans">
+          <p className="text-xs text-slate-500 font-sans">
             Accepts official CSV / XLSX monthly returns. Header names are normalized case-insensitively.
           </p>
         </div>
@@ -1029,10 +1030,10 @@ function CufTab({ canWrite }) {
       <div
         className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center transition-all cursor-pointer flex flex-col items-center justify-center space-y-4 ${
           drag
-            ? 'border-zinc-900 bg-zinc-100/60 ring-4 ring-zinc-900/10'
+            ? 'border-gov-navy bg-slate-100/60 ring-4 ring-gov-navy/10'
             : file
             ? 'border-emerald-500 bg-emerald-50/20'
-            : 'border-zinc-300 hover:border-zinc-400 bg-zinc-50/40'
+            : 'border-slate-300 hover:border-gov-navy bg-slate-50/50'
         }`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
@@ -1049,16 +1050,16 @@ function CufTab({ canWrite }) {
         />
 
         <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-2xs transition-transform ${
-          file ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-200 text-zinc-700 group-hover:scale-105'
+          file ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-gov-navy group-hover:scale-105'
         }`}>
           {file ? <FileCheck size={24} /> : <FileUp size={24} />}
         </div>
 
         <div className="space-y-1.5 max-w-md">
-          <h3 className="font-bold text-sm text-zinc-900">
+          <h3 className="font-bold text-sm text-gov-navy">
             {file ? file.name : 'Drag and Drop Common Upload Form (CSV / XLSX)'}
           </h3>
-          <p className="text-xs text-zinc-500 font-sans leading-relaxed">
+          <p className="text-xs text-slate-500 font-sans leading-relaxed">
             {file
               ? `${(file.size / 1024).toFixed(1)} KB · File ready for batch validation`
               : 'Drop your monthly return file here or click to browse from local computer.'}
@@ -1068,7 +1069,7 @@ function CufTab({ canWrite }) {
         {!file && (
           <button
             type="button"
-            className="px-4 py-2 rounded-lg bg-white border border-zinc-300 text-zinc-800 text-xs font-bold hover:bg-zinc-100 shadow-2xs"
+            className="px-4 py-2 rounded-lg bg-white border border-slate-300 text-gov-navy text-xs font-bold hover:bg-slate-100 shadow-2xs"
           >
             Select CUF File
           </button>
@@ -1087,12 +1088,12 @@ function CufTab({ canWrite }) {
       <ValidationReport report={report} />
       <JobResult job={job} />
 
-      <div className="pt-4 border-t border-zinc-100 flex items-center justify-end gap-3">
+      <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
         <button
           type="button"
           disabled={!file || busy || !canWrite}
           onClick={upload}
-          className="px-8 py-3 rounded-lg bg-zinc-950 hover:bg-black text-white text-xs font-bold tracking-wide uppercase flex items-center gap-2 shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          className="px-8 py-3 rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-xs font-bold tracking-wide uppercase flex items-center gap-2 border border-sky-900 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {busy ? <Loader2 size={16} className="animate-spin text-white" /> : <UploadCloud size={16} />}
           <span>{busy ? 'Validating & Rebuilding Snapshot…' : 'Validate & Ingest CUF Return'}</span>
@@ -1124,13 +1125,13 @@ function HistoryTab({ enabled }) {
   return (
     <div className="space-y-6">
       {/* Table 1: Ingest Jobs */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 shadow-2xs overflow-hidden space-y-0">
-        <div className="bg-zinc-50/80 px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden space-y-0">
+        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
           <div className="space-y-0.5">
-            <h3 className="font-bold text-base text-zinc-950">
+            <h3 className="font-bold text-base text-gov-navy">
               Recent Ledger Ingestion Transactions
             </h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-slate-500">
               Audit trail of content-addressed corpus versions and Merkle roots
             </p>
           </div>
@@ -1139,7 +1140,7 @@ function HistoryTab({ enabled }) {
             type="button"
             onClick={refresh}
             disabled={loading}
-            className="px-3 py-1.5 rounded-lg bg-white border border-zinc-300 text-zinc-800 text-xs font-bold hover:bg-zinc-100 flex items-center gap-1.5 shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-gov-navy text-xs font-bold hover:bg-slate-100 flex items-center gap-1.5 shadow-2xs"
           >
             <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
             <span>Refresh</span>
@@ -1148,12 +1149,12 @@ function HistoryTab({ enabled }) {
 
         <div className="overflow-x-auto">
           {jobs.length === 0 ? (
-            <div className="p-10 text-center text-zinc-400 font-mono text-xs">
+            <div className="p-10 text-center text-slate-400 font-mono text-xs">
               No jobs recorded this session. (In-process audit log resets on container restart).
             </div>
           ) : (
             <table className="w-full text-left text-xs border-collapse font-sans">
-              <thead className="bg-zinc-100/80 border-b border-zinc-200 text-zinc-600 text-[10.5px] uppercase font-mono font-bold">
+              <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-[10.5px] uppercase font-mono font-bold">
                 <tr>
                   <th className="py-3 px-4">Job ID</th>
                   <th className="py-3 px-4">Type</th>
@@ -1164,26 +1165,26 @@ function HistoryTab({ enabled }) {
                   <th className="py-3 px-4">Duration</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-slate-100">
                 {jobs.map((j) => (
-                  <tr key={j.job_id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-zinc-950">{j.job_id.slice(0, 8)}</td>
-                    <td className="py-3 px-4 font-medium text-zinc-800">{j.kind}</td>
+                  <tr key={j.job_id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-gov-navy">{j.job_id.slice(0, 8)}</td>
+                    <td className="py-3 px-4 font-medium text-slate-800">{j.kind}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2 py-0.5 rounded text-[10.5px] font-mono font-bold uppercase ${
                         j.state === 'succeeded' ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
                         : j.state === 'failed' ? 'bg-rose-50 text-rose-800 border border-rose-300'
-                        : 'bg-zinc-100 text-zinc-800 border border-zinc-300'
+                        : 'bg-slate-100 text-slate-800 border border-slate-300'
                       }`}>
                         {j.state}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-zinc-600 font-mono">{j.submitted_by || 'admin'}</td>
-                    <td className="py-3 px-4 font-mono font-bold text-zinc-950">
+                    <td className="py-3 px-4 text-slate-600 font-mono">{j.submitted_by || 'admin'}</td>
+                    <td className="py-3 px-4 font-mono font-bold text-gov-navy">
                       {j.detail?.corpus_version ? `v${j.detail.corpus_version}` : '—'}
                     </td>
                     <td className="py-3 px-4"><Hash value={j.detail?.corpus_root} /></td>
-                    <td className="py-3 px-4 font-mono text-zinc-500">
+                    <td className="py-3 px-4 font-mono text-slate-500">
                       {j.duration_s != null ? `${j.duration_s}s` : '—'}
                     </td>
                   </tr>
@@ -1195,13 +1196,13 @@ function HistoryTab({ enabled }) {
       </div>
 
       {/* Table 2: Unresolved Agencies Queue */}
-      <div className="bg-white rounded-xl border border-zinc-200/90 shadow-2xs overflow-hidden space-y-0">
-        <div className="bg-zinc-50/80 px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden space-y-0">
+        <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
           <div className="space-y-0.5">
-            <h3 className="font-bold text-base text-zinc-950">
+            <h3 className="font-bold text-base text-gov-navy">
               Unresolved Executing Agency Triage Queue
             </h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-slate-500">
               Raw entity strings from rejected rows awaiting canonical resolution mapping
             </p>
           </div>
@@ -1209,7 +1210,7 @@ function HistoryTab({ enabled }) {
 
         <div className="p-4 sm:p-6 overflow-x-auto">
           {!enabled ? (
-            <div className="p-8 text-center bg-zinc-50 rounded-xl border border-zinc-200 text-zinc-500 text-xs font-sans">
+            <div className="p-8 text-center bg-slate-50 rounded-xl border border-slate-200 text-slate-500 text-xs font-sans">
               The persistent mapping queue is stored in PostgreSQL and is unavailable in offline CSV bootstrap mode.
             </div>
           ) : queueError ? (
@@ -1224,19 +1225,19 @@ function HistoryTab({ enabled }) {
             </div>
           ) : (
             <table className="w-full text-left text-xs border-collapse font-sans">
-              <thead className="bg-zinc-100/80 border-b border-zinc-200 text-zinc-600 text-[10.5px] uppercase font-mono font-bold">
+              <thead className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-[10.5px] uppercase font-mono font-bold">
                 <tr>
                   <th className="py-2.5 px-3.5">Raw Agency Name</th>
                   <th className="py-2.5 px-3.5">Occurrence Count</th>
                   <th className="py-2.5 px-3.5">First Seen Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-slate-100">
                 {queue.map((q) => (
-                  <tr key={q.raw_name} className="hover:bg-zinc-50 transition-colors">
-                    <td className="py-2.5 px-3.5 font-bold text-zinc-950">{q.raw_name}</td>
+                  <tr key={q.raw_name} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-2.5 px-3.5 font-bold text-gov-navy">{q.raw_name}</td>
                     <td className="py-2.5 px-3.5 font-mono font-bold text-amber-800">{q.occurrences}</td>
-                    <td className="py-2.5 px-3.5 font-mono text-zinc-500">{String(q.first_seen_at).slice(0, 19)}</td>
+                    <td className="py-2.5 px-3.5 font-mono text-slate-500">{String(q.first_seen_at).slice(0, 19)}</td>
                   </tr>
                 ))}
               </tbody>

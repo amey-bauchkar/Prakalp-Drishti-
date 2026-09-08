@@ -47,7 +47,7 @@ function InstitutionalHeader() {
   ];
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs select-none">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-[100] shadow-xs select-none">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
         {/* Brand & Prakalp Drishti Logo */}
         <Link to="/" className="flex items-center gap-3 shrink-0 group">

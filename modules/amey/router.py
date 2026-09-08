@@ -5,8 +5,9 @@ Exposes KAAL-CHAKRA, SETU-GRAPH, VITTA-VYUHA, and PRAGATI-SAARTHI endpoints.
 
 import json
 import os
+import re
 from fastapi import APIRouter, Query, HTTPException, Depends
-from typing import Optional
+from typing import Optional, List, Dict
 
 from analytics_engine.contracts import (
     ProjectForecast, DependencySubGraph, AllocationRequest,
@@ -366,23 +367,137 @@ def get_early_warning(
 class CopilotQuestion(BaseModel):
     question: str
     project_id: str = "400188"
+    # Prior turns, oldest first: [{"role": "user"|"assistant", "content": "..."}].
+    # Caller-supplied and therefore ATTACKER-CONTROLLED: sanitised on the way in,
+    # and its numbers are explicitly excluded from the admissible fact set.
+    history: List[Dict[str, str]] = Field(default_factory=list)
 
 
 @router.post("/ask")
 def ask_copilot(q: CopilotQuestion):
-    """Outcome (h): grounded natural-language Q&A over the Fact layer.
+    """Outcome (h): dual-mode grounded Q&A with multi-turn memory.
 
-    Retrieval is always deterministic: the answer is assembled from Fact objects
-    carrying SHA-256 lineage and Merkle inclusion proofs. When GROQ_API_KEY is set
-    a cloud model additionally PHRASES those facts, and its output is rejected if it
-    contains any number the retrieval layer did not vouch for. Without a key the
-    system stays fully air-gapped and serves the assembled answer directly.
+    The question is routed to one of three modes, each with a different safety
+    rule, because one rule cannot serve all three:
+
+      PROJECT_FACT_QUERY       assembled from Fact objects carrying SHA-256
+                               lineage and Merkle inclusion proofs. If a model
+                               phrases them, EVERY figure it states must appear
+                               in that fact set or the generation is discarded.
+
+      HYBRID_ANALYTICAL_QUERY  same strictness for project figures; statutory
+                               reasoning around them is model-generated and is
+                               labelled as not provenanced.
+
+      GENERAL_QUERY            policy and engineering knowledge, with no project
+                               data attached. Guarded in the OPPOSITE direction:
+                               the answer is rejected if it asserts a
+                               project-shaped figure, because nothing here
+                               carries provenance.
+
+    With no GROQ_API_KEY the process stays fully air-gapped: project questions
+    are served from the deterministic fact assembly, and general questions
+    decline rather than guess.
     """
     try:
-        from analytics_engine.copilot_qa import answer_question
-        from analytics_engine.copilot_llm import phrase_answer
-        pid = sanitize_id(q.project_id, field="project_id")
-        return phrase_answer(q.question, answer_question(q.question, pid))
+        from analytics_engine.copilot_qa import (
+            answer_question, classify_query, build_project_context)
+        from analytics_engine.copilot_llm import answer_with_context
+
+        route = classify_query(q.question, sanitize_id(q.project_id, field="project_id"))
+        mode = route["mode"]
+
+        # The retrieval layer echoes the caller's question back in its payload.
+        # phrase_answer() used to strip the tag characters on the way out; these
+        # branches bypass it, so the stripping has to happen here or the endpoint
+        # hands back an executable payload. Not exploitable through this frontend
+        # (JSON + nosniff, and React escapes on render), but an API should not
+        # rely on today's client being safe.
+        def _echo_safe(text: str) -> str:
+            return re.sub(r"[<>]", "", str(text or ""))[:500]
+
+        lang = route.get("language") or {}
+
+        if mode == "CONVERSATIONAL_QUERY":
+            # A greeting gets a greeting. This used to fall through to the policy
+            # path and come back as "No substantive query detected", which reads
+            # as a form rejecting an input rather than an assistant answering one.
+            from analytics_engine.copilot_qa import conversational_reply
+            pid_hint = route.get("project_id") or ""
+            gen = answer_with_context(q.question, mode, facts=None,
+                                      history=q.history, project_id=pid_hint,
+                                      lang=lang)
+            return {
+                "question": _echo_safe(q.question),
+                "project_id": pid_hint or None,
+                "routing": route,
+                # The offline reply is native in its greeting and English in its
+                # body: short greetings are safe to ship untranslated, whole
+                # administrative paragraphs in nine languages are not.
+                "answer": gen["text"] or conversational_reply(lang, pid_hint),
+                "answer_llm": gen["text"],
+                "cited_fact_ids": [],
+                "grounding": ("Conversational reply. No project figures are asserted "
+                              "and none are claimed to be verified."),
+                "llm": gen["llm"],
+            }
+
+        if mode == "GENERAL_QUERY":
+            gen = answer_with_context(q.question, mode, facts=None,
+                                      history=q.history, project_id="", lang=lang)
+            return {
+                "question": _echo_safe(q.question),
+                "project_id": None,
+                "routing": route,
+                # The decline message must name the ACTUAL reason. It previously
+                # said "no API key configured" for every failure path, so a
+                # transient model outage was reported to the user as a
+                # deliberate air-gapped posture -- two very different states.
+                "answer": gen["text"] or {
+                    "deterministic": (
+                        "This is a general policy question, and the generative "
+                        "surface is switched off (no API key configured) — the "
+                        "sovereign default. Project questions are still answered "
+                        "in full from the verified corpus, which needs no model."),
+                    "deterministic_fallback": (
+                        "This is a general policy question. The language model was "
+                        "unreachable just now, and there is no verified corpus "
+                        "answer for a general question, so nothing is returned "
+                        "rather than a guess. Please retry."),
+                    "general_guard_tripped": (
+                        "The generated answer asserted project-specific figures, "
+                        "which carry no provenance in general mode, so it was "
+                        "discarded. Ask about the project directly to get "
+                        "Merkle-verified figures."),
+                }.get(gen["llm"]["mode"],
+                      "No answer could be produced for this general question."),
+                "answer_llm": gen["text"],
+                "cited_fact_ids": [],
+                "grounding": ("General domain knowledge. NOT drawn from the MoSPI "
+                              "corpus and NOT Merkle-provenanced."),
+                "llm": gen["llm"],
+            }
+
+        pid = sanitize_id(route["project_id"], field="project_id")
+        deterministic = answer_question(q.question, pid)      # always available
+        context = build_project_context(pid)                  # every engine's view
+
+        gen = answer_with_context(q.question, mode, facts=context,
+                                  history=q.history, project_id=pid, lang=lang)
+
+        out = dict(deterministic)
+        if isinstance(out.get("question"), str):
+            out["question"] = _echo_safe(out["question"])
+        out["project_id"] = pid
+        out["routing"] = route
+        out["context_sections"] = {
+            "available": context["available_sections"],
+            "unavailable": context["unavailable_sections"],
+        }
+        if gen["text"]:
+            out["answer_llm"] = gen["text"]
+        out["llm"] = gen["llm"]
+        return out
     except HTTPException:
         raise
     except Exception as e:

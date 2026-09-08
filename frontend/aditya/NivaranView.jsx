@@ -365,7 +365,7 @@ export default function NivaranView() {
                 </p>
 
                 {/* Clean Refactored Flagged Contract Clauses Accordion */}
-                <div className="max-h-[540px] overflow-y-auto pr-1">
+                <div data-lenis-prevent className="max-h-[540px] overflow-y-auto pr-1">
                   <FlaggedContractClauses
                     clauses={niv?.flagged_clauses || []}
                     initialExpandedIndex={0}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -68,12 +68,48 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
     fetchBriefing(targetId);
   };
 
-  const filteredProjects = projectList.filter(p => {
-    const idStr = p.project_id ? String(p.project_id) : "";
-    const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
-    const search = (searchInput || "").toLowerCase();
-    return idStr.includes(search) || nameStr.includes(search);
-  }).slice(0, 100);
+  const filteredProjects = useMemo(() => {
+    const query = (searchInput || "").trim().toLowerCase();
+    if (!query) {
+      return [...projectList]
+        .sort((a, b) => (a.project_name || "").localeCompare(b.project_name || ""))
+        .slice(0, 100);
+    }
+    return [...projectList]
+      .filter(p => {
+        const idStr = p.project_id ? String(p.project_id) : "";
+        const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
+        return idStr.includes(query) || nameStr.includes(query);
+      })
+      .sort((a, b) => {
+        const aId = String(a.project_id || "").toLowerCase();
+        const bId = String(b.project_id || "").toLowerCase();
+        const aName = (a.project_name || "").toLowerCase();
+        const bName = (b.project_name || "").toLowerCase();
+
+        // 1. Exact ID starts with query
+        const aIdStarts = aId.startsWith(query);
+        const bIdStarts = bId.startsWith(query);
+        if (aIdStarts && !bIdStarts) return -1;
+        if (!aIdStarts && bIdStarts) return 1;
+
+        // 2. Name starts with query (prioritize "P" for "patna", "polavaram", etc.)
+        const aStarts = aName.startsWith(query);
+        const bStarts = bName.startsWith(query);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        // 3. Word in name starts with query
+        const aWordStarts = aName.split(/\s+/).some(w => w.startsWith(query));
+        const bWordStarts = bName.split(/\s+/).some(w => w.startsWith(query));
+        if (aWordStarts && !bWordStarts) return -1;
+        if (!aWordStarts && bWordStarts) return 1;
+
+        // 4. Alphabetical sort
+        return (a.project_name || "").localeCompare(b.project_name || "");
+      })
+      .slice(0, 100);
+  }, [projectList, searchInput]);
 
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
@@ -89,7 +125,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-slate-900 shadow-xl border border-slate-700/50 relative z-50"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-slate-900 shadow-xl border border-slate-700/50 relative z-20"
       >
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
         <div className="space-y-3 max-w-2xl relative z-10">
@@ -105,7 +141,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-50">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-30">
           {/* Quick Project Lookup - Autocomplete */}
           <div className="relative w-full sm:w-80 shrink-0">
             <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm focus-within:border-amber-400/50 transition-all">
@@ -137,9 +173,9 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                   initial={{ opacity: 0, y: -6 }} 
                   animate={{ opacity: 1, y: 0 }} 
                   exit={{ opacity: 0, y: -6 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-[100] max-h-80 flex flex-col"
+                  className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-40 max-h-80 flex flex-col"
                 >
-                  <div className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+                  <div data-lenis-prevent className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
                     {filteredProjects.map((p) => (
                       <div 
                         key={p.project_id} 
@@ -400,7 +436,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
       {/* Slide-Out Audit Lineage Drawer */}
       {drawerOpen && activeFact && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex justify-end transition-opacity">
-          <div className="w-full max-w-md bg-white h-full shadow-2xl p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
+          <div data-lenis-prevent className="w-full max-w-md bg-white h-full shadow-2xl p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2.5">
                 <Database className="w-5 h-5 text-gov-navy" />
@@ -452,7 +488,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
               <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 space-y-3">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Step-by-Step Proof Path</span>
-                <div className="relative pl-3 space-y-3 max-h-40 overflow-y-auto">
+                <div data-lenis-prevent className="relative pl-3 space-y-3 max-h-40 overflow-y-auto">
                   <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-400 to-emerald-200/20"></div>
                   {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
                     activeFact.lineage.merkle_proof.map((p, idx) => (

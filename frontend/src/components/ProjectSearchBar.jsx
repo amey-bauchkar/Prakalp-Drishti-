@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search, X, MapPin, Building2, TrendingUp, AlertTriangle, Command } from 'lucide-react';
 
@@ -56,18 +56,53 @@ export default function ProjectSearchBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredProjects = query.trim() === ''
-    ? projects.slice(0, 6)
-    : projects.filter((p) => {
-        const q = query.toLowerCase();
+  const filteredProjects = useMemo(() => {
+    const q = (query || "").trim().toLowerCase();
+    if (!q) {
+      return [...projects]
+        .sort((a, b) => (a.project_name || "").localeCompare(b.project_name || ""))
+        .slice(0, 8);
+    }
+    return [...projects]
+      .filter((p) => {
+        const idStr = String(p.project_id || "").toLowerCase();
+        const nameStr = String(p.project_name || "").toLowerCase();
+        const stateStr = String(p.state || "").toLowerCase();
+        const sectorStr = String(p.sector || "").toLowerCase();
+        const compStr = String(p.company || "").toLowerCase();
         return (
-          p.project_id.toLowerCase().includes(q) ||
-          p.project_name.toLowerCase().includes(q) ||
-          (p.state && p.state.toLowerCase().includes(q)) ||
-          (p.sector && p.sector.toLowerCase().includes(q)) ||
-          (p.company && p.company.toLowerCase().includes(q))
+          idStr.includes(q) ||
+          nameStr.includes(q) ||
+          stateStr.includes(q) ||
+          sectorStr.includes(q) ||
+          compStr.includes(q)
         );
-      }).slice(0, 12);
+      })
+      .sort((a, b) => {
+        const aId = String(a.project_id || "").toLowerCase();
+        const bId = String(b.project_id || "").toLowerCase();
+        const aName = (a.project_name || "").toLowerCase();
+        const bName = (b.project_name || "").toLowerCase();
+
+        const aIdStarts = aId.startsWith(q);
+        const bIdStarts = bId.startsWith(q);
+        if (aIdStarts && !bIdStarts) return -1;
+        if (!aIdStarts && bIdStarts) return 1;
+
+        const aStarts = aName.startsWith(q);
+        const bStarts = bName.startsWith(q);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+
+        const aWordStarts = aName.split(/\s+/).some(w => w.startsWith(q));
+        const bWordStarts = bName.split(/\s+/).some(w => w.startsWith(q));
+        if (aWordStarts && !bWordStarts) return -1;
+        if (!aWordStarts && bWordStarts) return 1;
+
+        return (a.project_name || "").localeCompare(b.project_name || "");
+      })
+      .slice(0, 16);
+  }, [projects, query]);
 
   const handleSelectProject = (projectId) => {
     setActiveProjectId(projectId);
@@ -116,7 +151,7 @@ export default function ProjectSearchBar() {
             <span>MoSPI Database</span>
           </div>
 
-          <div className="overflow-y-auto flex-1 divide-y divide-slate-100">
+          <div data-lenis-prevent className="overflow-y-auto flex-1 divide-y divide-slate-100">
             {filteredProjects.length === 0 ? (
               <div className="px-4 py-8 text-center text-xs text-text-muted">
                 No projects found matching "<span className="font-bold text-gov-navy">{query}</span>"

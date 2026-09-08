@@ -27,6 +27,19 @@ export default function SmoothScrollProvider({ children, options = {} }) {
       touchMultiplier: 1.0,
       infinite: false,
       autoResize: true,
+      allowNestedScroll: true, // Automatically permit native wheel scroll in nested overflow containers
+      prevent: (node) => {
+        if (!node || typeof node.closest !== 'function') return false;
+        if (node.closest('[data-lenis-prevent]')) return true;
+        let current = node;
+        while (current && current !== document.body && current !== document.documentElement) {
+          const style = window.getComputedStyle(current);
+          const isScrollable = (style.overflowY === 'auto' || style.overflowY === 'scroll') && current.scrollHeight > current.clientHeight;
+          if (isScrollable) return true;
+          current = current.parentElement;
+        }
+        return false;
+      },
       ...options,
     });
 

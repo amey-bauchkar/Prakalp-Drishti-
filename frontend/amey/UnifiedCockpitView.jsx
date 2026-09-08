@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import SatelliteViewer from './SatelliteViewer';
 import CopilotChat from './CopilotChat';
@@ -89,12 +89,42 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
     runSimulation(targetId, delayShock, budgetPool, riskKappa, enforceNer);
   };
 
-  const filteredProjects = projectList.filter((p) => {
-    const idStr = p.project_id ? String(p.project_id) : '';
-    const nameStr = p.project_name ? String(p.project_name).toLowerCase() : '';
-    const search = (inputVal || '').toLowerCase();
-    return idStr.includes(search) || nameStr.includes(search);
-  }).slice(0, 100);
+  const filteredProjects = useMemo(() => {
+    const search = (inputVal || '').trim().toLowerCase();
+    if (!search) {
+      return [...projectList]
+        .sort((a, b) => (a.project_name || '').localeCompare(b.project_name || '', undefined, { sensitivity: 'base' }))
+        .slice(0, 100);
+    }
+    return projectList
+      .filter((p) => {
+        const idStr = p.project_id ? String(p.project_id) : '';
+        const nameStr = p.project_name ? String(p.project_name).toLowerCase() : '';
+        return idStr.includes(search) || nameStr.includes(search);
+      })
+      .sort((a, b) => {
+        const nameA = (a.project_name || '').toLowerCase();
+        const nameB = (b.project_name || '').toLowerCase();
+        const idA = a.project_id ? String(a.project_id) : '';
+        const idB = b.project_id ? String(b.project_id) : '';
+
+        // Priority 1: ID starts with search query
+        const aIdStarts = idA.startsWith(search);
+        const bIdStarts = idB.startsWith(search);
+        if (aIdStarts && !bIdStarts) return -1;
+        if (!aIdStarts && bIdStarts) return 1;
+
+        // Priority 2: Name starts with search query (e.g. typing "p" places "Polavaram...", "Patna..." first)
+        const aNameStarts = nameA.startsWith(search);
+        const bNameStarts = nameB.startsWith(search);
+        if (aNameStarts && !bNameStarts) return -1;
+        if (!aNameStarts && bNameStarts) return 1;
+
+        // Priority 3: Alphabetical order (A-Z) by project name
+        return (a.project_name || '').localeCompare(b.project_name || '', undefined, { sensitivity: 'base' });
+      })
+      .slice(0, 100);
+  }, [projectList, inputVal]);
 
   const pct = (v, d = 1) => (Number.isFinite(v) ? (v * 100).toFixed(d) + '%' : '—');
   const cr = (v) => (Number.isFinite(v) ? '₹' + v.toLocaleString('en-IN') + ' Cr' : '—');
@@ -134,7 +164,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           ═══════════════════════════════════════════════════════════════ */}
       <motion.div 
         variants={itemVariants}
-        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/60 shadow-xl text-white relative z-50"
+        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/60 shadow-xl text-white relative z-20"
       >
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
@@ -158,7 +188,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           </div>
 
           {/* Quick Project Lookup - Autocomplete */}
-          <div className="relative w-full lg:w-96 shrink-0 z-50">
+          <div className="relative w-full lg:w-96 shrink-0 z-30">
             <form onSubmit={handleSearchSubmit} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm transition-all">
               <input
                 type="text"
@@ -186,9 +216,9 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               <motion.div 
                 initial={{ opacity: 0, y: -6 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-[100] max-h-80 flex flex-col"
+                className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-40 max-h-80 flex flex-col"
               >
-                <div className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+                <div data-lenis-prevent className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
                   {filteredProjects.map((p) => (
                     <div 
                       key={p.project_id} 

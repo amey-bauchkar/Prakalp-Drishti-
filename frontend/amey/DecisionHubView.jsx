@@ -116,7 +116,7 @@ export default function DecisionHubView() {
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">SYSTEM OPERATIONAL</span>
+            <span className="text-[11px] font-semibold text-white uppercase tracking-wider">SYSTEM OPERATIONAL</span>
           </span>
         </div>
 
@@ -175,6 +175,7 @@ export default function DecisionHubView() {
 
               {/* Independently Scrollable Engine List */}
               <nav
+                data-lenis-prevent
                 className="overflow-y-auto flex-1 divide-y divide-gov-border"
                 role="tablist"
                 aria-label="Decision engines"

@@ -105,7 +105,7 @@ export default function EOAuditorView() {
                 <div className="px-4 py-3 border-b border-border-default">
                   <div className="text-[12px] font-semibold text-gov-navy uppercase tracking-wider">Georeferenced Projects</div>
                 </div>
-                <div className="overflow-y-auto max-h-[500px] divide-y divide-border-default">
+                <div data-lenis-prevent className="overflow-y-auto max-h-[500px] divide-y divide-border-default">
                   {data.showcase_projects?.map((p, idx) => {
                     const isSelected = selectedProject?.project_id === p.project_id;
                     return (

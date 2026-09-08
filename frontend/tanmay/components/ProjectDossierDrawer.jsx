@@ -61,6 +61,7 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 28, stiffness: 300 }}
+          data-lenis-prevent
           className="relative w-full max-w-2xl bg-white shadow-2xl border-l border-slate-200 h-full overflow-y-auto z-10 flex flex-col font-sans"
         >
           {/* Header */}
