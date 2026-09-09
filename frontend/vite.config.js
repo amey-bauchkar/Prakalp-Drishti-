@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'favicon-192x192.png', 'favicon-512x512.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'PRAKALP-DRISHTI — MoSPI Central Sector Mega-Projects Decision Intelligence',
         short_name: 'PRAKALP-DRISHTI',
@@ -22,8 +22,18 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
+            src: '/favicon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/favicon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
             src: '/favicon.svg',
-            sizes: '192x192 512x512',
+            sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',
           },
