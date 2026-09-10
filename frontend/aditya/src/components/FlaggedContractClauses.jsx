@@ -83,14 +83,28 @@ function getClauseFix(clause) {
 export default function FlaggedContractClauses({
   clauses = [],
   className = '',
+  lang = 'en',
 }) {
+  const isHi = lang === 'hi';
+
+  const SEVERITY_LABELS = {
+    CRITICAL: isHi ? 'अति-गंभीर' : 'CRITICAL',
+    HIGH: isHi ? 'उच्च' : 'HIGH',
+    MEDIUM: isHi ? 'मध्यम' : 'MEDIUM',
+    LOW: isHi ? 'निम्न' : 'LOW',
+  };
+
   if (!clauses || clauses.length === 0) {
     return (
       <div className="p-8 text-center bg-gray-50/70 dark:bg-slate-900/40 rounded-lg border border-dashed border-slate-200 dark:border-slate-800 text-slate-500 text-sm">
         <ShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-500 mx-auto mb-2" />
-        <p className="font-semibold text-slate-800 dark:text-slate-200">No High-Risk Clauses Flagged</p>
+        <p className="font-semibold text-slate-800 dark:text-slate-200">
+          {isHi ? 'कोई उच्च जोखिम वाला खंड चिह्नित नहीं' : 'No High-Risk Clauses Flagged'}
+        </p>
         <p className="text-xs text-slate-500 mt-1">
-          Current contract language complies with standard institutional dispute-prevention norms.
+          {isHi 
+            ? 'वर्तमान अनुबंध भाषा मानक संस्थागत विवाद-निवारण मानदंडों का अनुपालन करती है।'
+            : 'Current contract language complies with standard institutional dispute-prevention norms.'}
         </p>
       </div>
     );
@@ -102,19 +116,19 @@ export default function FlaggedContractClauses({
         const severity = (clause.severity || 'HIGH').toUpperCase();
         const config = SEVERITY_CONFIG[severity] || SEVERITY_CONFIG.HIGH;
 
-        const title = clause.clause_title || clause.title || 'Standard Contract Provision';
+        const title = clause.clause_title || clause.title || (isHi ? 'मानक अनुबंध प्रावधान' : 'Standard Contract Provision');
         const extractText =
           clause.snippet ||
           clause.detected_text ||
           clause.wording ||
           clause.text ||
-          'Contract clause excerpt not available.';
+          (isHi ? 'अनुबंध खंड अंश उपलब्ध नहीं है।' : 'Contract clause excerpt not available.');
         const riskText =
           clause.risk_reason ||
           clause.legal_risk_reason ||
           clause.reason ||
           clause.dispute_trigger_condition ||
-          'Ambiguity in this clause exposes the project to delayed payments, cost disputes, or contractor arbitration.';
+          (isHi ? 'इस खंड में अस्पष्टता परियोजना को विलंबित भुगतान, लागत विवादों या ठेकेदार मध्यस्थता के जोखिम में डालती है।' : 'Ambiguity in this clause exposes the project to delayed payments, cost disputes, or contractor arbitration.');
         const fixText = getClauseFix(clause);
 
         return (
@@ -128,7 +142,7 @@ export default function FlaggedContractClauses({
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-bold tracking-wider uppercase border shrink-0 ${config.badge}`}
               >
-                {severity}
+                {SEVERITY_LABELS[severity] || severity}
               </span>
 
               {/* Plain-English Title (Zero backend enum identifiers) */}
@@ -153,13 +167,13 @@ export default function FlaggedContractClauses({
 
               {/* Section 2: The Risk */}
               <p className="text-xs sm:text-[13.5px] text-slate-700 dark:text-slate-300 leading-relaxed">
-                <strong className="font-semibold text-slate-900 dark:text-white">The Risk: </strong>
+                <strong className="font-semibold text-slate-900 dark:text-white">{isHi ? 'जोखिम: ' : 'The Risk: '}</strong>
                 {riskText}
               </p>
 
               {/* Section 3: The Fix */}
               <p className="text-xs sm:text-[13.5px] text-slate-700 dark:text-slate-300 leading-relaxed">
-                <strong className="font-semibold text-slate-900 dark:text-white">The Fix: </strong>
+                <strong className="font-semibold text-slate-900 dark:text-white">{isHi ? 'निवारक उपाय: ' : 'The Fix: '}</strong>
                 {fixText}
               </p>
             </div>

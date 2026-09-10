@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, ShieldCheck, ShieldAlert, Cpu, Loader2, Database, Fingerprint, Sparkles, MessageSquare, BookOpen } from 'lucide-react';
 import { apiFetch } from './authClient';
+import { getStoredLanguage, t } from '../src/lib/i18n';
 
 /**
  * PMO Copilot — conversational surface over the Fact layer.
@@ -77,6 +78,13 @@ const QUERY_MODE_META = {
 export default function CopilotChat({ projectId }) {
   const [turns, setTurns] = useState([]);
   const [draft, setDraft] = useState('');
+  const [lang, setLang] = useState(() => getStoredLanguage());
+
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
   const [busy, setBusy] = useState(false);
   const endRef = useRef(null);
 
@@ -164,7 +172,14 @@ export default function CopilotChat({ projectId }) {
 
       {/* Transcript Conversation Flow */}
       {turns.length > 0 && (
-        <div data-lenis-prevent className="space-y-3 max-h-72 overflow-y-auto pr-1 text-slate-200 scrollbar-thin scrollbar-thumb-slate-700">
+        <div
+          data-lenis-prevent
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions text"
+          aria-label={t('copilot_transcript', lang)}
+          className="relative space-y-3 max-h-72 overflow-y-auto pr-1 text-slate-200 scrollbar-thin scrollbar-thumb-slate-700"
+        >
           <AnimatePresence initial={false}>
             {turns.map((t, i) => {
               if (t.role === 'user') {
@@ -306,10 +321,12 @@ export default function CopilotChat({ projectId }) {
       {/* Input Composer */}
       <div className="flex items-center gap-2 pt-1">
         <input
+          id={`copilot-ask-${projectId}`}
+          aria-label={`${t('copilot_input_label', lang)} (#${projectId})`}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
-          placeholder={`Ask anything about project #${projectId}…`}
+          placeholder={`${t('copilot_input_label', lang)} — #${projectId}`}
           className="flex-1 min-w-0 text-[12px] bg-black/40 text-white border border-white/15 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/30 placeholder:text-slate-400 font-sans"
         />
         <button
@@ -318,7 +335,7 @@ export default function CopilotChat({ projectId }) {
           className="shrink-0 bg-amber-500 hover:bg-amber-400 text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed py-2 px-3.5 rounded-lg text-[11px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
         >
           <Send className="w-3.5 h-3.5" />
-          <span>Ask</span>
+          <span>{t('copilot_ask', lang)}</span>
         </button>
       </div>
     </div>

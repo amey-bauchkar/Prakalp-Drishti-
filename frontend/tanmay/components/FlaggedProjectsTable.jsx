@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
   Search, Scale, ChevronRight, ChevronLeft, ArrowUpDown, Filter,
-  Eye, ShieldAlert, ChevronDown, CheckCircle2, AlertTriangle
+  Eye, ShieldAlert, ChevronDown, CheckCircle2, AlertTriangle, Download
 } from 'lucide-react';
 import { Card, Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from '@tremor/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectProject }) {
+export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectProject, lang = 'en' }) {
+  const isHi = lang === 'hi';
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('ALL');
   const [sortField, setSortField] = useState('suspicion_score');
@@ -15,6 +16,32 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const exportToCSV = () => {
+    if (!sorted || !sorted.length) return;
+    const headers = ['Project ID', 'Project Name', 'Sector', 'Agency', 'State', 'Cost Overrun %', 'Suspicion Score', 'Clause 10CC Escalation (₹ Cr)', 'Status'];
+    const rows = sorted.map(p => [
+      `"${p.project_id || ''}"`,
+      `"${(p.project_name || '').replace(/"/g, '""')}"`,
+      `"${(p.sector || '').replace(/"/g, '""')}"`,
+      `"${(p.agency || '').replace(/"/g, '""')}"`,
+      `"${(p.state || '').replace(/"/g, '""')}"`,
+      p.cost_overrun_pct != null ? Number(p.cost_overrun_pct).toFixed(2) : '',
+      p.suspicion_score != null ? Number(p.suspicion_score).toFixed(3) : '',
+      p.clause_10cc_risk_cr != null ? Number(p.clause_10cc_risk_cr).toFixed(2) : '',
+      `"${(p.status || 'FLAGGED').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ccea_flagged_audit_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   // Extract unique sectors
   const sectors = ['ALL', ...new Set(flaggedProjects.map(p => p.sector).filter(Boolean))];
@@ -77,11 +104,13 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
               <ShieldAlert className="w-4 h-4" />
             </span>
             <h3 className="font-heading font-extrabold text-lg text-slate-900 tracking-tight">
-              CCEA THRESHOLD PROXIMITY & CLAUSE 10CC AUDIT DIRECTORY
+              {isHi ? "सीसीईए सीमांत निकटता एवं खंड १०सीसी लेखापरीक्षा निर्देशिका" : "CCEA THRESHOLD PROXIMITY & CLAUSE 10CC AUDIT DIRECTORY"}
             </h3>
           </div>
           <p className="text-xs text-slate-500 font-sans">
-            Showing {sorted.length} projects identified in the 18.0% – 19.99% proximity zone. Click any project row to open the complete forensic revision dossier.
+            {isHi
+              ? `कुल ${sorted.length} चिन्हित परियोजनाएं प्रदर्शित (18.0% – 19.99% निकटता क्षेत्र)। पूर्ण विधिक संशोधन दस्तावेज़ खोलने हेतु किसी भी पंक्ति पर क्लिक करें।`
+              : `Showing ${sorted.length} projects identified in the 18.0% – 19.99% proximity zone. Click any project row to open the complete forensic revision dossier.`}
           </p>
         </div>
 
@@ -97,7 +126,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Search projects, agencies, states…"
+              placeholder={isHi ? "परियोजना, एजेंसी, राज्य खोजें…" : "Search projects, agencies, states…"}
               className="pl-8 pr-3 py-1.5 bg-slate-50 text-xs rounded-lg border border-slate-200 text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-500 w-48 sm:w-60 font-medium"
             />
           </div>
@@ -113,14 +142,14 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
           >
             {sectors.map((s, i) => (
               <option key={i} value={s}>
-                {s === 'ALL' ? 'All Sectors' : s}
+                {s === 'ALL' ? (isHi ? 'सभी क्षेत्र' : 'All Sectors') : s}
               </option>
             ))}
           </select>
 
           {/* Rows per page */}
           <div className="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
-            <span>Show:</span>
+            <span>{isHi ? "प्रदर्शित:" : "Show:"}</span>
             <select
               value={pageSize}
               onChange={(e) => {
@@ -134,6 +163,16 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
               <option value={50}>50</option>
             </select>
           </div>
+
+          {/* Export CSV Button */}
+          <button
+            onClick={exportToCSV}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs rounded-lg border border-slate-300 font-bold transition-colors cursor-pointer shadow-xs"
+            title={isHi ? "चिन्हित परियोजनाओं को सीएसवी में निर्यात करें" : "Export filtered flagged projects to CSV"}
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>{isHi ? "सीएसवी निर्यात" : "CSV Export"}</span>
+          </button>
         </div>
       </div>
 
@@ -147,7 +186,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 className="py-3 px-3 cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center gap-1">
-                  <span>Project & Agency</span>
+                  <span>{isHi ? "परियोजना एवं एजेंसी" : "Project & Agency"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
@@ -156,7 +195,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 className="py-3 px-3 text-right cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-end gap-1">
-                  <span>Original Cost</span>
+                  <span>{isHi ? "मूल लागत" : "Original Cost"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
@@ -165,7 +204,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 className="py-3 px-3 text-right cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-end gap-1">
-                  <span>Revised Cost</span>
+                  <span>{isHi ? "संशोधित लागत" : "Revised Cost"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
@@ -174,7 +213,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 className="py-3 px-3 text-right cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-end gap-1">
-                  <span>Overrun %</span>
+                  <span>{isHi ? "लागत वृद्धि %" : "Overrun %"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
@@ -183,24 +222,24 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 className="py-3 px-3 text-right cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-end gap-1">
-                  <span>Dist. to 20%</span>
+                  <span>{isHi ? "20% सीमा से दूरी" : "Dist. to 20%"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
               <TableHeaderCell className="py-3 px-3 text-right">
-                Statutory 10CC Cap
+                {isHi ? "सांविधिक 10सीसी सीमा" : "Statutory 10CC Cap"}
               </TableHeaderCell>
               <TableHeaderCell
                 onClick={() => handleSort('suspicion_score')}
                 className="py-3 px-3 text-center cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-center gap-1">
-                  <span>Suspicion Score</span>
+                  <span>{isHi ? "संदेह स्कोर" : "Suspicion Score"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
               <TableHeaderCell className="py-3 px-3 text-center">
-                Action
+                {isHi ? "कार्रवाई" : "Action"}
               </TableHeaderCell>
             </TableRow>
           </TableHead>
@@ -261,7 +300,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                       {p.distance_to_boundary_pp} pp
                     </span>
                     <span className="text-[10px] text-slate-400 block">
-                      to CCEA limit
+                      {isHi ? "सीसीईए सीमा तक" : "to CCEA limit"}
                     </span>
                   </TableCell>
 
@@ -271,7 +310,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                       ₹{(p.total_allowed_10cc_cost_cr || p.statutory_10cc_cap_cr)?.toLocaleString('en-IN')} Cr
                     </span>
                     <span className="text-[10px] text-slate-400 block">
-                      (+{p.statutory_10cc_cap_pct}% allowed)
+                      {isHi ? `(+${p.statutory_10cc_cap_pct}% अनुमत)` : `(+${p.statutory_10cc_cap_pct}% allowed)`}
                     </span>
                   </TableCell>
 
@@ -307,7 +346,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 font-mono text-[11px] font-semibold border border-slate-300 transition-colors"
                     >
                       <Eye className="w-3.5 h-3.5 text-slate-600" />
-                      <span>Inspect</span>
+                      <span>{isHi ? "निरीक्षण" : "Inspect"}</span>
                     </button>
                   </TableCell>
                 </TableRow>
@@ -320,7 +359,9 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
       {/* Pagination Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs font-mono">
         <span className="text-slate-500">
-          Showing <strong>{sorted.length > 0 ? startIndex + 1 : 0}–{endIndex}</strong> of <strong>{sorted.length}</strong> flagged projects
+          {isHi
+            ? <>कुल <strong>{sorted.length}</strong> में से <strong>{sorted.length > 0 ? startIndex + 1 : 0}–{endIndex}</strong> चिन्हित परियोजनाएं प्रदर्शित</>
+            : <>Showing <strong>{sorted.length > 0 ? startIndex + 1 : 0}–{endIndex}</strong> of <strong>{sorted.length}</strong> flagged projects</>}
         </span>
 
         <div className="flex items-center gap-1.5">
@@ -330,7 +371,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
             className="px-2.5 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-sans flex items-center gap-1"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Previous</span>
+            <span>{isHi ? "पिछला" : "Previous"}</span>
           </button>
 
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
@@ -352,7 +393,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
             disabled={currentPage >= totalPages}
             className="px-2.5 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-sans flex items-center gap-1"
           >
-            <span>Next</span>
+            <span>{isHi ? "अगला" : "Next"}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>

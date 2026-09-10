@@ -5,6 +5,7 @@ import {
   Filter, BarChart3, Compass, Layers, ArrowUpRight, TrendingDown, Building2,
   MapPin, Clock, ShieldCheck, CheckCircle2, Info, ArrowRight, ChevronRight
 } from 'lucide-react';
+import { getStoredLanguage } from '../src/lib/i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,7 +24,15 @@ const itemVariants = {
   }
 };
 
-export default function VarshaSpeedView() {
+export default function VarshaSpeedView({ lang: propLang }) {
+  const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+  useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
   const [anomaly, setAnomaly] = useState(0.0);
   const [impactData, setImpactData] = useState(null);
   const [profilesData, setProfilesData] = useState(null);
@@ -188,24 +197,28 @@ export default function VarshaSpeedView() {
       {impactData?.national_summary && (
         <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="panel p-4">
-            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Working Window</div>
-            <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">{impactData.national_summary.average_working_window_months} mo/yr</div>
-            <div className="text-[12px] text-text-muted mt-1 font-medium">National average</div>
+            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">{isHi ? 'कार्य अवधि' : 'Working Window'}</div>
+            <div className="text-[30px] font-black text-gov-navy mt-1 tracking-tight font-mono">
+              {impactData.national_summary.average_working_window_months} {isHi ? 'माह/वर्ष' : 'mo/yr'}
+            </div>
+            <div className="text-[12px] text-text-muted mt-1 font-medium">{isHi ? 'राष्ट्रीय औसत' : 'National average'}</div>
           </div>
           <div className="panel p-4">
-            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Lost Weather Days</div>
-            <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">{impactData.national_summary.average_lost_days_per_year} days</div>
-            <div className="text-[12px] text-text-muted mt-1 font-medium">Average per year</div>
+            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">{isHi ? 'मौसम के कारण नष्ट दिन' : 'Lost Weather Days'}</div>
+            <div className="text-[30px] font-black text-rose-600 mt-1 tracking-tight font-mono">
+              {impactData.national_summary.average_lost_days_per_year} {isHi ? 'दिन' : 'days'}
+            </div>
+            <div className="text-[12px] text-text-muted mt-1 font-medium">{isHi ? 'प्रति वर्ष औसत' : 'Average per year'}</div>
           </div>
           <div className="panel p-4">
-            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Schedule Stretch</div>
+            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">{isHi ? 'समयसीमा विस्तार' : 'Schedule Stretch'}</div>
             <div className="text-[30px] font-black text-amber-600 mt-1 tracking-tight font-mono">{impactData.national_summary.national_schedule_stretch_multiplier}×</div>
-            <div className="text-[12px] text-text-muted mt-1 font-medium">Multiplier</div>
+            <div className="text-[12px] text-text-muted mt-1 font-medium">{isHi ? 'गुणक' : 'Multiplier'}</div>
           </div>
           <div className="panel p-4">
-            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">Most Vulnerable</div>
+            <div className="text-[11.5px] text-text-muted font-bold uppercase tracking-wider">{isHi ? 'सर्वाधिक सुभेद्य' : 'Most Vulnerable'}</div>
             <div className="text-[20px] font-black text-rose-600 mt-2 truncate font-heading">{impactData.national_summary.most_vulnerable_state}</div>
-            <div className="text-[12px] text-text-muted mt-1 font-medium">Highest weather impact</div>
+            <div className="text-[12px] text-text-muted mt-1 font-medium">{isHi ? 'उच्चतम मौसम प्रभाव' : 'Highest weather impact'}</div>
           </div>
         </motion.div>
       )}
@@ -220,7 +233,7 @@ export default function VarshaSpeedView() {
               : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
           }`}
         >
-          <span>Working-Window Simulator</span>
+          <span>{isHi ? 'कार्य-अवधि सिमुलेटर' : 'Working-Window Simulator'}</span>
         </button>
         <button
           onClick={() => setActiveTab('historical')}
@@ -230,7 +243,7 @@ export default function VarshaSpeedView() {
               : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
           }`}
         >
-          <span>Historical Departure Explorer</span>
+          <span>{isHi ? 'ऐतिहासिक विचलन अन्वेषक' : 'Historical Departure Explorer'}</span>
         </button>
         <button
           onClick={() => setActiveTab('projects')}
@@ -240,7 +253,7 @@ export default function VarshaSpeedView() {
               : 'bg-transparent text-text-secondary hover:text-gov-navy hover:bg-white/80'
           }`}
         >
-          <span>Corpus Project Impacts</span>
+          <span>{isHi ? 'कॉर्पस परियोजना प्रभाव' : 'Corpus Project Impacts'}</span>
         </button>
       </motion.div>
 
@@ -316,6 +329,8 @@ export default function VarshaSpeedView() {
             <div className="space-y-2 pt-2">
               <input
                 type="range"
+                aria-label="Monsoon rainfall departure from the long period average"
+                aria-valuetext={`${anomaly > 0 ? 'Excess ' : anomaly < 0 ? 'Deficit ' : 'Normal, '}${anomaly}% departure from the long period average`}
                 min="-30"
                 max="30"
                 step="1"
@@ -659,7 +674,7 @@ export default function VarshaSpeedView() {
                       <span className="text-[11px] text-text-muted">{p.state} ({p.region})</span>
                     </td>
                     <td className="num font-mono font-bold text-gov-navy">
-                      ₹{p.original_cost_cr?.toLocaleString()} Cr
+                      ₹{p.original_cost_cr?.toLocaleString('en-IN')} Cr
                     </td>
                     <td className="font-mono">
                       <div className="text-rose-600 font-bold">{p.annual_weather_downtime_days} Days/yr</div>

@@ -171,10 +171,6 @@
   color: #94A3B8 !important;
 }
 
-html[data-font-size="large"] {
-  font-size: 110%;
-}
-
-html[data-font-size="larger"] {
-  font-size: 120%;
-}
+/* The user font-size preference is implemented in styles/a11y-scaling.css, which
+   also carries the per-utility overrides that an absolute px font size needs.
+   Setting the root percentage here as well would only give two sources of truth. */

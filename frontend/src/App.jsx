@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility, ExternalLink } from 'lucide-react';
 
-import AmeyMasterView from '../amey/index.jsx';
-import DecisionHubView from '../amey/DecisionHubView.jsx';
-import SatyaKavachView from './views/SatyaKavachView.jsx';
-import ArthaNivaranView from './views/ArthaNivaranView.jsx';
-import SetuVarshaView from './views/SetuVarshaView.jsx';
-import PublicDashboardView from './views/PublicDashboardView.jsx';
-import AdminIngestView from './views/AdminIngestView.jsx';
-import MilestoneTimelineView from './views/MilestoneTimelineView.jsx';
-import PoliciesView from './views/PoliciesView.jsx';
+// Routes are split so each audience downloads only its own surface. Vendor chunks
+// were already split in vite.config.js, but the application itself was one 1,510 kB
+// file, so /nagrik pulled the whole officer console down with it.
+const AmeyMasterView       = React.lazy(() => import('../amey/index.jsx'));
+const DecisionHubView      = React.lazy(() => import('../amey/DecisionHubView.jsx'));
+const PublicDashboardView  = React.lazy(() => import('./views/PublicDashboardView.jsx'));
+const AdminIngestView      = React.lazy(() => import('./views/AdminIngestView.jsx'));
+const MilestoneTimelineView = React.lazy(() => import('./views/MilestoneTimelineView.jsx'));
+const PoliciesView         = React.lazy(() => import('./views/PoliciesView.jsx'));
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
-import KaryaDakshataSimulator from './components/KaryaDakshataSimulator.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
 import SmoothScrollProvider from './components/SmoothScrollProvider.jsx';
+import AccessibilityBar from './components/AccessibilityBar.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+import { getStoredLanguage, t } from './lib/i18n';
 
 
 
@@ -24,6 +26,7 @@ function InstitutionalHeader() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState(() => getStoredLanguage());
   const session = useSession();
 
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
@@ -33,6 +36,12 @@ function InstitutionalHeader() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  useEffect(() => {
+    const onLang = (e) => setCurrentLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+
   // Top-level Navigation: Sovereign Home, Government Decision Hub, Nagrik Portal
   // CORPUS ADMIN is offered only to a session holding `allocate_capital`. This is
   // presentation, NOT access control -- /api/ingest enforces the capability server-side
@@ -40,10 +49,10 @@ function InstitutionalHeader() {
   // officer a door their role cannot open.
   const canAdminister = !!session?.permissions?.includes('allocate_capital');
   const navItems = [
-    { to: '/', label: 'HOME' },
-    { to: '/decision-hub', label: 'DECISION HUB' },
-    { to: '/nagrik', label: 'NAGRIK PORTAL' },
-    ...(canAdminister ? [{ to: '/admin/ingest', label: 'CORPUS ADMIN' }] : []),
+    { to: '/', label: t('nav_home', currentLang) },
+    { to: '/decision-hub', label: t('nav_decision_hub', currentLang) },
+    { to: '/nagrik', label: t('nav_nagrik', currentLang) },
+    ...(canAdminister ? [{ to: '/admin/ingest', label: t('nav_admin', currentLang) }] : []),
   ];
 
   return (
@@ -59,18 +68,18 @@ function InstitutionalHeader() {
 
           <div className="flex flex-col">
             <div className="font-devanagari text-[10.5px] font-bold text-[#1E2A45] tracking-tight leading-none mb-0.5">
-              सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय
+              {t('ministry_name', currentLang)}
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-heading font-black text-[20px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
+              <span lang="en" className="font-heading font-black text-[20px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
                 prakalp<span className="text-[#FF9933]">.drishti</span>
               </span>
               <span className="hidden xl:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-300 font-mono">
-                MoSPI · CCEA AI
+                <span lang="en">MoSPI · CCEA AI</span>
               </span>
             </div>
             <div className="text-[10px] text-slate-500 font-medium tracking-tight mt-0.5">
-              Autonomous Infrastructure Decision Intelligence
+              {t('subtitle', currentLang)}
             </div>
           </div>
         </Link>
@@ -129,21 +138,21 @@ function InstitutionalHeader() {
             <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs">
               <div className="flex items-center gap-1.5 text-[12px] font-heading font-bold text-[#0060B6]">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>{session.username}</span>
+                <span lang="en">{session.username}</span>
                 {session.role && (
                   <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-blue-100/80 text-[#0060B6] font-bold uppercase tracking-wider">
-                    {session.role}
+                    <span lang="en">{String(session.role).replace(/_/g, " ")}</span>
                   </span>
                 )}
               </div>
               <div className="h-3.5 w-px bg-slate-300 mx-0.5" />
               <button
                 onClick={clearSession}
-                className="flex items-center gap-1 text-[11px] font-heading font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
+                className="flex items-center gap-1 min-h-[24px] text-[11px] font-heading font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 px-1.5 py-1 rounded transition-colors cursor-pointer"
                 title="Sign out of console"
               >
                 <LogOut className="w-3 h-3" />
-                <span>Sign out</span>
+                <span>{t('nav_sign_out', currentLang)}</span>
               </button>
             </div>
           ) : (
@@ -151,7 +160,7 @@ function InstitutionalHeader() {
               to="/decision-hub"
               className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer px-2 py-1 rounded hover:bg-slate-50 transition-colors"
             >
-              LOGIN | REGISTER
+              {t('nav_login', currentLang)}
             </Link>
           )}
         </div>
@@ -212,10 +221,10 @@ function InstitutionalHeader() {
               <div className="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between px-3 py-2 text-xs bg-slate-50 rounded-lg">
                 <div className="flex items-center gap-1.5 font-bold text-[#0060B6]">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>{session.username}</span>
+                  <span lang="en">{session.username}</span>
                   {session.role && (
                     <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold uppercase">
-                      {session.role}
+                      <span lang="en">{String(session.role).replace(/_/g, " ")}</span>
                     </span>
                   )}
                 </div>
@@ -224,7 +233,7 @@ function InstitutionalHeader() {
                   className="flex items-center gap-1 text-rose-600 font-bold text-xs hover:bg-rose-50 px-2 py-1 rounded transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>Sign out</span>
+                  <span>{t('nav_sign_out', currentLang)}</span>
                 </button>
               </div>
             ) : (
@@ -233,7 +242,7 @@ function InstitutionalHeader() {
                   to="/decision-hub"
                   className="block text-center py-2 bg-[#0060B6] text-white rounded-lg font-bold text-xs"
                 >
-                  LOGIN | REGISTER
+                  {t('nav_login', currentLang)}
                 </Link>
               </div>
             )}
@@ -246,6 +255,13 @@ function InstitutionalHeader() {
 
 /* ─── Institutional Footer (GIGW 3.0 Standard) ───────────────── */
 function InstitutionalFooter() {
+  const [lang, setLang] = useState(() => getStoredLanguage());
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+
   return (
     <footer className="mt-auto select-none font-sans">
       {/* Main Sovereign Footer Content */}
@@ -266,29 +282,28 @@ function InstitutionalFooter() {
                   <div className="font-devanagari text-[12.5px] text-amber-400 font-bold leading-tight">
                     सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय
                   </div>
-                  <h4 className="text-white font-extrabold text-[17.5px] font-heading tracking-tight leading-snug">
+                  <h4 lang="en" className="text-white font-extrabold text-[17.5px] font-heading tracking-tight leading-snug">
                     PRAKALP-DRISHTI
                   </h4>
                   <div className="text-[11px] text-slate-300 font-medium">
-                    Ministry of Statistics &amp; Programme Implementation · Govt. of India
+                    {t('ft_ministry_line', lang)}
                   </div>
                 </div>
               </div>
 
-              <p className="text-[12px] text-slate-400 leading-relaxed pr-3">
-                National Infrastructure Monitoring &amp; Decision Intelligence System for Central Sector Projects (&ge; ₹150 Crore). 
-                Empowering statutory oversight, empirical risk analysis, and project performance tracking.
+              <p className="text-[12px] text-slate-300 leading-relaxed pr-3">
+                {t('ft_blurb', lang)}
               </p>
 
               <div className="pt-2 text-[11.5px] text-slate-400 space-y-1.5 border-t border-slate-800/80">
-                <div><span className="text-slate-300 font-medium">Nodal Division:</span> Infrastructure &amp; Project Monitoring Division (IPMD)</div>
-                <div><span className="text-slate-300 font-medium">Headquarters:</span> Khurshid Lal Bhawan, Janpath, New Delhi – 110001</div>
+                <div><span className="text-slate-200 font-medium">{t('ft_nodal_division', lang)}</span> {t('ft_nodal_division_val', lang)}</div>
+                <div><span className="text-slate-200 font-medium">{t('ft_built_for', lang)}</span> {t('ft_built_for_val', lang)}</div>
               </div>
 
               {/* Official Social Channels & Network */}
               <div className="pt-2.5 border-t border-slate-800/80 space-y-2">
                 <div className="text-[11px] font-bold text-amber-400/90 uppercase tracking-wider font-heading">
-                  Official MoSPI Accounts
+                  {t('ft_official_accounts', lang)}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <a
@@ -319,7 +334,7 @@ function InstitutionalFooter() {
                     title="Open Government Data Portal RSS"
                   >
                     <Rss className="w-3.5 h-3.5 text-amber-400" />
-                    <span>data.gov.in</span>
+                    <span lang="en">data.gov.in</span>
                   </a>
                 </div>
               </div>
@@ -328,43 +343,43 @@ function InstitutionalFooter() {
             {/* Column 2: Public & Analytical Portals (Span 3) */}
             <div className="lg:col-span-3 space-y-3">
               <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
-                Analytical Portals
+                {t('ft_analytical_portals', lang)}
               </h5>
               <ul className="space-y-2 text-[12.5px] text-slate-300">
                 <li>
                   <Link to="/nagrik" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group font-medium text-emerald-300">
                     <ChevronRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                    <span>Nagrik Portal (Public Citizens)</span>
+                    <span>{t('ftlink_0', lang)}</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/decision-hub" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>Decision Intelligence Hub (10 Engines)</span>
+                    <span>{t('ftlink_1', lang)}</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/decision-hub?engine=satya_kavach" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>Satya-Kavach (CCEA 20% Audit)</span>
+                    <span>{t('ftlink_2', lang)}</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/decision-hub?engine=artha_nivaran" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>Artha-Nivaran (PSU Financial Radar)</span>
+                    <span>{t('ftlink_3', lang)}</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/decision-hub?engine=setu_varsha" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>Setu-Varsha (Climate Exposure)</span>
+                    <span>{t('ftlink_4', lang)}</span>
                   </Link>
                 </li>
                 <li>
                   <Link to="/decision-hub?engine=karya_dakshata" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>Karya-Dakshata (Agency Simulator)</span>
+                    <span>{t('ftlink_5', lang)}</span>
                   </Link>
                 </li>
               </ul>
@@ -373,17 +388,17 @@ function InstitutionalFooter() {
             {/* Column 3: National Infrastructure Network (Span 2) */}
             <div className="lg:col-span-2 space-y-3">
               <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
-                Government Portals
+                {t('ft_government_portals', lang)}
               </h5>
               <ul className="space-y-2 text-[12.5px] text-slate-300">
                 <li>
                   <a href="https://mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    MoSPI Official Website
+                    <span lang="en">MoSPI Official Website</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    PM GatiShakti NMP
+                    <span lang="en">PM GatiShakti NMP</span>
                   </a>
                 </li>
                 <li>
@@ -393,17 +408,17 @@ function InstitutionalFooter() {
                 </li>
                 <li>
                   <a href="https://niti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    NITI Aayog
+                    <span lang="en">NITI Aayog</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://paimana-proj.mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    PAIMANA Repository
+                    <span lang="en">PAIMANA Repository</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://cloud.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    NIC MeghRaj Cloud
+                    <span lang="en">NIC MeghRaj Cloud</span>
                   </a>
                 </li>
               </ul>
@@ -412,7 +427,7 @@ function InstitutionalFooter() {
             {/* Column 4: Official Policies & Technical Hosting (Span 3) */}
             <div className="lg:col-span-3 space-y-3">
               <h5 className="text-[12px] font-bold text-amber-400 uppercase tracking-widest font-heading border-b border-slate-800 pb-2">
-                Website Policies &amp; Help
+                {t('ft_policies_help', lang)}
               </h5>
               
               <ul className="space-y-2 text-[12.5px] text-slate-300">
@@ -423,7 +438,7 @@ function InstitutionalFooter() {
                     rel="noopener noreferrer"
                     className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
                   >
-                    <span>Website Policies &amp; Disclaimer</span>
+                    <span>{t('ftlink_6', lang)}</span>
                     <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
                   </a>
                 </li>
@@ -434,7 +449,7 @@ function InstitutionalFooter() {
                     rel="noopener noreferrer"
                     className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
                   >
-                    <span>Hyperlinking Policy &amp; Terms</span>
+                    <span>{t('ftlink_hyperlink', lang)}</span>
                     <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
                   </a>
                 </li>
@@ -445,7 +460,7 @@ function InstitutionalFooter() {
                     rel="noopener noreferrer"
                     className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
                   >
-                    <span>Privacy Policy (DPDP Act)</span>
+                    <span>{t('ftlink_7', lang)}</span>
                     <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
                   </a>
                 </li>
@@ -456,7 +471,7 @@ function InstitutionalFooter() {
                     rel="noopener noreferrer"
                     className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
                   >
-                    <span>Accessibility Statement (GIGW 3.0)</span>
+                    <span>{t('ftlink_8', lang)}</span>
                     <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
                   </a>
                 </li>
@@ -467,15 +482,17 @@ function InstitutionalFooter() {
                     rel="noopener noreferrer"
                     className="text-slate-300 hover:text-amber-300 transition-colors flex items-center justify-between group py-0.5"
                   >
-                    <span>Feedback &amp; Grievance Redressal</span>
+                    <span>{t('ftlink_9', lang)}</span>
                     <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-amber-300 transition-colors shrink-0" />
                   </a>
                 </li>
               </ul>
 
-              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
-                <div>Hosted on <strong className="text-slate-200">National Informatics Centre (NIC)</strong> Platform</div>
-                <div>Executive Division: <strong className="text-slate-200">Infrastructure &amp; Project Monitoring Division (IPMD)</strong></div>
+              {/* Previously asserted NIC hosting. It is a prototype; stating the
+                  deployment target rather than a present fact keeps the claim true. */}
+              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
+                <div>{t('ft_deployment_target', lang)} <strong className="text-slate-200">National Informatics Centre (NIC)</strong></div>
+                <div>{t('ft_intended_owner', lang)} <strong className="text-slate-200">{t('ft_nodal_division_val', lang)}</strong></div>
               </div>
             </div>
           </div>
@@ -485,7 +502,7 @@ function InstitutionalFooter() {
       {/* Bottom Copyright Strip */}
       <div className="bg-[#030A12] text-slate-400 text-[12px] py-4 border-t border-slate-800/80">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
-          <span>&copy; {new Date().getFullYear()} Ministry of Statistics &amp; Programme Implementation, Government of India.</span>
+          <span>&copy; {new Date().getFullYear()} {t('ft_copyright', lang)}</span>
           <div className="flex items-center gap-3 text-[11.5px] text-slate-400">
             <span className="font-semibold text-amber-400/90">Prakalp-Drishti Release v3.2</span>
             <span className="text-slate-700">|</span>
@@ -526,6 +543,18 @@ function ProtectedRoute({ children }) {
   return <LoginGate>{children}</LoginGate>;
 }
 
+/* ─── Chunk-loading fallback ─────────────────────────────────────
+   Shown while a route's JavaScript is fetched. Government office links can be
+   slow, and a silent blank frame reads as a failure. */
+function RouteLoading() {
+  return (
+    <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3" role="status">
+      <div className="w-7 h-7 rounded-full border-2 border-gov-border border-t-gov-navy animate-spin" aria-hidden="true" />
+      <p className="text-[12.5px] text-gov-soft">Loading this section…</p>
+    </div>
+  );
+}
+
 /* ─── Animated Route Transitions ─────────────────────────────── */
 function AnimatedRoutes() {
   const location = useLocation();
@@ -539,6 +568,8 @@ function AnimatedRoutes() {
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="w-full"
       >
+        <ErrorBoundary key={location.pathname} label={location.pathname}>
+        <Suspense fallback={<RouteLoading />}>
         <Routes location={location}>
           {/* ── Tier 1: Public Citizen Unrestricted Routes ── */}
           <Route path="/" element={<AmeyMasterView />} />
@@ -578,6 +609,8 @@ function AnimatedRoutes() {
           {/* Catch-all */}
           <Route path="*" element={<NotFoundView />} />
         </Routes>
+        </Suspense>
+        </ErrorBoundary>
       </motion.div>
     </AnimatePresence>
   );
@@ -585,20 +618,37 @@ function AnimatedRoutes() {
 
 /* ─── Main Application Shell ─────────────────────────────────── */
 export default function App() {
+  // The skip link is the first thing a keyboard or screen-reader user meets, so it
+  // has to be in the language they chose before they reach anything else.
+  const [appLang, setAppLang] = useState(() => getStoredLanguage());
+  useEffect(() => {
+    const onLang = (e) => setAppLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+
   return (
     <BrowserRouter>
       <SmoothScrollProvider>
         <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
           {/* WCAG 2.4.1 Bypass Blocks */}
-          <a href="#main-content" className="skip-to-content">Skip to main content</a>
+          <a href="#main-content" className="skip-to-content">{t('skip_to_content', appLang)}</a>
 
-          <InstitutionalHeader />
+          {/* Prototype provenance + the text-size and contrast controls the
+              accessibility statement promises. Above the masthead, on every page. */}
+          <AccessibilityBar />
+
+          <ErrorBoundary label="site header">
+            <InstitutionalHeader />
+          </ErrorBoundary>
 
           <main id="main-content" tabIndex={-1} className="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3">
             <AnimatedRoutes />
           </main>
 
-          <InstitutionalFooter />
+          <ErrorBoundary label="site footer">
+            <InstitutionalFooter />
+          </ErrorBoundary>
         </div>
       </SmoothScrollProvider>
     </BrowserRouter>

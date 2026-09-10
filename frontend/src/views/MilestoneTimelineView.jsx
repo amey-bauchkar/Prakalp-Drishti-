@@ -350,8 +350,11 @@ function TimelineInner({ projectId }) {
       variants={containerVariants}
       className="space-y-5 font-sans"
     >
-      <motion.header variants={itemVariants} className="command-header p-5 sm:p-6">
-        <div className="space-y-2 max-w-2xl relative z-10">
+      <motion.header variants={itemVariants} className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <CalendarDays className="w-48 h-48 text-amber-500" />
+        </div>
+        <div className="space-y-3 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
             <CalendarDays className="w-3.5 h-3.5 text-white" aria-hidden="true" />
             <span>KAAL-DARPAN · TEMPORAL GROUND-TRUTH AUDIT</span>

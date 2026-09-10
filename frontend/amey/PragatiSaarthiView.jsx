@@ -3,14 +3,28 @@ import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Text, Metric } from '@tremor/react';
+import ProjectCombobox from '../src/components/ProjectCombobox';
+import { getStoredLanguage } from '../src/lib/i18n';
 
-export default function PragatiSaarthiView({ selectedProjectId = "618402", onSelectProject }) {
+export default function PragatiSaarthiView({ selectedProjectId = "618402", onSelectProject, lang: propLang }) {
   const [tamperState, setTamperState] = useState({ kind: 'idle' });
   const [projectId, setProjectId] = useState(selectedProjectId);
   const [searchInput, setSearchInput] = useState("");
   const [projectList, setProjectList] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+
+  useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
+
+  const handleLanguageSwitch = (newLang) => {
+    setLang(newLang);
+    window.dispatchEvent(new CustomEvent('prakalp:languageChanged', { detail: newLang }));
+  };
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeFact, setActiveFact] = useState(null);
@@ -53,63 +67,6 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
       .catch(err => console.error("Failed to load project list", err));
   }, []);
 
-  const handleSearch = (e) => {
-    if (e) e.preventDefault();
-    const query = (searchInput || "").trim();
-    if (!query) return;
-    const match = projectList.find(
-      p => String(p.project_id) === query || (p.project_name && p.project_name.toLowerCase() === query.toLowerCase())
-    ) || filteredProjects[0];
-    const targetId = match ? String(match.project_id) : query;
-    setProjectId(targetId);
-    if (match) setSearchInput(match.project_name);
-    if (onSelectProject) onSelectProject(targetId);
-    setShowDropdown(false);
-    fetchBriefing(targetId);
-  };
-
-  const filteredProjects = useMemo(() => {
-    const query = (searchInput || "").trim().toLowerCase();
-    if (!query) {
-      return [...projectList]
-        .sort((a, b) => (a.project_name || "").localeCompare(b.project_name || ""))
-        .slice(0, 100);
-    }
-    return [...projectList]
-      .filter(p => {
-        const idStr = p.project_id ? String(p.project_id) : "";
-        const nameStr = p.project_name ? String(p.project_name).toLowerCase() : "";
-        return idStr.includes(query) || nameStr.includes(query);
-      })
-      .sort((a, b) => {
-        const aId = String(a.project_id || "").toLowerCase();
-        const bId = String(b.project_id || "").toLowerCase();
-        const aName = (a.project_name || "").toLowerCase();
-        const bName = (b.project_name || "").toLowerCase();
-
-        // 1. Exact ID starts with query
-        const aIdStarts = aId.startsWith(query);
-        const bIdStarts = bId.startsWith(query);
-        if (aIdStarts && !bIdStarts) return -1;
-        if (!aIdStarts && bIdStarts) return 1;
-
-        // 2. Name starts with query (prioritize "P" for "patna", "polavaram", etc.)
-        const aStarts = aName.startsWith(query);
-        const bStarts = bName.startsWith(query);
-        if (aStarts && !bStarts) return -1;
-        if (!aStarts && bStarts) return 1;
-
-        // 3. Word in name starts with query
-        const aWordStarts = aName.split(/\s+/).some(w => w.startsWith(query));
-        const bWordStarts = bName.split(/\s+/).some(w => w.startsWith(query));
-        if (aWordStarts && !bWordStarts) return -1;
-        if (!aWordStarts && bWordStarts) return 1;
-
-        // 4. Alphabetical sort
-        return (a.project_name || "").localeCompare(b.project_name || "");
-      })
-      .slice(0, 100);
-  }, [projectList, searchInput]);
 
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
@@ -125,89 +82,49 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-gov-navy to-slate-900 shadow-xl border border-slate-700/50 relative z-20"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden z-20"
       >
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <FileText className="w-48 h-48 text-amber-500" />
+        </div>
         <div className="space-y-3 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <FileText className="w-3.5 h-3.5 text-white" />
-            <span>MODULE 4 · EXECUTIVE GOVERNANCE</span>
+            <span>{isHi ? "मॉड्यूल ४ · कार्यपालक शासन" : "MODULE 4 · EXECUTIVE GOVERNANCE"}</span>
           </div>
           <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
-            PRAGATI-SAARTHI Cabinet Note
+            {isHi ? "प्रगति-सारथी कैबिनेट टिप्पणी" : "PRAGATI-SAARTHI Cabinet Note"}
           </h2>
           <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
-            Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails.
+            {isHi
+              ? "क्रिप्टोग्राफिक लेखापरीक्षा साक्ष्य सहित पीएमओ और कैबिनेट समीक्षाओं के लिए सटीक, १००% तथ्य-सत्यापित ब्रीफिंग नोट्स तैयार करता है।"
+              : "Generates clean, 100% fact-checked briefing notes for PMO and Cabinet reviews with cryptographic audit trails."}
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-30">
-          {/* Quick Project Lookup - Autocomplete */}
-          <div className="relative w-full sm:w-80 shrink-0">
-            <form onSubmit={handleSearch} className="flex w-full items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/20 backdrop-blur-md shadow-sm focus-within:border-amber-400/50 transition-all">
-              <input
-                type="text"
-                placeholder="Search by Name or MoSPI Code…"
-                value={searchInput}
-                onChange={(e) => {
-                  setSearchInput(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
-                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-                className="flex h-11 w-full rounded-lg border-none bg-transparent px-4 py-2 text-sm text-white placeholder:text-slate-400 focus-visible:outline-none font-medium tracking-tight"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center justify-center rounded-lg text-xs font-bold transition-all h-11 px-4 py-2 bg-slate-100 hover:bg-amber-500 text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-amber-500 gap-1.5 shrink-0 cursor-pointer uppercase tracking-wider font-mono shadow-xs disabled:opacity-50"
-              >
-                <Search className="w-3.5 h-3.5" />
-                <span>{loading ? 'Compiling…' : 'Generate'}</span>
-              </button>
-            </form>
-
-            <AnimatePresence>
-              {showDropdown && searchInput && filteredProjects.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -6 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  exit={{ opacity: 0, y: -6 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-40 max-h-80 flex flex-col"
-                >
-                  <div data-lenis-prevent className="overflow-y-auto divide-y divide-slate-800/80 [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-                    {filteredProjects.map((p) => (
-                      <div 
-                        key={p.project_id} 
-                        onMouseDown={(e) => { e.preventDefault(); }} // prevent blur before click
-                        onClick={() => {
-                          setSearchInput(p.project_name);
-                          setProjectId(p.project_id);
-                          if (onSelectProject) onSelectProject(p.project_id);
-                          setShowDropdown(false);
-                          fetchBriefing(p.project_id);
-                        }}
-                        className="p-3.5 hover:bg-slate-800/90 cursor-pointer transition-colors flex flex-col gap-1 text-left"
-                      >
-                        <span className="text-sm font-bold text-slate-100 line-clamp-1">{p.project_name}</span>
-                        <div className="flex items-center gap-2 text-[11px] font-mono">
-                          <span className="text-amber-400 font-bold">ID: {p.project_id}</span>
-                          <span className="text-slate-500">·</span>
-                          <span className="text-slate-400 font-medium truncate">{p.sector}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <ProjectCombobox
+            className="w-full sm:w-80 shrink-0"
+            projects={projectList}
+            value={searchInput}
+            onChange={setSearchInput}
+            onSelect={(p) => {
+              setProjectId(p.project_id);
+              if (onSelectProject) onSelectProject(p.project_id);
+              fetchBriefing(p.project_id);
+            }}
+            onSubmitRaw={(q) => { setProjectId(q); fetchBriefing(q); }}
+            loading={loading}
+            submitLabel={isHi ? "तैयार करें" : "Generate"}
+            busyLabel={isHi ? "संकलन जारी…" : "Compiling…"}
+            label={isHi ? "ब्रीफिंग हेतु परियोजना चुनें" : "Find a project to brief"}
+          />
 
           {/* Bilingual Language Switcher */}
           <div className="flex items-center gap-1.5 bg-black/25 p-1.5 rounded-xl border border-white/15 shrink-0 h-11">
             <Globe className="w-4 h-4 text-amber-400 ml-1 mr-0.5" />
             <button
-              onClick={() => setLang('en')}
+              onClick={() => handleLanguageSwitch('en')}
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
                 lang === 'en'
                   ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
@@ -217,7 +134,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               English
             </button>
             <button
-              onClick={() => setLang('hi')}
+              onClick={() => handleLanguageSwitch('hi')}
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
                 lang === 'hi'
                   ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
@@ -234,8 +151,12 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[360px]">
           <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-600 animate-spin" />
           <div className="space-y-1">
-            <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">Compiling Fact-Verified Cabinet Briefing…</p>
-            <p className="text-xs text-slate-500">Synthesizing bilingual policy briefs and generating SHA-256 Merkle inclusion proofs</p>
+            <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">
+              {isHi ? "तथ्य-सत्यापित कैबिनेट ब्रीफिंग का संकलन जारी…" : "Compiling Fact-Verified Cabinet Briefing…"}
+            </p>
+            <p className="text-xs text-slate-500">
+              {isHi ? "द्विभाषी नीति संक्षिप्त विवरण का संश्लेषण एवं SHA-256 मर्कल समावेशन प्रमाण उत्पन्न किए जा रहे हैं" : "Synthesizing bilingual policy briefs and generating SHA-256 Merkle inclusion proofs"}
+            </p>
           </div>
         </div>
       )}
@@ -248,10 +169,12 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
           </div>
           <div className="max-w-md space-y-2">
             <h3 className="text-xl font-bold text-slate-800">
-              Ready to Compile Cabinet Briefing
+              {isHi ? "कैबिनेट ब्रीफिंग संकलन के लिए तैयार" : "Ready to Compile Cabinet Briefing"}
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Enter any MoSPI project ID or select from autocomplete in the search bar above, then click <strong className="text-slate-700">"Generate"</strong> to synthesize bilingual executive notes with zero-hallucination audit traces.
+              {isHi
+                ? <>ऊपर खोज बार में कोई भी एमओएसपीआई परियोजना आईडी दर्ज करें या स्वतः-सुझाव से चुनें, फिर शून्य-भ्रम (zero-hallucination) लेखापरीक्षा साक्ष्य सहित द्विभाषी कार्यपालक टिप्पणी संकलित करने हेतु <strong className="text-slate-700">"तैयार करें"</strong> पर क्लिक करें।</>
+                : <>Enter any MoSPI project ID or select from autocomplete in the search bar above, then click <strong className="text-slate-700">"Generate"</strong> to synthesize bilingual executive notes with zero-hallucination audit traces.</>}
             </p>
           </div>
 
@@ -260,24 +183,36 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-slate-700">SHA-256 Merkle Inclusion</h4>
-              <p className="text-[11px] text-slate-500 leading-tight">Cryptographic tamper detection across timeline records</p>
+              <h4 className="text-xs font-bold text-slate-700">
+                {isHi ? "एसएचए-२५६ मर्कल समावेशन" : "SHA-256 Merkle Inclusion"}
+              </h4>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                {isHi ? "समयसीमा अभिलेखों में क्रिप्टोग्राफिक छेड़छाड़ का पता लगाना" : "Cryptographic tamper detection across timeline records"}
+              </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
               <div className="w-8 h-8 rounded-lg bg-blue-100/60 text-blue-700 flex items-center justify-center">
                 <Globe className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-slate-700">Bilingual Policy Synthesis</h4>
-              <p className="text-[11px] text-slate-500 leading-tight">Simultaneous English and Rajbhasha Hindi briefs</p>
+              <h4 className="text-xs font-bold text-slate-700">
+                {isHi ? "द्विभाषी नीति संश्लेषण" : "Bilingual Policy Synthesis"}
+              </h4>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                {isHi ? "अंग्रेजी एवं राजभाषा हिन्दी में एक साथ ब्रीफिंग" : "Simultaneous English and Rajbhasha Hindi briefs"}
+              </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
               <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
                 <Database className="w-4 h-4" />
               </div>
-              <h4 className="text-xs font-bold text-slate-700">Fact Verification Trace</h4>
-              <p className="text-[11px] text-slate-500 leading-tight">Interactive drawer linking facts to source records</p>
+              <h4 className="text-xs font-bold text-slate-700">
+                {isHi ? "तथ्य सत्यापन साक्ष्य" : "Fact Verification Trace"}
+              </h4>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                {isHi ? "तथ्यों को मूल अभिलेखों से जोड़ने वाला इंटरैक्टिव विवरण" : "Interactive drawer linking facts to source records"}
+              </p>
             </div>
           </div>
         </div>
@@ -341,7 +276,8 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               <div className="pt-4 border-t border-border-default space-y-4">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                  <span className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading"> Click Any Metric to Inspect its Source &amp; Proof
+                  <span className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading">
+                    {isHi ? "स्रोत एवं साक्ष्य देखने हेतु किसी भी मीट्रिक पर क्लिक करें" : "Click Any Metric to Inspect its Source & Proof"}
                   </span>
                 </div>
                 <motion.div 
@@ -381,7 +317,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               <div className="flex items-center gap-2 border-b border-border-default pb-4">
                 <Sparkles className="w-4 h-4 text-gov-saffron" />
                 <h3 className="text-[14px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
-                  {lang === 'en' ? 'High-Level Executive Directives for Cabinet Review' : 'शीर्ष कार्यपालक निर्णय'}
+                  {lang === 'en' ? 'High-Level Executive Directives for Cabinet Review' : 'कैबिनेट समीक्षा हेतु उच्च-स्तरीय कार्यपालक निर्देश'}
                 </h3>
               </div>
 
@@ -392,14 +328,15 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                       <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-sm font-mono transition-colors shrink-0 ${
                         dec.priority === 'HIGH' ? 'bg-rose-50 text-rose-800 border border-rose-300 group-hover:bg-rose-100' : 'bg-amber-50 text-amber-800 border border-amber-300 group-hover:bg-amber-100'
                       }`}>
-                        {dec.priority} PRIORITY
+                        {isHi ? `${dec.priority === 'HIGH' ? 'उच्च' : 'मध्यम'} प्राथमिकता` : `${dec.priority} PRIORITY`}
                       </span>
                       <span className="text-[11px] font-bold text-text-muted truncate text-right" title={dec.action_agency}>{dec.action_agency}</span>
                     </div>
                     <p className="text-[12.5px] font-bold text-gov-navy leading-snug font-sans">
                       {lang === 'en' ? dec.recommendation_en : dec.recommendation_hi}
                     </p>
-                    <div className="text-[11px] font-mono text-emerald-800 font-bold"> Estimated Capital Safeguarded: ₹{dec.impact_cr.toLocaleString()} Cr
+                    <div className="text-[11px] font-mono text-emerald-800 font-bold">
+                      {isHi ? `सुरक्षित अनुमानित पूंजी: ₹${dec.impact_cr.toLocaleString('en-IN')} करोड़` : `Estimated Capital Safeguarded: ₹${dec.impact_cr.toLocaleString('en-IN')} Cr`}
                     </div>
                   </div>
                 ))}
@@ -415,17 +352,24 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                   <div className="absolute inset-0 bg-amber-400/20 rounded-full animate-ping"></div>
                   <Lock className="w-4 h-4 text-amber-400 relative z-10 group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <h3 className="text-xs font-extrabold uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-500 font-heading"> Cryptographic Integrity &amp; Lineage Assurance
+                <h3 className="text-xs font-extrabold uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-500 font-heading">
+                  {isHi ? "क्रिप्टोग्राफिक सत्यनिष्ठा एवं वंशावली आश्वासन" : "Cryptographic Integrity & Lineage Assurance"}
                 </h3>
               </div>
               
               <p className="text-[12px] text-slate-300 leading-relaxed font-sans relative z-10">
-                Every number in this Cabinet note is <strong className="text-amber-100 font-medium tracking-wide">locked to official database records</strong>. No fabricated data or hallucinated estimates can enter this document.
+                {isHi ? (
+                  <>इस कैबिनेट टिप्पणी की प्रत्येक संख्या <strong className="text-amber-100 font-medium tracking-wide">आधिकारिक डेटाबेस अभिलेखों से आबद्ध</strong> है। इसमें कोई भी काल्पनिक अथवा अपुष्ट अनुमान शामिल नहीं हो सकता।</>
+                ) : (
+                  <>Every number in this Cabinet note is <strong className="text-amber-100 font-medium tracking-wide">locked to official database records</strong>. No fabricated data or hallucinated estimates can enter this document.</>
+                )}
               </p>
               
               <div className="relative z-10 bg-black/60 p-4 rounded-xl border border-emerald-500/30 font-mono text-[11px] text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)] shadow-[inset_0_0_20px_rgba(52,211,153,0.05)] break-all overflow-hidden group/hash">
                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px] pointer-events-none opacity-30"></div>
-                <span className="text-emerald-600/80 uppercase tracking-widest text-[9px] block mb-1.5 font-bold">SECURE_HASH // VERIFIED</span>
+                <span className="text-emerald-600/80 uppercase tracking-widest text-[9px] block mb-1.5 font-bold">
+                  {isHi ? "सुरक्षित हैश // सत्यापित" : "SECURE_HASH // VERIFIED"}
+                </span>
                 {data.merkle_root}
               </div>
             </div>

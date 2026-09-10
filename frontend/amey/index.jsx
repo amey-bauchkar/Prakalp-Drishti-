@@ -6,7 +6,7 @@ import {
   Sparkles, Layers, FileText, CheckCircle2, ChevronRight, Activity, Clock,
   DollarSign, GitBranch, CloudRain, Scale, Compass, ChevronLeft, Lock
 } from 'lucide-react';
-import LoginGate from './LoginGate';
+import LoginGate, { useSession } from './LoginGate';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,6 +26,7 @@ const itemVariants = {
 };
 
 export default function AmeyMasterView() {
+  const session = useSession();
   // Portfolio headline figures are READ FROM THE LIVE API, never typed here.
   //
   // These four numbers were previously hardcoded as 1,981 / Rs 42.78L Cr, which
@@ -133,6 +134,33 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 1: FRAMED SOVEREIGN BLUE HERO BOX (PAGE 1)
             ═══════════════════════════════════════════════════════════════ */}
+        {/* A returning officer should not have to read a landing page to get to work.
+            The home route serves two audiences — a first-time visitor who needs the
+            value proposition, and a signed-in officer who needs their queue — and this
+            band gives the second a one-click path without taking anything from the
+            first. It is the cheapest fix for a daily-use console whose work surface sat
+            three clicks and a login behind a hero. */}
+        {session && (
+          <motion.aside
+            variants={itemVariants}
+            className="panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 border-l-4 border-l-gov-accent"
+          >
+            <p className="text-[13px] text-gov-navy">
+              Signed in as <strong>{session.username}</strong>
+              {session.role && (
+                <span className="text-gov-soft"> ({String(session.role).replace(/_/g, ' ')})</span>
+              )}. Your early-warning queue is ready.
+            </p>
+            <Link
+              to="/decision-hub?engine=watchlist"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[40px] rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-xs font-bold transition-colors shrink-0"
+            >
+              See what needs attention
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+          </motion.aside>
+        )}
+
         <motion.section variants={itemVariants} id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
             {/* High-Fidelity Transparent 3D Isometric Extruded Model of India (Right-Aligned) */}
@@ -387,7 +415,11 @@ export default function AmeyMasterView() {
               const Icon = mod.icon;
               return (
                 <Link
-                  key={mod.to}
+                  // Keyed on `name`, not `to`. Five module cards map onto three engine
+                  // routes (ARTHA-NETRA and NIVARAN both open artha_nivaran; SATYA-KAVACH
+                  // and ANUMATI both open satya_kavach), so keying on the destination gave
+                  // React duplicate keys and a console error on the landing page.
+                  key={mod.name}
                   to={mod.to}
                   className={`panel ${mod.accent} p-4.5 sm:p-5 flex flex-col justify-between group rounded-2xl min-h-[320px] sm:min-h-[340px] shadow-xs hover:shadow-md transition-all`}
                 >

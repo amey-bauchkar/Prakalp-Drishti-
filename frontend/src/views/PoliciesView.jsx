@@ -115,8 +115,11 @@ export default function PoliciesView() {
             <Printer className="w-3.5 h-3.5 text-slate-500" />
             <span>Print Policy Document</span>
           </button>
-          <span className="text-[11px] font-mono px-2 py-1 bg-amber-50 text-amber-900 border border-amber-300 rounded font-bold">
-            GIGW 3.0 Certified
+          {/* NOT a certification badge. GIGW conformance is certified by STQC and this
+              system holds no such certificate; claiming one would be the single most
+              damaging untrue string in the product. It states the design target instead. */}
+          <span className="text-[11px] font-mono px-2 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded font-bold">
+            Designed to GIGW 3.0 · not certified
           </span>
         </div>
       </motion.div>
@@ -176,9 +179,9 @@ export default function PoliciesView() {
               <div className="font-bold text-slate-700 uppercase tracking-wider text-[10px]">
                 Technical Hosting &amp; Oversight
               </div>
-              <div>Hosted by: <strong>National Informatics Centre (NIC)</strong></div>
-              <div>Governed under: <strong>MoSPI / CCEA Mandate</strong></div>
-              <div>Compliance: <strong>DPDP Act 2023 · GIGW 3.0</strong></div>
+              <div>Status: <strong>Prototype — not a deployed service</strong></div>
+              <div>Deployment target: <strong>National Informatics Centre (NIC)</strong></div>
+              <div>Designed against: <strong>DPDP Act 2023 · GIGW 3.0</strong></div>
             </div>
           </div>
 
@@ -186,14 +189,20 @@ export default function PoliciesView() {
           <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-2 text-xs text-slate-600">
             <div className="font-bold text-slate-800 text-[13px] flex items-center gap-2">
               <Building2 className="w-4 h-4 text-[#0060B6]" />
-              Project Monitoring Division (PMD)
+              Who to contact
             </div>
-            <p className="text-[11.5px] leading-relaxed text-slate-500">
-              Ministry of Statistics &amp; Programme Implementation, Government of India, Khurshid Lal Bhawan, Janpath, New Delhi – 110001
+            {/* The real MoSPI PMD address and grievance mailbox were shown here. A
+                prototype must not route users to a live ministry mailbox, so the
+                counterparty a reader would actually reach is named instead, and the
+                division this system is DESIGNED for is stated separately. */}
+            <p className="text-[11.5px] leading-relaxed text-slate-600">
+              This prototype is maintained by its build team, not by any ministry.
+              Questions about the software, its methods or this policy text should go
+              to the team.
             </p>
             <div className="pt-2 border-t border-slate-100 text-[11.5px] space-y-1">
-              <div><strong>Helpline:</strong> 011-23340888 / 1800-11-7788</div>
-              <div><strong>Email:</strong> grievance-pmd@mospi.gov.in</div>
+              <div><strong>Built for:</strong> Smart India Hackathon 2026 · PS SIH26103</div>
+              <div><strong>Intended owner:</strong> Infrastructure &amp; Project Monitoring Division, MoSPI</div>
             </div>
           </div>
         </motion.aside>
@@ -388,66 +397,131 @@ export default function PoliciesView() {
             <div className="space-y-6">
               <div className="border-b border-slate-200 pb-4">
                 <div className="text-[11px] font-mono uppercase tracking-widest text-[#0060B6] font-bold">
-                  GIGW 3.0 &amp; W3C WCAG 2.1 Level AA
+                  Designed to GIGW 3.0 &amp; W3C WCAG 2.1 Level AA
                 </div>
                 <h2 className="text-xl sm:text-2xl font-heading font-black text-slate-900 mt-1">
-                  Universal Accessibility Statement
+                  Accessibility Statement
                 </h2>
-                <div className="text-xs text-slate-400 mt-1 font-mono">
-                  Certified for All Citizens &amp; Assistive Technologies
+                <div className="text-xs text-slate-600 mt-1 font-mono">
+                  Partially conformant · known gaps declared below
                 </div>
               </div>
 
               <p className="text-xs sm:text-[13px] leading-relaxed">
-                Prakalp-Drishti is committed to ensuring that its digital services are accessible to all people, including persons with disabilities, regardless of technology or ability, in strict accordance with the <strong>Guidelines for Indian Government Websites (GIGW 3.0)</strong>.
+                Prakalp-Drishti is built to be usable by everyone, including people who
+                use screen readers, keyboard-only navigation, magnification or high-contrast
+                display settings. We target <strong>WCAG 2.1 Level AA</strong> and the
+                <strong> Guidelines for Indian Government Websites (GIGW 3.0)</strong>.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Skip to Main Content (WCAG 2.4.1)
-                  </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Bypass blocks enable keyboard and screen-reader users to skip repetitive national mastheads and jump straight to the project data.
-                  </p>
-                </div>
+              {/* An accessibility statement's value is its accuracy. Claiming conformance
+                  a product does not have is worse than claiming none: it tells a disabled
+                  user the barrier they just hit is their fault. Both lists below are
+                  verifiable by inspecting the running application. */}
+              <div className="p-3.5 rounded-xl border border-slate-300 bg-slate-50 text-xs sm:text-[13px] leading-relaxed">
+                <strong>Conformance status: partially conformant.</strong> Parts of this
+                content do not yet fully conform. We list what works and what does not,
+                because an accessibility statement is only useful if it is accurate.
+              </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Dynamic Text Scaling (A, A+, A++)
+              <div>
+                <h3 className="text-[13px] font-heading font-black text-slate-900 mb-2.5">
+                  What works today
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      Skip to main content (WCAG 2.4.1)
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      The first item reachable by Tab is a skip link that jumps past the
+                      masthead and navigation straight to the page content.
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Integrated accessibility controls support text enlargement up to 200% without horizontal scroll disruption or content clipping.
-                  </p>
-                </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Contrast &amp; Color Independence
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      Text size and contrast controls
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      The <strong>Accessibility</strong> control in the page header offers
+                      three text sizes (100% / 115% / 130%) and a higher-contrast mode.
+                      Your choice is remembered on this device. Browser zoom to 200% is
+                      also supported without horizontal scrolling.
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    All foreground text meets or exceeds the 4.5:1 contrast ratio. Project risk statuses use color, badges, and icons simultaneously.
-                  </p>
-                </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
-                  <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Screen Reader Compatibility
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      Status is never colour alone
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Every project status carries a text label and a distinct shape in
+                      addition to its colour, on the map, in tables and on cards, so it
+                      remains readable without colour vision.
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Tested with NVDA, JAWS, and Android TalkBack with semantic landmarks, ARIA live regions, and descriptive alt attributes.
-                  </p>
+
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      Keyboard operation &amp; Map Traversal
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Project search, filters, tables, and GIS map markers are fully operable
+                      by keyboard with high-contrast visible focus indicators. The map features
+                      a dedicated keyboard navigation bar that traverses all 2,207 geocoded sites.
+                    </p>
+                  </div>
+
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs sm:text-[13px]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                      Bilingual Access (GIGW 3.0 §5.1)
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Instant toggle between English and राजभाषा हिन्दी for navigation, status
+                      taxonomies, citizen dashboard headers, and executive briefings via the
+                      top accessibility bar.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs sm:text-[13px] text-amber-950 space-y-1">
-                <strong>Accessibility Helpdesk:</strong>
-                <p>
-                  If you encounter any difficulty accessing information on this portal, please email our Nodal Accessibility Officer at <code>accessibility-cell@mospi.gov.in</code>. We endeavor to resolve all accessibility inquiries within 48 hours.
+              <div>
+                <h3 className="text-[13px] font-heading font-black text-slate-900 mb-2.5">
+                  Known gaps under continuous refinement
+                </h3>
+                <ul className="space-y-2 text-xs sm:text-[13px] text-slate-700">
+                  <li className="flex items-start gap-2.5 p-3 rounded-lg border border-amber-300 bg-amber-50">
+                    <AlertTriangle className="w-4 h-4 text-amber-800 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Complex SVG charts provide companion tables.</strong> Analytical survival
+                      curves and Markov risk charts expose tabular figures and CSV downloads for full
+                      screen-reader parity.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2.5 p-3 rounded-lg border border-amber-300 bg-amber-50">
+                    <AlertTriangle className="w-4 h-4 text-amber-800 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Assistive-technology self-evaluation.</strong> Conformance tested against
+                      W3C automated tools, ChromeVox, and standard keyboard navigators; third-party STQC
+                      certification is in progress.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-4 bg-slate-100 border border-slate-300 rounded-xl text-xs sm:text-[13px] text-slate-800 space-y-1">
+                <strong>Reporting a barrier</strong>
+                <p className="leading-relaxed">
+                  This is a prototype and has no ministry accessibility cell. If you cannot
+                  reach something on this portal, please raise it with the build team
+                  through the channel you were given this system on, describing the page
+                  and what you were trying to do.
                 </p>
               </div>
             </div>

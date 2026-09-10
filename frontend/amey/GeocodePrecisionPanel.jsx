@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Target, AlertTriangle, CheckCircle2, FlaskConical } from 'lucide-react';
+import { getStoredLanguage } from '../src/lib/i18n';
 
 const API = '';
 
 /**
  * Publishes MEASURED geocoding precision per tier.
- *
- * This panel deliberately renders in the "not yet measured" state rather than hiding
- * itself when no labels exist. A metric that disappears when it is missing reads to a
- * reviewer exactly like a metric that passed; the entire purpose of publishing this
- * number is that an unmeasured claim and a measured one must look different.
- *
- * Strict vs lenient is not cosmetic. The EO pipeline gates on strict -- "imagery at
- * this coordinate actually shows this project" -- because that is the condition under
- * which a change measurement means anything. The map view only needs lenient.
  */
 
 const TIER_LABEL = {
@@ -26,9 +18,31 @@ const TIER_LABEL = {
   STATE_CENTROID_MATCH: 'State centroid',
 };
 
+const getTierLabel = (key, isHi) => {
+  const map = {
+    OSM_LANDMARK_MATCH: isHi ? 'ओपनस्ट्रीटमैप लैंडमार्क' : 'OSM landmark',
+    GAZETTEER_CITY_MATCH: isHi ? 'राजपत्रक शहर' : 'Gazetteer city',
+    OSM_CORRIDOR_MIDPOINT: isHi ? 'गलियारा मध्यबिंदु' : 'Corridor midpoint',
+    GEONAMES_TOKEN_MATCH: isHi ? 'जियोनेम्स टोकन' : 'GeoNames token',
+    GEONAMES_EXACT_MATCH: isHi ? 'जियोनेम्स सटीक' : 'GeoNames exact',
+    GEONAMES_EXACT_UNCONSTRAINED: isHi ? 'जियोनेम्स अद्वितीय' : 'GeoNames unique',
+    STATE_CENTROID_MATCH: isHi ? 'राज्य केन्द्रक' : 'State centroid',
+  };
+  return map[key] || TIER_LABEL[key] || key;
+};
+
 const pct = (v) => (v == null ? '—' : `${(v * 100).toFixed(1)}%`);
 
-export default function GeocodePrecisionPanel() {
+export default function GeocodePrecisionPanel({ lang: propLang }) {
+  const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+  useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +58,7 @@ export default function GeocodePrecisionPanel() {
   if (loading) {
     return (
       <div className="panel p-4 text-xs text-gov-muted">
-        Loading geocoding validation…
+        {isHi ? 'भू-कोडिंग सत्यापन लोड हो रहा है…' : 'Loading geocoding validation…'}
       </div>
     );
   }
@@ -54,10 +68,10 @@ export default function GeocodePrecisionPanel() {
       <Target className="w-4 h-4 text-gov-navy" />
       <div>
         <h3 className="text-xs font-black text-gov-navy uppercase tracking-wider">
-          Geocoding Precision — Measured
+          {isHi ? 'भू-कोडिंग सटीकता — मापित' : 'Geocoding Precision — Measured'}
         </h3>
         <span className="text-[10px] text-gov-muted">
-          Hand-labelled stratified sample · Wilson 95% intervals
+          {isHi ? 'हस्त-चिह्नित स्तरीकृत नमूना · विल्सन ९५% अंतराल' : 'Hand-labelled stratified sample · Wilson 95% intervals'}
         </span>
       </div>
     </div>
@@ -70,10 +84,10 @@ export default function GeocodePrecisionPanel() {
         <div className="note note-warn flex items-start gap-2">
           <FlaskConical className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
           <span>
-            <strong>Not yet measured.</strong> A 200-project stratified sample has been drawn but
-            not yet hand-labelled, so this system does <em>not</em> currently know how often its
-            geocodes are correct. Treat every tier label as unverified until this panel reports a
-            number.
+            <strong>{isHi ? 'अभी तक मापा नहीं गया।' : 'Not yet measured.'}</strong>{' '}
+            {isHi 
+              ? '२००-परियोजना स्तरीकृत नमूना तैयार किया गया है किंतु अभी हस्त-सत्यापित नहीं हुआ है, अतः यह प्रणाली वर्तमान में नहीं जानती कि इसके जियोकोड कितनी बार सही हैं। जब तक यह पैनल संख्या रिपोर्ट न करे, प्रत्येक श्रेणी लेबल को असत्यापित मानें।'
+              : 'A 200-project stratified sample has been drawn but not yet hand-labelled, so this system does not currently know how often its geocodes are correct. Treat every tier label as unverified until this panel reports a number.'}
             <span className="block mt-1 text-amber-800/80">{data?.reason}</span>
           </span>
         </div>
@@ -93,26 +107,26 @@ export default function GeocodePrecisionPanel() {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
           <span className="text-[10px] uppercase text-gov-muted font-bold block">
-            Portfolio — imagery shows the project
+            {isHi ? 'पोर्टफोलियो — उपग्रह चित्र परियोजना दर्शाता है' : 'Portfolio — imagery shows the project'}
           </span>
           <span className="text-xl font-black font-mono text-gov-navy">
             {pct(data.portfolio_strict_precision)}
           </span>
           <span className="text-[10px] text-gov-muted block mt-0.5">
-            Population-weighted across site-level tiers
+            {isHi ? 'स्थल-स्तरीय श्रेणियों में जनसंख्या-भारित' : 'Population-weighted across site-level tiers'}
           </span>
         </div>
         <div className="bg-gov-surface p-3 rounded-xl border border-gov-border">
           <span className="text-[10px] uppercase text-gov-muted font-bold block">
-            Portfolio — right locality
+            {isHi ? 'पोर्टफोलियो — सही स्थानीयता' : 'Portfolio — right locality'}
           </span>
           <span className="text-xl font-black font-mono text-emerald-700">
             {pct(data.portfolio_lenient_precision)}
           </span>
           <span className="text-[10px] text-gov-muted block mt-0.5">
             {data.median_error_km != null
-              ? `Median error ${data.median_error_km} km (n=${data.n_with_true_coords})`
-              : `${data.labelled} of ${data.sample_size} rows labelled`}
+              ? (isHi ? `माध्यिका त्रुटि ${data.median_error_km} किमी (n=${data.n_with_true_coords})` : `Median error ${data.median_error_km} km (n=${data.n_with_true_coords})`)
+              : (isHi ? `${data.sample_size} में से ${data.labelled} पंक्तियां चिह्नित` : `${data.labelled} of ${data.sample_size} rows labelled`)}
           </span>
         </div>
       </div>
@@ -121,18 +135,18 @@ export default function GeocodePrecisionPanel() {
         <table className="w-full text-left text-[11px]">
           <thead className="text-gov-muted border-b border-gov-border">
             <tr>
-              <th className="py-1.5 pr-2 font-bold">Tier</th>
-              <th className="py-1.5 px-2 font-bold text-right">Projects</th>
-              <th className="py-1.5 px-2 font-bold text-right">Labelled</th>
-              <th className="py-1.5 px-2 font-bold text-right">Precision</th>
-              <th className="py-1.5 pl-2 font-bold">95% CI</th>
+              <th className="py-1.5 pr-2 font-bold">{isHi ? 'श्रेणी' : 'Tier'}</th>
+              <th className="py-1.5 px-2 font-bold text-right">{isHi ? 'परियोजनाएं' : 'Projects'}</th>
+              <th className="py-1.5 px-2 font-bold text-right">{isHi ? 'चिह्नित' : 'Labelled'}</th>
+              <th className="py-1.5 px-2 font-bold text-right">{isHi ? 'सटीकता' : 'Precision'}</th>
+              <th className="py-1.5 pl-2 font-bold">{isHi ? '९५% सीआई' : '95% CI'}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gov-border">
             {tiers.map(([name, t]) => (
               <tr key={name}>
                 <td className="py-1.5 pr-2 font-semibold text-gov-navy">
-                  {TIER_LABEL[name] || name}
+                  {getTierLabel(name, isHi)}
                 </td>
                 <td className="py-1.5 px-2 text-right font-mono text-gov-muted">{t.population}</td>
                 <td className="py-1.5 px-2 text-right font-mono text-gov-muted">{t.scored}</td>
@@ -159,12 +173,10 @@ export default function GeocodePrecisionPanel() {
             ? <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
             : <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600" />}
           <span>
-            <strong>Negative control:</strong> {control.scored} known-bad state-centroid projects
-            were mixed into the sample unlabelled. {pct(control.strict_precision)} were marked
-            correct.{' '}
-            {data.negative_control_warning
-              ? 'That is high enough to suggest lenient labelling — treat the figures above as an upper bound.'
-              : 'Low, as expected, so the labelling was not systematically optimistic.'}
+            <strong>{isHi ? 'नकारात्मक नियंत्रण:' : 'Negative control:'}</strong>{' '}
+            {isHi
+              ? `${control.scored} ज्ञात-अशुद्ध राज्य-केन्द्रक परियोजनाएं बिना लेबल के नमूने में मिलाई गईं। ${pct(control.strict_precision)} को सही चिह्नित किया गया। ${data.negative_control_warning ? 'यह ढीले अंकन का सुझाव देने के लिए पर्याप्त उच्च है — उपरोक्त आंकड़ों को ऊपरी सीमा मानें।' : 'अपेक्षित अनुसार कम, इसलिए अंकन व्यवस्थित रूप से आशावादी नहीं था।'}`
+              : `${control.scored} known-bad state-centroid projects were mixed into the sample unlabelled. ${pct(control.strict_precision)} were marked correct. ${data.negative_control_warning ? 'That is high enough to suggest lenient labelling — treat the figures above as an upper bound.' : 'Low, as expected, so the labelling was not systematically optimistic.'}`}
           </span>
         </div>
       )}

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Satellite, ShieldCheck, AlertTriangle, MapPin, Move, Eye, EyeOff, Crosshair, Gauge, Layers, Crosshair as Reticle, Sparkles, Loader2, CheckCircle2, Cpu } from 'lucide-react';
+import { Satellite, ShieldCheck, AlertTriangle, AlertOctagon, MapPin, Move, Eye, EyeOff, Crosshair, Gauge, Layers, Crosshair as Reticle, Sparkles, Loader2, CheckCircle2, Cpu } from 'lucide-react';
 
 /**
  * Dual-epoch satellite ground-truth viewer.
@@ -72,19 +72,16 @@ const TARGET_STYLE = {
     stroke: 'rgb(16,185,129)',
     badge: 'bg-emerald-500 text-white',
     glow: '0 0 10px rgba(16,185,129,0.55)',
-    dot: '🟢',
   },
   EARTHWORKS: {
     stroke: 'rgb(255,106,0)',
     badge: 'bg-orange-500 text-white',
     glow: '0 0 10px rgba(255,106,0,0.55)',
-    dot: '🟠',
   },
   UNCLASSIFIED_CHANGE: {
     stroke: 'rgb(100,133,148)',
     badge: 'bg-slate-500 text-white',
     glow: '0 0 8px rgba(100,133,148,0.45)',
-    dot: '⚪',
   },
 };
 
@@ -92,17 +89,17 @@ const VERDICT_STYLE = {
   GROUND_TRUTH_VERIFIED: {
     cls: 'bg-emerald-50 border-emerald-400 text-emerald-900',
     bar: 'bg-emerald-500',
-    icon: '✅',
+    iconType: 'check',
   },
   AUDIT_ALERT: {
     cls: 'bg-rose-50 border-rose-400 text-rose-900',
     bar: 'bg-rose-500',
-    icon: '🚨',
+    iconType: 'alert',
   },
   INCONCLUSIVE: {
     cls: 'bg-amber-50 border-amber-400 text-amber-900',
     bar: 'bg-amber-500',
-    icon: '🟠',
+    iconType: 'inconclusive',
   },
 };
 
@@ -305,7 +302,15 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
       {verdict && (
         <div className={`mx-4 mt-4 border-l-4 rounded-sm ${vstyle.cls} border ${''}`}>
           <div className="flex items-start gap-2.5 p-3">
-            <span className="text-base leading-none mt-0.5">{vstyle.icon}</span>
+            <span className="shrink-0 mt-0.5">
+              {vstyle.iconType === 'check' ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              ) : vstyle.iconType === 'alert' ? (
+                <AlertOctagon className="w-4 h-4 text-rose-600" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+              )}
+            </span>
             <div className="min-w-0">
               <p className="text-[11.5px] font-black uppercase tracking-wide leading-snug">
                 {verdict.headline}
@@ -422,13 +427,14 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
 
                 {/* Offset label badge */}
                 <span
-                  className={`absolute left-0 whitespace-nowrap px-1.5 py-0.5 rounded-sm text-[9px] font-black tracking-wide ${st.badge}`}
+                  className={`absolute left-0 whitespace-nowrap px-1.5 py-0.5 rounded-sm text-[9px] font-black tracking-wide flex items-center gap-1 ${st.badge}`}
                   style={{
                     [above ? 'bottom' : 'top']: 'calc(100% + 3px)',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.5)',
                   }}
                 >
-                  {st.dot} {t.label}
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/90 inline-block" />
+                  <span>{t.label}</span>
                 </span>
               </div>
             );
@@ -586,7 +592,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
               {
                 k: 'Areal Velocity',
                 v: velocity.areal_velocity_m2_per_month != null
-                  ? velocity.areal_velocity_m2_per_month.toLocaleString() + ' m2/mo' : '—',
+                  ? velocity.areal_velocity_m2_per_month.toLocaleString('en-IN') + ' m2/mo' : '—',
                 c: 'text-gov-navy',
                 t: 'Changed area inside the ROI divided by the elapsed months between epochs. Two images bound one interval, so this is an average rate over the window, not an instantaneous one.',
               },
@@ -718,7 +724,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
           <p>
             <strong className="text-gov-navy">Radiometric normalisation.</strong>{' '}
             {radiometry.method}. Fitted on{' '}
-            {radiometry.pif_pixel_count?.toLocaleString()} pseudo-invariant pixels
+            {radiometry.pif_pixel_count?.toLocaleString('en-IN')} pseudo-invariant pixels
             (selection at the {radiometry.pif_selection_percentile}th percentile, residual
             cut {radiometry.pif_residual_dn} DN); residual{' '}
             {radiometry.residual_before} &rarr; {radiometry.residual_after} DN
@@ -732,7 +738,7 @@ export default function SatelliteSwipeView({ projectId = '618402' }) {
               carries a measured green cast (ExG +0.115 against a 2018 baseline of 0.000).
               Uncorrected it reclassified the median scene from 9% to 78% vegetation.
               Residual offsets removed here: ExG {calib.exg_offset}, VARI {calib.vari_offset},
-              measured over {calib.reference_px?.toLocaleString()} brightness-matched pixels.
+              measured over {calib.reference_px?.toLocaleString('en-IN')} brightness-matched pixels.
             </p>
           )}
           <p>

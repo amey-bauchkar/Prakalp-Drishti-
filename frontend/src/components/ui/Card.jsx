@@ -31,9 +31,19 @@ export const Card = ({
 
   const hoverStyles = hoverable ? 'hover:shadow-elevated hover:-translate-y-0.5 cursor-pointer' : '';
 
+  // A Card given an onClick is a control, and has to behave like one: reachable by
+  // Tab, activated by Enter or Space, announced as a button. Without onClick it
+  // stays a plain container and gains no spurious semantics.
+  const interactive = typeof onClick === 'function';
+
   return (
     <div
       onClick={onClick}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      onKeyDown={interactive ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); }
+      } : undefined}
       className={`
         ${baseStyles}
         ${variants[variant] || variants.white}

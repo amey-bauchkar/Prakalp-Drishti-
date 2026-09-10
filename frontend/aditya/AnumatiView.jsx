@@ -153,7 +153,7 @@ export default function AnumatiView() {
                 Agency: <strong className="text-gov-navy">{meta.executing_agency}</strong>
               </span>
               <span className="text-text-secondary font-mono">
-                Sanctioned: <strong className="text-gov-navy">₹{meta.total_sanctioned_cost_cr.toLocaleString()} Cr</strong>
+                Sanctioned: <strong className="text-gov-navy">₹{meta.total_sanctioned_cost_cr.toLocaleString('en-IN')} Cr</strong>
               </span>
             </div>
           )}

@@ -303,6 +303,7 @@ class RiskIndexEngine:
             "projects_scored": len(self.scores),
             "with_ground_truth_signal": n_with_eo,
             "band_distribution": bands,
+            "sectors": sorted(list(set(r["sector"] for r in self.scores.values() if r.get("sector")))),
             "weights": COMPONENT_WEIGHTS,
             "weights_note": "Declared policy weights, not fitted -- no ground-truth risk "
                             "label exists to fit against. Exposed so MoSPI can change them.",

@@ -17,7 +17,9 @@ export default defineConfig({
         theme_color: '#1E2A45',
         background_color: '#F7F8FA',
         display: 'standalone',
-        orientation: 'portrait',
+        // 'portrait' locked a data-dense console with an eight-column register out of
+        // landscape on tablets. The layout is responsive; let the device decide.
+        orientation: 'any',
         scope: '/',
         start_url: '/',
         icons: [
@@ -101,6 +103,13 @@ export default defineConfig({
         // bytes, especially on the high-latency links this platform targets.
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // framer-motion drives the shell's route transitions, so it loads on every
+          // page and belongs in its own long-lived chunk rather than inside the entry.
+          'vendor-motion': ['framer-motion'],
+          // Tremor is shared by several engines. Naming it keeps Rollup from emitting
+          // it under a component name (it was surfacing as "Tracker-*.js"), and it is
+          // fetched only with the first engine that needs it, then cached.
+          'vendor-tremor': ['@tremor/react'],
           'vendor-charts': ['recharts'],
           'vendor-maps': ['leaflet', 'react-leaflet'],
           'vendor-icons': ['lucide-react'],

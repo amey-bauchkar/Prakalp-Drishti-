@@ -3,7 +3,8 @@ import { Card, Metric, Text } from '@tremor/react';
 import { Scale, Calculator, AlertTriangle, CheckCircle2, RefreshCw, Landmark, HelpCircle, Sliders } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Clause10CCSimulator() {
+export default function Clause10CCSimulator({ lang = 'en' }) {
+  const isHi = lang === 'hi';
   const [originalCost, setOriginalCost] = useState(1000);
   const [sanctionYear, setSanctionYear] = useState(2018);
   const [revisedCost, setRevisedCost] = useState(1195);
@@ -69,11 +70,11 @@ export default function Clause10CCSimulator() {
               <Calculator className="w-4 h-4" />
             </span>
             <h3 className="font-heading font-extrabold text-lg text-slate-900 tracking-tight">
-              CLAUSE 10CC WHAT-IF LAB
+              {isHi ? "खंड १०सीसी क्या-अगर प्रयोगशाला" : "CLAUSE 10CC WHAT-IF LAB"}
             </h3>
           </div>
           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 text-xs font-mono font-bold">
-            CPWD GCC Standard Model
+            {isHi ? "सीपीडब्ल्यूडी जीसीसी मानक मॉडल" : "CPWD GCC Standard Model"}
           </span>
         </div>
 
@@ -81,7 +82,7 @@ export default function Clause10CCSimulator() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div>
             <label className="text-[11px] font-mono text-slate-600 uppercase block font-bold">
-              Original Sanction (₹ Cr)
+              {isHi ? "मूल स्वीकृति (₹ करोड़)" : "Original Sanction (₹ Cr)"}
             </label>
             <input
               type="number"
@@ -93,7 +94,7 @@ export default function Clause10CCSimulator() {
 
           <div>
             <label className="text-[11px] font-mono text-slate-600 uppercase block font-bold">
-              Sanction / Bid Year
+              {isHi ? "स्वीकृति / बोली वर्ष" : "Sanction / Bid Year"}
             </label>
             <select
               value={sanctionYear}
@@ -108,7 +109,7 @@ export default function Clause10CCSimulator() {
 
           <div>
             <label className="text-[11px] font-mono text-slate-600 uppercase block font-bold">
-              Demanded Revised Cost (₹ Cr)
+              {isHi ? "मांगी गई संशोधित लागत (₹ करोड़)" : "Demanded Revised Cost (₹ Cr)"}
             </label>
             <input
               type="number"
@@ -120,7 +121,7 @@ export default function Clause10CCSimulator() {
 
           <div>
             <label className="text-[11px] font-mono text-slate-600 uppercase block font-bold">
-              Claimed Escalation (₹ Cr)
+              {isHi ? "दावा की गई मूल्य वृद्धि (₹ करोड़)" : "Claimed Escalation (₹ Cr)"}
             </label>
             <input
               type="number"
@@ -136,10 +137,10 @@ export default function Clause10CCSimulator() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-heading">
               <Sliders className="w-3.5 h-3.5 text-slate-700" />
-              COMMODITY WPI COMPONENT FRACTIONS (P-WEIGHTS)
+              {isHi ? "वस्तु थोक मूल्य सूचकांक घटक अंश (P-भार)" : "COMMODITY WPI COMPONENT FRACTIONS (P-WEIGHTS)"}
             </span>
             <span className="font-mono text-[11px] text-slate-500 font-bold">
-              Sum: {((pSteel + pCement + pFuel + pLabor + pOther) * 100).toFixed(0)}%
+              {isHi ? "योग" : "Sum"}: {((pSteel + pCement + pFuel + pLabor + pOther) * 100).toFixed(0)}%
             </span>
           </div>
 
@@ -151,6 +152,8 @@ export default function Clause10CCSimulator() {
             </div>
             <input
               type="range"
+              aria-label="Steel weight in the Clause 10CC escalation formula"
+              aria-valuetext={`${(pSteel * 100).toFixed(0)} percent`}
               min="0"
               max="0.5"
               step="0.05"
@@ -168,6 +171,8 @@ export default function Clause10CCSimulator() {
             </div>
             <input
               type="range"
+              aria-label="Cement weight in the Clause 10CC escalation formula"
+              aria-valuetext={`${(pCement * 100).toFixed(0)} percent`}
               min="0"
               max="0.5"
               step="0.05"
@@ -185,6 +190,8 @@ export default function Clause10CCSimulator() {
             </div>
             <input
               type="range"
+              aria-label="Fuel and bitumen weight in the Clause 10CC escalation formula"
+              aria-valuetext={`${(pFuel * 100).toFixed(0)} percent`}
               min="0"
               max="0.5"
               step="0.05"
@@ -202,6 +209,8 @@ export default function Clause10CCSimulator() {
             </div>
             <input
               type="range"
+              aria-label="Labour and CPI weight in the Clause 10CC escalation formula"
+              aria-valuetext={`${(pLabor * 100).toFixed(0)} percent`}
               min="0"
               max="0.5"
               step="0.05"
@@ -217,7 +226,7 @@ export default function Clause10CCSimulator() {
       <Card className="lg:col-span-6 p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-md bg-white space-y-5">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <h3 className="font-heading font-extrabold text-lg text-slate-900 tracking-tight">
-            FORENSIC VERDICT & ALLOWABLE CEILING
+            {isHi ? "विधिक निर्णय एवं स्वीकार्य उच्चतम सीमा" : "FORENSIC VERDICT & ALLOWABLE CEILING"}
           </h3>
           {loading && <RefreshCw className="w-4 h-4 animate-spin text-amber-500" />}
         </div>
@@ -241,17 +250,23 @@ export default function Clause10CCSimulator() {
           <div className="space-y-1">
             <span className="font-mono text-xs font-bold uppercase tracking-wider block">
               {isCloseTo20
-                ? "⚠️ SUSPICIOUS: CCEA EVASION PROXIMITY [18%, 20%)"
+                ? (isHi ? "संदेहास्पद: सीसीईए बचाव निकटता [18%, 20%)" : "SUSPICIOUS: CCEA EVASION PROXIMITY [18%, 20%)")
                 : isOver20
-                ? "🚨 CCEA MANDATORY REVIEW REQUIRED (≥20%)"
-                : "✅ NORMAL COMPLIANT REVISION (<18%)"}
+                ? (isHi ? "अनिवार्य सीसीईए कैबिनेट समीक्षा आवश्यक (≥20%)" : "CCEA MANDATORY REVIEW REQUIRED (≥20%)")
+                : (isHi ? "सामान्य अनुपालन संशोधन (<18%)" : "NORMAL COMPLIANT REVISION (<18%)")}
             </span>
             <p className="text-xs leading-relaxed font-sans">
               {isCloseTo20
-                ? `Demanded overrun of +${overrunPct}% stops exactly ${(20.0 - overrunPct).toFixed(2)} pp below the 20% CCEA Cabinet re-sanction threshold.`
+                ? (isHi
+                    ? `मांगी गई +${overrunPct}% की लागत वृद्धि २०% सीसीईए पुनः स्वीकृति सीमा से ठीक ${(20.0 - overrunPct).toFixed(2)} pp नीचे रुकती है।`
+                    : `Demanded overrun of +${overrunPct}% stops exactly ${(20.0 - overrunPct).toFixed(2)} pp below the 20% CCEA Cabinet re-sanction threshold.`)
                 : isOver20
-                ? `Overrun of +${overrunPct}% breaches the statutory 20% threshold. Mandatory Standing Committee and Cabinet approval required.`
-                : `Demanded overrun of +${overrunPct}% is within standard ministerial delegated financial powers.`}
+                ? (isHi
+                    ? `+${overrunPct}% की लागत वृद्धि सांविधिक 20% सीमा का उल्लंघन करती है। स्थायी समिति एवं कैबिनेट अनुमोदन अनिवार्य है।`
+                    : `Overrun of +${overrunPct}% breaches the statutory 20% threshold. Mandatory Standing Committee and Cabinet approval required.`)
+                : (isHi
+                    ? `मांगी गई +${overrunPct}% की लागत वृद्धि मानक मंत्रालयीय वित्तीय शक्तियों के दायरे में है।`
+                    : `Demanded overrun of +${overrunPct}% is within standard ministerial delegated financial powers.`)}
             </p>
           </div>
         </div>
@@ -259,15 +274,21 @@ export default function Clause10CCSimulator() {
         {/* 10CC Calculation Results Grid */}
         <div className="grid grid-cols-2 gap-3.5 text-xs font-mono">
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-[10px] text-slate-500 block uppercase font-bold">Escalable Base (85%)</span>
+            <span className="text-[10px] text-slate-500 block uppercase font-bold">
+              {isHi ? "मूल्य वृद्धि योग्य आधार (८५%)" : "Escalable Base (85%)"}
+            </span>
             <span className="font-bold text-base text-slate-900 block mt-0.5">
               ₹{simResult?.escalable_base_cr?.toLocaleString('en-IN')} Cr
             </span>
-            <span className="text-[10px] text-slate-400 block mt-0.5">15% Contractor Fixed Risk deducted</span>
+            <span className="text-[10px] text-slate-400 block mt-0.5">
+              {isHi ? "15% संविदाकार निश्चित जोखिम घटाया गया" : "15% Contractor Fixed Risk deducted"}
+            </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-            <span className="text-[10px] text-slate-500 block uppercase font-bold">Composite WPI Inflation</span>
+            <span className="text-[10px] text-slate-500 block uppercase font-bold">
+              {isHi ? "समग्र थोक मूल्य मुद्रास्फीति" : "Composite WPI Inflation"}
+            </span>
             <span className="font-bold text-base text-emerald-600 block mt-0.5">
               +{simResult?.composite_inflation_pct}%
             </span>
@@ -278,14 +299,14 @@ export default function Clause10CCSimulator() {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10.5px] text-indigo-800 block uppercase font-bold">
-                  Statutory Allowed Escalation (Clause 10CC Cap)
+                  {isHi ? "सांविधिक अनुमत मूल्य वृद्धि (खंड 10सीसी सीमा)" : "Statutory Allowed Escalation (Clause 10CC Cap)"}
                 </span>
                 <span className="font-bold text-lg text-indigo-900 block mt-0.5">
                   ₹{simResult?.statutory_allowed_escalation_cr?.toLocaleString('en-IN')} Cr
                 </span>
               </div>
               <span className="px-3 py-1 rounded-md bg-indigo-100 text-indigo-800 border border-indigo-300 font-mono text-xs font-bold">
-                +{simResult?.cap_pct_of_original_cost}% Original Cap
+                +{simResult?.cap_pct_of_original_cost}% {isHi ? "मूल सीमा" : "Original Cap"}
               </span>
             </div>
           </div>
@@ -294,7 +315,7 @@ export default function Clause10CCSimulator() {
         {/* Explanatory Formula Note */}
         <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-1">
           <span className="font-mono font-bold text-slate-800 block">
-            CPWD GCC Clause 10CC Statutory Formula:
+            {isHi ? "सीपीडब्ल्यूडी जीसीसी खंड १०सीसी सांविधिक सूत्र:" : "CPWD GCC Clause 10CC Statutory Formula:"}
           </span>
           <p className="font-mono text-[10.5px] text-slate-700">
             V = 0.85 × BaseCost × ( P_s × ΔS/S₀ + P_c × ΔC/C₀ + P_f × ΔF/F₀ + P_l × ΔL/L₀ + P_m × ΔM/M₀ )

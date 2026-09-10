@@ -71,6 +71,24 @@ export default {
         'gov-muted-dark': '#46586B',
         'gov-muted-light': '#9AA8B6',
 
+        /* Body text one step softer than --ink but still comfortably AA. Added
+           because the audit replaced ~169 uses of text-slate-400 (2.56:1 on
+           white — a 1.4.3 failure) and needed a readable secondary that is not
+           the same weight as primary text. Mirrors --ink-soft in tokens.css. */
+        'gov-soft': '#46586B',   /* 7.6:1 on #FFFFFF */
+        'gov-dim': '#9AA8B6',    /* decorative tint only, never body text */
+
+        /* Surface aliases matching --surface-* in tokens.css, so a component can
+           name the paper it sits on without hardcoding a slate/zinc step. */
+        'surface-2': '#F7F8F9',
+        'surface-3': '#F1F3F5',
+
+        /* Status washes, matching --*-wash in tokens.css. */
+        'gold-wash': '#FCF7EC',
+        'azure-wash': '#EDF3F8',
+        'emerald-wash': '#EAF6F0',
+        'crimson-wash': '#FCEFF0',
+
         amber: {
           50: '#FDF8EE', 100: '#F8EFD9', 200: '#EADFC0', 300: '#DCC48A',
           400: '#C99A38', 500: '#B57F14', 600: '#A9680A', 700: '#8A5308',

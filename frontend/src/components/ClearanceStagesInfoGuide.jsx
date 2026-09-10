@@ -152,11 +152,13 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
   const IconComponent = selectedStage.icon;
 
   return (
-    <div className={`rounded-xl border border-zinc-200 bg-white overflow-hidden shadow-xs ${className}`}>
+    <div className={`rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs ${className}`}>
       {/* Accordion Header / Title Bar */}
-      <div 
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="p-4 bg-gradient-to-r from-zinc-50 via-white to-zinc-50 border-b border-zinc-200 flex items-center justify-between cursor-pointer select-none hover:bg-zinc-100/60 transition-colors"
+        aria-expanded={isOpen}
+        className="w-full text-left p-4 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-b border-slate-200 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/60 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[#0060B6]/10 border border-[#0060B6]/20 flex items-center justify-center text-[#0060B6]">
@@ -164,36 +166,35 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-heading font-extrabold text-sm text-zinc-900 tracking-tight">
+              <h3 className="font-heading font-extrabold text-sm text-slate-900 tracking-tight">
                 Statutory Clearance Framework: What Different Stage Clearances Mean
               </h3>
               <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-900 border border-blue-200">
                 PARIVESH Regulatory Guide
               </span>
             </div>
-            <p className="text-[11.5px] text-zinc-500 mt-0.5">
+            <p className="text-[11.5px] text-slate-500 mt-0.5">
               Citizen's charter benchmark timelines, legal mandates, and approval steps for Central Sector infrastructure.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
-          <span className="hidden md:inline text-[11px] font-mono text-zinc-400">
-            {isOpen ? 'Click to collapse guide' : 'Click to expand guide'}
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+          <span className="hidden md:inline text-[11px] font-mono text-slate-400">
+            {isOpen ? 'Collapse guide' : 'Expand guide'}
           </span>
-          <button 
-            type="button"
-            className="p-1.5 rounded-md hover:bg-zinc-200/60 text-zinc-500 transition-colors"
-            aria-label={isOpen ? 'Collapse guide' : 'Expand guide'}
+          <span
+            aria-hidden="true"
+            className="p-1.5 rounded-md text-slate-500 transition-colors"
           >
             {isOpen ? <ChevronUp className="w-4 h-4 text-[#0060B6]" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
+          </span>
         </div>
-      </div>
+      </button>
 
       {/* Expandable Guide Body */}
       {isOpen && (
-        <div className="p-4 sm:p-5 space-y-5 bg-zinc-50/40">
+        <div className="p-4 sm:p-5 space-y-5 bg-slate-50/40">
           
           {/* Stage Selector Tabs */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
@@ -209,19 +210,19 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
                   className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col justify-between ${
                     isActive
                       ? 'bg-white border-[#0060B6] ring-1 ring-[#0060B6] shadow-xs'
-                      : 'bg-white/80 border-zinc-200 hover:border-zinc-300 hover:bg-white'
+                      : 'bg-white/80 border-slate-200 hover:border-slate-300 hover:bg-white'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1 mb-1">
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#0060B6]' : 'text-zinc-500'}`} />
-                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-700">
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#0060B6]' : 'text-slate-500'}`} />
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-100 text-slate-700">
                       {stage.sla}
                     </span>
                   </div>
-                  <span className={`text-xs font-bold truncate block ${isActive ? 'text-zinc-900' : 'text-zinc-700'}`}>
+                  <span className={`text-xs font-bold truncate block ${isActive ? 'text-slate-900' : 'text-slate-700'}`}>
                     {stage.title.split('(')[0].trim()}
                   </span>
-                  <span className="text-[10px] font-mono text-zinc-400 block mt-0.5 truncate">
+                  <span className="text-[10px] font-mono text-slate-400 block mt-0.5 truncate">
                     {stage.code}
                   </span>
                 </button>
@@ -230,20 +231,20 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
           </div>
 
           {/* Detailed Card for Active Selected Stage */}
-          <div className={`p-4 sm:p-5 rounded-xl bg-white border border-zinc-200 border-l-4 ${selectedStage.borderClass} shadow-xs space-y-4`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3">
+          <div className={`p-4 sm:p-5 rounded-xl bg-white border border-slate-200 border-l-4 ${selectedStage.borderClass} shadow-xs space-y-4`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-800 shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 shrink-0">
                   <IconComponent className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="font-heading font-extrabold text-sm sm:text-base text-zinc-900">
+                  <h4 className="font-heading font-extrabold text-sm sm:text-base text-slate-900">
                     {selectedStage.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-500 flex-wrap mt-0.5">
-                    <span className="font-mono font-semibold text-zinc-700">{selectedStage.code}</span>
+                  <div className="flex items-center gap-2 text-[11px] text-slate-500 flex-wrap mt-0.5">
+                    <span className="font-mono font-semibold text-slate-700">{selectedStage.code}</span>
                     <span>•</span>
-                    <span>Nodal Authority: <strong className="text-zinc-800">{selectedStage.authority}</strong></span>
+                    <span>Nodal Authority: <strong className="text-slate-800">{selectedStage.authority}</strong></span>
                   </div>
                 </div>
               </div>
@@ -255,19 +256,19 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
               </div>
             </div>
 
-            <p className="text-xs sm:text-[13px] text-zinc-700 leading-relaxed font-sans">
+            <p className="text-xs sm:text-[13px] text-slate-700 leading-relaxed font-sans">
               {selectedStage.summary}
             </p>
 
             {/* Three key breakdown points */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
               {selectedStage.keyPoints.map((pt, pIdx) => (
-                <div key={pIdx} className="p-3 rounded-lg bg-zinc-50 border border-zinc-200/80 space-y-1">
+                <div key={pIdx} className="p-3 rounded-lg bg-slate-50 border border-slate-200/80 space-y-1">
                   <div className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="font-bold text-[11.5px] text-zinc-900">{pt.term}</span>
+                    <span className="font-bold text-[11.5px] text-slate-900">{pt.term}</span>
                   </div>
-                  <p className="text-[11px] text-zinc-600 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
                     {pt.detail}
                   </p>
                 </div>
@@ -276,12 +277,12 @@ export default function ClearanceStagesInfoGuide({ defaultOpen = true, className
           </div>
 
           {/* Quick Institutional Footnote */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-[11px] text-zinc-500 font-mono">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-[11px] text-slate-500 font-mono">
             <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-zinc-400" />
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>Timelines benchmarked against MoEFCC Citizen's Charter &amp; Cabinet Committee on Infrastructure (CCI) guidelines.</span>
             </div>
-            <span className="font-bold text-zinc-700">PARIVESH 2.0 Real-Time Synchronized</span>
+            <span className="font-bold text-slate-700">PARIVESH 2.0 Real-Time Synchronized</span>
           </div>
 
         </div>

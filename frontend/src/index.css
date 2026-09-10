@@ -8,7 +8,7 @@
    position.
 
    Order is meaningful: tokens define the variables everything else reads, and
-   a11y is last so it can override.                                        */
+   the a11y sheets are last so they can override.                                        */
 
 @import "leaflet/dist/leaflet.css";
 @import "./fonts.css";
@@ -19,6 +19,7 @@
 @import "./styles/utilities.css";
 @import "./styles/shadcn.css";
 @import "./styles/a11y.css";
+@import "./styles/a11y-scaling.css";
 
 @tailwind base;
 @tailwind components;

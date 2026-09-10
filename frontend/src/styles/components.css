@@ -286,43 +286,25 @@
   .command-header {
     position: relative;
     overflow: hidden;
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(0,0,0,0.12) 100%),
-      linear-gradient(118deg, #0B1D2E 0%, #102A40 46%, #143755 74%, #0D2438 100%);
-    border: 1px solid #1B3E5C;
-    border-radius: 3px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
     color: #FFFFFF;
   }
 
-  /* Tricolour authority rule */
+  /* Tricolour authority rule disabled for unified modern command look */
   .hero-saffron-banner::before,
   .command-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      var(--tri-saffron) 0%, var(--tri-saffron) 33.33%,
-      #FFFFFF 33.33%, #FFFFFF 66.66%,
-      var(--tri-green) 66.66%, var(--tri-green) 100%);
-    z-index: 2;
+    content: none;
+    display: none;
   }
 
-  /* Engraved hatching, at the threshold of visibility */
+  /* Engraved hatching disabled for clean modern card look */
   .hero-saffron-banner::after,
   .command-header::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      rgba(255,255,255,0.028) 0px,
-      rgba(255,255,255,0.028) 1px,
-      transparent 1px,
-      transparent 7px
-    );
-    pointer-events: none;
-    z-index: 0;
+    content: none;
+    display: none;
   }
 
   .command-header > *,

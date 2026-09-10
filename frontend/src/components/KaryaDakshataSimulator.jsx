@@ -9,8 +9,18 @@ import {
 import { Card, Metric, BadgeDelta, Flex, ProgressBar } from '@tremor/react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 import LoginGate from '../../amey/LoginGate.jsx';
+import { getStoredLanguage } from '../lib/i18n';
 
-export default function KaryaDakshataSimulator() {
+export default function KaryaDakshataSimulator({ lang: propLang }) {
+  const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+  useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
+
   const [agencies, setAgencies] = useState([]);
   const [selectedAgency, setSelectedAgency] = useState("");
   const [baseCost, setBaseCost] = useState("");
@@ -87,12 +97,21 @@ export default function KaryaDakshataSimulator() {
 
   const getScoreBadge = (score) => {
     if (score >= 80) {
-      return { label: "High Reliability", bg: "bg-emerald-50 text-emerald-800 border-emerald-200" };
+      return { 
+        label: isHi ? "उच्च विश्वसनीयता" : "High Reliability", 
+        bg: "bg-emerald-50 text-emerald-800 border-emerald-200" 
+      };
     }
     if (score >= 50) {
-      return { label: "Moderate Risk", bg: "bg-blue-50 text-blue-800 border-blue-200" };
+      return { 
+        label: isHi ? "मध्यम जोखिम" : "Moderate Risk", 
+        bg: "bg-blue-50 text-blue-800 border-blue-200" 
+      };
     }
-    return { label: "High Overrun Risk", bg: "bg-rose-50 text-rose-800 border-rose-200" };
+    return { 
+      label: isHi ? "उच्च अतिव्यय जोखिम" : "High Overrun Risk", 
+      bg: "bg-rose-50 text-rose-800 border-rose-200" 
+    };
   };
 
   const containerVariants = {
@@ -121,13 +140,13 @@ export default function KaryaDakshataSimulator() {
     : 0;
 
   const costChartData = result ? [
-    { name: 'Proposed Budget', value: result.Base_Cost_Cr },
-    { name: 'AI De-Biased Expected', value: result.True_Expected_Cost_Cr }
+    { name: isHi ? 'प्रस्तावित बजट' : 'Proposed Budget', value: result.Base_Cost_Cr },
+    { name: isHi ? 'एआई अपेक्षित लागत' : 'AI De-Biased Expected', value: result.True_Expected_Cost_Cr }
   ] : [];
 
   const timeChartData = result ? [
-    { name: 'Proposed Timeline', value: result.Base_Timeline_Days },
-    { name: 'AI De-Biased Expected', value: result.True_Expected_Timeline_Days }
+    { name: isHi ? 'प्रस्तावित समयसीमा' : 'Proposed Timeline', value: result.Base_Timeline_Days },
+    { name: isHi ? 'एआई अपेक्षित समय' : 'AI De-Biased Expected', value: result.True_Expected_Timeline_Days }
   ] : [];
 
   return (
@@ -153,18 +172,20 @@ export default function KaryaDakshataSimulator() {
             <div className="space-y-2.5 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300 text-xs font-mono font-bold tracking-wider uppercase">
                 <Activity className="w-3.5 h-3.5 text-blue-400" />
-                <span>KARYA-DAKSHATA · कार्य-दक्षता // AGENCY DE-BIASING ENGINE</span>
+                <span>{isHi ? 'कार्य-दक्षता // एजेंसी पूर्वाग्रह-निवारण इंजन' : 'KARYA-DAKSHATA · कार्य-दक्षता // AGENCY DE-BIASING ENGINE'}</span>
               </div>
               
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                <span>EXECUTION RELIABILITY SIMULATOR</span>
+                <span>{isHi ? 'निष्पादन विश्वसनीयता सिमुलेटर' : 'EXECUTION RELIABILITY SIMULATOR'}</span>
                 <span className="text-xs px-2.5 py-1 rounded-md bg-white/10 text-slate-300 font-mono font-normal">
-                  {agencies.length} AGENCIES CATALOGUED
+                  {isHi ? `${agencies.length} एजेंसियां सूचीबद्ध` : `${agencies.length} AGENCIES CATALOGUED`}
                 </span>
               </h1>
               
               <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-xl">
-                AI-driven empirical de-biasing of optimistic project proposals using multi-year agency track records, historical completion velocities, and cost/schedule variance distributions.
+                {isHi
+                  ? 'बहु-वर्षीय एजेंसी ट्रैक रिकॉर्ड, ऐतिहासिक समापन गति और लागत/समयसीमा प्रसरण वितरण का उपयोग करके आशावादी परियोजना प्रस्तावों का एआई-आधारित अनुभवजन्य पूर्वाग्रह-निवारण।'
+                  : 'AI-driven empirical de-biasing of optimistic project proposals using multi-year agency track records, historical completion velocities, and cost/schedule variance distributions.'}
               </p>
             </div>
 
@@ -174,14 +195,18 @@ export default function KaryaDakshataSimulator() {
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 block font-mono tracking-wider">Active Agency</span>
+                <span className="text-[10px] uppercase font-bold text-slate-400 block font-mono tracking-wider">
+                  {isHi ? 'सक्रिय एजेंसी' : 'Active Agency'}
+                </span>
                 <span className="text-base font-black text-white font-mono truncate block max-w-[200px]">
-                  {selectedAgency || 'None Selected'}
+                  {selectedAgency || (isHi ? 'कोई चयनित नहीं' : 'None Selected')}
                 </span>
                 <span className="text-[10px] font-mono text-blue-300 block">
                   {selectedAgencyObj 
-                    ? `${selectedAgencyObj.projects || selectedAgencyObj.project_count || selectedAgencyObj.total_projects || 0} Historical Projects` 
-                    : 'Choose from dropdown'}
+                    ? (isHi 
+                        ? `${selectedAgencyObj.projects || selectedAgencyObj.project_count || selectedAgencyObj.total_projects || 0} ऐतिहासिक परियोजनाएं` 
+                        : `${selectedAgencyObj.projects || selectedAgencyObj.project_count || selectedAgencyObj.total_projects || 0} Historical Projects`)
+                    : (isHi ? 'ड्रॉपडाउन से चुनें' : 'Choose from dropdown')}
                 </span>
               </div>
             </div>
@@ -201,30 +226,30 @@ export default function KaryaDakshataSimulator() {
                   <div className="flex items-center gap-2">
                     <Calculator className="w-4 h-4 text-blue-600" />
                     <h3 className="font-extrabold text-sm uppercase tracking-wider text-slate-900 font-mono">
-                      Proposal Inputs
+                      {isHi ? 'प्रस्ताव इनपुट' : 'Proposal Inputs'}
                     </h3>
                   </div>
                   <span className="text-[10px] font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold">
-                    Parameter Setup
+                    {isHi ? 'पैरामीटर सेटअप' : 'Parameter Setup'}
                   </span>
                 </div>
 
                 {/* Implementing Agency Selector */}
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                    Implementing Agency
+                    {isHi ? 'कार्यान्वयन एजेंसी' : 'Implementing Agency'}
                   </label>
                   <select 
                     value={selectedAgency} 
                     onChange={(e) => setSelectedAgency(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 outline-none text-xs font-bold text-slate-900 transition-all font-sans cursor-pointer"
                   >
-                    <option value="" disabled>Select Agency...</option>
+                    <option value="" disabled>{isHi ? 'एजेंसी चुनें...' : 'Select Agency...'}</option>
                     {agencies.map(a => {
                       const count = a.projects ?? a.project_count ?? a.total_projects ?? 0;
                       return (
                         <option key={a.name} value={a.name}>
-                          {a.name} ({count} projects)
+                          {a.name} ({count} {isHi ? 'परियोजनाएं' : 'projects'})
                         </option>
                       );
                     })}
@@ -235,14 +260,14 @@ export default function KaryaDakshataSimulator() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                      Proposed Budget (₹ Cr)
+                      {isHi ? 'प्रस्तावित बजट (₹ करोड़)' : 'Proposed Budget (₹ Cr)'}
                     </label>
                     <span className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${
                       baseCost 
                         ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
                         : 'text-slate-400 bg-slate-100 border-slate-200'
                     }`}>
-                      {baseCost ? `₹${Number(baseCost).toLocaleString()} Cr` : 'Not Set'}
+                      {baseCost ? `₹${Number(baseCost).toLocaleString('en-IN')} ${isHi ? 'करोड़' : 'Cr'}` : (isHi ? 'निर्धारित नहीं' : 'Not Set')}
                     </span>
                   </div>
                   <div className="relative">
@@ -272,7 +297,7 @@ export default function KaryaDakshataSimulator() {
                             : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
                         }`}
                       >
-                        ₹{crVal.toLocaleString()} Cr
+                        ₹{crVal.toLocaleString('en-IN')} {isHi ? 'करोड़' : 'Cr'}
                       </button>
                     ))}
                   </div>
@@ -282,14 +307,18 @@ export default function KaryaDakshataSimulator() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider font-mono">
-                      Proposed Timeline (Days)
+                      {isHi ? 'प्रस्तावित समयसीमा (दिन)' : 'Proposed Timeline (Days)'}
                     </label>
                     <span className={`text-xs font-mono font-bold px-2.5 py-0.5 rounded-md border ${
                       baseTime 
                         ? 'text-blue-700 bg-blue-50 border-blue-200' 
                         : 'text-slate-400 bg-slate-100 border-slate-200'
                     }`}>
-                      {baseTime ? `${Number(baseTime)} Days (${(Number(baseTime) / 365).toFixed(1)} Yrs)` : 'Not Set'}
+                      {baseTime 
+                        ? (isHi 
+                            ? `${Number(baseTime)} दिन (${(Number(baseTime) / 365).toFixed(1)} वर्ष)` 
+                            : `${Number(baseTime)} Days (${(Number(baseTime) / 365).toFixed(1)} Yrs)`) 
+                        : (isHi ? 'निर्धारित नहीं' : 'Not Set')}
                     </span>
                   </div>
                   <div className="relative">
@@ -309,10 +338,10 @@ export default function KaryaDakshataSimulator() {
                   {/* Timeline Presets */}
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {[
-                      { label: '1 Yr', days: 365 },
-                      { label: '2 Yrs', days: 730 },
-                      { label: '3 Yrs', days: 1095 },
-                      { label: '5 Yrs', days: 1825 }
+                      { label: isHi ? '१ वर्ष' : '1 Yr', days: 365 },
+                      { label: isHi ? '२ वर्ष' : '2 Yrs', days: 730 },
+                      { label: isHi ? '३ वर्ष' : '3 Yrs', days: 1095 },
+                      { label: isHi ? '५ वर्ष' : '5 Yrs', days: 1825 }
                     ].map((p) => (
                       <button
                         key={p.days}
@@ -340,12 +369,12 @@ export default function KaryaDakshataSimulator() {
                 {loading ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin text-blue-600 group-hover:text-white" />
-                    <span>De-Biasing Estimates…</span>
+                    <span>{isHi ? 'अनुमानों का पूर्वाग्रह-निवारण जारी…' : 'De-Biasing Estimates…'}</span>
                   </>
                 ) : (
                   <>
                     <BarChart3 className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors" />
-                    <span>Run De-Biasing Engine</span>
+                    <span>{isHi ? 'पूर्वाग्रह-निवारण इंजन चलाएं' : 'Run De-Biasing Engine'}</span>
                     <ArrowRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                   </>
                 )}
@@ -360,7 +389,7 @@ export default function KaryaDakshataSimulator() {
             {error && (
               <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2.5 mb-4">
                 <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
-                <span>Simulation Error: {error}</span>
+                <span>{isHi ? `सिमुलेशन त्रुटि: ${error}` : `Simulation Error: ${error}`}</span>
               </div>
             )}
 
@@ -373,10 +402,12 @@ export default function KaryaDakshataSimulator() {
                 
                 <div className="space-y-2 max-w-lg">
                   <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans tracking-tight">
-                    Ready to De-Bias Project Proposal
+                    {isHi ? 'परियोजना प्रस्ताव पूर्वाग्रह-निवारण हेतु तैयार' : 'Ready to De-Bias Project Proposal'}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-sans">
-                    Select an agency and configure the proposed budget and duration. Click <strong>"Run De-Biasing Engine"</strong> to compute empirical variance, expected cost escalation, and schedule slippage based on historical track records.
+                    {isHi
+                      ? <>एक एजेंसी का चयन करें और प्रस्तावित बजट व अवधि कॉन्फ़िगर करें। ऐतिहासिक ट्रैक रिकॉर्ड के आधार पर अनुभवजन्य प्रसरण, अपेक्षित लागत वृद्धि और समयसीमा विचलन की गणना करने के लिए <strong>"पूर्वाग्रह-निवारण इंजन चलाएं"</strong> पर क्लिक करें।</>
+                      : <>Select an agency and configure the proposed budget and duration. Click <strong>"Run De-Biasing Engine"</strong> to compute empirical variance, expected cost escalation, and schedule slippage based on historical track records.</>}
                   </p>
                 </div>
 
@@ -385,30 +416,30 @@ export default function KaryaDakshataSimulator() {
                   <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
                     <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-bold uppercase">
                       <History className="w-3.5 h-3.5" />
-                      <span>Historical Variance</span>
+                      <span>{isHi ? 'ऐतिहासिक प्रसरण' : 'Historical Variance'}</span>
                     </div>
                     <p className="text-[11.5px] text-slate-600 leading-snug">
-                      Analyzes 10+ years of agency cost overruns and completion velocities.
+                      {isHi ? '10+ वर्षों के एजेंसी लागत अतिव्यय और समापन गति का विश्लेषण करता है।' : 'Analyzes 10+ years of agency cost overruns and completion velocities.'}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
                     <div className="flex items-center gap-1.5 text-cyan-600 font-mono text-[11px] font-bold uppercase">
                       <Gauge className="w-3.5 h-3.5" />
-                      <span>Reliability Score</span>
+                      <span>{isHi ? 'विश्वसनीयता स्कोर' : 'Reliability Score'}</span>
                     </div>
                     <p className="text-[11.5px] text-slate-600 leading-snug">
-                      Calculates empirical reliability score (0–100) and delivery variance.
+                      {isHi ? 'अनुभवजन्य विश्वसनीयता स्कोर (0–100) और वितरण प्रसरण की गणना करता है।' : 'Calculates empirical reliability score (0–100) and delivery variance.'}
                     </p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-emerald-200 transition-colors">
                     <div className="flex items-center gap-1.5 text-emerald-600 font-mono text-[11px] font-bold uppercase">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Reserve Buffer</span>
+                      <span>{isHi ? 'आरक्षित बफ़र' : 'Reserve Buffer'}</span>
                     </div>
                     <p className="text-[11.5px] text-slate-600 leading-snug">
-                      Recommends statutory capital buffer and 90-day milestone audit checks.
+                      {isHi ? 'सांविधिक पूंजी बफ़र और 90-दिवसीय माइलस्टोन ऑडिट जांच की अनुशंसा करता है।' : 'Recommends statutory capital buffer and 90-day milestone audit checks.'}
                     </p>
                   </div>
                 </div>
@@ -420,8 +451,12 @@ export default function KaryaDakshataSimulator() {
               <div className="bg-white rounded-2xl border border-slate-200/90 p-12 text-center flex flex-col items-center justify-center space-y-4 flex-1 min-h-[460px]">
                 <div className="w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
                 <div className="space-y-1">
-                  <h4 className="font-bold text-sm text-slate-900">Running Monte Carlo De-Biasing Simulations…</h4>
-                  <p className="text-xs text-slate-400 font-mono">Querying historical delivery variances for {selectedAgency}</p>
+                  <h4 className="font-bold text-sm text-slate-900">
+                    {isHi ? 'मोंटे कार्लो पूर्वाग्रह-निवारण सिमुलेशन जारी…' : 'Running Monte Carlo De-Biasing Simulations…'}
+                  </h4>
+                  <p className="text-xs text-slate-400 font-mono">
+                    {isHi ? `${selectedAgency} के लिए ऐतिहासिक वितरण प्रसरण की क्वेरी की जा रही है` : `Querying historical delivery variances for ${selectedAgency}`}
+                  </p>
                 </div>
               </div>
             )}
@@ -436,7 +471,11 @@ export default function KaryaDakshataSimulator() {
                     <div className="space-y-2">
                       <div className="inline-flex items-center gap-2 px-2.5 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-700 uppercase tracking-wider font-mono">
                         <Building2 className="w-3 h-3 text-blue-600" />
-                        <span>Agency Execution Track Record ({result.sample_size_projects || selectedAgencyObj?.projects || 'Corpus'} Projects)</span>
+                        <span>
+                          {isHi 
+                            ? `एजेंसी निष्पादन ट्रैक रिकॉर्ड (${result.sample_size_projects || selectedAgencyObj?.projects || 'कॉर्पस'} परियोजनाएं)` 
+                            : `Agency Execution Track Record (${result.sample_size_projects || selectedAgencyObj?.projects || 'Corpus'} Projects)`}
+                        </span>
                       </div>
                       <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-sans">
                         {result.Agency}
@@ -444,12 +483,12 @@ export default function KaryaDakshataSimulator() {
                       <div className="flex items-center gap-3 flex-wrap text-xs text-slate-600 pt-1">
                         <span className="inline-flex items-center gap-1 font-medium">
                           <TrendingUp className="w-3.5 h-3.5 text-rose-500" />
-                          <span>Avg Cost Variance: <strong className="text-slate-900 font-mono">+{result.Historical_Cost_Variance_Avg}%</strong></span>
+                          <span>{isHi ? 'औसत लागत प्रसरण: ' : 'Avg Cost Variance: '}<strong className="text-slate-900 font-mono">+{result.Historical_Cost_Variance_Avg}%</strong></span>
                         </span>
                         <span>•</span>
                         <span className="inline-flex items-center gap-1 font-medium">
                           <Clock className="w-3.5 h-3.5 text-blue-500" />
-                          <span>Avg Schedule Delay: <strong className="text-slate-900 font-mono">+{result.Historical_Delay_Avg} Mo</strong></span>
+                          <span>{isHi ? 'औसत समय विलंब: ' : 'Avg Schedule Delay: '}<strong className="text-slate-900 font-mono">+{result.Historical_Delay_Avg} {isHi ? 'माह' : 'Mo'}</strong></span>
                         </span>
                       </div>
                     </div>
@@ -457,7 +496,7 @@ export default function KaryaDakshataSimulator() {
                     {/* Reliability Score Gauge Badge */}
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 flex flex-col items-center justify-center shrink-0 min-w-[140px]">
                       <span className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider block mb-1">
-                        Reliability Score
+                        {isHi ? 'विश्वसनीयता स्कोर' : 'Reliability Score'}
                       </span>
                       <span className={`text-3xl font-black font-mono tracking-tight ${getScoreColor(result.Reliability_Score)}`}>
                         {Number(result.Reliability_Score).toFixed(1)}
@@ -478,17 +517,17 @@ export default function KaryaDakshataSimulator() {
                       <div className="flex justify-between items-start">
                         <div>
                           <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-0.5 font-mono tracking-wider">
-                            True Expected Cost
+                            {isHi ? 'वास्तविक अपेक्षित लागत' : 'True Expected Cost'}
                           </span>
                           <div className="text-2xl font-black text-rose-600 font-mono">
-                            ₹{Number(result.True_Expected_Cost_Cr).toLocaleString('en-IN')} <span className="text-sm text-rose-400">Cr</span>
+                            ₹{Number(result.True_Expected_Cost_Cr).toLocaleString('en-IN')} <span className="text-sm text-rose-400">{isHi ? 'करोड़' : 'Cr'}</span>
                           </div>
                           <div className="text-xs text-slate-400 mt-0.5 font-mono">
-                            Proposed: <span className="line-through">₹{Number(result.Base_Cost_Cr).toLocaleString('en-IN')} Cr</span>
+                            {isHi ? 'प्रस्तावित: ' : 'Proposed: '}<span className="line-through">₹{Number(result.Base_Cost_Cr).toLocaleString('en-IN')} {isHi ? 'करोड़' : 'Cr'}</span>
                           </div>
                         </div>
                         <span className="font-mono text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
-                          +{costEscalationPct}% Escalation
+                          +{costEscalationPct}% {isHi ? 'वृद्धि' : 'Escalation'}
                         </span>
                       </div>
                     </div>
@@ -501,7 +540,7 @@ export default function KaryaDakshataSimulator() {
                           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
                           <Tooltip 
-                            formatter={(val) => [`₹${Number(val).toLocaleString('en-IN')} Cr`, 'Cost']}
+                            formatter={(val) => [`₹${Number(val).toLocaleString('en-IN')} ${isHi ? 'करोड़' : 'Cr'}`, isHi ? 'लागत' : 'Cost']}
                             contentStyle={{ borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px' }} 
                           />
                           <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -520,17 +559,17 @@ export default function KaryaDakshataSimulator() {
                       <div className="flex justify-between items-start">
                         <div>
                           <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-0.5 font-mono tracking-wider">
-                            True Expected Timeline
+                            {isHi ? 'वास्तविक अपेक्षित समयसीमा' : 'True Expected Timeline'}
                           </span>
                           <div className="text-2xl font-black text-blue-600 font-mono">
-                            {Math.round(result.True_Expected_Timeline_Days)} <span className="text-sm text-blue-400">Days</span>
+                            {Math.round(result.True_Expected_Timeline_Days)} <span className="text-sm text-blue-400">{isHi ? 'दिन' : 'Days'}</span>
                           </div>
                           <div className="text-xs text-slate-400 mt-0.5 font-mono">
-                            Proposed: <span className="line-through">{Math.round(result.Base_Timeline_Days)} Days</span>
+                            {isHi ? 'प्रस्तावित: ' : 'Proposed: '}<span className="line-through">{Math.round(result.Base_Timeline_Days)} {isHi ? 'दिन' : 'Days'}</span>
                           </div>
                         </div>
                         <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                          +{timeDelayDays} Days Slippage
+                          +{timeDelayDays} {isHi ? 'दिन विचलन' : 'Days Slippage'}
                         </span>
                       </div>
                     </div>
@@ -543,7 +582,12 @@ export default function KaryaDakshataSimulator() {
                           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10 }} />
                           <Tooltip 
-                            formatter={(val) => [`${Math.round(val)} Days (${(val / 365).toFixed(1)} Yrs)`, 'Timeline']}
+                            formatter={(val) => [
+                              isHi 
+                                ? `${Math.round(val)} दिन (${(val / 365).toFixed(1)} वर्ष)` 
+                                : `${Math.round(val)} Days (${(val / 365).toFixed(1)} Yrs)`, 
+                              isHi ? 'समयसीमा' : 'Timeline'
+                            ]}
                             contentStyle={{ borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px' }} 
                           />
                           <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -583,14 +627,14 @@ export default function KaryaDakshataSimulator() {
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-mono font-extrabold uppercase tracking-institutional text-amber-400 border-l-2 border-amber-400">
-                        STATUTORY ENFORCEMENT DIRECTIVE
+                        {isHi ? 'सांविधिक प्रवर्तन निर्देश' : 'STATUTORY ENFORCEMENT DIRECTIVE'}
                       </span>
                       <span className="text-[10.5px] font-mono text-slate-300">
-                        MoSPI / CPWD Standard OM Calibrated
+                        {isHi ? 'सांख्यिकी मंत्रालय / सीपीडब्ल्यूडी मानक ओएम द्वारा अंशांकित' : 'MoSPI / CPWD Standard OM Calibrated'}
                       </span>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-black text-white font-heading tracking-tight mt-1">
-                      Fiduciary De-Biasing &amp; Risk Mitigation Protocol
+                      {isHi ? 'वित्तीय पूर्वाग्रह-निवारण एवं जोखिम शमन प्रोटोकॉल' : 'Fiduciary De-Biasing & Risk Mitigation Protocol'}
                     </h3>
                   </div>
                 </div>
@@ -598,7 +642,7 @@ export default function KaryaDakshataSimulator() {
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-black/40 border border-white/20 text-xs font-mono text-white shadow-inner font-bold">
                     <Scale className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Enforceable Mandate</span>
+                    <span>{isHi ? 'प्रवर्तनीय अधिदेश' : 'Enforceable Mandate'}</span>
                   </span>
                 </div>
               </div>
@@ -607,49 +651,49 @@ export default function KaryaDakshataSimulator() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
                   <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
-                    <span>1. Mandated Capital Reserve</span>
+                    <span>{isHi ? '१. अनिवार्य पूंजीगत आरक्षित बफ़र' : '1. Mandated Capital Reserve'}</span>
                   </div>
                   <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
-                    +₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} <span className="text-sm font-bold text-slate-400">Cr</span>
+                    +₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} <span className="text-sm font-bold text-slate-400">{isHi ? 'करोड़' : 'Cr'}</span>
                   </div>
                   <span className="text-xs text-slate-300 font-mono block">
-                    +{costEscalationPct}% Statutory Contingency
+                    +{costEscalationPct}% {isHi ? 'सांविधिक आकस्मिकता' : 'Statutory Contingency'}
                   </span>
                 </div>
 
                 <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
                   <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
-                    <span>2. Expected Schedule Drift</span>
+                    <span>{isHi ? '२. अपेक्षित समयसीमा विचलन' : '2. Expected Schedule Drift'}</span>
                   </div>
                   <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
-                    +{timeDelayDays} <span className="text-sm font-bold text-slate-400">Days</span>
+                    +{timeDelayDays} <span className="text-sm font-bold text-slate-400">{isHi ? 'दिन' : 'Days'}</span>
                   </div>
                   <span className="text-xs text-slate-300 font-mono block">
-                    +{(timeDelayDays / 30.4375).toFixed(1)} Months Empirical Slippage
+                    +{(timeDelayDays / 30.4375).toFixed(1)} {isHi ? 'माह अनुभवजन्य विचलन' : 'Months Empirical Slippage'}
                   </span>
                 </div>
 
                 <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
                   <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
-                    <span>3. Milestone Audit Cadence</span>
+                    <span>{isHi ? '३. माइलस्टोन ऑडिट आवृत्ति' : '3. Milestone Audit Cadence'}</span>
                   </div>
                   <div className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
-                    90-Day Review
+                    {isHi ? '९०-दिवसीय समीक्षा' : '90-Day Review'}
                   </div>
                   <span className="text-xs text-slate-300 font-mono block">
-                    Mandatory On-Site Inspection
+                    {isHi ? 'अनिवार्य ऑन-साइट निरीक्षण' : 'Mandatory On-Site Inspection'}
                   </span>
                 </div>
 
                 <div className="p-4 sm:p-5 rounded-xl bg-black/40 border border-white/15 backdrop-blur-sm space-y-2 hover:border-white/30 transition-all shadow-inner">
                   <div className="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-widest flex items-center justify-between">
-                    <span>4. Performance Class</span>
+                    <span>{isHi ? '४. निष्पादन श्रेणी' : '4. Performance Class'}</span>
                   </div>
                   <div className="text-xl sm:text-2xl font-black text-white font-mono tracking-tight truncate">
-                    {result.performance_tier ? result.performance_tier.replace(/_/g, ' ') : 'TIER 2 WATCHLIST'}
+                    {result.performance_tier ? result.performance_tier.replace(/_/g, ' ') : (isHi ? 'श्रेणी २ निगरानी सूची' : 'TIER 2 WATCHLIST')}
                   </div>
                   <span className="text-xs text-slate-300 font-mono block">
-                    Reliability Index: {Number(result.Reliability_Score).toFixed(1)} / 100
+                    {isHi ? 'विश्वसनीयता सूचकांक: ' : 'Reliability Index: '}{Number(result.Reliability_Score).toFixed(1)} / 100
                   </span>
                 </div>
               </div>
@@ -658,18 +702,24 @@ export default function KaryaDakshataSimulator() {
               <div className="p-5 rounded-xl bg-black/50 border border-white/15 backdrop-blur-sm space-y-3 shadow-inner">
                 <div className="flex items-center gap-2 text-xs font-bold font-mono text-amber-400 uppercase tracking-wider">
                   <FileText className="w-4 h-4 text-amber-400" />
-                  <span>Fiduciary Decision Rationale &amp; Compliance Mandate</span>
+                  <span>{isHi ? 'वित्तीय निर्णय औचित्य एवं अनुपालन अधिदेश' : 'Fiduciary Decision Rationale & Compliance Mandate'}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
-                  {result.basis || `Re-priced at ${result.Agency}'s measured delivery multiple across ${result.sample_size_projects || 'all'} historical projects: historical cost variance +${result.Historical_Cost_Variance_Avg}%, average schedule slippage +${result.Historical_Delay_Avg} months.`} The sanctioning authority is directed to ring-fence a dedicated capital contingency buffer of <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/15">₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr</strong> and enforce CPWD Clause 10CC price adjustment caps with mandatory 90-day progress milestones.
+                  {result.basis || (isHi 
+                    ? `${result.Agency} के पिछले ${result.sample_size_projects || 'सभी'} ऐतिहासिक परियोजनाओं में मापे गए वितरण गुणक पर पुनर्गणना: ऐतिहासिक लागत प्रसरण +${result.Historical_Cost_Variance_Avg}%, औसत समयसीमा विचलन +${result.Historical_Delay_Avg} माह।` 
+                    : `Re-priced at ${result.Agency}'s measured delivery multiple across ${result.sample_size_projects || 'all'} historical projects: historical cost variance +${result.Historical_Cost_Variance_Avg}%, average schedule slippage +${result.Historical_Delay_Avg} months.`
+                  )} {isHi 
+                    ? <>स्वीकृति प्राधिकारी को <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/15">₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} करोड़</strong> का एक समर्पित पूंजीगत आकस्मिक बफ़र सुरक्षित रखने और अनिवार्य 90-दिवसीय प्रगति मील के पत्थरों के साथ सीपीडब्ल्यूडी क्लॉज 10सीसी मूल्य समायोजन सीमाओं को लागू करने का निर्देश दिया जाता है।</> 
+                    : <>The sanctioning authority is directed to ring-fence a dedicated capital contingency buffer of <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/15">₹{(result.True_Expected_Cost_Cr - result.Base_Cost_Cr).toFixed(1)} Cr</strong> and enforce CPWD Clause 10CC price adjustment caps with mandatory 90-day progress milestones.</>
+                  }
                 </p>
                 <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-slate-400">
                   <span className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                    <span>Statutory Reference: MoSPI RCF Guideline Annexure-IV · CPWD Works Manual 2019</span>
+                    <span>{isHi ? 'सांविधिक संदर्भ: सांख्यिकी मंत्रालय आरसीएफ दिशानिर्देश अनुबंध-IV · सीपीडब्ल्यूडी वर्क्स मैनुअल 2019' : 'Statutory Reference: MoSPI RCF Guideline Annexure-IV · CPWD Works Manual 2019'}</span>
                   </span>
                   <span className="px-2 py-0.5 rounded bg-white/10 border border-white/15 text-slate-200 text-[10px] font-bold">
-                    OFFICIAL DIRECTIVE
+                    {isHi ? 'आधिकारिक निर्देश' : 'OFFICIAL DIRECTIVE'}
                   </span>
                 </div>
               </div>

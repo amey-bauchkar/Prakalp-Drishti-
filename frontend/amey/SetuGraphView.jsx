@@ -29,10 +29,13 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Banner */}
-      <div className="command-header p-5 sm:p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent font-mono">
+      <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+          <GitBranch className="w-48 h-48 text-amber-500" />
+        </div>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400 font-mono">
               <GitBranch className="w-3.5 h-3.5" />
               <span>MODULE 2 · PROJECT DEPENDENCY CONTAGION</span>
             </div>
@@ -89,12 +92,12 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
             </div>
             <div className="metric-cell">
               <span className="metric-label">Contagion Capital (P50)</span>
-              <span className="metric-value metric-warn">₹{data.total_cascade_locked_p50_cr.toLocaleString()} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+              <span className="metric-value metric-warn">₹{data.total_cascade_locked_p50_cr.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
               <span className="metric-sub">Likely Capital Exposure</span>
             </div>
             <div className="metric-cell panel-critical">
               <span className="metric-label">Tail Capital Exposure (P95)</span>
-              <span className="metric-value metric-neg">₹{data.total_cascade_locked_p95_cr.toLocaleString()} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
+              <span className="metric-value metric-neg">₹{data.total_cascade_locked_p95_cr.toLocaleString('en-IN')} <span className="text-xs font-normal text-gov-muted">Cr</span></span>
               <span className="metric-sub">Severe Contagion Bound</span>
             </div>
           </div>
@@ -138,7 +141,7 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
                         <div className="text-[10.5px] text-text-muted font-bold">{node.canonical_entity}</div>
                       </td>
                       <td className="num font-mono font-bold text-gov-navy">
-                        ₹{node.cost_cr.toLocaleString()} Cr
+                        ₹{node.cost_cr.toLocaleString('en-IN')} Cr
                       </td>
                       <td>
                         <span className="note note-ok font-mono">
@@ -157,7 +160,7 @@ export default function SetuGraphView({ selectedProjectId = "618402" }) {
                         )}
                       </td>
                       <td className="num font-mono font-bold text-amber-700">
-                        ₹{node.locked_capital_p50_cr.toLocaleString()} Cr
+                        ₹{node.locked_capital_p50_cr.toLocaleString('en-IN')} Cr
                       </td>
                       <td className="text-center">
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-black bg-gov-navy text-gov-saffron-light font-mono">

@@ -793,7 +793,7 @@
       document.getElementById('nivaranDisputedClaims').innerText = `₹${(matchedCtr.disputed_variation_value_cr || 0).toFixed(1)} Cr`;
       
       const isBlacklisted = matchedCtr.blacklisting_risk_flag;
-      document.getElementById('nivaranBlacklistFlag').innerText = isBlacklisted ? "⚠️ High Risk Flag (Show Cause)" : "Clear (Good Standing)";
+      document.getElementById('nivaranBlacklistFlag').innerText = isBlacklisted ? "High Risk Flag (Show Cause)" : "Clear (Good Standing)";
       document.getElementById('nivaranBlacklistFlag').className = isBlacklisted ? "text-red-400 font-bold" : "text-emerald-400 font-bold";
 
       if (matchedCtr.litigation_exposure_index >= 75) {
@@ -900,10 +900,10 @@
 
             <div class="space-y-1.5 text-xs">
               <p class="text-slate-200">
-                <strong class="text-amber-400">💡 In Plain Words:</strong> ${plainExplanation}
+                <strong class="text-amber-400">In Plain Words:</strong> ${plainExplanation}
               </p>
               <p class="text-slate-300">
-                <strong class="text-red-400">⚠️ Why It Causes Trouble:</strong> ${whyItMatters}
+                <strong class="text-red-400">Why It Causes Trouble:</strong> ${whyItMatters}
               </p>
             </div>
           </div>
@@ -939,7 +939,7 @@
         }
 
         if (isLoop) {
-          plainReason += " ⚠️ Officers raised clarification queries multiple times without resolving.";
+          plainReason += " Officers raised clarification queries multiple times without resolving.";
         }
 
         const card = `

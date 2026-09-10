@@ -16,6 +16,10 @@ export default function ElasticSlider({
   trackColor = '#e2e8f0',
   className = '',
   onCommit,
+  // A range input with no name is announced as a bare number. Callers must say
+  // what the slider controls; ariaValueText adds the unit the number is missing.
+  ariaLabel,
+  ariaValueText,
 }) {
   const isControlled = value !== undefined;
   const [internalVal, setInternalVal] = useState(defaultValue);
@@ -56,6 +60,8 @@ export default function ElasticSlider({
     >
       <input
         type="range"
+        aria-label={ariaLabel}
+        aria-valuetext={ariaValueText}
         min={min}
         max={max}
         step={step}

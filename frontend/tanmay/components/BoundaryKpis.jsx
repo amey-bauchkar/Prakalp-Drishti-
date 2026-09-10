@@ -3,7 +3,8 @@ import { Card, Metric, Text } from '@tremor/react';
 import { ShieldAlert, AlertTriangle, Scale, Target, Award, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function BoundaryKpis({ summaryData }) {
+export default function BoundaryKpis({ summaryData, lang = 'en' }) {
+  const isHi = lang === 'hi';
   const kpi = summaryData?.kpi_metrics || {};
   const boundary = summaryData?.boundary_metrics || {};
   const signal = summaryData?.mccrary_bunching_signal || {};
@@ -17,38 +18,46 @@ export default function BoundaryKpis({ summaryData }) {
 
   const cards = [
     {
-      title: "ACTIVE REVISED POPULATION",
+      title: isHi ? "सक्रिय संशोधित संवर्ग" : "ACTIVE REVISED POPULATION",
       metric: `N = ${totalN.toLocaleString('en-IN')}`,
-      desc: "Projects with official cost revisions on file evaluated for statutory compliance.",
-      badgeText: `${unrevisedN} unrevised excluded`,
+      desc: isHi
+        ? "सांविधिक अनुपालन के लिए मूल्यांकित आधिकारिक लागत संशोधनों वाली परियोजनाएं।"
+        : "Projects with official cost revisions on file evaluated for statutory compliance.",
+      badgeText: isHi ? `${unrevisedN} असंशोधित पृथक` : `${unrevisedN} unrevised excluded`,
       icon: Target,
       borderTop: "border-t-slate-500",
       iconColor: "text-slate-600"
     },
     {
-      title: "SUSPICIOUS ZONE [18%, 20%)",
+      title: isHi ? "संदेहास्पद क्षेत्र [18%, 20%)" : "SUSPICIOUS ZONE [18%, 20%)",
       metric: `n = ${suspiciousN}`,
-      desc: "Anomalous concentration of projects stopping just below the 20% CCEA Cabinet re-approval line.",
-      badgeText: "+64.7% step vs breached",
+      desc: isHi
+        ? "20% सीसीईए कैबिनेट पुनः अनुमोदन सीमा से ठीक पहले रुकने वाली परियोजनाओं का असामान्य संकेंद्रण।"
+        : "Anomalous concentration of projects stopping just below the 20% CCEA Cabinet re-approval line.",
+      badgeText: isHi ? "+64.7% वृद्धि (सीमा उल्लंघन की तुलना में)" : "+64.7% step vs breached",
       icon: AlertTriangle,
       borderTop: "border-t-amber-500",
       iconColor: "text-amber-500",
       highlight: true
     },
     {
-      title: "CCEA APPROVAL ZONE [20%, 22%)",
+      title: isHi ? "सीसीईए अनुमोदन क्षेत्र [20%, 22%)" : "CCEA APPROVAL ZONE [20%, 22%)",
       metric: `n = ${breachedN}`,
-      desc: "Projects that crossed the 20% limit and triggered mandatory Cabinet Secretariat oversight.",
-      badgeText: "Statutory Drop-off",
+      desc: isHi
+        ? "20% की सीमा पार कर अनिवार्य कैबिनेट सचिवालय समीक्षा के अधीन आने वाली परियोजनाएं।"
+        : "Projects that crossed the 20% limit and triggered mandatory Cabinet Secretariat oversight.",
+      badgeText: isHi ? "सांविधिक गिरावट" : "Statutory Drop-off",
       icon: Scale,
       borderTop: "border-t-rose-500",
       iconColor: "text-rose-500"
     },
     {
-      title: "BUNCHING RATIO (SUSPICION SCORE)",
+      title: isHi ? "बंचिंग अनुपात (संदेह स्कोर)" : "BUNCHING RATIO (SUSPICION SCORE)",
       metric: `${ratio}x`,
-      desc: `Statistically significant clustering ratio at boundary (95% CI: ${ci95}).`,
-      badgeText: "p < 0.05 Anomaly",
+      desc: isHi
+        ? `सीमांत पर सांख्यिकीय रूप से महत्वपूर्ण संकुलन अनुपात (95% CI: ${ci95})।`
+        : `Statistically significant clustering ratio at boundary (95% CI: ${ci95}).`,
+      badgeText: isHi ? "p < 0.05 विसंगति" : "p < 0.05 Anomaly",
       icon: ShieldAlert,
       borderTop: "border-t-indigo-600",
       iconColor: "text-indigo-600"

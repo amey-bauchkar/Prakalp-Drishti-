@@ -1,0 +1,294 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PRAKALP-DRISHTI — TEXT SCALING & HIGHER CONTRAST
+   ═══════════════════════════════════════════════════════════════════════
+   GENERATED — do not hand-edit. Regenerate when new text-[Npx] sizes appear.
+
+   WHY THIS FILE EXISTS
+   tokens.css has always defined html[data-font-size="large"|"larger"], and the
+   accessibility statement has always promised text enlargement. Neither worked,
+   for two independent reasons:
+
+     1. Nothing in the application ever set the attribute. AccessibilityBar.jsx
+        now does.
+     2. Even once set, a root font-size change cannot move an absolute px value,
+        and 36 distinct px sizes are hardcoded across ~1,100 call sites
+        (text-[10px] alone appears 284 times). Converting them all to rem is the
+        right long-term fix; overriding the generated utilities is what makes the
+        control work today without editing a single view.
+
+   SPECIFICITY: the floor rules are prefixed `html` to reach (0,1,1). They are
+   emitted before @tailwind utilities, so at equal specificity Tailwind would win
+   on source order. The data-font-size rules are already (0,2,1) and need no help.
+
+   FLOOR: the default tier lifts anything below 10px up to 10px. Text at 8-9.5px
+   is not readable on the 1366x768 laptops this platform targets. The affected
+   labels are short (badges, micro-labels), so reflow risk is small and the
+   legibility gain is not.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Default tier: enforce the legibility floor ──────────────────────── */
+
+html .text-\[8px\]{font-size:10px}
+html .text-\[9px\]{font-size:10px}
+html .text-\[9\.5px\]{font-size:10px}
+
+/* ── A+ (115%) ───────────────────────────────────────────────────────── */
+html[data-font-size="large"]{font-size:115%}
+html[data-font-size="large"] body{font-size:15.5px}
+html[data-font-size="large"] .text-\[8px\]{font-size:11.5px}
+html[data-font-size="large"] .text-\[9px\]{font-size:11.5px}
+html[data-font-size="large"] .text-\[9\.5px\]{font-size:11.5px}
+html[data-font-size="large"] .text-\[10px\]{font-size:11.5px}
+html[data-font-size="large"] .text-\[10\.5px\]{font-size:12.07px}
+html[data-font-size="large"] .text-\[11px\]{font-size:12.65px}
+html[data-font-size="large"] .text-\[11\.5px\]{font-size:13.22px}
+html[data-font-size="large"] .text-\[12px\]{font-size:13.8px}
+html[data-font-size="large"] .text-\[12\.5px\]{font-size:14.37px}
+html[data-font-size="large"] .text-\[13px\]{font-size:14.95px}
+html[data-font-size="large"] .text-\[13\.5px\]{font-size:15.52px}
+html[data-font-size="large"] .text-\[14px\]{font-size:16.1px}
+html[data-font-size="large"] .text-\[14\.5px\]{font-size:16.67px}
+html[data-font-size="large"] .text-\[15px\]{font-size:17.25px}
+html[data-font-size="large"] .text-\[15\.5px\]{font-size:17.82px}
+html[data-font-size="large"] .text-\[16px\]{font-size:18.4px}
+html[data-font-size="large"] .text-\[17px\]{font-size:19.55px}
+html[data-font-size="large"] .text-\[17\.5px\]{font-size:20.12px}
+html[data-font-size="large"] .text-\[18px\]{font-size:20.7px}
+html[data-font-size="large"] .text-\[19px\]{font-size:21.85px}
+html[data-font-size="large"] .text-\[20px\]{font-size:23.0px}
+html[data-font-size="large"] .text-\[21px\]{font-size:24.15px}
+html[data-font-size="large"] .text-\[22px\]{font-size:25.3px}
+html[data-font-size="large"] .text-\[23px\]{font-size:26.45px}
+html[data-font-size="large"] .text-\[24px\]{font-size:27.6px}
+html[data-font-size="large"] .text-\[25px\]{font-size:28.75px}
+html[data-font-size="large"] .text-\[26px\]{font-size:29.9px}
+html[data-font-size="large"] .text-\[28px\]{font-size:32.2px}
+html[data-font-size="large"] .text-\[30px\]{font-size:34.5px}
+html[data-font-size="large"] .text-\[32px\]{font-size:36.8px}
+html[data-font-size="large"] .text-\[34px\]{font-size:39.1px}
+html[data-font-size="large"] .text-\[36px\]{font-size:41.4px}
+html[data-font-size="large"] .text-\[38px\]{font-size:43.7px}
+html[data-font-size="large"] .text-\[42px\]{font-size:48.3px}
+html[data-font-size="large"] .text-\[44px\]{font-size:50.6px}
+html[data-font-size="large"] .text-\[50px\]{font-size:57.5px}
+
+/* ── A++ (130%) ──────────────────────────────────────────────────────── */
+html[data-font-size="larger"]{font-size:130%}
+html[data-font-size="larger"] body{font-size:17.5px}
+html[data-font-size="larger"] .text-\[8px\]{font-size:13.0px}
+html[data-font-size="larger"] .text-\[9px\]{font-size:13.0px}
+html[data-font-size="larger"] .text-\[9\.5px\]{font-size:13.0px}
+html[data-font-size="larger"] .text-\[10px\]{font-size:13.0px}
+html[data-font-size="larger"] .text-\[10\.5px\]{font-size:13.65px}
+html[data-font-size="larger"] .text-\[11px\]{font-size:14.3px}
+html[data-font-size="larger"] .text-\[11\.5px\]{font-size:14.95px}
+html[data-font-size="larger"] .text-\[12px\]{font-size:15.6px}
+html[data-font-size="larger"] .text-\[12\.5px\]{font-size:16.25px}
+html[data-font-size="larger"] .text-\[13px\]{font-size:16.9px}
+html[data-font-size="larger"] .text-\[13\.5px\]{font-size:17.55px}
+html[data-font-size="larger"] .text-\[14px\]{font-size:18.2px}
+html[data-font-size="larger"] .text-\[14\.5px\]{font-size:18.85px}
+html[data-font-size="larger"] .text-\[15px\]{font-size:19.5px}
+html[data-font-size="larger"] .text-\[15\.5px\]{font-size:20.15px}
+html[data-font-size="larger"] .text-\[16px\]{font-size:20.8px}
+html[data-font-size="larger"] .text-\[17px\]{font-size:22.1px}
+html[data-font-size="larger"] .text-\[17\.5px\]{font-size:22.75px}
+html[data-font-size="larger"] .text-\[18px\]{font-size:23.4px}
+html[data-font-size="larger"] .text-\[19px\]{font-size:24.7px}
+html[data-font-size="larger"] .text-\[20px\]{font-size:26.0px}
+html[data-font-size="larger"] .text-\[21px\]{font-size:27.3px}
+html[data-font-size="larger"] .text-\[22px\]{font-size:28.6px}
+html[data-font-size="larger"] .text-\[23px\]{font-size:29.9px}
+html[data-font-size="larger"] .text-\[24px\]{font-size:31.2px}
+html[data-font-size="larger"] .text-\[25px\]{font-size:32.5px}
+html[data-font-size="larger"] .text-\[26px\]{font-size:33.8px}
+html[data-font-size="larger"] .text-\[28px\]{font-size:36.4px}
+html[data-font-size="larger"] .text-\[30px\]{font-size:39.0px}
+html[data-font-size="larger"] .text-\[32px\]{font-size:41.6px}
+html[data-font-size="larger"] .text-\[34px\]{font-size:44.2px}
+html[data-font-size="larger"] .text-\[36px\]{font-size:46.8px}
+html[data-font-size="larger"] .text-\[38px\]{font-size:49.4px}
+html[data-font-size="larger"] .text-\[42px\]{font-size:54.6px}
+html[data-font-size="larger"] .text-\[44px\]{font-size:57.2px}
+html[data-font-size="larger"] .text-\[50px\]{font-size:65.0px}
+
+/* Enlarged text must not clip. Utilities that hide overflow are relaxed at the
+   larger tiers so a longer string wraps instead of disappearing (WCAG 1.4.4:
+   content and functionality must not be lost at 200%). */
+html[data-font-size="large"] .truncate,
+html[data-font-size="larger"] .truncate{
+  overflow:visible;text-overflow:clip;white-space:normal;
+}
+html[data-font-size="large"] [class*="line-clamp-"],
+html[data-font-size="larger"] [class*="line-clamp-"]{
+  -webkit-line-clamp:unset;line-clamp:unset;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HIGHER CONTRAST  —  html[data-theme="contrast"]
+   ═══════════════════════════════════════════════════════════════════════
+   This RAISES contrast; it does not invert the page. Inversion would need to
+   reach 3,514 raw Tailwind colour utilities, and a half-inverted page reads
+   worse than the default — so the mode instead darkens the muted greys that
+   actually fail, strengthens hairlines to a visible weight, removes decorative
+   transparency, and thickens the focus ring.
+
+   The greys below were measured against #FFFFFF:
+     text-slate-400 / text-zinc-400 .... 2.56:1   FAIL 1.4.3
+     text-slate-500 .................... 4.76:1   passes, but only just
+     --line (#E3E6EA) .................. 1.25:1   invisible as a boundary
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[data-theme="contrast"]{
+  --ink:#000000;
+  --ink-soft:#1a1a1a;
+  --ink-mute:#31414f;      /* 9.1:1 on white */
+  --ink-dim:#31414f;
+  --line:#8b95a1;
+  --line-strong:#4a5560;
+  --line-field:#33414e;
+  --focus-ring:#0b3d91;
+}
+
+/* Muted text, raised to at least 7:1 on a light ground. */
+[data-theme="contrast"] .text-slate-300,
+[data-theme="contrast"] .text-slate-400,
+[data-theme="contrast"] .text-slate-500,
+[data-theme="contrast"] .text-gov-muted,
+[data-theme="contrast"] .text-text-muted{ color:#31414f !important; }
+
+[data-theme="contrast"] .text-slate-600,
+[data-theme="contrast"] .text-slate-700{ color:#1b2733 !important; }
+
+/* On dark grounds the same classes are the readable ones, so lift rather than
+   darken. Scoped to elements that actually sit on a dark surface. */
+[data-theme="contrast"] [class*="bg-slate-8"] .text-slate-300,
+[data-theme="contrast"] [class*="bg-slate-9"] .text-slate-300,
+[data-theme="contrast"] [class*="bg-slate-8"] .text-slate-400,
+[data-theme="contrast"] [class*="bg-slate-9"] .text-slate-400,
+[data-theme="contrast"] .hero-saffron-banner .text-slate-300,
+[data-theme="contrast"] .hero-saffron-banner .text-slate-400,
+[data-theme="contrast"] .telemetry .text-slate-400{ color:#ffffff !important; }
+
+/* Status colours, darkened so the label passes 4.5:1 on its own wash. */
+[data-theme="contrast"] .text-emerald-600,
+[data-theme="contrast"] .text-emerald-700{ color:#04543a !important; }
+[data-theme="contrast"] .text-amber-600,
+[data-theme="contrast"] .text-amber-700{ color:#6b3d02 !important; }
+[data-theme="contrast"] .text-rose-600,
+[data-theme="contrast"] .text-rose-700{ color:#8a0c28 !important; }
+
+/* Boundaries become visible rather than suggestive. */
+[data-theme="contrast"] [class*="border-slate-1"],
+[data-theme="contrast"] [class*="border-slate-2"],
+[data-theme="contrast"] .panel,
+[data-theme="contrast"] table th,
+[data-theme="contrast"] table td{ border-color:#6b7684 !important; }
+
+[data-theme="contrast"] input,
+[data-theme="contrast"] select,
+[data-theme="contrast"] textarea{ border-color:#33414e !important; border-width:2px !important; }
+
+/* Decorative translucency hides text; remove it. */
+[data-theme="contrast"] [class*="/10"],
+[data-theme="contrast"] [class*="/20"],
+[data-theme="contrast"] [class*="/30"],
+[data-theme="contrast"] [class*="/40"]{ --tw-bg-opacity:1 !important; }
+[data-theme="contrast"] .backdrop-blur-md,
+[data-theme="contrast"] .backdrop-blur-sm{ backdrop-filter:none !important; }
+
+/* A heavier focus ring, since this mode is used by people who need one. */
+[data-theme="contrast"] :focus-visible{
+  outline:3px solid var(--focus-ring) !important;
+  outline-offset:2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LOW-CONTRAST TEXT ON LIGHT SURFACES  (always on, not only in contrast mode)
+   ═══════════════════════════════════════════════════════════════════════
+   text-slate-400 and text-zinc-400 measure 2.56:1 on white — a clear 1.4.3
+   failure — and were used 169 times on light grounds, including the master
+   register's own "no results" message and most placeholder text.
+
+   They cannot simply be redefined, because the SAME classes are the readable
+   choice on the dark command headers (slate-400 on slate-900 is 6.96:1). So the
+   correction is scoped to ancestors that are unambiguously light. Anything on a
+   dark banner keeps the value it needs.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.panel .text-slate-400,
+.bg-white .text-slate-400,
+.bg-slate-50 .text-slate-400,
+.bg-slate-100 .text-slate-400,
+.bulletin-paper-card .text-slate-400,
+.card-parchment-gold .text-slate-400,
+table .text-slate-400 {
+  color: var(--ink-mute);   /* #637384 — 4.87:1 on white, 4.58:1 on --surface-2 */
+}
+
+/* Placeholders are text too, and were the single most common 2.56:1 offender. */
+input::placeholder,
+textarea::placeholder { color: var(--ink-mute); opacity: 1; }
+
+/* --ink-dim (#9AA8B6, 2.43:1) is a decorative tint. Where it has been used for
+   text on a light surface, lift it to the readable muted token. */
+.panel .text-gov-dim,
+.bg-white .text-gov-dim { color: var(--ink-mute); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TARGET SIZE  —  WCAG 2.2 SC 2.5.8 (minimum 24x24 CSS px)
+   ═══════════════════════════════════════════════════════════════════════
+   Fifteen controls measured under 24px tall, mostly footer links at 20px and
+   the header's own "Sign out". Padding is added rather than font size, so the
+   institutional density is unchanged.                                       */
+footer a,
+footer button { display: inline-flex; align-items: center; min-height: 24px; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MAP MARKER SHAPES  —  WCAG 1.4.1 (use of colour)
+   ═══════════════════════════════════════════════════════════════════════
+   Leaflet renders CircleMarkers as SVG circles. clip-path re-cuts them into the
+   status glyph shapes used everywhere else in the product, so the map is legible
+   without colour vision. The selected marker is left round and simply enlarged,
+   because a clipped shape at 9px reads as noise.                             */
+.leaflet-overlay-pane path.marker-triangle:not(.marker-selected) {
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+.leaflet-overlay-pane path.marker-square:not(.marker-selected) {
+  clip-path: inset(6% round 1px);
+}
+.leaflet-overlay-pane path.marker-diamond:not(.marker-selected) {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* Leaflet renders its own attribution at 14px. The text is required by the tile
+   licence and cannot be removed, so it is padded to the 24px target minimum
+   instead (WCAG 2.2 SC 2.5.8). */
+.leaflet-control-attribution { padding: 4px 6px !important; line-height: 16px !important; }
+.leaflet-control-attribution a { display: inline-block; min-height: 24px; line-height: 24px; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TRUNCATION ON NARROW VIEWPORTS
+   ═══════════════════════════════════════════════════════════════════════
+   112 elements clipped mid-word at 375px — project names, executing-agency
+   names, sector labels. "Department of Telecommunications · Not speci…" is not
+   a label, and on the citizen tier the project name IS the content.
+
+   Below the sm breakpoint a truncated string wraps to at most two lines instead
+   of being cut. Two lines keeps the row rhythm; unbounded wrapping would let one
+   long name push a card to four lines and break the list's scannability.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 639px) {
+  html .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  /* Table cells keep their own max-width truncation; relaxing those would force
+     horizontal scrolling on the register, which is the worse trade. */
+  html td .truncate, html th .truncate { -webkit-line-clamp: 3; line-clamp: 3; }
+}

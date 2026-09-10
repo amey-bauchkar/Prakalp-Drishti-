@@ -14,6 +14,20 @@
     <meta name="description" content="MoSPI Central Sector Mega-Projects Decision Intelligence System. Sovereign Infrastructure Monitoring, EO Satellite Verification &amp; Predictive Overrun Analytics." />
     
     <!-- 100% Offline Air-Gapped Sovereign Web Fonts vendored locally via fonts.css -->
+
+    <!-- Apply the stored accessibility preferences before first paint. Doing this in
+         React would flash the default size and default contrast at every page load,
+         which is exactly the audience that should not have to watch the page move. -->
+    <script>
+      (function () {
+        try {
+          var f = localStorage.getItem('prakalp:a11y:fontSize');
+          if (f && f !== 'normal') document.documentElement.setAttribute('data-font-size', f);
+          if (localStorage.getItem('prakalp:a11y:contrast') === 'on')
+            document.documentElement.setAttribute('data-theme', 'contrast');
+        } catch (e) { /* blocked site data: fall back to defaults */ }
+      })();
+    </script>
   </head>
   <body class="font-sans antialiased">
     <div id="root"></div>

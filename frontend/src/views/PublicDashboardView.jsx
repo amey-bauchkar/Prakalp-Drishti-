@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, FileText, Landmark, Search, Filter, ShieldCheck,
@@ -7,11 +7,23 @@ import {
   TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3,
   Download, ChevronLeft, ChevronsLeft, ChevronsRight, RotateCcw,
   SlidersHorizontal, ArrowUpDown, ListFilter, Activity, Eye,
-  IndianRupee, Globe2, ShieldAlert, Cpu, Terminal
+  IndianRupee, Globe2, ShieldAlert, Cpu, Terminal, Keyboard
 } from 'lucide-react';
 import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
 import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
 import ClearanceStagesInfoGuide from '../components/ClearanceStagesInfoGuide';
+// The corpus writes "Not specified" where a field was never recorded. Rendered
+// verbatim it reads as a broken string ("...asset in Not specified executed by...");
+// an em dash says "not recorded" without pretending to be a value.
+const NULLISH = /^(not specified|n\/?a|nan|nat|none|null|-)$/i;
+const orDash = (v) => (v == null || NULLISH.test(String(v).trim()) ? '—' : v);
+import StatusBadge, { StatusGlyph, StatusLegend } from '../components/StatusBadge';
+import DataUnavailable from '../components/DataUnavailable';
+import { getStoredLanguage, t } from '../lib/i18n';
+import {
+  getProjectStatus, describeStatus, STATUS, STATUS_ORDER,
+  formatCount, formatCr, formatDate, sectorName, sectorIsTranslated,
+} from '../lib/projectStatus';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -30,62 +42,96 @@ const itemVariants = {
   }
 };
 
-// Status threshold logic with Minimalist Swiss monochrome + emerald/amber/coral accents
-function getProjectStatus(p) {
-  const delayed = Number(p.delayed_months) || 0;
-  const progress = Number(p.progress_perc) || 0;
-  if (delayed > 24 || (progress < 40 && delayed > 12)) {
-    return {
-      label: 'CRITICAL DELAY',
-      color: '#e11d48', // rose-600
-      borderClass: 'border-rose-200',
-      bgClass: 'bg-rose-50 text-rose-800',
-      dotClass: 'bg-rose-600',
-      badgeClass: 'text-rose-700',
-    };
-  }
-  if (delayed > 0 || progress < 70) {
-    return {
-      label: 'UNDER MONITORING',
-      color: '#d97706', // amber-600
-      borderClass: 'border-amber-200',
-      bgClass: 'bg-amber-50 text-amber-900',
-      dotClass: 'bg-amber-600',
-      badgeClass: 'text-amber-700',
-    };
-  }
-  return {
-    label: 'ON TRACK',
-    color: '#059669', // emerald-600
-    borderClass: 'border-emerald-200',
-    bgClass: 'bg-emerald-50 text-emerald-800',
-    dotClass: 'bg-emerald-600',
-    badgeClass: 'text-emerald-700',
-  };
+/**
+ * A column header that sorts. Carries aria-sort so assistive tech announces the
+ * current order, and toggles direction on repeat activation.
+ */
+function SortableTh({ id, sortBy, setSortBy, children, numeric = false, textual = false, className = '', lang = 'en' }) {
+  const active = sortBy.startsWith(id + '_');
+  const dir = active ? sortBy.slice(id.length + 1) : null;
+  // Text opens A-Z, quantities open highest-first — the direction each is read in.
+  const opening = textual ? 'asc' : 'desc';
+  const next = active
+    ? `${id}_${dir === opening ? (opening === 'asc' ? 'desc' : 'asc') : opening}`
+    : `${id}_${opening}`;
+  return (
+    <th
+      scope="col"
+      aria-sort={active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+      className={`p-0 ${className}`}
+    >
+      <button
+        type="button"
+        onClick={() => setSortBy(next)}
+        className={`w-full flex items-center gap-1.5 p-3.5 font-bold uppercase tracking-wider transition-colors hover:bg-slate-200 ${
+          numeric ? 'justify-end' : 'justify-start'
+        } ${active ? 'text-slate-950' : 'text-slate-700'}`}
+        title={`${t('sort_by', lang)}: ${String(children)}`}
+      >
+        <span>{children}</span>
+        <ArrowUpDown
+          className={`w-3 h-3 shrink-0 ${active ? 'opacity-100' : 'opacity-35'}`}
+          aria-hidden="true"
+        />
+        {active && (
+          <span className="sr-only">
+            , {dir === 'asc' ? t('sort_ascending', lang) : t('sort_descending', lang)}
+          </span>
+        )}
+      </button>
+    </th>
+  );
 }
 
 export default function PublicDashboardView() {
   const [activeTab, setActiveTab] = useState('metadata');
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [fetchedAt, setFetchedAt] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(() => {
     return localStorage.getItem('prakalp:selectedProjectId') || '619092';
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
   const [selectedState, setSelectedState] = useState('All');
+  const [lang, setLang] = useState(() => getStoredLanguage());
 
-  // Fetch project list
   useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+
+  // Fetch project list.
+  //
+  // The previous `.catch(() => setLoading(false))` discarded the error, so with the
+  // API down the portal showed an empty register under a masthead still asserting
+  // "2,207 SEALED PROJECTS - Rs 47.44L CR" and told the user nothing. A transparency
+  // portal that keeps quoting national figures while unable to load a single record
+  // is the one failure mode it cannot afford.
+  const loadProjects = useCallback(() => {
     setLoading(true);
+    setLoadError(null);
     fetch('/api/projects?limit=2207')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`The project database responded with status ${res.status}.`);
+        return res.json();
+      })
       .then((data) => {
-        if (Array.isArray(data)) setProjects(data);
+        if (!Array.isArray(data)) throw new Error('The project database returned an unexpected response.');
+        setProjects(data);
+        setFetchedAt(new Date());
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        setProjects([]);
+        setLoadError(err.message || 'The project database could not be reached.');
+        setLoading(false);
+      });
   }, []);
+
+  useEffect(() => { loadProjects(); }, [loadProjects]);
 
   // Listen to global project select events
   useEffect(() => {
@@ -119,27 +165,60 @@ export default function PublicDashboardView() {
     return matchesSearch && matchesSector && matchesState;
   });
 
+  // One counter per status rather than three coarse buckets, so both the masthead
+  // above and the register's filter chips below read from the same figures.
+  const portfolioStats = useMemo(() => {
+    const counts = Object.fromEntries(STATUS_ORDER.map((st) => [st.id, 0]));
+    let totalCapex = 0;
+    projects.forEach((p) => {
+      counts[getProjectStatus(p).id] += 1;
+      totalCapex += Number(p.revised_cost_cr || p.original_cost_cr || 0);
+    });
+    return {
+      total: projects.length,
+      counts,
+      needsAttention: counts.CRITICAL + counts.DELAYED,
+      totalCapex,
+    };
+  }, [projects]);
+
+  // Arrow keys move between tabs, Home/End jump to the ends, per the WAI-ARIA
+  // tabs pattern. Without this the rail announced itself as a tablist and then
+  // behaved like three unrelated buttons.
+  const onTabKeyDown = (e) => {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+    e.preventDefault();
+    const ids = tabs.map((x) => x.id);
+    const at = ids.indexOf(activeTab);
+    const to = e.key === 'Home' ? 0
+      : e.key === 'End' ? ids.length - 1
+      : e.key === 'ArrowRight' ? (at + 1) % ids.length
+      : (at - 1 + ids.length) % ids.length;
+    setActiveTab(ids[to]);
+    requestAnimationFrame(() => document.getElementById(`nagrik-tab-${ids[to]}`)?.focus());
+  };
+
   const tabs = [
     {
       id: 'metadata',
-      label: 'Geospatial GIS & Master Tracking',
-      desc: 'Sovereign profiles, milestone progress & Pan-India GIS map',
+      label: t('tab_find', lang),
+      desc: t('tab_find_desc', lang),
       icon: MapPin,
-      badge: `${projects.length || '2,207'} Projects`
+      badge: loadError ? t('prov_unavailable', lang) : `${formatCount(projects.length)} ${t('projects_unit', lang)}`
     },
     {
       id: 'financial',
-      label: 'Financial Transparency (RTI §4)',
-      desc: 'Sanctioned vs Disbursed capex & WPI Clause 10CC adjustments',
+      label: t('tab_money', lang),
+      desc: t('tab_money_desc', lang),
       icon: FileText,
-      badge: '₹47.4L Cr Portfolio'
+      badge: loadError ? t('prov_unavailable', lang) : formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })
     },
     {
       id: 'clearances',
-      label: 'Statutory Clearances (ANUMATI)',
-      desc: 'PARIVESH Forest Stage I/II, EIA, Wildlife & Land Acquisition',
+      label: t('tab_permissions', lang),
+      desc: t('tab_permissions_desc', lang),
       icon: Landmark,
-      badge: 'PARIVESH Live'
+      badge: 'PARIVESH'
     }
   ];
 
@@ -158,15 +237,19 @@ export default function PublicDashboardView() {
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="flex items-center gap-1.5 text-white font-bold uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            NAGRIK TRANSPARENCY
+            {t('nagrik_transparency', lang)}
           </span>
-          <span className="text-[#24425C] font-bold">/</span>
-          <span className="text-slate-400 font-semibold">RTI ACT §4 MANDATE</span>
-          <span className="text-[#24425C] font-bold">/</span>
-          <span className="text-white font-bold">2,207 SEALED PROJECTS · ₹47.44L CR</span>
+          <span className="text-[#24425C] font-bold" aria-hidden="true">/</span>
+          <span className="text-slate-300 font-semibold">{t('nagrik_rti_mandate', lang)}</span>
+          <span className="text-[#24425C] font-bold" aria-hidden="true">/</span>
+          <span className="text-white font-bold">
+            {loading ? t('prov_loading', lang)
+              : loadError ? t('register_unavailable', lang)
+              : `${formatCount(portfolioStats.total)} ${t('projects_unit', lang)} · ${formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })}`}
+          </span>
         </div>
         <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-0.5 rounded border border-slate-700/80 text-xs">
-          <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">DOSSIER:</span>
+          <span className="text-slate-300 text-[10px] uppercase font-bold tracking-widest">{t('nagrik_dossier', lang)}:</span>
           <span className="font-bold text-amber-400 font-mono">#{selectedProjectId}</span>
         </div>
       </motion.div>
@@ -181,22 +264,36 @@ export default function PublicDashboardView() {
           <div className="space-y-2.5 max-w-3xl">
             <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>CITIZEN CHARTER · OPEN DATA INITIATIVE · RTI ACT §4(1)(B)</span>
+              <span>{t('nagrik_eyebrow', lang)}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold font-heading text-white tracking-tight leading-tight">
-              Public Infrastructure Transparency &amp; Oversight
+              {t('nagrik_title', lang)}
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-2xl font-sans">
-              Proactive public disclosure for Central Sector Mega-Projects under Section 4(1)(b) of the Right to Information Act, 2005. Inspect geocoded site locations, CCEA sanctioned vs revised capex baselines, physical milestones, and statutory environmental clearances in real time.
+            {/* Was: "Proactive public disclosure ... Inspect geocoded site locations,
+                CCEA sanctioned vs revised capex baselines, physical milestones, and
+                statutory environmental clearances in real time." On a phone that
+                paragraph filled the entire first screen, and it was written for the
+                same reader as the officer console. Same facts, same statutory anchor,
+                readable by the audience it is for. */}
+            <p className="text-sm text-slate-200 leading-relaxed max-w-2xl font-sans">
+              {t('nagrik_lede', lang)}
+            </p>
+            <p className="text-[12.5px] text-slate-300 leading-relaxed max-w-2xl font-sans">
+              {t('nagrik_rti_note', lang)}
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0 relative z-10">
+            {/* Read from the fetch. These were literals, so with the API down the
+                page went on asserting national totals under an empty register. */}
             <div className="p-4 rounded-xl bg-black/40 border border-white/20 backdrop-blur-md shadow-inner text-right min-w-[190px]">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">Total Monitored Capex</div>
-              <div className="text-2xl sm:text-3xl font-black text-white font-mono mt-0.5">₹47.44L Cr</div>
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">{t('total_approved_cost', lang)}</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono mt-0.5">
+                {loadError ? '—' : formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })}
+              </div>
               <div className="text-[11px] text-white flex items-center justify-end gap-1 mt-1 font-mono font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" /> 2,207 Projects Audited
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" aria-hidden="true" />
+                {loadError ? t('register_unavailable', lang) : `${formatCount(portfolioStats.total)} ${t('projects_published', lang)}`}
               </div>
             </div>
           </div>
@@ -208,7 +305,8 @@ export default function PublicDashboardView() {
         variants={itemVariants} 
         className="grid grid-cols-1 sm:grid-cols-3 gap-3" 
         role="tablist" 
-        aria-label="Public transparency sections"
+        aria-label={t('nagrik_transparency', lang)}
+        onKeyDown={onTabKeyDown}
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -216,8 +314,11 @@ export default function PublicDashboardView() {
           return (
             <button
               key={tab.id}
+              id={`nagrik-tab-${tab.id}`}
               role="tab"
               aria-selected={isActive}
+              aria-controls="nagrik-tabpanel"
+              tabIndex={isActive ? 0 : -1}
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex items-center gap-3.5 p-4 rounded-xl border text-left transition-all duration-150 cursor-pointer ${
                 isActive
@@ -234,7 +335,7 @@ export default function PublicDashboardView() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <span className={`text-sm font-bold tracking-tight truncate font-heading ${isActive ? 'text-white' : 'text-gov-navy'}`}>
+                  <span className={`text-sm font-bold tracking-tight font-heading ${isActive ? 'text-white' : 'text-gov-navy'}`}>
                     {tab.label}
                   </span>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
@@ -243,14 +344,59 @@ export default function PublicDashboardView() {
                     {tab.badge}
                   </span>
                 </div>
-                <p className={`text-xs truncate ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>{tab.desc}</p>
+                <p className={`text-xs leading-snug ${isActive ? 'text-slate-200' : 'text-slate-600'}`}>{tab.desc}</p>
               </div>
             </button>
           );
         })}
       </motion.nav>
 
+      {/* ── Failure is stated, not swallowed ── */}
+      {loadError && (
+        <motion.div variants={itemVariants}>
+          <DataUnavailable
+            variant="error"
+            title={t('err_load_title', lang)}
+            detail={t('err_load_detail', lang)}
+            retryLabel={t('err_retry', lang)}
+            clearLabel={t('err_clear_filters', lang)}
+            onRetry={loadProjects}
+          />
+        </motion.div>
+      )}
+
+      {/* ── Provenance. A transparency portal that will not say where its figures
+             came from, or how current they are, is asking for trust it has not
+             earned — and GIGW 3.0 requires a content review date. ── */}
+      <motion.div
+        variants={itemVariants}
+        className="flex flex-wrap items-center gap-x-5 gap-y-1.5 px-4 py-2.5 rounded-lg bg-surface-2 border border-gov-border text-[11.5px] text-gov-soft"
+      >
+        <span className="inline-flex items-center gap-1.5">
+          <Info className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />
+          <strong className="text-gov-navy font-semibold">{t('prov_source', lang)}</strong>
+          {t('prov_source_val', lang)}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Clock className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />
+          <strong className="text-gov-navy font-semibold">{t('prov_loaded', lang)}</strong>
+          {loading ? t('prov_loading', lang) : fetchedAt
+            ? fetchedAt.toLocaleString(lang === 'hi' ? 'hi-IN' : 'en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+            : t('prov_unavailable', lang)}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />
+          {t('prov_delay_basis', lang)}
+        </span>
+      </motion.div>
+
       {/* ── Tab Views with Animated Transitions ── */}
+      <div
+        id="nagrik-tabpanel"
+        role="tabpanel"
+        aria-labelledby={`nagrik-tab-${activeTab}`}
+        tabIndex={-1}
+      >
       <AnimatePresence mode="wait">
         {activeTab === 'metadata' && (
           <motion.div
@@ -275,6 +421,8 @@ export default function PublicDashboardView() {
               sectors={sectors}
               states={states}
               loading={loading}
+              portfolioStats={portfolioStats}
+              lang={lang}
             />
           </motion.div>
         )}
@@ -307,6 +455,7 @@ export default function PublicDashboardView() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
@@ -328,10 +477,14 @@ function PublicMetadataTab({
   setSelectedState,
   sectors,
   states,
-  loading
+  loading,
+  portfolioStats,
+  lang = 'en',
 }) {
   const [basemapStatus, setBasemapStatus] = useState('ok');
   const [dirLimit, setDirLimit] = useState(100);
+  const [mapNavIndex, setMapNavIndex] = useState(0);
+  const [mapLiveAnnouncement, setMapLiveAnnouncement] = useState('');
 
   // Master Table State
   const [tableSearch, setTableSearch] = useState('');
@@ -383,6 +536,27 @@ function PublicMetadataTab({
     }).length;
   }, [projects]);
 
+  const navigateMap = useCallback((direction) => {
+    if (!mappedProjects.length) return;
+    setMapNavIndex((prev) => {
+      const next = direction === 'next'
+        ? (prev + 1) % mappedProjects.length
+        : (prev - 1 + mappedProjects.length) % mappedProjects.length;
+      const target = mappedProjects[next];
+      if (target) {
+        selectProject(target.project_id);
+        const st = getProjectStatus(target);
+        const statusTxt = lang === 'hi' ? (st.hiLabel || st.label) : st.label;
+        setMapLiveAnnouncement(
+          lang === 'hi'
+            ? `मानचित्र परियोजना ${next + 1}/${mappedProjects.length}: ${target.project_name}, ${target.state || 'भारत'}। स्थिति: ${statusTxt}`
+            : `Project ${next + 1} of ${mappedProjects.length}: ${target.project_name}, ${target.state || 'India'}. Status: ${statusTxt}`
+        );
+      }
+      return next;
+    });
+  }, [mappedProjects, lang]);
+
   // Handle directory scroll to load more
   const handleDirScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
@@ -392,30 +566,6 @@ function PublicMetadataTab({
   };
 
   const corpus = allProjects.length > 0 ? allProjects : projects;
-  
-  // High-level Corpus Statistics
-  const portfolioStats = useMemo(() => {
-    let onTrack = 0;
-    let monitored = 0;
-    let critical = 0;
-    let totalCapex = 0;
-
-    corpus.forEach((p) => {
-      const st = getProjectStatus(p);
-      if (st.label === 'ON TRACK') onTrack += 1;
-      else if (st.label === 'UNDER MONITORING') monitored += 1;
-      else critical += 1;
-      totalCapex += Number(p.revised_cost_cr || p.original_cost_cr || 0);
-    });
-
-    return {
-      total: corpus.length,
-      onTrack,
-      monitored,
-      critical,
-      totalCapex,
-    };
-  }, [corpus]);
 
   const tableFiltered = useMemo(() => {
     let list = corpus;
@@ -436,7 +586,7 @@ function PublicMetadataTab({
 
     // Status filter
     if (tableStatus !== 'All') {
-      list = list.filter((p) => getProjectStatus(p).label === tableStatus);
+      list = list.filter((p) => getProjectStatus(p).id === tableStatus);
     }
 
     // Sector filter
@@ -458,15 +608,16 @@ function PublicMetadataTab({
       const progA = Number(a.progress_perc || 0);
       const progB = Number(b.progress_perc || 0);
 
-      if (sortBy === 'cost_desc') return costB - costA;
-      if (sortBy === 'cost_asc') return costA - costB;
-      if (sortBy === 'delay_desc') return delayB - delayA;
-      if (sortBy === 'delay_asc') return delayA - delayB;
-      if (sortBy === 'progress_desc') return progB - progA;
-      if (sortBy === 'progress_asc') return progA - progB;
-      if (sortBy === 'id_asc') return Number(a.project_id) - Number(b.project_id);
-      if (sortBy === 'name_asc') return (a.project_name || '').localeCompare(b.project_name || '');
-      return 0;
+      const [key, dir] = String(sortBy).split('_');
+      const sign = dir === 'asc' ? 1 : -1;
+      switch (key) {
+        case 'cost':     return (costA - costB) * sign;
+        case 'delay':    return (delayA - delayB) * sign;
+        case 'progress': return (progA - progB) * sign;
+        case 'id':       return (Number(a.project_id) - Number(b.project_id)) * sign;
+        case 'name':     return (a.project_name || '').localeCompare(b.project_name || '') * sign;
+        default:         return 0;
+      }
     });
   }, [corpus, tableSearch, tableStatus, tableSector, tableState, sortBy]);
 
@@ -558,19 +709,17 @@ function PublicMetadataTab({
                   #{activeProject.project_id}
                 </span>
                 <span className="px-2.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 font-mono text-[11px] font-semibold">
-                  {activeProject.sector || 'Central Sector'}
+                  <span lang={sectorIsTranslated(activeProject.sector, lang) ? undefined : 'en'}>{sectorName(activeProject.sector, lang) || 'Central Sector'}</span>
                 </span>
-                <span className={`px-2.5 py-0.5 rounded border text-[11px] font-mono font-bold ${status.bgClass} ${status.borderClass}`}>
-                  {status.label}
-                </span>
+                <StatusBadge project={activeProject} />
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-gov-navy font-heading tracking-tight">
+              <h2 lang="en" className="text-xl sm:text-2xl font-extrabold text-gov-navy font-heading tracking-tight">
                 {activeProject.project_name}
               </h2>
             </div>
             <div className="flex items-center gap-4 shrink-0 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <div className="text-right">
-                <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Physical Progress</div>
+                <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">{t('sp_physical_progress', lang)}</div>
                 <div className="text-2xl font-extrabold text-gov-navy font-mono">{progressPct.toFixed(1)}%</div>
               </div>
               <div className="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shadow-2xs">
@@ -582,44 +731,47 @@ function PublicMetadataTab({
           {/* 4 Metric Cells in Spotlight HUD */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-5">
             <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Executing Agency</span>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_executing_agency', lang)}</span>
               <span className="text-sm font-bold text-gov-navy truncate block mt-0.5">{activeProject.company || '—'}</span>
               <span className="text-xs text-slate-600 flex items-center gap-1 mt-1 font-medium">
-                <MapPin className="w-3 h-3 text-slate-400" /> {activeProject.state || 'Pan-India'}
+                <MapPin className="w-3 h-3 text-slate-500" aria-hidden="true" />{' '}
+                <span lang="en">{orDash(activeProject.state) === '—' ? 'Pan-India' : activeProject.state}</span>
               </span>
             </div>
 
             <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Original Sanction Date</span>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_original_sanction', lang)}</span>
               <span className="text-sm font-bold text-gov-navy font-mono block mt-0.5">{activeProject.sanction_date?.slice(0, 10) || '—'}</span>
-              <span className="text-xs text-slate-500 mt-1 block">CCEA Approval Baseline</span>
+              <span className="text-xs text-slate-600 mt-1 block">{t('sp_ccea_baseline', lang)}</span>
             </div>
 
             <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Target Completion</span>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_target_completion', lang)}</span>
               <span className="text-sm font-bold text-gov-navy font-mono block mt-0.5">{activeProject.target_date?.slice(0, 10) || '—'}</span>
-              <span className="text-xs text-slate-500 mt-1 block">Revised MoSPI Target</span>
+              <span className="text-xs text-slate-600 mt-1 block">{t('sp_revised_target', lang)}</span>
             </div>
 
             <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Schedule Deviation</span>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_schedule_deviation', lang)}</span>
               <span className={`text-sm font-bold font-mono block mt-0.5 ${Number(activeProject.delayed_months) > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
-                {Number(activeProject.delayed_months) > 0 ? `+${activeProject.delayed_months} Months Delay` : 'Nil Delay (On Track)'}
+                {Number(activeProject.delayed_months) > 0
+                  ? `+${activeProject.delayed_months} ${t('sp_months_delay', lang)}`
+                  : t('sp_nil_delay', lang)}
               </span>
-              <span className="text-xs text-slate-500 mt-1 block">Against Approved Plan</span>
+              <span className="text-xs text-slate-600 mt-1 block">{t('sp_against_plan', lang)}</span>
             </div>
           </div>
 
           {/* Progress Bar Line */}
           <div className="mt-5 pt-4 border-t border-slate-200 flex items-center gap-3">
-            <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider shrink-0 font-mono">Milestone Track</span>
+            <span className="text-[10.5px] font-bold text-slate-600 uppercase tracking-wider shrink-0 font-mono">{t('sp_milestone_track', lang)}</span>
             <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden relative border border-slate-200">
               <div
                 className="bg-gradient-to-r from-gov-navy to-emerald-600 h-full rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="font-mono text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% Realized</span>
+            <span className="font-mono text-xs font-bold text-gov-navy shrink-0">{progressPct.toFixed(1)}% {t('sp_realized', lang)}</span>
           </div>
         </div>
       )}
@@ -627,23 +779,66 @@ function PublicMetadataTab({
       {/* ── Interactive Pan-India Map + Directory Filter Grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Geographic Leaflet Map */}
-        <div className="lg:col-span-7 rounded-xl bg-white border border-zinc-200/90 flex flex-col h-[600px] overflow-hidden shadow-2xs">
-          <div className="flex items-center justify-between p-4 border-b border-zinc-200 bg-zinc-50/80">
-            <span className="flex items-center gap-2 text-sm font-bold text-zinc-900 font-mono uppercase tracking-wide text-xs">
-              <MapPin className="w-3.5 h-3.5 text-zinc-700" />
-              Pan-India GIS Sites ({mappedProjects.length.toLocaleString('en-IN')} Georeferenced)
+        <div className="lg:col-span-7 rounded-xl bg-white border border-slate-200/90 flex flex-col h-[600px] overflow-hidden shadow-2xs">
+          <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-slate-50/80">
+            <span className="flex items-center gap-2 text-sm font-bold text-slate-900 font-mono uppercase tracking-wide text-xs">
+              <MapPin className="w-3.5 h-3.5 text-slate-700" />
+              {t('map_sites_title', lang)} ({formatCount(mappedProjects.length)} {t('map_georeferenced_n', lang)})
             </span>
             <div className="flex items-center gap-2.5 text-[10.5px] font-mono flex-wrap">
-              <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold"><span className="w-2 h-2 rounded-full bg-emerald-600" /> On Track</span>
-              <span className="inline-flex items-center gap-1.5 text-amber-700 font-semibold"><span className="w-2 h-2 rounded-full bg-amber-600" /> Monitored</span>
-              <span className="inline-flex items-center gap-1.5 text-rose-700 font-semibold"><span className="w-2 h-2 rounded-full bg-rose-600" /> Delayed</span>
+              {/* Shape carries the meaning; colour reinforces it. WCAG 1.4.1. */}
+              <StatusLegend compact only={['CRITICAL', 'DELAYED', 'SLIPPING', 'ON_TRACK', 'COMPLETED_LATE']} />
               {unmappedCount > 0 && (
-                <span className="inline-flex items-center gap-1 text-zinc-500 border-l border-zinc-300 pl-2.5 ml-0.5 font-sans text-[11px]">
-                  <HelpCircle className="w-3 h-3 text-zinc-400" />
-                  {unmappedCount} non-georeferenced
+                <span className="inline-flex items-center gap-1 text-slate-500 border-l border-slate-300 pl-2.5 ml-0.5 font-sans text-[11px]">
+                  <HelpCircle className="w-3 h-3 text-slate-400" />
+                  {formatCount(unmappedCount)} {t('map_unmapped_n', lang)}
                 </span>
               )}
             </div>
+          </div>
+
+          {/* Accessible Keyboard Traversal Toolbar (WCAG 2.2 AAA & GIGW 3.0) */}
+          <div
+            role="toolbar"
+            aria-label="Map keyboard traversal controls"
+            className="px-3.5 py-1.5 bg-slate-100 border-b border-slate-200 flex items-center justify-between gap-3 text-xs shrink-0"
+          >
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-600 font-sans">
+              <span className="inline-flex items-center gap-1 font-bold text-slate-800 uppercase tracking-wider">
+                <Keyboard className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
+                <span>{lang === 'hi' ? 'मानचित्र नेविगेशन:' : 'Keyboard Map Nav:'}</span>
+              </span>
+              <span className="hidden sm:inline text-slate-500">
+                {lang === 'hi' ? 'तीर कुंजियों या बटन से परियोजनाएं बदलें' : 'Traverse mapped sites without a mouse'}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => navigateMap('prev')}
+                disabled={!mappedProjects.length}
+                aria-label="Previous project pin on map"
+                className="inline-flex items-center gap-1 px-2 py-1 min-h-[24px] rounded bg-white hover:bg-slate-200 border border-slate-300 font-mono text-[11px] font-bold text-slate-800 transition-colors disabled:opacity-40"
+              >
+                <ChevronLeft className="w-3 h-3" />
+                <span>{t('map_prev', lang)}</span>
+              </button>
+              <span className="font-mono text-[11px] font-semibold text-slate-700 px-1">
+                {mappedProjects.length ? `${mapNavIndex + 1} / ${mappedProjects.length}` : '0 / 0'}
+              </span>
+              <button
+                type="button"
+                onClick={() => navigateMap('next')}
+                disabled={!mappedProjects.length}
+                aria-label="Next project pin on map"
+                className="inline-flex items-center gap-1 px-2 py-1 min-h-[24px] rounded bg-white hover:bg-slate-200 border border-slate-300 font-mono text-[11px] font-bold text-slate-800 transition-colors disabled:opacity-40"
+              >
+                <span>{t('map_next', lang)}</span>
+                <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            {/* Live screen-reader announcement */}
+            <div role="status" aria-live="polite" className="sr-only">{mapLiveAnnouncement}</div>
           </div>
 
           <div className="flex-1 overflow-hidden relative z-0">
@@ -686,9 +881,15 @@ function PublicMetadataTab({
                       key={p.project_id}
                       center={[lat, lon]}
                       radius={isSelected ? 9 : 4.5}
+                      // Marker shape encodes status so the map is readable without
+                      // colour vision: triangle critical, square delayed, diamond
+                      // slipping, circle on track / complete. Leaflet takes the
+                      // number of sides via the canvas renderer's `shape` hint,
+                      // so the class is applied for CSS-based shaping too.
+                      className={`marker-${pStat.shape}${isSelected ? ' marker-selected' : ''}`}
                       pathOptions={{
                         fillColor: pStat.color,
-                        fillOpacity: approx ? 0.3 : (isSelected ? 0.95 : 0.75),
+                        fillOpacity: approx ? 0.3 : (isSelected ? 0.95 : 0.8),
                         color: approx ? pStat.color : (isSelected ? '#09090b' : '#ffffff'),
                         weight: isSelected ? 2.5 : 1,
                         dashArray: approx ? '2 3' : undefined,
@@ -699,10 +900,13 @@ function PublicMetadataTab({
                     >
                       <Popup>
                         <div className="p-1 font-sans text-xs space-y-1.5 min-w-[200px]">
-                          <div className="font-bold text-zinc-950 leading-tight">{p.project_name}</div>
-                          <div className="text-zinc-600 font-mono text-[10px]">ID #{p.project_id} · {p.sector}</div>
-                          <div className="text-zinc-900 font-bold font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
-                          <div className="text-zinc-700 font-semibold">Progress: {p.progress_perc}% ({pStat.label})</div>
+                          <div className="font-bold text-slate-950 leading-tight">{p.project_name}</div>
+                          <div className="text-slate-600 font-mono text-[10px]">ID #{p.project_id} · <span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span></div>
+                          <div className="text-slate-900 font-bold font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
+                          <div className="text-slate-700 font-semibold flex items-center gap-1.5">
+                            <StatusGlyph status={pStat} size={10} />
+                            Progress: {p.progress_perc}% — {pStat.label}
+                          </div>
                           {approx && (
                             <div className="text-amber-950 bg-amber-50 border border-amber-300 rounded p-1 text-[10px] leading-snug">
                               <strong>Approximate Centroid.</strong> Plotted at {String(p.geocode_precision || '').toLowerCase().includes('state') ? 'state' : 'national'} centroid.
@@ -711,7 +915,7 @@ function PublicMetadataTab({
                           <div className="pt-1">
                             <button
                               onClick={() => handleSelectAndFocus(p.project_id)}
-                              className="w-full text-center py-1.5 bg-zinc-900 hover:bg-black text-white rounded font-bold text-[11px] transition-colors"
+                              className="w-full text-center py-1.5 bg-slate-900 hover:bg-black text-white rounded font-bold text-[11px] transition-colors"
                             >
                               Inspect Dossier
                             </button>
@@ -726,28 +930,29 @@ function PublicMetadataTab({
             <BaseMapNotice status={basemapStatus} />
           </div>
 
-          <div className="p-3 border-t border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs text-zinc-500 font-mono">
-            <span>Click any marker to inspect dossier</span>
-            <span className="text-zinc-800 font-semibold">GeoNames 5-Tier Geocoding Engine</span>
+          <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
+            <span>{t('map_click_marker', lang)}</span>
+            <span className="text-slate-800 font-semibold">{t('map_geocoder', lang)}</span>
           </div>
         </div>
 
         {/* Right Column: Search & Filtered Project Directory */}
-        <div className="lg:col-span-5 rounded-xl bg-white border border-zinc-200/90 flex flex-col h-[600px] overflow-hidden shadow-2xs">
-          <div className="p-4 border-b border-zinc-200 bg-zinc-50/80 space-y-3 shrink-0">
+        <div className="lg:col-span-5 rounded-xl bg-white border border-slate-200/90 flex flex-col h-[600px] overflow-hidden shadow-2xs">
+          <div className="p-4 border-b border-slate-200 bg-slate-50/80 space-y-3 shrink-0">
             <div className="relative">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search by project name, PSU, state or ID..."
+                aria-label={t('search_directory_label', lang)}
+                placeholder={t('search_directory_ph', lang)}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-zinc-300 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
+                className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 text-xs text-zinc-400 hover:text-zinc-700"
+                  className="absolute right-2.5 top-2.5 text-xs text-slate-400 hover:text-slate-700"
                 >
                   ✕
                 </button>
@@ -758,7 +963,7 @@ function PublicMetadataTab({
               <select
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
-                className="w-full text-xs bg-white border border-zinc-300 rounded-lg p-2 text-zinc-800 focus:outline-none focus:border-zinc-900 cursor-pointer font-sans"
+                className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-slate-900 cursor-pointer font-sans"
                 aria-label="Filter by sector"
               >
                 {sectors.map((s) => (
@@ -768,7 +973,7 @@ function PublicMetadataTab({
               <select
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full text-xs bg-white border border-zinc-300 rounded-lg p-2 text-zinc-800 focus:outline-none focus:border-zinc-900 cursor-pointer font-sans"
+                className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:border-slate-900 cursor-pointer font-sans"
                 aria-label="Filter by state"
               >
                 {states.map((s) => (
@@ -778,7 +983,7 @@ function PublicMetadataTab({
             </div>
 
             {(selectedSector !== 'All' || selectedState !== 'All' || searchQuery) && (
-              <div className="flex items-center justify-between text-xs text-zinc-500 font-mono">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
                 <span>{projects.length} of {allProjects.length || 2207} match</span>
                 <button
                   onClick={() => {
@@ -786,7 +991,7 @@ function PublicMetadataTab({
                     setSelectedSector('All');
                     setSelectedState('All');
                   }}
-                  className="text-zinc-900 hover:underline flex items-center gap-1 font-semibold"
+                  className="text-slate-900 hover:underline flex items-center gap-1 font-semibold"
                 >
                   <RotateCcw className="w-3 h-3" /> Reset
                 </button>
@@ -795,67 +1000,90 @@ function PublicMetadataTab({
           </div>
 
           {/* Scrollable list with progressive expansion */}
+          {/* `relative` is load-bearing, not decorative. Without a positioned
+              containing block here, the 8,500px list inside this 445px scrollport
+              leaked its full height into the ROOT scroll area: the document scrolled
+              to 9,534px while the body ended at 3,043px, leaving ~6,500px of blank
+              dead space below the footer that a user could scroll into and find
+              nothing. Verified: hiding the list dropped documentElement.scrollHeight
+              from 9,534 to exactly body.scrollHeight. */}
           <div
             data-lenis-prevent
             onScroll={handleDirScroll}
-            className="flex-1 overflow-y-auto divide-y divide-zinc-100 scrollbar-thin"
+            className="relative flex-1 overflow-y-auto scrollbar-thin"
           >
             {projects.length === 0 ? (
-              <div className="p-8 text-center text-zinc-400 text-xs">
-                No projects found matching the current search criteria.
-              </div>
+              <DataUnavailable
+                variant={searchQuery || selectedSector !== 'All' || selectedState !== 'All' ? 'filtered' : 'empty'}
+                title={t('err_no_match_title', lang)}
+                detail={t('err_no_match_detail', lang)}
+                clearLabel={t('err_clear_filters', lang)}
+                className="m-4 border-0 bg-transparent"
+                onClear={() => { setSearchQuery(''); setSelectedSector('All'); setSelectedState('All'); }}
+              />
             ) : (
               <>
+                {/* A list, not ~100 sibling <h4> headings. Heading navigation is the
+                    primary way screen-reader users move through a page; a flat wall
+                    of 100 project names at one level destroys it. Each row is a
+                    <button> so it is focusable and operable by keyboard. */}
+                <ul className="divide-y divide-slate-100">
                 {projects.slice(0, dirLimit).map((p) => {
                   const isSelected = String(p.project_id) === String(activeProject?.project_id);
                   const pStat = getProjectStatus(p);
                   return (
-                    <div
-                      key={p.project_id}
+                    <li key={p.project_id}>
+                    <button
+                      type="button"
                       onClick={() => selectProject(p.project_id)}
-                      className={`p-3.5 cursor-pointer transition-all ${
-                        isSelected 
-                          ? 'bg-zinc-100/90 border-l-4 border-zinc-950 font-medium' 
-                          : 'hover:bg-zinc-50/80'
+                      aria-current={isSelected ? 'true' : undefined}
+                      className={`w-full text-left p-3.5 cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-slate-100/90 border-l-4 border-slate-950 font-medium'
+                          : 'hover:bg-slate-50/80'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-mono text-[10.5px] font-bold text-zinc-900">#{p.project_id}</span>
-                            <span className="text-[10px] font-semibold text-zinc-500 truncate">{p.sector}</span>
+                            <span className="font-mono text-[10.5px] font-bold text-slate-900">#{p.project_id}</span>
+                            <span className="text-[10px] font-semibold text-slate-600 truncate"><span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span></span>
                           </div>
-                          <h4 className="text-xs font-bold text-zinc-900 truncate">{p.project_name}</h4>
-                          <p className="text-[11px] text-zinc-500 truncate mt-0.5">{p.company} · {p.state}</p>
+                          <span lang="en" className="block text-xs font-bold text-slate-900 truncate">{p.project_name}</span>
+                          <span lang="en" className="block text-[11px] text-slate-600 truncate mt-0.5">{p.company} · {p.state}</span>
                         </div>
                         <div className="text-right shrink-0">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${pStat.bgClass} ${pStat.borderClass}`}>
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${pStat.badgeClass}`}>
+                            <StatusGlyph status={pStat} size={8} />
                             {p.progress_perc}%
                           </span>
-                          <div className="font-mono font-bold text-xs text-zinc-900 mt-1.5">
-                            ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr
+                          <span className="sr-only">{describeStatus(p, lang)}</span>
+                          <div className="font-mono font-bold text-xs text-slate-900 mt-1.5">
+                            {formatCr(p.revised_cost_cr)}
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </button>
+                    </li>
                   );
                 })}
+                </ul>
 
                 {dirLimit < projects.length && (
-                  <div className="p-4 bg-zinc-50 text-center space-y-2 border-t border-zinc-200">
-                    <p className="text-xs text-zinc-500 font-mono">
+                  <div className="p-4 bg-slate-50 text-center space-y-2 border-t border-slate-200">
+                    <p className="text-xs text-slate-500 font-mono">
                       Showing {dirLimit} of {projects.length.toLocaleString('en-IN')} projects
                     </p>
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => setDirLimit((prev) => Math.min(prev + 100, projects.length))}
-                        className="px-3 py-1.5 text-xs bg-white border border-zinc-300 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-100 transition-colors shadow-2xs"
+                        className="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-100 transition-colors shadow-2xs"
                       >
                         Load +100 More
                       </button>
                       <button
                         onClick={() => setDirLimit(projects.length)}
-                        className="px-3 py-1.5 text-xs bg-zinc-900 text-white rounded-lg font-bold hover:bg-black transition-colors shadow-2xs"
+                        className="px-3 py-1.5 text-xs bg-slate-900 text-white rounded-lg font-bold hover:bg-black transition-colors shadow-2xs"
                       >
                         Show All ({projects.length.toLocaleString('en-IN')})
                       </button>
@@ -866,96 +1094,105 @@ function PublicMetadataTab({
             )}
           </div>
 
-          <div className="p-3 border-t border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs text-zinc-500 font-mono">
+          <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
             <span>Showing {Math.min(dirLimit, projects.length).toLocaleString('en-IN')} of {projects.length.toLocaleString('en-IN')}</span>
-            <span className="text-zinc-700 font-semibold">MoSPI Central Sector</span>
+            <span className="text-slate-700 font-semibold">{t('reg_corpus_label', lang)}</span>
           </div>
         </div>
       </div>
 
       {/* ── MASTER PUBLIC TRACKING REGISTER & TABLE (ALL 2,207 PROJECTS) ── */}
-      <div className="rounded-xl bg-white border border-zinc-200/90 overflow-hidden shadow-2xs">
-        <div className="p-5 border-b border-zinc-200 bg-zinc-50/80 flex flex-wrap items-center justify-between gap-4">
+      <div className="rounded-xl bg-white border border-slate-200/90 overflow-hidden shadow-2xs">
+        <div className="p-5 border-b border-slate-200 bg-slate-50/80 flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <Layers className="w-5 h-5 text-zinc-900" />
-              <h3 className="text-lg font-extrabold text-zinc-950 tracking-[-0.02em]">
-                Central Sector Mega-Projects Master Public Tracking Register
+              <Layers className="w-5 h-5 text-slate-900" />
+              <h3 className="text-lg font-extrabold text-slate-950 tracking-[-0.02em]">
+                {t('register_title', lang)}
               </h3>
-              <span className="px-2.5 py-0.5 rounded bg-zinc-100 text-zinc-900 border border-zinc-300 font-mono font-bold text-xs">
+              <span className="px-2.5 py-0.5 rounded bg-slate-100 text-slate-900 border border-slate-300 font-mono font-bold text-xs">
                 {corpus.length.toLocaleString('en-IN')} PROJECTS
               </span>
             </div>
-            <p className="text-xs text-zinc-500 mt-1">
-              RTI Section 4(1)(b) proactive disclosure covering all {portfolioStats.total.toLocaleString('en-IN')} central projects (₹{(portfolioStats.totalCapex / 100000).toFixed(2)} Lakh Cr capex portfolio)
+            <p className="text-xs text-slate-500 mt-1">
+              {t('register_subtitle_a', lang)} {formatCount(portfolioStats.total)}{' '}
+              {t('register_subtitle_b', lang)} {formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })}{' '}
+              {t('register_subtitle_c', lang)}
             </p>
           </div>
 
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-black text-white font-bold text-xs shadow-2xs transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-2xs transition-colors"
             title="Download filtered projects as CSV"
           >
             <Download className="w-4 h-4" />
-            <span>Export CSV Ledger ({tableFiltered.length.toLocaleString('en-IN')})</span>
+            <span>{t('reg_export_csv', lang)} ({formatCount(tableFiltered.length)})</span>
           </button>
         </div>
 
-        {/* 4 Summary Stat KPI Strip */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-200 border-b border-zinc-200">
+        {/* Summary strip. "Under Monitoring" used to carry 67.4% of the portfolio
+            and told an officer nothing; these four are actionable populations. */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 border-b border-slate-200">
           <div className="p-4 bg-white">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Total Corpus Projects</span>
-            <span className="text-xl font-extrabold text-zinc-950 font-mono block mt-0.5">
-              {portfolioStats.total.toLocaleString('en-IN')}
+            <span className="text-[10px] uppercase font-mono tracking-widest text-slate-600 font-bold block">{t('kpi_in_register', lang)}</span>
+            <span className="text-xl font-extrabold text-slate-950 font-mono block mt-0.5">
+              {formatCount(portfolioStats.total)}
             </span>
-            <span className="text-xs text-zinc-600 mt-1 block font-mono font-medium">₹{(portfolioStats.totalCapex / 100000).toFixed(1)} Lakh Cr Capex</span>
+            <span className="text-xs text-slate-600 mt-1 block font-mono font-medium">{formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })} {t('kpi_approved', lang)}</span>
           </div>
 
           <div className="p-4 bg-white">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">On Track Baseline</span>
-            <span className="text-xl font-extrabold text-emerald-700 font-mono block mt-0.5">
-              {portfolioStats.onTrack.toLocaleString('en-IN')}
+            <span className="text-[10px] uppercase font-mono tracking-widest text-slate-600 font-bold block">{t('kpi_needs_attention', lang)}</span>
+            <span className="text-xl font-extrabold text-rose-800 font-mono block mt-0.5">
+              {formatCount(portfolioStats.needsAttention)}
             </span>
-            <span className="text-xs text-emerald-600 mt-1 block font-mono">{((portfolioStats.onTrack / portfolioStats.total) * 100).toFixed(1)}% within milestones</span>
+            <span className="text-xs text-rose-800 mt-1 block font-mono">{t('kpi_needs_attention_sub', lang)}</span>
           </div>
 
           <div className="p-4 bg-white">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Under Monitoring</span>
-            <span className="text-xl font-extrabold text-amber-700 font-mono block mt-0.5">
-              {portfolioStats.monitored.toLocaleString('en-IN')}
+            <span className="text-[10px] uppercase font-mono tracking-widest text-slate-600 font-bold block">{t('kpi_on_schedule', lang)}</span>
+            <span className="text-xl font-extrabold text-emerald-800 font-mono block mt-0.5">
+              {formatCount(portfolioStats.counts.ON_TRACK)}
             </span>
-            <span className="text-xs text-amber-600 mt-1 block font-mono">{((portfolioStats.monitored / portfolioStats.total) * 100).toFixed(1)}% schedule alerts</span>
+            <span className="text-xs text-emerald-800 mt-1 block font-mono">{t('kpi_on_schedule_sub', lang)}</span>
           </div>
 
           <div className="p-4 bg-white">
-            <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Critical Delay</span>
-            <span className="text-xl font-extrabold text-rose-700 font-mono block mt-0.5">
-              {portfolioStats.critical.toLocaleString('en-IN')}
+            <span className="text-[10px] uppercase font-mono tracking-widest text-slate-600 font-bold block">{t('kpi_finished', lang)}</span>
+            <span className="text-xl font-extrabold text-[#0f3f61] font-mono block mt-0.5">
+              {formatCount(portfolioStats.counts.COMPLETED + portfolioStats.counts.COMPLETED_LATE)}
             </span>
-            <span className="text-xs text-rose-600 mt-1 block font-mono">{((portfolioStats.critical / portfolioStats.total) * 100).toFixed(1)}% &gt;24 mo delay</span>
+            <span className="text-xs text-[#0f3f61] mt-1 block font-mono">
+              {t('kpi_finished_sub_a', lang)} {formatCount(portfolioStats.counts.COMPLETED_LATE)} {t('kpi_finished_sub_b', lang)}
+            </span>
           </div>
         </div>
 
         {/* Master Table Filter Controls Toolbar */}
-        <div className="p-4 bg-zinc-50/80 border-b border-zinc-200 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="p-4 bg-slate-50/80 border-b border-slate-200 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Status Tabs */}
           <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              { id: 'All', label: `All (${corpus.length})` },
-              { id: 'ON TRACK', label: `On Track (${portfolioStats.onTrack})` },
-              { id: 'UNDER MONITORING', label: `Monitored (${portfolioStats.monitored})` },
-              { id: 'CRITICAL DELAY', label: `Critical Delay (${portfolioStats.critical})` }
-            ].map((tab) => (
+            {[{ id: 'All', label: t('filter_all', lang), glyph: null, count: corpus.length },
+              ...STATUS_ORDER.map((st) => ({
+                id: st.id,
+                label: lang === 'hi' ? (st.hiLabel || st.label) : st.label,
+                glyph: st,
+                count: portfolioStats.counts[st.id],
+              }))].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setTableStatus(tab.id)}
-                className={`px-3 py-1.5 text-xs rounded-lg font-semibold transition-colors ${
+                aria-pressed={tableStatus === tab.id}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 min-h-[34px] text-xs rounded-lg font-semibold transition-colors ${
                   tableStatus === tab.id
-                    ? 'bg-zinc-950 text-white font-bold shadow-2xs'
-                    : 'bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-100'
+                    ? 'bg-slate-950 text-white font-bold shadow-2xs'
+                    : 'bg-white border border-slate-300 text-slate-800 hover:bg-slate-100'
                 }`}
               >
-                {tab.label}
+                {tab.glyph && <StatusGlyph status={tab.glyph} size={9} />}
+                <span>{tab.label}</span>
+                <span className="font-mono opacity-80">({formatCount(tab.count)})</span>
               </button>
             ))}
           </div>
@@ -963,48 +1200,52 @@ function PublicMetadataTab({
           {/* Search, Sort and Page Size */}
           <div className="flex flex-wrap items-center gap-2.5">
             <div className="relative min-w-[200px] sm:min-w-[240px]">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
               <input
                 type="text"
-                placeholder="Search all 2,207 projects..."
+                aria-label={t('search_register_label', lang)}
+                placeholder={t('search_register_ph', lang)}
                 value={tableSearch}
                 onChange={(e) => setTableSearch(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-zinc-300 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
+                className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900"
               />
               {tableSearch && (
                 <button
                   onClick={() => setTableSearch('')}
-                  className="absolute right-2.5 top-2.5 text-xs text-zinc-400 hover:text-zinc-700"
+                  className="absolute right-2.5 top-2.5 text-xs text-slate-400 hover:text-slate-700"
                 >
                   ✕
                 </button>
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-zinc-600 font-mono">
-              <span>Sort:</span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
+              <span id="register-sort-label">Sort:</span>
               <select
+                aria-labelledby="register-sort-label"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="text-xs bg-white border border-zinc-300 rounded-lg py-2 px-2.5 text-zinc-800 focus:outline-none cursor-pointer"
+                className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer"
               >
-                <option value="cost_desc">Cost: Highest First</option>
-                <option value="cost_asc">Cost: Lowest First</option>
-                <option value="delay_desc">Delay: Most Delayed</option>
-                <option value="delay_asc">Delay: Least Delayed</option>
-                <option value="progress_desc">Progress: Highest First</option>
-                <option value="progress_asc">Progress: Lowest First</option>
+                <option value="cost_desc">Cost: highest first</option>
+                <option value="cost_asc">Cost: lowest first</option>
+                <option value="delay_desc">Delay: most delayed</option>
+                <option value="delay_asc">Delay: least delayed</option>
+                <option value="progress_desc">Progress: highest first</option>
+                <option value="progress_asc">Progress: lowest first</option>
                 <option value="id_asc">Project ID</option>
-                <option value="name_asc">Project Name (A-Z)</option>
+                <option value="name_asc">Project name (A–Z)</option>
+                <option value="name_desc">Project name (Z–A)</option>
               </select>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-zinc-600 font-mono">
-              <span>Rows:</span>
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
+              <span id="register-rows-label">{t('rows_label', lang)}</span>
               <select
+                aria-labelledby="register-rows-label"
                 value={pageSize}
                 onChange={(e) => setPageSize(e.target.value === 'All' ? 'All' : Number(e.target.value))}
-                className="text-xs bg-white border border-zinc-300 rounded-lg py-2 px-2.5 text-zinc-800 focus:outline-none cursor-pointer"
+                className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer"
               >
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -1016,26 +1257,47 @@ function PublicMetadataTab({
           </div>
         </div>
 
-        {/* The Master Public Ledger Table */}
-        <div className="overflow-x-auto">
+        {/* The master register.
+            · <thead> is sticky: at "All 2,207" rows the column names used to scroll
+              away within one screen, leaving an officer reading unlabelled columns.
+            · Headers are buttons that sort. Sorting existed only in a dropdown
+              elsewhere on the page — recall where every operator reaches for
+              recognition. The dropdown is kept and stays in sync.
+            · scope="col" and a <caption> were both absent, so no screen reader
+              could associate a cell with its column. */}
+        <div className="overflow-x-auto max-h-[70vh] overflow-y-auto" data-lenis-prevent>
           <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-100/90 text-[11px] font-mono uppercase tracking-wider text-zinc-600 font-bold">
-                <th className="p-3.5 pl-4 w-20">ID</th>
-                <th className="p-3.5 min-w-[260px]">Project Name & Sector</th>
-                <th className="p-3.5 min-w-[180px]">Agency & State</th>
-                <th className="p-3.5 min-w-[150px] text-right">Sanction / Revised Cost</th>
-                <th className="p-3.5 min-w-[140px]">Physical Progress</th>
-                <th className="p-3.5 min-w-[130px]">Schedule Delay</th>
-                <th className="p-3.5 min-w-[130px]">Status</th>
-                <th className="p-3.5 pr-4 text-right min-w-[110px]">Action</th>
+            <caption className="sr-only">
+              {t('reg_caption', lang)} {formatCount(tableFiltered.length)}{' '}
+              {t('reg_showing_of', lang)} {formatCount(corpus.length)}.
+            </caption>
+            <thead className="sticky top-0 z-10">
+              <tr className="border-b-2 border-slate-300 bg-slate-100 text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold">
+                <SortableTh id="id" sortBy={sortBy} setSortBy={setSortBy} lang={lang} textual className="pl-4 w-20">{t('col_id', lang)}</SortableTh>
+                <SortableTh id="name" sortBy={sortBy} setSortBy={setSortBy} lang={lang} textual className="min-w-[260px]">{t('col_name', lang)}</SortableTh>
+                <th scope="col" className="p-3.5 min-w-[180px]">{t('col_agency', lang)}</th>
+                <SortableTh id="cost" sortBy={sortBy} setSortBy={setSortBy} lang={lang} numeric className="min-w-[150px]">{t('col_cost', lang)}</SortableTh>
+                <SortableTh id="progress" sortBy={sortBy} setSortBy={setSortBy} lang={lang} className="min-w-[140px]">{t('col_progress', lang)}</SortableTh>
+                <SortableTh id="delay" sortBy={sortBy} setSortBy={setSortBy} lang={lang} className="min-w-[130px]">{t('col_delay', lang)}</SortableTh>
+                <th scope="col" className="p-3.5 min-w-[150px]">{t('col_status', lang)}</th>
+                <th scope="col" className="p-3.5 pr-4 text-right min-w-[110px]">{t('col_action', lang)}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-slate-100">
               {pagedProjects.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-zinc-400 text-xs">
-                    No central sector mega-projects match the current filter and search query.
+                  <td colSpan={8} className="p-6">
+                    <DataUnavailable
+                      variant="filtered"
+                      title={t('err_no_match_title', lang)}
+                      detail={t('err_no_match_detail', lang)}
+                      clearLabel={t('err_clear_filters', lang)}
+                      className="border-0 bg-transparent"
+                      onClear={() => {
+                        setTableSearch(''); setTableStatus('All');
+                        setTableSector('All'); setTableState('All');
+                      }}
+                    />
                   </td>
                 </tr>
               ) : (
@@ -1054,29 +1316,29 @@ function PublicMetadataTab({
                       key={p.project_id}
                       className={`transition-colors ${
                         isSelected 
-                          ? 'bg-zinc-100/80 font-medium' 
-                          : 'hover:bg-zinc-50'
+                          ? 'bg-slate-100/80 font-medium' 
+                          : 'hover:bg-slate-50'
                       }`}
                     >
                       {/* Column 1: ID */}
                       <td className="p-3.5 pl-4">
-                        <span className="font-mono font-bold text-zinc-950 text-xs">
+                        <span className="font-mono font-bold text-slate-950 text-xs">
                           #{p.project_id}
                         </span>
                       </td>
 
                       {/* Column 2: Name & Sector */}
                       <td className="p-3.5">
-                        <div className="font-bold text-zinc-950 text-xs leading-snug">
+                        <div lang="en" className="font-bold text-slate-950 text-xs leading-snug">
                           {p.project_name}
                         </div>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 text-[10px] font-semibold border border-zinc-200">
-                            {p.sector}
+                          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
+                            <span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span>
                           </span>
                           {p.location_is_approximate && (
                             <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-medium">
-                              Centroid Approx
+                              {t('reg_centroid_approx', lang)}
                             </span>
                           )}
                         </div>
@@ -1084,21 +1346,21 @@ function PublicMetadataTab({
 
                       {/* Column 3: Executing Agency & State */}
                       <td className="p-3.5">
-                        <div className="text-xs font-semibold text-zinc-800 truncate max-w-[200px]" title={p.company}>
-                          {p.company || '—'}
+                        <div lang="en" className="text-xs font-semibold text-slate-800 truncate max-w-[200px]" title={p.company}>
+                          {orDash(p.company)}
                         </div>
-                        <div className="text-[11px] text-zinc-500 flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-zinc-400" />
-                          <span>{p.state || 'Pan-India'}</span>
+                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3 h-3 text-slate-400" />
+                          <span lang="en">{orDash(p.state) === '—' ? 'Pan-India' : p.state}</span>
                         </div>
                       </td>
 
                       {/* Column 4: Cost */}
                       <td className="p-3.5 text-right font-mono">
-                        <div className="font-bold text-xs text-zinc-950">
+                        <div className="font-bold text-xs text-slate-950">
                           ₹{revCost.toLocaleString('en-IN')} Cr
                         </div>
-                        <div className="text-[10px] text-zinc-500">
+                        <div className="text-[10px] text-slate-500">
                           Orig: ₹{origCost.toLocaleString('en-IN')} Cr
                           {costDiff > 0 && (
                             <span className="text-amber-800 ml-1 font-semibold">
@@ -1110,12 +1372,12 @@ function PublicMetadataTab({
 
                       {/* Column 5: Physical Progress */}
                       <td className="p-3.5">
-                        <div className="flex items-center justify-between text-xs font-mono font-bold text-zinc-700 mb-1">
+                        <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-700 mb-1">
                           <span>{prog.toFixed(1)}%</span>
                         </div>
-                        <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden border border-zinc-200">
+                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
                           <div
-                            className="bg-zinc-950 h-full rounded-full transition-all duration-300"
+                            className="bg-slate-950 h-full rounded-full transition-all duration-300"
                             style={{ width: `${prog}%` }}
                           />
                         </div>
@@ -1126,23 +1388,21 @@ function PublicMetadataTab({
                         <div className={`font-mono font-bold text-xs ${delayed > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
                           {delayed > 0 ? `+${delayed} Mos` : 'Nil Delay'}
                         </div>
-                        <div className="text-[10px] text-zinc-500 font-mono truncate">
+                        <div className="text-[10px] text-slate-500 font-mono truncate">
                           Target: {p.target_date?.slice(0, 10) || '—'}
                         </div>
                       </td>
 
                       {/* Column 7: Status */}
                       <td className="p-3.5">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${pStat.bgClass} ${pStat.borderClass}`}>
-                          {pStat.label}
-                        </span>
+                        <StatusBadge project={p} size="sm" />
                       </td>
 
                       {/* Column 8: Action */}
                       <td className="p-3.5 pr-4 text-right">
                         <button
                           onClick={() => handleSelectAndFocus(p.project_id)}
-                          className="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-950 hover:text-white text-zinc-800 rounded-lg text-xs font-bold transition-colors border border-zinc-200 shadow-2xs"
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-950 hover:text-white text-slate-800 rounded-lg text-xs font-bold transition-colors border border-slate-200 shadow-2xs"
                           title="Focus in active dossier and map"
                         >
                           Inspect
@@ -1157,21 +1417,21 @@ function PublicMetadataTab({
         </div>
 
         {/* Master Table Pagination Footer */}
-        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-xs">
-          <div className="text-zinc-600 font-mono">
+        <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div className="text-slate-600 font-mono">
             Showing{' '}
-            <strong className="text-zinc-950">
+            <strong className="text-slate-950">
               {tableFiltered.length === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1}
             </strong>{' '}
-            to{' '}
-            <strong className="text-zinc-950">
+            –{' '}
+            <strong className="text-slate-950">
               {Math.min(safeCurrentPage * effectivePageSize, tableFiltered.length)}
             </strong>{' '}
-            of{' '}
-            <strong className="text-zinc-950">
+            {t('of_word', lang)}{' '}
+            <strong className="text-slate-950">
               {tableFiltered.length.toLocaleString('en-IN')}
             </strong>{' '}
-            Filtered Projects ({corpus.length.toLocaleString('en-IN')} Total Corpus)
+            {t('pg_filtered_projects', lang)} ({formatCount(corpus.length)} {t('pg_total_corpus', lang)})
           </div>
 
           {totalPages > 1 && (
@@ -1179,37 +1439,41 @@ function PublicMetadataTab({
               <button
                 disabled={safeCurrentPage <= 1}
                 onClick={() => setCurrentPage(1)}
-                className="p-2 rounded-lg border border-zinc-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-100 text-zinc-700 shadow-2xs"
-                title="First Page"
+                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-700 shadow-2xs"
+                title={t('pg_first', lang)}
+                aria-label={t('pg_first', lang)}
               >
                 <ChevronsLeft className="w-4 h-4" />
               </button>
               <button
                 disabled={safeCurrentPage <= 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="p-2 rounded-lg border border-zinc-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-100 text-zinc-700 shadow-2xs"
-                title="Previous Page"
+                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-700 shadow-2xs"
+                title={t('pg_prev', lang)}
+                aria-label={t('pg_prev', lang)}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <span className="px-4 py-2 font-bold text-xs text-zinc-950 bg-white border border-zinc-200 rounded-lg shadow-2xs">
-                Page {safeCurrentPage} of {totalPages}
+              <span className="px-4 py-2 font-bold text-xs text-slate-950 bg-white border border-slate-200 rounded-lg shadow-2xs">
+                {t('pg_page', lang)} {safeCurrentPage} / {totalPages}
               </span>
 
               <button
                 disabled={safeCurrentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="p-2 rounded-lg border border-zinc-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-100 text-zinc-700 shadow-2xs"
-                title="Next Page"
+                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-700 shadow-2xs"
+                title={t('pg_next', lang)}
+                aria-label={t('pg_next', lang)}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
               <button
                 disabled={safeCurrentPage >= totalPages}
                 onClick={() => setCurrentPage(totalPages)}
-                className="p-2 rounded-lg border border-zinc-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-100 text-zinc-700 shadow-2xs"
-                title="Last Page"
+                className="p-2 rounded-lg border border-slate-200 bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-100 text-slate-700 shadow-2xs"
+                title={t('pg_last', lang)}
+                aria-label={t('pg_last', lang)}
               >
                 <ChevronsRight className="w-4 h-4" />
               </button>
@@ -1245,52 +1509,52 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
   return (
     <div className="space-y-6">
       {/* RTI Compliance Banner */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-900 text-xs shadow-2xs">
-        <Info className="w-4 h-4 shrink-0 mt-0.5 text-zinc-700" />
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs shadow-2xs">
+        <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-700" />
         <div>
-          <strong className="text-zinc-950 font-bold">Right to Information Act, 2005 · Section 4(1)(b)(xi) Mandate.</strong> Proactive disclosure of sanctioned budgetary outlays, cumulative spending against physical progress milestones, and statutory CPWD price adjustments.
+          <strong className="text-slate-950 font-bold">Right to Information Act, 2005 · Section 4(1)(b)(xi) Mandate.</strong> Proactive disclosure of sanctioned budgetary outlays, cumulative spending against physical progress milestones, and statutory CPWD price adjustments.
         </div>
       </div>
 
       {/* Top 4 Financial Metric Cells */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Sanctioned Baseline</span>
-          <span className="text-2xl font-extrabold text-zinc-950 font-mono block mt-1">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-zinc-500">Cr</span></span>
-          <span className="text-xs text-zinc-500 mt-1 block">CCEA Approved Baseline</span>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Sanctioned Baseline</span>
+          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">Cr</span></span>
+          <span className="text-xs text-slate-500 mt-1 block">CCEA Approved Baseline</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Revised Sanctioned Cost</span>
-          <span className="text-2xl font-extrabold text-zinc-950 font-mono block mt-1">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-zinc-500">Cr</span></span>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Revised Sanctioned Cost</span>
+          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">Cr</span></span>
           <span className={`text-xs mt-1 block font-mono font-semibold ${costVariance > 0 ? 'text-amber-800' : 'text-emerald-700'}`}>
             {costVariance > 0 ? `+₹${costVariance.toLocaleString('en-IN')} Cr (+${costVariancePct.toFixed(1)}%)` : 'Within Initial Outlay'}
           </span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">Cumulative Disbursal (Est.)</span>
-          <span className="text-2xl font-extrabold text-emerald-700 font-mono block mt-1">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-zinc-500">Cr</span></span>
-          <span className="text-xs text-zinc-500 mt-1 block">Tied to {progressPerc}% physical milestone</span>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Cumulative Disbursal (Est.)</span>
+          <span className="text-2xl font-extrabold text-emerald-700 font-mono block mt-1">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">Cr</span></span>
+          <span className="text-xs text-slate-500 mt-1 block">Tied to {progressPerc}% physical milestone</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold block">CPWD WPI Escalation</span>
-          <span className="text-2xl font-extrabold text-zinc-900 font-mono block mt-1">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-zinc-500">Cr</span></span>
-          <span className="text-xs text-zinc-500 mt-1 block">Statutory Clause 10CC buffer</span>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">CPWD WPI Escalation</span>
+          <span className="text-2xl font-extrabold text-slate-900 font-mono block mt-1">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">Cr</span></span>
+          <span className="text-xs text-slate-500 mt-1 block">Statutory Clause 10CC buffer</span>
         </div>
       </div>
 
       {/* Visual Budget Comparison: Progress Bars */}
-      <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-2xs space-y-6">
-        <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+      <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-6">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-zinc-900" />
-            <h3 className="text-base font-extrabold text-zinc-950">
+            <BarChart3 className="w-5 h-5 text-slate-900" />
+            <h3 className="text-base font-extrabold text-slate-950">
               Visual Capex Comparison · {activeProject.project_name}
             </h3>
           </div>
-          <span className="px-2.5 py-1 rounded bg-zinc-100 border border-zinc-200 text-zinc-900 font-mono font-bold text-xs">
+          <span className="px-2.5 py-1 rounded bg-slate-100 border border-slate-200 text-slate-900 font-mono font-bold text-xs">
             #{activeProject.project_id}
           </span>
         </div>
@@ -1299,12 +1563,12 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 1: Sanctioned Initial */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-zinc-700">1. Initial Approved Budget (CCEA Baseline)</span>
-              <span className="font-bold text-zinc-950">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
+              <span className="font-semibold text-slate-700">1. Initial Approved Budget (CCEA Baseline)</span>
+              <span className="font-bold text-slate-950">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
             </div>
-            <div className="w-full bg-zinc-100 h-3.5 rounded-full overflow-hidden border border-zinc-200">
+            <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
               <div
-                className="bg-zinc-400 h-full rounded-full transition-all duration-500"
+                className="bg-slate-400 h-full rounded-full transition-all duration-500"
                 style={{ width: `${origBarWidth}%` }}
               />
             </div>
@@ -1313,14 +1577,14 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 2: Revised Budget */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-zinc-700">2. Revised Sanctioned Budget (MoSPI RCE)</span>
-              <span className="font-bold text-zinc-950">
+              <span className="font-semibold text-slate-700">2. Revised Sanctioned Budget (MoSPI RCE)</span>
+              <span className="font-bold text-slate-950">
                 ₹{revCost.toLocaleString('en-IN')} Cr ({costVariancePct >= 0 ? `+${costVariancePct.toFixed(1)}%` : '0%'})
               </span>
             </div>
-            <div className="w-full bg-zinc-100 h-3.5 rounded-full overflow-hidden border border-zinc-200">
+            <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${costVariancePct >= 20 ? 'bg-rose-600' : 'bg-zinc-900'}`}
+                className={`h-full rounded-full transition-all duration-500 ${costVariancePct >= 20 ? 'bg-rose-600' : 'bg-slate-900'}`}
                 style={{ width: `${revBarWidth}%` }}
               />
             </div>
@@ -1329,12 +1593,12 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 3: Cumulative Disbursed */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-zinc-700">3. Cumulative Disbursed Amount (Milestone Realized)</span>
+              <span className="font-semibold text-slate-700">3. Cumulative Disbursed Amount (Milestone Realized)</span>
               <span className="font-bold text-emerald-700">
                 ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr ({progressPerc}% of Revised)
               </span>
             </div>
-            <div className="w-full bg-zinc-100 h-3.5 rounded-full overflow-hidden border border-zinc-200">
+            <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
               <div
                 className="bg-emerald-600 h-full rounded-full transition-all duration-500"
                 style={{ width: `${disbursedBarWidth}%` }}
@@ -1343,43 +1607,43 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 font-mono">
+        <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 font-mono">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-zinc-400" /> Approved Baseline</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-zinc-900" /> Revised Budget</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-400" /> Approved Baseline</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-900" /> Revised Budget</span>
             <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-600" /> Disbursed Funds</span>
           </div>
-          <span className="text-zinc-900 font-semibold">RTI §4(1)(b)(xi) Standardized Realization</span>
+          <span className="text-slate-900 font-semibold">RTI §4(1)(b)(xi) Standardized Realization</span>
         </div>
       </div>
 
       {/* Detailed Ledger */}
-      <div className="rounded-xl bg-white border border-zinc-200 overflow-hidden shadow-2xs">
-        <div className="p-4 border-b border-zinc-200 bg-zinc-50/80 flex items-center justify-between">
-          <span className="text-sm font-bold text-zinc-950">Public Expenditure Breakdown</span>
-          <span className="text-xs font-mono text-zinc-500">Executing PSU: {activeProject.company}</span>
+      <div className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-2xs">
+        <div className="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
+          <span className="text-sm font-bold text-slate-950">Public Expenditure Breakdown</span>
+          <span className="text-xs font-mono text-slate-500">Executing PSU: {activeProject.company}</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-100/80 text-[11px] font-mono uppercase tracking-wider text-zinc-600 font-bold">
+              <tr className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
                 <th className="p-3.5 pl-4">Expenditure Head</th>
                 <th className="p-3.5">Sanctioned Reference</th>
                 <th className="p-3.5 text-right">Amount (₹ Cr)</th>
                 <th className="p-3.5 pr-4">Statutory Audit Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100 font-mono">
-              <tr className="hover:bg-zinc-50">
-                <td className="p-3.5 pl-4 font-bold text-zinc-950">Initial Approved Baseline</td>
-                <td className="p-3.5 text-zinc-600 font-sans">Cabinet Committee on Economic Affairs (CCEA)</td>
-                <td className="p-3.5 text-right font-bold text-zinc-950">₹{origCost.toLocaleString('en-IN')}</td>
+            <tbody className="divide-y divide-slate-100 font-mono">
+              <tr className="hover:bg-slate-50">
+                <td className="p-3.5 pl-4 font-bold text-slate-950">Initial Approved Baseline</td>
+                <td className="p-3.5 text-slate-600 font-sans">Cabinet Committee on Economic Affairs (CCEA)</td>
+                <td className="p-3.5 text-right font-bold text-slate-950">₹{origCost.toLocaleString('en-IN')}</td>
                 <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">APPROVED</span></td>
               </tr>
-              <tr className="hover:bg-zinc-50">
-                <td className="p-3.5 pl-4 font-bold text-zinc-950">Cumulative Cost Variation / Revised Scope</td>
-                <td className="p-3.5 text-zinc-600 font-sans">MoSPI Revised Cost Estimates (RCE)</td>
-                <td className={`p-3.5 text-right font-bold ${costVariance > 0 ? 'text-amber-800' : 'text-zinc-800'}`}>
+              <tr className="hover:bg-slate-50">
+                <td className="p-3.5 pl-4 font-bold text-slate-950">Cumulative Cost Variation / Revised Scope</td>
+                <td className="p-3.5 text-slate-600 font-sans">MoSPI Revised Cost Estimates (RCE)</td>
+                <td className={`p-3.5 text-right font-bold ${costVariance > 0 ? 'text-amber-800' : 'text-slate-800'}`}>
                   ₹{costVariance.toLocaleString('en-IN')}
                 </td>
                 <td className="p-3.5 pr-4">
@@ -1390,21 +1654,21 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
                   </span>
                 </td>
               </tr>
-              <tr className="hover:bg-zinc-50">
-                <td className="p-3.5 pl-4 font-bold text-zinc-950">Contractor Cumulative Realization</td>
-                <td className="p-3.5 text-zinc-600 font-sans">Physical Milestone Verification</td>
+              <tr className="hover:bg-slate-50">
+                <td className="p-3.5 pl-4 font-bold text-slate-950">Contractor Cumulative Realization</td>
+                <td className="p-3.5 text-slate-600 font-sans">Physical Milestone Verification</td>
                 <td className="p-3.5 text-right font-bold text-emerald-700">
                   ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
                 <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">DISBURSED</span></td>
               </tr>
-              <tr className="hover:bg-zinc-50">
-                <td className="p-3.5 pl-4 font-bold text-zinc-950">CPWD Clause 10CC Escalation Allocation</td>
-                <td className="p-3.5 text-zinc-600 font-sans">Wholesale Price Index (WPI) Formula</td>
-                <td className="p-3.5 text-right font-bold text-zinc-900">
+              <tr className="hover:bg-slate-50">
+                <td className="p-3.5 pl-4 font-bold text-slate-950">CPWD Clause 10CC Escalation Allocation</td>
+                <td className="p-3.5 text-slate-600 font-sans">Wholesale Price Index (WPI) Formula</td>
+                <td className="p-3.5 text-right font-bold text-slate-900">
                   ₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 border border-zinc-300 text-[10px] font-bold">INDEX-TIED</span></td>
+                <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-bold">INDEX-TIED</span></td>
               </tr>
             </tbody>
           </table>
@@ -1425,9 +1689,9 @@ function PublicStageChecklist({ stages }) {
   const hasMore = stages.length > 3;
 
   return (
-    <div className="space-y-2 pt-2 border-t border-zinc-200/80">
+    <div className="space-y-2 pt-2 border-t border-slate-200/80">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono uppercase text-zinc-500 font-bold tracking-wider">
+        <span className="text-[10px] font-mono uppercase text-slate-500 font-bold tracking-wider">
           Statutory Stage Checklist ({stages.length})
         </span>
         {hasMore && (
@@ -1453,7 +1717,7 @@ function PublicStageChecklist({ stages }) {
               className={`p-2.5 rounded-lg border text-xs transition-all ${
                 isStag
                   ? 'bg-rose-50/70 border-rose-200 text-rose-950'
-                  : 'bg-white border-zinc-200 text-zinc-900 shadow-2xs'
+                  : 'bg-white border-slate-200 text-slate-900 shadow-2xs'
               }`}
             >
               <div className="flex items-start justify-between gap-2">
@@ -1464,7 +1728,7 @@ function PublicStageChecklist({ stages }) {
                     {isStag ? <AlertCircle className="w-2.5 h-2.5" /> : <Check className="w-2.5 h-2.5" />}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-bold text-[11px] leading-tight text-zinc-900 flex items-center gap-1.5 flex-wrap">
+                    <div className="font-bold text-[11px] leading-tight text-slate-900 flex items-center gap-1.5 flex-wrap">
                       <span>{st.stage_name}</span>
                       {st.paperwork_loopback_detected && (
                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300">
@@ -1472,15 +1736,15 @@ function PublicStageChecklist({ stages }) {
                         </span>
                       )}
                     </div>
-                    <p className="text-[10px] text-zinc-500 truncate mt-0.5" title={st.department}>
+                    <p className="text-[10px] text-slate-500 truncate mt-0.5" title={st.department}>
                       {st.department || 'Statutory Review Authority'}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <div className="font-mono font-bold text-[10.5px] text-zinc-900">
-                    {st.days_pending}d <span className="text-[9.5px] font-normal text-zinc-500">/ {st.benchmark_days}d SLA</span>
+                  <div className="font-mono font-bold text-[10.5px] text-slate-900">
+                    {st.days_pending}d <span className="text-[9.5px] font-normal text-slate-500">/ {st.benchmark_days}d SLA</span>
                   </div>
                   <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-mono font-bold mt-0.5 ${
                     isStag
@@ -1493,8 +1757,8 @@ function PublicStageChecklist({ stages }) {
               </div>
 
               {/* SLA Consumption Progress Bar */}
-              <div className="mt-2 pt-1.5 border-t border-zinc-100/80 flex items-center gap-2">
-                <div className="flex-1 bg-zinc-100 rounded-full h-1.5 overflow-hidden">
+              <div className="mt-2 pt-1.5 border-t border-slate-100/80 flex items-center gap-2">
+                <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
                       isStag ? 'bg-rose-500' : percent > 80 ? 'bg-amber-500' : 'bg-emerald-500'
@@ -1502,7 +1766,7 @@ function PublicStageChecklist({ stages }) {
                     style={{ width: `${Math.min(100, percent)}%` }}
                   />
                 </div>
-                <span className="text-[9px] font-mono text-zinc-500 shrink-0 font-semibold">
+                <span className="text-[9px] font-mono text-slate-500 shrink-0 font-semibold">
                   {percent}% SLA consumed
                 </span>
               </div>
@@ -1554,41 +1818,41 @@ function PublicClearancesTab() {
       <ClearanceStagesInfoGuide />
 
       {/* Top Banner */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-zinc-100 border border-zinc-200 text-zinc-900 text-xs shadow-2xs">
-        <Landmark className="w-4 h-4 text-zinc-800 shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs shadow-2xs">
+        <Landmark className="w-4 h-4 text-slate-800 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-zinc-950 font-bold">PARIVESH Statutory Clearance Transparency.</strong> Real-time regulatory tracking for all 2,207 Central Sector mega-projects across Forest Stage-I/II, Environmental Impact Assessment (EIA), Wildlife Clearances, and Land Acquisition approvals.
+          <strong className="text-slate-950 font-bold">PARIVESH Statutory Clearance Transparency.</strong> Real-time regulatory tracking for all 2,207 Central Sector mega-projects across Forest Stage-I/II, Environmental Impact Assessment (EIA), Wildlife Clearances, and Land Acquisition approvals.
         </div>
       </div>
 
       {/* 4 National Summary KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold">Clearance Corpus</div>
-          <div className="text-2xl font-extrabold text-zinc-950 font-mono mt-1">
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Clearance Corpus</div>
+          <div className="text-2xl font-extrabold text-slate-950 font-mono mt-1">
             {data?.total_portfolio_projects || 2207}
           </div>
-          <div className="text-xs text-zinc-500 mt-1 font-mono">7,257 active filings</div>
+          <div className="text-xs text-slate-500 mt-1 font-mono">7,257 active filings</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold">Total Forest Diverted</div>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Total Forest Diverted</div>
           <div className="text-2xl font-extrabold text-emerald-700 font-mono mt-1">
-            {data?.total_forest_diversion_ha ? `${Number(data.total_forest_diversion_ha).toLocaleString()} ha` : '87,038 ha'}
+            {data?.total_forest_diversion_ha ? `${Number(data.total_forest_diversion_ha).toLocaleString('en-IN')} ha` : '87,038 ha'}
           </div>
           <div className="text-xs text-emerald-600 mt-1 font-mono">MoEFCC CAMPA audited</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold">Stalled Clearances</div>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Stalled Clearances</div>
           <div className="text-2xl font-extrabold text-rose-700 font-mono mt-1">
             {data?.projects_stalled ?? '—'}
           </div>
           <div className="text-xs text-rose-600 mt-1 font-mono">RSI &gt; 1.2 loopbacks</div>
         </div>
 
-        <div className="p-4 rounded-xl bg-white border border-zinc-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-zinc-500 font-bold">PMO Direct Escalations</div>
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">PMO Direct Escalations</div>
           <div className="text-2xl font-extrabold text-amber-700 font-mono mt-1">
             {data?.projects_flagged_for_pmo_escalation ?? '—'}
           </div>
@@ -1597,9 +1861,9 @@ function PublicClearancesTab() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-4 rounded-xl bg-white border border-zinc-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+      <div className="p-4 rounded-xl bg-white border border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Search by project name, ID (#619092), or proposal no..."
@@ -1608,12 +1872,12 @@ function PublicClearancesTab() {
               setSearchQuery(e.target.value);
               setDisplayLimit(50);
             }}
-            className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-zinc-300 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900"
+            className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-xs text-zinc-600 font-mono">
+          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
             <span>State:</span>
             <select
               value={selectedState}
@@ -1621,7 +1885,7 @@ function PublicClearancesTab() {
                 setSelectedState(e.target.value);
                 setDisplayLimit(50);
               }}
-              className="text-xs bg-white border border-zinc-300 rounded-lg py-2 px-2.5 text-zinc-800 focus:outline-none cursor-pointer font-sans"
+              className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer font-sans"
             >
               {statesList.map((st) => (
                 <option key={st} value={st}>{st}</option>
@@ -1629,7 +1893,7 @@ function PublicClearancesTab() {
             </select>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs text-zinc-600 font-mono">
+          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
             <span>Status:</span>
             <select
               value={selectedStatus}
@@ -1637,7 +1901,7 @@ function PublicClearancesTab() {
                 setSelectedStatus(e.target.value);
                 setDisplayLimit(50);
               }}
-              className="text-xs bg-white border border-zinc-300 rounded-lg py-2 px-2.5 text-zinc-800 focus:outline-none cursor-pointer font-sans"
+              className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer font-sans"
             >
               <option value="All">All Statuses</option>
               <option value="STALLED">STALLED</option>
@@ -1649,28 +1913,28 @@ function PublicClearancesTab() {
       </div>
 
       {/* Clean Status Card Grid */}
-      <div className="rounded-xl bg-white border border-zinc-200 overflow-hidden shadow-2xs">
-        <div className="p-4 border-b border-zinc-200 bg-zinc-50/80 flex items-center justify-between">
-          <span className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-bold text-zinc-900">
+      <div className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-2xs">
+        <div className="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
+          <span className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-bold text-slate-900">
             <TreePine className="w-3.5 h-3.5 text-emerald-700" />
             Statutory Clearances Pipeline
           </span>
-          <span className="text-xs text-zinc-500 font-mono">Showing {projects.length} of {filteredTotal} matching proposals</span>
+          <span className="text-xs text-slate-500 font-mono">Showing {projects.length} of {filteredTotal} matching proposals</span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-xs text-zinc-400">
+          <div className="p-12 text-center text-xs text-slate-400">
             Loading statutory clearances from PARIVESH portal...
           </div>
         ) : projects.length === 0 ? (
-          <div className="p-12 text-center text-xs text-zinc-400">
+          <div className="p-12 text-center text-xs text-slate-400">
             No clearance records match your search criteria. Try a different query or state.
           </div>
         ) : (
           <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
             {projects.map((p) => {
               const status = p.overall_clearance_status || 'PENDING';
-              let tagCls = 'bg-zinc-100 text-zinc-700 border-zinc-200';
+              let tagCls = 'bg-slate-100 text-slate-700 border-slate-200';
               if (status === 'APPROVED') tagCls = 'bg-emerald-50 text-emerald-800 border-emerald-300';
               else if (status === 'IN_PROGRESS') tagCls = 'bg-amber-50 text-amber-800 border-amber-300';
               else if (status === 'STALLED') tagCls = 'bg-rose-50 text-rose-800 border-rose-300';
@@ -1678,19 +1942,19 @@ function PublicClearancesTab() {
               const stages = p.stage_breakdown || [];
 
               return (
-                <div key={p.project_id} className="p-4 rounded-lg bg-zinc-50/70 border border-zinc-200/80 space-y-3 hover:border-zinc-400 transition-all shadow-2xs">
-                  <div className="flex items-start justify-between gap-2 border-b border-zinc-200/80 pb-3">
+                <div key={p.project_id} className="p-4 rounded-lg bg-slate-50/70 border border-slate-200/80 space-y-3 hover:border-slate-400 transition-all shadow-2xs">
+                  <div className="flex items-start justify-between gap-2 border-b border-slate-200/80 pb-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 rounded bg-zinc-950 text-white font-mono font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-slate-950 text-white font-mono font-bold text-[10px]">
                           #{p.project_id}
                         </span>
-                        <span className="px-2 py-0.5 rounded bg-zinc-200/80 text-zinc-800 text-[10px] font-semibold">
+                        <span className="px-2 py-0.5 rounded bg-slate-200/80 text-slate-800 text-[10px] font-semibold">
                           {p.state || 'Pan-India'}
                         </span>
-                        <span className="text-[10px] text-zinc-500 truncate">({p.sector || 'Infrastructure'})</span>
+                        <span className="text-[10px] text-slate-500 truncate">({p.sector || 'Infrastructure'})</span>
                       </div>
-                      <h4 className="text-xs font-bold text-zinc-900 leading-snug truncate" title={p.project_name}>
+                      <h4 className="text-xs font-bold text-slate-900 leading-snug truncate" title={p.project_name}>
                         {p.project_name}
                       </h4>
                     </div>
@@ -1700,19 +1964,19 @@ function PublicClearancesTab() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-2 rounded bg-white border border-zinc-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-zinc-500 font-bold block">Forest Diverted</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs block mt-0.5">
+                    <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Forest Diverted</span>
+                      <span className="font-mono font-bold text-slate-900 text-xs block mt-0.5">
                         {p.total_forest_diversion_ha ? `${p.total_forest_diversion_ha} ha` : '—'}
                       </span>
                     </div>
-                    <div className="p-2 rounded bg-white border border-zinc-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-zinc-500 font-bold block">Review Period</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs block mt-0.5">{p.days_overdue || 0}d</span>
+                    <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Review Period</span>
+                      <span className="font-mono font-bold text-slate-900 text-xs block mt-0.5">{p.days_overdue || 0}d</span>
                     </div>
-                    <div className="p-2 rounded bg-white border border-zinc-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-zinc-500 font-bold block">Bottleneck</span>
-                      <span className="font-semibold text-zinc-900 text-[10.5px] truncate block mt-0.5" title={p.bottleneck_department}>
+                    <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Bottleneck</span>
+                      <span className="font-semibold text-slate-900 text-[10.5px] truncate block mt-0.5" title={p.bottleneck_department}>
                         {p.bottleneck_department?.split(' ')[0] || 'MoEFCC'}
                       </span>
                     </div>
@@ -1728,19 +1992,19 @@ function PublicClearancesTab() {
 
         {/* Load More Button */}
         {projects.length < filteredTotal && (
-          <div className="p-4 border-t border-zinc-200 text-center bg-zinc-50">
+          <div className="p-4 border-t border-slate-200 text-center bg-slate-50">
             <button
               onClick={() => setDisplayLimit((prev) => prev + 50)}
-              className="px-6 py-2 rounded-lg bg-zinc-900 hover:bg-black text-white font-bold text-xs shadow-2xs transition-colors"
+              className="px-6 py-2 rounded-lg bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-2xs transition-colors"
             >
               Load More Proposals ({filteredTotal - projects.length} remaining)
             </button>
           </div>
         )}
 
-        <div className="p-3 border-t border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs text-zinc-500 font-mono">
+        <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
           <span>Direct feed from PARIVESH statutory portal (2,207 Projects Indexed)</span>
-          <span className="text-zinc-800 font-semibold">RTI §4 Environmental Disclosure</span>
+          <span className="text-slate-800 font-semibold">RTI §4 Environmental Disclosure</span>
         </div>
       </div>
     </div>

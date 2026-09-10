@@ -64,7 +64,8 @@ export default function BaseMapLayer({ onStatus }) {
         url={LOCAL_URL}
         maxNativeZoom={8}
         maxZoom={18}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &middot; cached for offline use'
+        data-lang-en=""
+      attribution='<span lang="en">&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &middot; cached for offline use</span>'
         eventHandlers={{ tileerror: () => setMissing((n) => n + 1) }}
       />
     );
@@ -74,7 +75,7 @@ export default function BaseMapLayer({ onStatus }) {
     <TileLayer
       url={PRIMARY_MAP_URL}
       maxZoom={19}
-      attribution='&copy; <a href="https://www.esri.com/">Esri</a> &middot; National Geospatial Infrastructure'
+      attribution='<span lang="en">&copy; <a href="https://www.esri.com/">Esri</a> &middot; National Geospatial Infrastructure</span>'
       eventHandlers={{ tileerror: () => setMissing((n) => n + 1) }}
     />
   );

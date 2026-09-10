@@ -9,6 +9,7 @@ import {
 
 import LoginGate, { useSession } from '../../amey/LoginGate.jsx';
 import { apiFetch, apiUpload } from '../../amey/authClient.js';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -60,7 +61,7 @@ const EMPTY_FORM = {
 function Hash({ value }) {
   const [copied, setCopied] = useState(false);
 
-  if (!value) return <span className="text-zinc-400 font-mono text-xs">—</span>;
+  if (!value) return <span className="text-slate-400 font-mono text-xs">—</span>;
 
   const copy = () => {
     navigator.clipboard?.writeText(value);
@@ -69,7 +70,7 @@ function Hash({ value }) {
   };
 
   return (
-    <div className="inline-flex items-center gap-1.5 bg-zinc-950 text-zinc-200 px-2.5 py-1 rounded border border-zinc-800 font-mono text-[11px] shadow-2xs group">
+    <div className="inline-flex items-center gap-1.5 bg-slate-950 text-slate-200 px-2.5 py-1 rounded border border-slate-800 font-mono text-[11px] shadow-2xs group">
       <span title={value} className="select-all">
         {String(value).slice(0, 12)}…{String(value).slice(-8)}
       </span>
@@ -77,7 +78,7 @@ function Hash({ value }) {
         type="button"
         onClick={copy}
         title="Copy full cryptographic SHA-256 hash"
-        className="text-zinc-400 hover:text-white transition-colors p-0.5 cursor-pointer"
+        className="text-slate-400 hover:text-white transition-colors p-0.5 cursor-pointer"
       >
         {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
       </button>
@@ -312,8 +313,9 @@ function GeocodePreview({ geo }) {
         </div>
         <p className="text-[12px] text-slate-600">{geo.display_note}</p>
         {!geo.counts_toward_ner_floor && (
-          <p className="text-[11px] font-bold text-amber-900 bg-amber-100/70 p-1.5 rounded border border-amber-300/60 mt-1">
-            ⚠️ Operator-entered coordinate: Excluded from statutory 10% NER funding floor calculations.
+          <p className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-900 bg-amber-100/70 p-1.5 rounded border border-amber-300/60 mt-1">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-700 shrink-0" aria-hidden="true" />
+            <span>Operator-entered coordinate: Excluded from statutory 10% NER funding floor calculations.</span>
           </p>
         )}
       </div>
@@ -648,8 +650,18 @@ function OnboardTab({ vocab, canWrite }) {
     return () => { alive = false; clearTimeout(t); };
   }, [payload, complete]);
 
-  const submit = async (e) => {
+  // The form's onSubmit now only ASKS. Nothing is written until the operator has
+  // reproduced the project ID in the dialog — a single click used to commit an
+  // irreversible append to the sealed corpus with no confirmation of any kind.
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const submit = (e) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const performIngest = async () => {
+    setConfirmOpen(false);
     setBusy(true); setSubmitError(null); setJob(null);
 
     const r = await apiFetch('/api/ingest/projects', {
@@ -712,10 +724,11 @@ function OnboardTab({ vocab, canWrite }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-ProjectId" className="block text-xs font-bold text-gov-navy mb-1">
                 Project ID (MoSPI / OCMS) <span className="text-rose-500">*</span>
               </label>
               <input
+                id="ingest-ProjectId"
                 type="number"
                 min="1"
                 required
@@ -728,10 +741,11 @@ function OnboardTab({ vocab, canWrite }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-SectorName" className="block text-xs font-bold text-gov-navy mb-1">
                 Sector Name <span className="text-rose-500">*</span>
               </label>
               <select
+                id="ingest-SectorName"
                 required
                 value={form.SectorName}
                 onChange={set('SectorName')}
@@ -744,10 +758,11 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gov-navy mb-1">
+            <label htmlFor="ingest-ProjectName" className="block text-xs font-bold text-gov-navy mb-1">
               Project Name <span className="text-rose-500">*</span>
             </label>
             <input
+              id="ingest-ProjectName"
               type="text"
               required
               maxLength={500}
@@ -759,10 +774,11 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gov-navy mb-1">
+            <label htmlFor="ingest-LineMinistry" className="block text-xs font-bold text-gov-navy mb-1">
               Line Ministry <span className="text-rose-500">*</span>
             </label>
             <input
+              id="ingest-LineMinistry"
               type="text"
               required
               maxLength={300}
@@ -782,10 +798,11 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gov-navy mb-1">
-              Executing Agency (COMPANYNAME) <span className="text-rose-500">*</span>
+            <label htmlFor="ingest-COMPANYNAME" className="block text-xs font-bold text-gov-navy mb-1">
+              Executing Agency <span className="text-rose-500">*</span>
             </label>
             <input
+              id="ingest-COMPANYNAME"
               type="text"
               required
               list="known-agencies"
@@ -804,12 +821,13 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div className="pt-2">
-            <label className="block text-xs font-bold text-gov-navy mb-1">
+            <label htmlFor="ingest-OriginalCost" className="block text-xs font-bold text-gov-navy mb-1">
               Original Sanctioned Capex (₹ Crore) <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-mono">₹</span>
               <input
+                id="ingest-OriginalCost"
                 type="number"
                 min="0.01"
                 step="0.01"
@@ -832,10 +850,11 @@ function OnboardTab({ vocab, canWrite }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-SanctionDate" className="block text-xs font-bold text-gov-navy mb-1">
                 Sanction Date (CCEA / PIB)
               </label>
               <input
+                id="ingest-SanctionDate"
                 type="date"
                 value={form.SanctionDate}
                 onChange={set('SanctionDate')}
@@ -844,10 +863,11 @@ function OnboardTab({ vocab, canWrite }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-OriginalEndDate" className="block text-xs font-bold text-gov-navy mb-1">
                 Original Target Completion Date
               </label>
               <input
+                id="ingest-OriginalEndDate"
                 type="date"
                 value={form.OriginalEndDate}
                 onChange={set('OriginalEndDate')}
@@ -865,10 +885,11 @@ function OnboardTab({ vocab, canWrite }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gov-navy mb-1">
+            <label htmlFor="ingest-StateName" className="block text-xs font-bold text-gov-navy mb-1">
               State / Union Territory
             </label>
             <select
+              id="ingest-StateName"
               value={form.StateName}
               onChange={set('StateName')}
               className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:border-gov-navy focus:ring-1 focus:ring-gov-navy outline-none shadow-2xs font-sans cursor-pointer text-slate-900"
@@ -880,10 +901,11 @@ function OnboardTab({ vocab, canWrite }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-Latitude" className="block text-xs font-bold text-gov-navy mb-1">
                 Latitude (°N)
               </label>
               <input
+                id="ingest-Latitude"
                 type="number"
                 step="0.000001"
                 min="-90"
@@ -896,10 +918,11 @@ function OnboardTab({ vocab, canWrite }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gov-navy mb-1">
+              <label htmlFor="ingest-Longitude" className="block text-xs font-bold text-gov-navy mb-1">
                 Longitude (°E)
               </label>
               <input
+                id="ingest-Longitude"
                 type="number"
                 step="0.000001"
                 min="-180"
@@ -939,8 +962,18 @@ function OnboardTab({ vocab, canWrite }) {
 
       {/* ── Submit & Action Buttons ── */}
       <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-xs text-slate-500 font-mono">
-          {complete ? '✓ All required fields satisfied' : '⚠️ Complete all required fields (*) to enable submission'}
+        <div className="text-xs text-slate-500 font-mono inline-flex items-center gap-1.5">
+          {complete ? (
+            <>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+              <span>All required fields satisfied</span>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
+              <span>Complete all required fields (*) to enable submission</span>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -962,6 +995,26 @@ function OnboardTab({ vocab, canWrite }) {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Append this project to the sealed corpus?"
+        confirmLabel="Append to corpus"
+        cancelLabel="Go back and review"
+        typeToConfirm={form.ProjectId}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={performIngest}
+      >
+        <p>
+          <strong>{form.ProjectName || 'This project'}</strong> (ID{' '}
+          <span className="font-mono">{form.ProjectId}</span>) will be written to the
+          Central Ledger and the Merkle snapshot will be rebuilt.
+        </p>
+        <p className="text-gov-muted">
+          The corpus is append-only. This entry cannot be edited or removed afterwards —
+          it can only be superseded by a later revision, which stays on the record.
+        </p>
+      </ConfirmDialog>
     </form>
   );
 }
@@ -975,13 +1028,17 @@ function CufTab({ canWrite }) {
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const inputRef = useRef(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const take = useCallback((f) => {
     setFile(f || null); setReport(null); setJob(null); setError(null);
   }, []);
 
+  // A CUF return rewrites the monthly position of every project it names, so it
+  // is confirmed the same way a single append is.
   const upload = async () => {
     if (!file) return;
+    setConfirmOpen(false);
     setBusy(true); setError(null); setReport(null); setJob(null);
 
     const fd = new FormData();
@@ -1028,6 +1085,10 @@ function CufTab({ canWrite }) {
 
       {/* Dropzone Container */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-label="Choose a CUF return file, or drop one here"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click(); } }}
         className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center transition-all cursor-pointer flex flex-col items-center justify-center space-y-4 ${
           drag
             ? 'border-gov-navy bg-slate-100/60 ring-4 ring-gov-navy/10'
@@ -1092,13 +1153,32 @@ function CufTab({ canWrite }) {
         <button
           type="button"
           disabled={!file || busy || !canWrite}
-          onClick={upload}
+          onClick={() => setConfirmOpen(true)}
           className="px-8 py-3 rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-xs font-bold tracking-wide uppercase flex items-center gap-2 border border-sky-900 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-colors"
         >
           {busy ? <Loader2 size={16} className="animate-spin text-white" /> : <UploadCloud size={16} />}
           <span>{busy ? 'Validating & Rebuilding Snapshot…' : 'Validate & Ingest CUF Return'}</span>
         </button>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Ingest this CUF return into the sealed corpus?"
+        confirmLabel="Validate and ingest"
+        cancelLabel="Go back"
+        typeToConfirm="INGEST"
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={upload}
+      >
+        <p>
+          <strong className="font-mono">{file?.name}</strong> will be validated and, if it
+          passes, appended to the Central Ledger. The Merkle snapshot will be rebuilt.
+        </p>
+        <p className="text-gov-muted">
+          Rows that fail validation are rejected and reported; rows that pass are written
+          and cannot be withdrawn. Check the file is the correct reporting month.
+        </p>
+      </ConfirmDialog>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, ShieldAlert, AlertTriangle, Scale, Clock, Building2,
@@ -16,6 +17,20 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
     if (!projectId) return;
     fetchDossier(projectId);
   }, [projectId]);
+
+  // Lock body scroll and handle ESC key while drawer is open
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
   const fetchDossier = async (id) => {
     setLoading(true);
@@ -43,61 +58,78 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
   const contribs = disclosure?.component_contributions_cr || {};
   const growth = disclosure?.commodity_growth_rates || {};
 
-  return (
+  const drawerContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-hidden flex justify-end">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
-        />
+      <div className="fixed inset-0 z-[9999] overflow-hidden flex justify-end">
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+      />
 
-        {/* Slide-over Drawer */}
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "spring", damping: 28, stiffness: 300 }}
-          data-lenis-prevent
-          className="relative w-full max-w-2xl bg-white shadow-2xl border-l border-slate-200 h-full overflow-y-auto z-10 flex flex-col font-sans"
-        >
-          {/* Header */}
-          <div className="sticky top-0 z-20 p-5 bg-slate-900 text-white border-b border-slate-800 flex items-start justify-between">
-            <div className="space-y-1 pr-6">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-sm bg-white/10 text-[10.5px] font-mono text-amber-400 border border-white/10 uppercase tracking-wider font-bold">
-                  PROJECT #{projectId}
-                </span>
-                <span className="px-2 py-0.5 rounded-sm bg-rose-500/20 text-[10.5px] font-mono text-rose-300 border border-rose-500/30 uppercase tracking-wider font-bold">
-                  {boundary.classification_label || "THRESHOLD PROXIMITY"}
-                </span>
-              </div>
-              <h2 className="font-heading font-extrabold text-lg text-white line-clamp-2">
-                {dossier?.project_name || `Project Dossier #${projectId}`}
-              </h2>
-              <p className="text-xs text-slate-300 font-mono flex items-center gap-2">
-                <span>{dossier?.sector || 'Infrastructure'}</span>
-                <span>•</span>
-                <span>Agency: {dossier?.agency || 'N/A'}</span>
-                <span>•</span>
-                <span>State: {dossier?.state || 'National'}</span>
-              </p>
+      {/* Slide-over Drawer */}
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        data-lenis-prevent
+        className="relative w-full max-w-2xl bg-white shadow-2xl border-l border-slate-200 h-screen max-h-screen overflow-hidden z-10 flex flex-col font-sans"
+      >
+        {/* Header */}
+        <div className="shrink-0 p-5 bg-slate-900 text-white border-b border-slate-800 flex items-start justify-between">
+          <div className="space-y-1 pr-6 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2 py-0.5 rounded-sm bg-white/10 text-[10.5px] font-mono text-amber-400 border border-white/10 uppercase tracking-wider font-bold">
+                PROJECT #{projectId}
+              </span>
+              <span className="px-2 py-0.5 rounded-sm bg-rose-500/20 text-[10.5px] font-mono text-rose-300 border border-rose-500/30 uppercase tracking-wider font-bold">
+                {boundary.classification_label || "THRESHOLD PROXIMITY"}
+              </span>
             </div>
-
-            <button
-              onClick={onClose}
-              aria-label="Close dossier drawer"
-              className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <h2 className="font-heading font-extrabold text-lg text-white line-clamp-2">
+              {dossier?.project_name || `Project Dossier #${projectId}`}
+            </h2>
+            <p className="text-xs text-slate-300 font-mono flex items-center gap-2 flex-wrap">
+              <span>{dossier?.sector || 'Infrastructure'}</span>
+              <span>•</span>
+              <span>Agency: {dossier?.agency || 'N/A'}</span>
+              <span>•</span>
+              <span>State: {dossier?.state || 'National'}</span>
+            </p>
+            <div className="pt-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  window.dispatchEvent(new CustomEvent('prakalp:selectProject', { detail: projectId }));
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('engine', 'unified_cockpit');
+                  window.history.pushState({}, '', url);
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] transition-colors cursor-pointer shadow-xs"
+              >
+                <span>Open Full 360° Simulator</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
           </div>
 
-          {/* Body Content */}
-          <div className="p-6 space-y-6 flex-1 text-slate-800 text-xs">
+          <button
+            onClick={onClose}
+            aria-label="Close dossier drawer"
+            className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 transition-colors shrink-0 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Body Content */}
+        <div className="p-6 space-y-6 flex-1 overflow-y-auto text-slate-800 text-xs">
             {loading ? (
               <div className="p-12 text-center text-slate-500 space-y-3 font-mono">
                 <div className="w-6 h-6 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -229,7 +261,7 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
                     <span className="font-mono text-[11px] font-bold text-slate-700 block">
                       Allowable Escalation Component Contributions (₹ Cr):
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center font-mono text-[11px]">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-center font-mono text-[11px]">
                       <div className="p-2 rounded-lg bg-white border border-slate-200">
                         <span className="text-[10px] text-slate-400 block font-bold">Steel</span>
                         <span className="font-bold text-slate-800">₹{contribs.steel || 0} Cr</span>
@@ -265,4 +297,6 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
       </div>
     </AnimatePresence>
   );
+
+  return typeof document !== 'undefined' ? createPortal(drawerContent, document.body) : drawerContent;
 }

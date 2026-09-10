@@ -1,35 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Scale, Gavel } from 'lucide-react';
 
 import SolvencyDirectory from '../../parth/index.jsx';
 import NivaranLitigationView from '../../aditya/NivaranView.jsx';
 import LoginGate from '../../amey/LoginGate.jsx';
+import { getStoredLanguage } from '../lib/i18n';
 
 /**
  * Pillar 3 — ARTHA-NIVARAN: contractor 360.
- *
- * Solvency and litigation are one assessment split across two datasets. An
- * agency with a clean balance sheet and eleven live arbitrations is not a safe
- * counterparty, and neither half tells you that on its own.
  */
 
-const TABS = [
-  {
-    id: 'solvency',
-    label: 'Solvency Matrix',
-    desc: 'Contractor financial health, debt burden & delay correlations across 2,207 projects',
-    icon: Scale,
-  },
-  {
-    id: 'litigation',
-    label: 'Nivaran Legal Radar',
-    desc: 'Contract disputes, arbitration claims & court stay risks',
-    icon: Gavel,
-  },
-];
+export default function ArthaNivaranView({ selectedProjectId = null, lang: propLang }) {
+  const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+  useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
 
-export default function ArthaNivaranView() {
+  const TABS = [
+    {
+      id: 'solvency',
+      label: isHi ? 'शोधनक्षमता मैट्रिक्स' : 'Solvency Matrix',
+      desc: isHi 
+        ? '2,207 परियोजनाओं में संविदाकार वित्तीय स्वास्थ्य, ऋण भार एवं विलंब सहसंबंध' 
+        : 'Contractor financial health, debt burden & delay correlations across 2,207 projects',
+      icon: Scale,
+    },
+    {
+      id: 'litigation',
+      label: isHi ? 'निवारण विधिक राडार' : 'Nivaran Legal Radar',
+      desc: isHi 
+        ? 'अनुबंध विवाद, मध्यस्थता दावे एवं न्यायालय स्थगन जोखिम' 
+        : 'Contract disputes, arbitration claims & court stay risks',
+      icon: Gavel,
+    },
+  ];
+
   const [tab, setTab] = useState('solvency');
 
   return (
@@ -65,7 +75,9 @@ export default function ArthaNivaranView() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
           >
-            {tab === 'solvency' ? <SolvencyDirectory /> : <NivaranLitigationView />}
+            {tab === 'solvency' 
+              ? <SolvencyDirectory selectedProjectId={selectedProjectId} lang={lang} /> 
+              : <NivaranLitigationView lang={lang} />}
           </motion.div>
         </AnimatePresence>
       </div>

@@ -54,7 +54,7 @@ export default function CombinedDashboard({ projectId = "PRJ-NH-2026-089" }) {
           <div className="flex items-center space-x-6 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
             <div className="text-center">
               <p className="text-[11px] font-semibold text-slate-400 uppercase">Sanctioned Cost</p>
-              <p className="text-xl font-bold text-white font-mono mt-0.5">₹{project_metadata.total_sanctioned_cost_cr.toLocaleString()} Cr</p>
+              <p className="text-xl font-bold text-white font-mono mt-0.5">₹{project_metadata.total_sanctioned_cost_cr.toLocaleString('en-IN')} Cr</p>
             </div>
             <div className="h-8 w-px bg-slate-800"></div>
             <div className="text-center">

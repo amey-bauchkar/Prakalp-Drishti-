@@ -21,11 +21,13 @@
 }
 
 /* Keyboard focus must never be invisible. Components may restyle the ring, but
-   they cannot remove it -- this is the floor. */
+   they cannot remove it -- this is the floor.
+   WCAG 2.4.11 Focus Appearance (Enhanced) */
 @layer base {
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid var(--focus-ring, #1a4d8f);
-    outline-offset: 2px;
+    outline: 2.5px solid var(--focus-ring, #0060B6) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(0, 96, 182, 0.18) !important;
   }
 }
 
@@ -43,5 +45,43 @@
   .skip-to-content:focus {
     left: 0;
     top: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRINT STYLESHEET — CABINET SECRETARIAT PRAGATI DOSSIER
+   ═══════════════════════════════════════════════════════════════════════ */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide navigation, header, accessibility bar, footers, search bars during print */
+  header, nav, footer, .skip-to-content, [role="status"],
+  .print\:hidden, [class*="print:hidden"] {
+    display: none !important;
+  }
+
+  /* Force background colors and borders to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ensure the dossier takes full page */
+  #pragati-dossier-print {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
   }
 }
