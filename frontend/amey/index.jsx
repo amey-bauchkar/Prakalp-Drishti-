@@ -25,6 +25,76 @@ const itemVariants = {
   }
 };
 
+function AnimatedMetric({ value }) {
+  const [displayValue, setDisplayValue] = React.useState('0');
+
+  React.useEffect(() => {
+    if (!value) return;
+    const str = String(value).trim();
+
+    // Parse metric string: prefix (e.g. ₹), number (with decimals/commas), suffix (e.g. L Cr)
+    const match = str.match(/^([^\d.]*)([\d,.]+)(.*)$/);
+    if (!match) {
+      setDisplayValue(str);
+      return;
+    }
+
+    const prefix = match[1];
+    const numStr = match[2].replace(/,/g, '');
+    const target = parseFloat(numStr);
+    const suffix = match[3];
+
+    if (isNaN(target)) {
+      setDisplayValue(str);
+      return;
+    }
+
+    const hasDecimals = match[2].includes('.');
+    const decimals = hasDecimals ? match[2].split('.')[1].length : 0;
+    const hasCommas = match[2].includes(',') || target >= 1000;
+
+    const format = (num) => {
+      let numFormatted = decimals > 0 ? num.toFixed(decimals) : Math.round(num).toString();
+      if (hasCommas) {
+        const parts = numFormatted.split('.');
+        parts[0] = parseInt(parts[0], 10).toLocaleString('en-IN');
+        numFormatted = parts.join('.');
+      }
+      return `${prefix}${numFormatted}${suffix}`;
+    };
+
+    // Initialize display with 0 formatted
+    setDisplayValue(format(0));
+
+    let start = null;
+    let frameId;
+    const duration = 1500; // 1.5s smooth count
+
+    const step = (now) => {
+      if (!start) start = now;
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Smooth ease-out cubic curve (fast start, gentle deceleration)
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = ease * target;
+
+      setDisplayValue(format(current));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      } else {
+        setDisplayValue(str);
+      }
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [value]);
+
+  return <span className="tabular-nums tracking-tight">{displayValue}</span>;
+}
+
 export default function AmeyMasterView() {
   const session = useSession();
   // Portfolio headline figures are READ FROM THE LIVE API, never typed here.
@@ -250,7 +320,7 @@ export default function AmeyMasterView() {
               ].map((m) => (
                 <div key={m.k} className="px-3 text-center">
                   <div className="font-heading text-[20px] sm:text-[23px] font-extrabold text-white leading-none tracking-tight">
-                    {m.v}
+                    <AnimatedMetric value={m.v} />
                   </div>
                   <div className="text-[9.5px] sm:text-[10px] uppercase tracking-institutional text-ink-200 mt-1.5 font-bold">
                     {m.k}

@@ -92,7 +92,7 @@ export default function BunchingHistogram({ histogramData }) {
             </h3>
           </div>
           <p className="text-xs text-slate-500 font-sans">
-            Active revised population distribution (N = {totalProjects.toLocaleString('en-IN')}) across ₹{totalCapexCr.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr total public outlay.
+            Evaluated cost-revised projects ({totalProjects.toLocaleString('en-IN')}) across ₹{totalCapexCr.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr total public outlay.
           </p>
         </div>
 

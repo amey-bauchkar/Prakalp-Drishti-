@@ -155,18 +155,18 @@ export default function PoliciesView() {
                   <button
                     key={item.id}
                     onClick={() => selectTab(item.id)}
-                    className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all cursor-pointer ${
+                    className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-all cursor-pointer border ${
                       isSelected
-                        ? 'bg-[#0060B6] text-white shadow-sm'
-                        : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900'
+                        ? 'bg-[#071320] text-white border-l-4 border-l-amber-500 border-t-slate-800 border-r-slate-800 border-b-slate-800 shadow-md ring-1 ring-amber-400/20'
+                        : 'border-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${isSelected ? 'text-white' : 'text-slate-500'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 mt-0.5 ${isSelected ? 'text-amber-400' : 'text-slate-500'}`} />
                     <div className="flex-1 min-w-0">
                       <div className={`text-xs font-heading font-bold leading-snug ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                         {item.label}
                       </div>
-                      <div className={`text-[11px] leading-tight truncate mt-0.5 ${isSelected ? 'text-blue-100' : 'text-slate-500'}`}>
+                      <div className={`text-[11px] leading-tight truncate mt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
                         {item.subtitle}
                       </div>
                     </div>
@@ -543,35 +543,70 @@ export default function PoliciesView() {
               </div>
 
               {submittedReceipt ? (
-                <div className="p-6 bg-amber-50 border border-amber-300 rounded-xl space-y-4">
-                  <div className="flex items-center gap-2 text-amber-900 font-bold text-base">
-                    <AlertTriangle className="w-5 h-5 text-amber-600" />
-                    Demonstration only — no grievance has been filed
+                <div className="p-6 bg-slate-50 border border-slate-300 rounded-xl space-y-5 shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div className="flex items-center gap-2 text-slate-900 font-extrabold text-base font-heading">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      <span>Government of India Grievance Docket Generated</span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded font-mono font-bold text-xs bg-amber-100 text-amber-900 border border-amber-300">
+                      PROTOTYPE DEMONSTRATION
+                    </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-amber-950">
-                    This prototype illustrates how a CPGRAMS-interoperable intake would capture a
-                    grievance against a monitored project. <strong>Nothing was transmitted to MoSPI
-                    or to any government system.</strong> The reference below was generated in your
-                    browser and stored only in this browser's local storage.
+
+                  <p className="text-xs text-slate-600 leading-relaxed font-sans">
+                    This prototype illustrates how a CPGRAMS-interoperable intake registers a grievance against a monitored central infrastructure project. <strong>Nothing was transmitted to MoSPI or any live government server.</strong> The reference below was generated for browser verification:
                   </p>
-                  <div className="bg-white p-4 rounded-xl border border-amber-200 font-mono text-xs sm:text-[13px] space-y-1.5 shadow-2xs">
-                    <div><strong className="text-slate-700">Local demo reference:</strong> <span className="text-amber-800 font-bold text-sm">{submittedReceipt.trackingId}</span> <span className="text-slate-400">(not a government tracking number)</span></div>
-                    <div><strong className="text-slate-700">Timestamp:</strong> {new Date(submittedReceipt.timestamp).toLocaleString('en-IN')}</div>
-                    <div><strong className="text-slate-700">Category:</strong> {submittedReceipt.category}</div>
-                    {submittedReceipt.projectId && <div><strong className="text-slate-700">Project Reference:</strong> #{submittedReceipt.projectId}</div>}
-                    <div><strong className="text-slate-700">Complainant:</strong> {submittedReceipt.name} ({submittedReceipt.email})</div>
+
+                  <div className="bg-white p-5 rounded-xl border border-slate-300 font-mono text-xs sm:text-[13px] space-y-2 shadow-2xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="text-slate-500 font-bold uppercase text-[10.5px]">Official Docket Number:</span>
+                      <span className="text-gov-navy font-black text-sm bg-slate-100 px-2 py-0.5 rounded border border-slate-200">{submittedReceipt.trackingId}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Registration Timestamp:</span>
+                      <span className="font-bold text-slate-900">{new Date(submittedReceipt.timestamp).toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-500">Grievance Head:</span>
+                      <span className="font-bold text-slate-900">{submittedReceipt.category}</span>
+                    </div>
+                    {submittedReceipt.projectId && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-500">Project Reference:</span>
+                        <span className="font-bold text-amber-700">#{submittedReceipt.projectId}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                      <span className="text-slate-500">Complainant:</span>
+                      <span className="font-semibold text-slate-800">{submittedReceipt.name} ({submittedReceipt.email})</span>
+                    </div>
                   </div>
-                  <div className="text-xs text-slate-700">
-                    <strong>To file a real grievance</strong>, use the Government of India's central
-                    CPGRAMS portal at <a href="https://pgportal.gov.in" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">pgportal.gov.in</a>.
-                    That portal issues the official tracking number; this page cannot.
+
+                  <div className="text-xs text-slate-600 bg-amber-50/70 p-3 rounded-lg border border-amber-200">
+                    <strong>To file a real statutory grievance</strong>, use the Government of India's central CPGRAMS portal at{' '}
+                    <a href="https://pgportal.gov.in" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-bold">
+                      pgportal.gov.in
+                    </a>. That portal issues the official legal tracking number.
                   </div>
-                  <button
-                    onClick={() => setSubmittedReceipt(null)}
-                    className="px-4 py-2 bg-[#0060B6] text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
-                  >
-                    Try the demonstration form again
-                  </button>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-black text-white rounded-lg text-xs font-bold transition-colors shadow-2xs cursor-pointer"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      <span>Print Docket Receipt</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSubmittedReceipt(null)}
+                      className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      File Another Grievance
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>

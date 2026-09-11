@@ -350,23 +350,42 @@ function TimelineInner({ projectId }) {
       variants={containerVariants}
       className="space-y-5 font-sans"
     >
-      <motion.header variants={itemVariants} className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <CalendarDays className="w-48 h-48 text-amber-500" />
-        </div>
+      <motion.header 
+        variants={itemVariants} 
+        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#071320] via-[#0D2137] to-[#071320] shadow-2xl border border-slate-700/80 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 text-white"
+      >
+        {/* Tactical Ambient Radial Aura */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-radial from-amber-500/10 via-sky-500/5 to-transparent blur-3xl pointer-events-none z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(#38bdf810_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none z-0" />
+
         <div className="space-y-3 max-w-2xl relative z-10">
-          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/[0.07] text-[9.5px] font-extrabold tracking-institutional uppercase text-gov-accent border-l-2 border-gov-accent">
-            <CalendarDays className="w-3.5 h-3.5 text-white" aria-hidden="true" />
+          <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
+            <CalendarDays className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
             <span>KAAL-DARPAN · TEMPORAL GROUND-TRUTH AUDIT</span>
           </div>
-          <h1 className="font-heading font-extrabold text-[21px] sm:text-[25px] tracking-[-0.025em] text-white leading-[1.12]">
+          <h1 className="font-heading font-extrabold text-[22px] sm:text-[26px] tracking-tight text-white leading-tight">
             MILESTONE TIMELINE &amp; SATELLITE CORROBORATION
           </h1>
-          <p className="text-[12.5px] text-ink-200 leading-relaxed font-sans max-w-xl">
+          <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-xl">
             Statutory progress reports bound to the dated satellite observations that
             actually exist. Each period is marked by what the ground showed — never by a
             satellite-derived completion figure, which this corpus cannot support.
           </p>
+        </div>
+
+        {/* Quick Optical Sensor Status Pill */}
+        <div className="bg-black/40 border border-white/20 rounded-xl p-4 text-xs text-slate-200 shrink-0 space-y-1.5 min-w-[220px] backdrop-blur-md shadow-inner relative z-10">
+          <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5">
+            <Satellite size={14} className="text-amber-400" />
+            <span>Optical Sensors Active</span>
+          </div>
+          <div className="font-bold text-white text-sm font-heading">
+            Sentinel-2 &amp; Cartosat-3
+          </div>
+          <div className="text-[11px] text-amber-300 font-mono flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-emerald-400" />
+            <span>Wayback Imagery Stream</span>
+          </div>
         </div>
       </motion.header>
 

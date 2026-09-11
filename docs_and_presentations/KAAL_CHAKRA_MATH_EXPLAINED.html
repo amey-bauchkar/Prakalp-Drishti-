@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAAL-CHAKRA Timeline Forecast Mathematics Explained — MoSPI Mega-Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --navy: #0F172A;
+      --navy-light: #1E293B;
+      --border: #E2E8F0;
+      --text: #1E293B;
+      --muted: #64748B;
+      --emerald: #059669;
+      --emerald-bg: #ECFDF5;
+      --amber: #D97706;
+      --amber-bg: #FFFBEB;
+      --rose: #E11D48;
+      --rose-bg: #FFF1F2;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Sovereign Header */
+    header {
+      background: linear-gradient(135deg, #0B1329 0%, #1E293B 100%);
+      color: #FFFFFF;
+      padding: 48px 0 40px;
+      border-bottom: 4px solid #F59E0B;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid #F59E0B;
+      color: #FCD34D;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: #94A3B8;
+      font-size: 15px;
+      max-width: 780px;
+      line-height: 1.6;
+    }
+
+    .action-bar {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #F59E0B;
+      color: #0F172A;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: #D97706;
+      color: #FFFFFF;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main Content Sections */
+    main {
+      margin-top: 40px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--navy);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title span.number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Result Preview Box */
+    .forecast-display {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 24px 0 12px;
+    }
+
+    .forecast-pill {
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+    .pill-p10 { background: var(--emerald-bg); border-color: #A7F3D0; }
+    .pill-p50 { background: var(--amber-bg); border-color: #FDE68A; border-top: 4px solid var(--amber); }
+    .pill-p80 { background: #FFF7ED; border-color: #FED7AA; }
+    .pill-p95 { background: var(--rose-bg); border-color: #FECDD3; }
+
+    .pill-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .pill-p10 .pill-label { color: var(--emerald); }
+    .pill-p50 .pill-label { color: var(--amber); }
+    .pill-p80 .pill-label { color: #EA580C; }
+    .pill-p95 .pill-label { color: var(--rose); }
+
+    .pill-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    /* The Analogy */
+    .analogy-box {
+      background: #F1F5F9;
+      border-left: 4px solid #2563EB;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 16px 0;
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-top: 16px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #F8FAFC;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+
+    td strong {
+      color: var(--navy);
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .highlight-row {
+      background: #FFFBEB;
+    }
+
+    .tag-diff {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-old { background: #FEE2E2; color: #991B1B; }
+    .tag-new { background: #DCFCE7; color: #166534; }
+
+    /* Print styling */
+    @media print {
+      body { background: white; padding: 0; }
+      header { background: #0F172A !important; color: white !important; }
+      .action-bar { display: none; }
+      .card { box-shadow: none; border: 1px solid #CBD5E1; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="badge-top">PRAKALP-DRISHTI · AUDIT & MATHEMATICAL PROVENANCE</div>
+      <h1>How KAAL-CHAKRA Calculates Completion Dates</h1>
+      <p class="subtitle">
+        A plain-English and mathematical breakdown of why Project #618992 (100 MW SPP SECI Hybrid) forecasts to <strong>2051</strong>, and why an unpulled laptop was showing <strong>2036</strong>.
+      </p>
+      
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="window.print()">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Print to PDF / Download Document
+        </button>
+        <a class="btn btn-secondary" href="/api/amey/forecast/618992" target="_blank">
+          View Live API JSON
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. The Numbers on Your Screen -->
+    <div class="card">
+      <div class="card-title">
+        <span class="number">1</span> The Final Dates Output (Your Laptop)
+      </div>
+      <p style="font-size: 14px; color: var(--muted);">
+        For Project #618992 (<strong>100 MW SPP part of SECI 150 MW Hybrid</strong>, Ministry of Coal / NLC India Ltd):
+      </p>
+
+      <div class="forecast-display">
+        <div class="forecast-pill pill-p10">
+          <div class="pill-label">Optimistic (P10)</div>
+          <div class="pill-date">2036-05-10</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">10% probability of earlier finish</div>
+        </div>
+        <div class="forecast-pill pill-p50">
+          <div class="pill-label">Forecast Median (P50)</div>
+          <div class="pill-date">2051-12-23</div>
+          <div style="font-size: 11px; color: var(--amber); font-weight: 700; margin-top: 4px;">Most likely completion date</div>
+        </div>
+        <div class="forecast-pill pill-p80">
+          <div class="pill-label">Target Buffer (P80)</div>
+          <div class="pill-date">2069-04-25</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">80% confidence interval</div>
+        </div>
+        <div class="forecast-pill pill-p95">
+          <div class="pill-label">Risk Tail (P95)</div>
+          <div class="pill-date">2100-11-08</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">Worst-case slippage tail</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. The Intuition in Simple Words -->
+    <div class="card">
+      <div class="card-title">
+        <span class="number">2</span> The Simple English Explanation (The Tower Analogy)
+      </div>
+      
+      <div class="analogy-box">
+        <strong>The 100-Floor Tower Analogy:</strong><br>
+        Imagine a contractor promised to build a 100-floor tower in <strong>4.5 years</strong>.<br>
+        Nearly <strong>4 full years have passed</strong> (88% of the agreed time is gone).<br>
+        You visit the construction site today and discover <strong>they have only built 1 floor (1% progress)!</strong><br><br>
+        • Can they finish the remaining 99 floors in the 6 months left? <em>Obviously impossible.</em><br>
+        • If they continue at their current snail's pace (1 floor every 4 years), finishing 100 floors would take <strong>over 400 years</strong>.<br>
+        • <strong>KAAL-CHAKRA</strong> recognizes that early work is sluggish, but also respects the harsh ground reality. It combines national historical data for power plants with this snail pace to compute that this project will realistically need <strong>~29 years</strong> to actually finish, landing in <strong>December 2051</strong>.
+      </div>
+    </div>
+
+    <!-- 3. Step by Step Math -->
+    <div class="card">
+      <div class="card-title">
+        <span class="number">3</span> The Mathematical Steps (Exact Calculation)
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Formula / Component</th>
+            <th>Value for Project #618992</th>
+            <th>Explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Input 1</strong></td>
+            <td>Sanction Date</td>
+            <td class="font-mono">2022-07-21</td>
+            <td>When the project was officially approved by Government.</td>
+          </tr>
+          <tr>
+            <td><strong>Input 2</strong></td>
+            <td>Original DPR Target</td>
+            <td class="font-mono">2026-12-31</td>
+            <td>Planned duration = <strong>53.4 months</strong> (4.45 years).</td>
+          </tr>
+          <tr>
+            <td><strong>Input 3</strong></td>
+            <td>Elapsed Time & Progress</td>
+            <td class="font-mono">47.3 months | 1.0%</td>
+            <td>47 months passed; only 1% physical progress recorded.</td>
+          </tr>
+          <tr>
+            <td><strong>Step A</strong></td>
+            <td>AFT Sector Multiplier</td>
+            <td class="font-mono">3.7196x</td>
+            <td>Electricity Generation projects historically take 3.7x longer than optimistic DPR estimates.</td>
+          </tr>
+          <tr>
+            <td><strong>Step B</strong></td>
+            <td>Contract Resets Penalty</td>
+            <td class="font-mono">1.4503x</td>
+            <td>Penalty applied for 1 contractual deadline rebaselining.</td>
+          </tr>
+          <tr>
+            <td><strong>Step C</strong></td>
+            <td>Cost & Agency Multipliers</td>
+            <td class="font-mono">1.043x · 1.015x</td>
+            <td>Capex coordination friction (Rs 481 Cr) and NLCIL agency execution factor.</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Prior Total</strong></td>
+            <td>Top-Down Historical Duration</td>
+            <td class="font-mono"><strong>304.8 months</strong></td>
+            <td>53.4 × 3.72 × 1.45 × 1.04 × 1.02 = <strong>25.4 years</strong> from sanction.</td>
+          </tr>
+          <tr>
+            <td><strong>Step D</strong></td>
+            <td>Bottom-Up Pace Duration</td>
+            <td class="font-mono">1,270.8 months</td>
+            <td>Linear extrapolation of 1% progress over 47 months.</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Step E</strong></td>
+            <td><strong>Bayesian Blend (P50)</strong></td>
+            <td class="font-mono"><strong>353.1 months</strong></td>
+            <td>(0.95 × 304.8) + (0.05 × 1270.8) = <strong>29.4 years</strong>.<br>Adding 353.1 months to 21 July 2022 = <strong>23 December 2051</strong>!</td>
+          </tr>
+          <tr>
+            <td><strong>Step F</strong></td>
+            <td>Conformal Calibration</td>
+            <td class="font-mono">Q = 5.185 months</td>
+            <td>Quantiles derived with 93.3% test-verified coverage across 1,800 historical projects.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. Why the Two Laptops Disagree -->
+    <div class="card">
+      <div class="card-title">
+        <span class="number">4</span> Mystery Solved: Why Did the Other Laptop Show 2036?
+      </div>
+      <p style="font-size: 14px; margin-bottom: 12px; color: var(--muted);">
+        The other laptop has not pulled commit <code style="background:#E2E8F0; padding: 2px 6px; border-radius:4px; font-weight:700;">883667b</code> authored by <strong>Amey Bauchkar</strong>.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Unpulled Laptop (Old Code)</th>
+            <th>Your Laptop (Updated Code)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sector Multiplier</strong></td>
+            <td><span class="tag-diff tag-old">1.40x (Placeholder)</span><br><small style="color:var(--muted)">'Electricity Generation' was missing, defaulted to 1.4</small></td>
+            <td><span class="tag-diff tag-new">3.7196x (Fitted MLE)</span><br><small style="color:var(--muted)">Learned from 2,148 real MoSPI projects in aft_survival.json</small></td>
+          </tr>
+          <tr>
+            <td><strong>Reset Penalty</strong></td>
+            <td><span class="tag-diff tag-old">+15% (0.15)</span></td>
+            <td><span class="tag-diff tag-new">+45.03% (0.4503)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Conformal Width</strong></td>
+            <td><span class="tag-diff tag-old">Arbitrary [-3, 0, 4.5, 9]</span></td>
+            <td><span class="tag-diff tag-new">Calibrated Q = 5.185 mos</span></td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>P50 Forecast Date</strong></td>
+            <td><strong>2036-03-26</strong></td>
+            <td><strong>2051-12-23</strong></td>
+          </tr>
+          <tr>
+            <td><strong>P95 Risk Tail</strong></td>
+            <td><strong>2061-06-10</strong></td>
+            <td><strong>2100-11-08</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 20px; font-size: 13.5px; background: #FEF3C7; padding: 16px; border-radius: 8px; border: 1px solid #FCD34D;">
+        <strong>How to fix the other laptop:</strong><br>
+        1. Run <code style="font-weight:700;">git pull</code> on the other laptop.<br>
+        2. <strong>Restart the FastAPI backend</strong> (<code style="font-weight:700;">python backend/server.py</code>). <em>(If the server isn't restarted, Python keeps the old weights in memory!)</em><br>
+        3. Hard-refresh the browser (<code style="font-weight:700;">Ctrl + F5</code>). Both laptops will now show <strong>2051-12-23</strong>.
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

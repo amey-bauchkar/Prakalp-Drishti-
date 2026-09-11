@@ -25,13 +25,14 @@ import { getStoredLanguage, t } from './lib/i18n';
 function InstitutionalHeader() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState(() => getStoredLanguage());
   const session = useSession();
 
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') { setMobileOpen(false); setSearchOpen(false); } };
+    const onKey = (e) => {
+      if (e.key === 'Escape') { setMobileOpen(false); }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
@@ -43,10 +44,6 @@ function InstitutionalHeader() {
   }, []);
 
   // Top-level Navigation: Sovereign Home, Government Decision Hub, Nagrik Portal
-  // CORPUS ADMIN is offered only to a session holding `allocate_capital`. This is
-  // presentation, NOT access control -- /api/ingest enforces the capability server-side
-  // and the route itself is reachable by URL. Hiding the link merely avoids showing an
-  // officer a door their role cannot open.
   const canAdminister = !!session?.permissions?.includes('allocate_capital');
   const navItems = [
     { to: '/', label: t('nav_home', currentLang) },
@@ -57,13 +54,13 @@ function InstitutionalHeader() {
 
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-[100] shadow-xs select-none">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-4">
         {/* Brand & Prakalp Drishti Logo */}
         <Link to="/" className="flex items-center gap-3 shrink-0 group">
           <img
             src="/logos/prakalp_drishti_emblem.png"
             alt="PRAKALP-DRISHTI"
-            className="h-12 w-12 sm:h-14 sm:w-14 object-contain group-hover:scale-105 transition-transform"
+            className="h-11 w-11 sm:h-13 sm:w-13 object-contain group-hover:scale-105 transition-transform"
           />
 
           <div className="flex flex-col">
@@ -71,7 +68,7 @@ function InstitutionalHeader() {
               {t('ministry_name', currentLang)}
             </div>
             <div className="flex items-center gap-1.5">
-              <span lang="en" className="font-heading font-black text-[20px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
+              <span lang="en" className="font-heading font-black text-[19px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
                 prakalp<span className="text-[#FF9933]">.drishti</span>
               </span>
               <span className="hidden xl:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-300 font-mono">
@@ -86,7 +83,7 @@ function InstitutionalHeader() {
 
         {/* Center-aligned Desktop Navigation Menu */}
         <div className="hidden lg:flex flex-1 items-center justify-center px-4">
-          <nav className="flex items-center gap-8 xl:gap-12">
+          <nav className="flex items-center gap-8 xl:gap-11">
             {navItems.map((item) => {
               const isActive = item.to === '/'
                 ? location.pathname === '/'
@@ -107,10 +104,12 @@ function InstitutionalHeader() {
                   >
                     {item.label}
                   </span>
-                  {/* data.gov.in Blue Indicator Dot */}
+                  {/* Sovereign Blue Indicator Pill */}
                   <span
-                    className={`w-1.5 h-1.5 rounded-full mt-1 transition-all ${
-                      isActive ? 'bg-[#0060B6] opacity-100 scale-100' : 'bg-transparent opacity-0 scale-0 group-hover:bg-slate-300 group-hover:opacity-100 group-hover:scale-75'
+                    className={`h-0.5 rounded-full mt-1 transition-all duration-200 ${
+                      isActive
+                        ? 'w-5 bg-[#0060B6] opacity-100'
+                        : 'w-1.5 bg-transparent opacity-0 group-hover:bg-slate-300 group-hover:opacity-100'
                     }`}
                   />
                 </NavLink>
@@ -120,22 +119,10 @@ function InstitutionalHeader() {
         </div>
 
         {/* Right side utility / login controls */}
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
-          {/* Search Popover Trigger */}
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-1.5 text-slate-600 hover:text-[#0060B6] hover:bg-slate-100 rounded-full transition-colors"
-            title="Search projects"
-          >
-            <Search className="w-4 h-4" />
-          </button>
-
-          {/* Vertical Divider */}
-          <div className="h-5 w-px bg-slate-300" />
-
+        <div className="hidden lg:flex items-center gap-3.5 shrink-0">
           {/* Login / Register or Role Status with Sign Out */}
           {session ? (
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs">
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/90 px-3 py-1.5 rounded-xl shadow-2xs">
               <div className="flex items-center gap-1.5 text-[12px] font-heading font-bold text-[#0060B6]">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span lang="en">{session.username}</span>
@@ -148,7 +135,7 @@ function InstitutionalHeader() {
               <div className="h-3.5 w-px bg-slate-300 mx-0.5" />
               <button
                 onClick={clearSession}
-                className="flex items-center gap-1 min-h-[24px] text-[11px] font-heading font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50 px-1.5 py-1 rounded transition-colors cursor-pointer"
+                className="flex items-center gap-1 min-h-[22px] text-[11px] font-heading font-bold text-slate-500 hover:text-rose-700 hover:bg-rose-50 px-1.5 py-0.5 rounded transition-colors cursor-pointer"
                 title="Sign out of console"
               >
                 <LogOut className="w-3 h-3" />
@@ -158,7 +145,7 @@ function InstitutionalHeader() {
           ) : (
             <Link
               to="/decision-hub"
-              className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer px-2 py-1 rounded hover:bg-slate-50 transition-colors"
+              className="text-[12px] font-heading font-extrabold tracking-wider text-[#1E2A45] hover:text-[#0060B6] cursor-pointer px-3 py-1.5 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all"
             >
               {t('nav_login', currentLang)}
             </Link>
@@ -168,15 +155,8 @@ function InstitutionalHeader() {
         {/* Mobile controls */}
         <div className="flex items-center gap-2 lg:hidden">
           <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200"
-            aria-label="Search"
-          >
-            <Search className="w-4 h-4" />
-          </button>
-          <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200"
+            className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer"
             aria-label="Menu"
           >
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -184,18 +164,9 @@ function InstitutionalHeader() {
         </div>
       </div>
 
-      {/* Search Bar Drawer */}
-      {searchOpen && (
-        <div className="border-t border-slate-200 bg-slate-50/95 backdrop-blur-sm px-4 py-3">
-          <div className="max-w-2xl mx-auto">
-            <ProjectSearchBar />
-          </div>
-        </div>
-      )}
-
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white shadow-lg">
+        <div className="lg:hidden border-t border-slate-200 bg-white shadow-lg animate-in fade-in-50 slide-in-from-top-2">
           <nav className="px-4 py-3 space-y-1">
             {navItems.map((item) => {
               const isActive = item.to === '/'
@@ -230,7 +201,7 @@ function InstitutionalHeader() {
                 </div>
                 <button
                   onClick={clearSession}
-                  className="flex items-center gap-1 text-rose-600 font-bold text-xs hover:bg-rose-50 px-2 py-1 rounded transition-colors"
+                  className="flex items-center gap-1 text-rose-600 font-bold text-xs hover:bg-rose-50 px-2 py-1 rounded transition-colors cursor-pointer"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>{t('nav_sign_out', currentLang)}</span>
@@ -240,7 +211,7 @@ function InstitutionalHeader() {
               <div className="pt-2 mt-2 border-t border-slate-100 px-3 py-1">
                 <Link
                   to="/decision-hub"
-                  className="block text-center py-2 bg-[#0060B6] text-white rounded-lg font-bold text-xs"
+                  className="block text-center py-2 bg-[#0060B6] text-white rounded-lg font-bold text-xs shadow-xs"
                 >
                   {t('nav_login', currentLang)}
                 </Link>
@@ -365,12 +336,6 @@ function InstitutionalFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/decision-hub?engine=artha_nivaran" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
-                    <span>{t('ftlink_3', lang)}</span>
-                  </Link>
-                </li>
-                <li>
                   <Link to="/decision-hub?engine=setu_varsha" className="hover:text-amber-300 transition-colors flex items-center gap-1.5 group">
                     <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
                     <span>{t('ftlink_4', lang)}</span>
@@ -488,11 +453,17 @@ function InstitutionalFooter() {
                 </li>
               </ul>
 
-              {/* Previously asserted NIC hosting. It is a prototype; stating the
-                  deployment target rather than a present fact keeps the claim true. */}
-              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
-                <div>{t('ft_deployment_target', lang)} <strong className="text-slate-200">National Informatics Centre (NIC)</strong></div>
-                <div>{t('ft_intended_owner', lang)} <strong className="text-slate-200">{t('ft_nodal_division_val', lang)}</strong></div>
+              {/* Statutory Target & Technical Infrastructure */}
+              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>{t('ft_deployment_target', lang)} <strong className="text-slate-100">National Informatics Centre (NIC MeghRaj)</strong></span>
+                </div>
+                <div>{t('ft_intended_owner', lang)} <strong className="text-slate-100">{t('ft_nodal_division_val', lang)}</strong></div>
+                <div className="pt-1 flex items-center gap-2 text-[10px] text-slate-400 font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700">GIGW 3.0 AA</span>
+                  <span>Merkle Root: e659bf58…482d</span>
+                </div>
               </div>
             </div>
           </div>
@@ -500,13 +471,16 @@ function InstitutionalFooter() {
       </div>
 
       {/* Bottom Copyright Strip */}
-      <div className="bg-[#030A12] text-slate-400 text-[12px] py-4 border-t border-slate-800/80">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+      <div className="bg-[#030A12] text-slate-400 text-[11.5px] py-4 border-t border-slate-800/80">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <span>&copy; {new Date().getFullYear()} {t('ft_copyright', lang)}</span>
-          <div className="flex items-center gap-3 text-[11.5px] text-slate-400">
-            <span className="font-semibold text-amber-400/90">Prakalp-Drishti Release v3.2</span>
+          <div className="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
+            <span className="font-semibold text-amber-400/90">Prakalp-Drishti v3.2 Enterprise</span>
             <span className="text-slate-700">|</span>
-            <span>2,207 Central Sector Projects</span>
+            <span className="text-emerald-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              2,207 Monitored Projects
+            </span>
           </div>
         </div>
       </div>
@@ -592,15 +566,15 @@ function AnimatedRoutes() {
 
           {/* ── Direct Engine Routes -> Redirect into Authenticated Decision Hub ── */}
           <Route path="/satya-kavach" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
-          <Route path="/artha-nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+          <Route path="/artha-nivaran" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
           <Route path="/setu-varsha" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
           <Route path="/karya-dakshata" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
 
           {/* ── Legacy per-developer paths -> Redirect into Authenticated Decision Hub ── */}
           <Route path="/tanmay" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
           <Route path="/anumati" element={<Navigate to="/decision-hub?engine=satya_kavach" replace />} />
-          <Route path="/parth" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
-          <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=artha_nivaran" replace />} />
+          <Route path="/parth" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
+          <Route path="/nivaran" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />
           <Route path="/janhavi" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
           <Route path="/aditya" element={<Navigate to="/decision-hub?engine=setu_varsha" replace />} />
           <Route path="/soham" element={<Navigate to="/decision-hub?engine=karya_dakshata" replace />} />

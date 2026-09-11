@@ -2,9 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Scale, ShieldAlert, CheckCircle2, Landmark, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getStoredLanguage } from '../../src/lib/i18n';
+import ProjectCombobox from '../../src/components/ProjectCombobox.jsx';
 
-export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loading, hasData = true, lang: propLang }) {
+export default function SatyaKavachHeader({ 
+  flaggedCount = 28, 
+  onRefresh, 
+  loading, 
+  hasData = true, 
+  lang: propLang,
+  projects = [],
+  selectedProjectId,
+  onSelectProject
+}) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     if (propLang) setLang(propLang);
@@ -16,24 +27,33 @@ export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loadin
     return () => window.removeEventListener('prakalp:languageChanged', onLang);
   }, []);
 
+  useEffect(() => {
+    if (selectedProjectId && projects.length > 0) {
+      const p = projects.find(item => String(item.project_id) === String(selectedProjectId));
+      if (p?.project_name) setSearchInput(p.project_name);
+    }
+  }, [selectedProjectId, projects]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
+      className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-visible z-30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
     >
-      <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-        <Scale className="w-48 h-48 text-amber-500" />
+      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+        <div className="absolute top-0 right-0 p-8 opacity-10">
+          <Scale className="w-48 h-48 text-amber-500" />
+        </div>
       </div>
 
-      <div className="space-y-3 max-w-3xl relative z-10">
+      <div className="space-y-3 max-w-2xl relative z-10">
         <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-widest uppercase text-amber-400 border-l-2 border-amber-400">
           <Scale className="w-3.5 h-3.5 text-white" />
           <span>
             {lang === 'hi'
-              ? 'मॉड्यूल २ · सांविधिक सीसीईए सीमांत लेखापरीक्षा एवं वित्तीय सत्यनिष्ठा'
-              : 'MODULE 2 · STATUTORY CCEA BOUNDARY AUDIT & FINANCIAL INTEGRITY'}
+              ? 'सांविधिक सीसीईए सीमांत लेखापरीक्षा एवं वित्तीय सत्यनिष्ठा'
+              : 'STATUTORY CCEA BOUNDARY AUDIT & FINANCIAL INTEGRITY'}
           </span>
         </div>
 
@@ -79,22 +99,25 @@ export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loadin
         </div>
       </div>
 
-      {onRefresh && (
-        <div className="shrink-0 w-full lg:w-auto relative z-10">
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="w-full lg:w-auto min-w-[270px] bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-indigo-600 font-extrabold py-3.5 px-6 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-indigo-500/25 cursor-pointer disabled:opacity-50 group"
-          >
-            <Scale className="w-4 h-4 text-indigo-600 group-hover:text-white transition-colors" />
-            <span>
-              {loading
-                ? (lang === 'hi' ? 'लेखापरीक्षा जारी…' : 'Auditing Portfolios…')
-                : (lang === 'hi' ? 'न्यायालयिक लेखापरीक्षा चलाएं' : 'Execute Forensic Audit')}
-            </span>
-          </button>
-        </div>
-      )}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 relative z-10 w-full lg:w-auto">
+        <ProjectCombobox
+          className="w-full sm:w-80 lg:w-96 shrink-0 z-30"
+          projects={projects}
+          value={searchInput}
+          onChange={setSearchInput}
+          onSelect={(p) => {
+            if (p?.project_name) setSearchInput(p.project_name);
+            if (onSelectProject) onSelectProject(p.project_id);
+          }}
+          onSubmitRaw={(q) => {
+            if (onSelectProject) onSelectProject(q);
+          }}
+          loading={loading}
+          submitLabel={lang === 'hi' ? "ऑडिट करें" : "Audit"}
+          busyLabel={lang === 'hi' ? "ऑडिट जारी…" : "Auditing…"}
+          label={lang === 'hi' ? "सीसीईए ऑडिट हेतु परियोजना खोजें" : "Find project for CCEA audit"}
+        />
+      </div>
     </motion.div>
   );
 }

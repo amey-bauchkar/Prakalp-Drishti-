@@ -18,19 +18,20 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
 
   const cards = [
     {
-      title: isHi ? "सक्रिय संशोधित संवर्ग" : "ACTIVE REVISED POPULATION",
-      metric: `N = ${totalN.toLocaleString('en-IN')}`,
+      title: isHi ? "लागत-संशोधित मूल्यांकित परियोजनाएं" : "AUDITED REVISED PROJECTS",
+      metric: totalN.toLocaleString('en-IN'),
       desc: isHi
         ? "सांविधिक अनुपालन के लिए मूल्यांकित आधिकारिक लागत संशोधनों वाली परियोजनाएं।"
         : "Projects with official cost revisions on file evaluated for statutory compliance.",
-      badgeText: isHi ? `${unrevisedN} असंशोधित पृथक` : `${unrevisedN} unrevised excluded`,
+      badgeText: isHi ? `${unrevisedN.toLocaleString('en-IN')} असंशोधित पृथक` : `${unrevisedN.toLocaleString('en-IN')} unrevised excluded`,
       icon: Target,
-      borderTop: "border-t-slate-500",
-      iconColor: "text-slate-600"
+      borderTop: "border-t-slate-600",
+      iconColor: "text-slate-700 dark:text-slate-300",
+      metricColor: "text-slate-900"
     },
     {
       title: isHi ? "संदेहास्पद क्षेत्र [18%, 20%)" : "SUSPICIOUS ZONE [18%, 20%)",
-      metric: `n = ${suspiciousN}`,
+      metric: String(suspiciousN),
       desc: isHi
         ? "20% सीसीईए कैबिनेट पुनः अनुमोदन सीमा से ठीक पहले रुकने वाली परियोजनाओं का असामान्य संकेंद्रण।"
         : "Anomalous concentration of projects stopping just below the 20% CCEA Cabinet re-approval line.",
@@ -38,18 +39,20 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
       icon: AlertTriangle,
       borderTop: "border-t-amber-500",
       iconColor: "text-amber-500",
+      metricColor: "text-amber-700",
       highlight: true
     },
     {
       title: isHi ? "सीसीईए अनुमोदन क्षेत्र [20%, 22%)" : "CCEA APPROVAL ZONE [20%, 22%)",
-      metric: `n = ${breachedN}`,
+      metric: String(breachedN),
       desc: isHi
         ? "20% की सीमा पार कर अनिवार्य कैबिनेट सचिवालय समीक्षा के अधीन आने वाली परियोजनाएं।"
         : "Projects that crossed the 20% limit and triggered mandatory Cabinet Secretariat oversight.",
       badgeText: isHi ? "सांविधिक गिरावट" : "Statutory Drop-off",
       icon: Scale,
       borderTop: "border-t-rose-500",
-      iconColor: "text-rose-500"
+      iconColor: "text-rose-500",
+      metricColor: "text-rose-700"
     },
     {
       title: isHi ? "बंचिंग अनुपात (संदेह स्कोर)" : "BUNCHING RATIO (SUSPICION SCORE)",
@@ -60,7 +63,8 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
       badgeText: isHi ? "p < 0.05 विसंगति" : "p < 0.05 Anomaly",
       icon: ShieldAlert,
       borderTop: "border-t-indigo-600",
-      iconColor: "text-indigo-600"
+      iconColor: "text-indigo-600",
+      metricColor: "text-indigo-700"
     }
   ];
 
@@ -76,29 +80,30 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
             transition={{ duration: 0.35, delay: i * 0.08 }}
             whileHover={{ y: -3, transition: { duration: 0.15 } }}
           >
-            <Card className={`h-full border-t-4 ${c.borderTop} shadow-md bg-white p-5 flex flex-col justify-between`}>
+            <div className={`h-full border-t-4 ${c.borderTop} rounded-xl shadow-sm hover:shadow-md transition-shadow bg-white p-5 flex flex-col justify-between border border-slate-200`}>
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-500 font-mono">
                     {c.title}
                   </span>
-                  <Icon className={`w-5 h-5 ${c.iconColor}`} />
+                  <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
+                    <Icon className={`w-4 h-4 ${c.iconColor}`} />
+                  </div>
                 </div>
-                <Metric className="text-slate-900 font-heading font-black text-2xl">
+                <div className={`font-heading font-black text-3xl tracking-tight ${c.metricColor || 'text-slate-900'}`}>
                   {c.metric}
-                </Metric>
-                <Text className="mt-2 text-xs text-slate-600 leading-relaxed font-sans">
+                </div>
+                <p className="mt-2 text-xs text-slate-600 leading-relaxed font-sans">
                   {c.desc}
-                </Text>
+                </p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
-                <span className="px-2 py-0.5 rounded-sm bg-slate-100 text-slate-700 font-semibold text-[10px]">
+                <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold text-[10px] border border-slate-200/60">
                   {c.badgeText}
                 </span>
-                <span className="text-slate-400">Pillar 2</span>
               </div>
-            </Card>
+            </div>
           </motion.div>
         );
       })}

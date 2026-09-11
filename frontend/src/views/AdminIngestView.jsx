@@ -445,33 +445,16 @@ function AdminIngestInner() {
       variants={containerVariants}
       className="space-y-6 font-sans pb-16 max-w-7xl mx-auto text-slate-900"
     >
-      {/* ── Sovereign Institutional Telemetry Strip ───────────────────── */}
-      <motion.div
-        variants={itemVariants}
-        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-[#071320] text-[11px] font-mono text-slate-300 shadow-2xs border border-[#102A40]"
-      >
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="flex items-center gap-1.5 text-white font-bold uppercase tracking-wider">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            CORPUS ADMIN TERMINAL
-          </span>
-          <span className="text-[#24425C] font-bold">/</span>
-          <span className="text-slate-400 font-semibold">APPEND-ONLY GOVERNANCE</span>
-          <span className="text-[#24425C] font-bold">/</span>
-          <span className="text-white font-bold">RFC 6962 MERKLE SEALED</span>
-        </div>
-        <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-0.5 rounded border border-slate-700/80 text-xs">
-          <span className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">SESSION:</span>
-          <span className="font-bold text-amber-400 font-mono">{session?.user || 'admin'}</span>
-        </div>
-      </motion.div>
 
       {/* ── Sovereign Institutional Command Header ───────────────────── */}
       <motion.header
         variants={itemVariants}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy border border-slate-700/60 shadow-xl text-white p-6 sm:p-8 z-20"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#071320] via-[#0D2137] to-[#071320] border border-slate-700/80 shadow-2xl text-white p-6 sm:p-8 z-20"
       >
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
+        {/* Tactical Ambient Radial Aura */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-radial from-amber-500/10 via-sky-500/5 to-transparent blur-3xl pointer-events-none z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(#38bdf810_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none z-0" />
+
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
             <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
@@ -488,7 +471,7 @@ function AdminIngestInner() {
 
           {/* Quick Authority Badge Card */}
           <div className="bg-black/40 border border-white/20 rounded-xl p-4 text-xs text-slate-200 shrink-0 space-y-1.5 min-w-[250px] backdrop-blur-md shadow-inner relative z-10">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold flex items-center gap-1.5">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5">
               <ShieldCheck size={14} className="text-amber-400" />
               <span>Authority &amp; Role Gate</span>
             </div>
@@ -498,7 +481,7 @@ function AdminIngestInner() {
             <div className="flex items-center gap-2 text-[11px] text-slate-300 font-mono">
               <span>Capability:</span>
               <span className={`px-2 py-0.5 rounded font-bold font-mono ${
-                canWrite ? 'bg-white/10 text-white border border-white/30' : 'bg-white/10 text-slate-300 border border-white/20'
+                canWrite ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30' : 'bg-white/10 text-slate-300 border border-white/20'
               }`}>
                 {canWrite ? 'allocate_capital (Full Write)' : 'Read-Only Verification'}
               </span>

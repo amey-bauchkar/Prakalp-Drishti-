@@ -145,7 +145,7 @@ export default function ModelBenchmarkView({ lang: propLang }) {
         <div className="space-y-3 max-w-3xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-widest uppercase text-amber-400 border-l-2 border-amber-400">
             <FlaskConical className="w-3.5 h-3.5 text-white" />
-            <span>{isHi ? 'मॉड्यूल ७ · अनुभवजन्य वैज्ञानिक सत्यापन' : 'MODULE 7 · EMPIRICAL SCIENTIFIC VALIDATION'}</span>
+            <span>{isHi ? 'अनुभवजन्य वैज्ञानिक सत्यापन' : 'EMPIRICAL SCIENTIFIC VALIDATION'}</span>
           </div>
           <h2 className="font-heading font-extrabold text-[24px] sm:text-[32px] tracking-tight text-white leading-tight">
             {isHi ? 'एआई बनाम पारंपरिक सूत्र: श्रेष्ठता का अनुभवजन्य प्रमाण' : 'AI vs Traditional Formulas: Empirical Proof of Superiority'}

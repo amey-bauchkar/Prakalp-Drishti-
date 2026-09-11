@@ -7,8 +7,9 @@ import {
 import LoginGate from '../amey/LoginGate.jsx';
 import FlaggedContractClauses from './src/components/FlaggedContractClauses.jsx';
 import { getStoredLanguage } from '../src/lib/i18n';
+import ProjectCombobox from '../src/components/ProjectCombobox.jsx';
 
-export default function NivaranView({ lang: propLang }) {
+export default function NivaranView({ lang: propLang, selectedProjectId: propSelectedProjectId, onSelectProject }) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
   useEffect(() => { if (propLang) setLang(propLang); }, [propLang]);
   useEffect(() => {
@@ -19,9 +20,12 @@ export default function NivaranView({ lang: propLang }) {
   const isHi = lang === 'hi';
 
   const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState('PRJ-NH-2026-089');
+  const [selectedProjectId, setSelectedProjectId] = useState(
+    () => propSelectedProjectId || null
+  );
+  const [searchInput, setSearchInput] = useState('');
   const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Accordion state: default expand first flagged clause
   const [expandedClause, setExpandedClause] = useState(0);
@@ -37,30 +41,72 @@ export default function NivaranView({ lang: propLang }) {
   const [evaluating, setEvaluating] = useState(false);
   const [evalError, setEvalError] = useState(null);
 
-  // Global project selection sync
+  const fetchRiskProfile = async (id) => {
+    const pid = id || selectedProjectId;
+    if (!pid) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/aditya/governance/combined-risk-profile/${pid}`);
+      if (res.ok) {
+        const json = await res.json();
+        setProfileData(json);
+        if (json?.project_metadata) {
+          const metaInfo = json.project_metadata;
+          if (metaInfo.project_name) {
+            setSearchInput(metaInfo.project_name);
+          }
+          setProjects((prev) => {
+            if (!prev.some((p) => String(p.project_id) === String(metaInfo.project_id))) {
+              return [{ ...metaInfo }, ...prev];
+            }
+            return prev;
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load Nivaran data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Global project selection sync (only when an explicit project selection event is dispatched)
   useEffect(() => {
     const handleSelect = (e) => {
       if (e.detail) {
-        setSelectedProjectId(String(e.detail));
+        const pid = String(e.detail);
+        setSelectedProjectId(pid);
+        fetchRiskProfile(pid);
       }
     };
     window.addEventListener('prakalp:selectProject', handleSelect);
     return () => window.removeEventListener('prakalp:selectProject', handleSelect);
   }, []);
 
-  // Fetch project list & initial risk profile
+  const handleSelectProject = (projectId, projectObj) => {
+    setSelectedProjectId(projectId);
+    if (projectObj?.project_name) {
+      setSearchInput(projectObj.project_name);
+    }
+    if (onSelectProject) {
+      onSelectProject(projectId);
+    }
+    fetchRiskProfile(projectId);
+  };
+
+  // Fetch project list only for autocomplete, do not auto-run on default project
   useEffect(() => {
     async function loadInitial() {
       try {
-        const pRes = await fetch('/api/aditya/projects?limit=500');
+        const pRes = await fetch('/api/projects?limit=2207');
         if (pRes.ok) {
           const pList = await pRes.json();
-          setProjects(pList);
-          const savedId = localStorage.getItem('prakalp:selectedProjectId');
-          if (savedId) {
-            setSelectedProjectId(savedId);
-          } else if (pList.length > 0 && !selectedProjectId) {
-            setSelectedProjectId(pList[0].project_id);
+          if (Array.isArray(pList)) setProjects(pList);
+        } else {
+          const alt = await fetch('/api/aditya/projects?limit=500');
+          if (alt.ok) {
+            const altList = await alt.json();
+            if (Array.isArray(altList)) setProjects(altList);
           }
         }
       } catch (err) {
@@ -69,34 +115,6 @@ export default function NivaranView({ lang: propLang }) {
     }
     loadInitial();
   }, []);
-
-  useEffect(() => {
-    async function loadRiskProfile() {
-      if (!selectedProjectId) return;
-      setLoading(true);
-      try {
-        const res = await fetch(`/api/aditya/governance/combined-risk-profile/${selectedProjectId}`);
-        if (res.ok) {
-          const json = await res.json();
-          setProfileData(json);
-          if (json?.project_metadata) {
-            const meta = json.project_metadata;
-            setProjects((prev) => {
-              if (!prev.some((p) => String(p.project_id) === String(meta.project_id))) {
-                return [{ ...meta }, ...prev];
-              }
-              return prev;
-            });
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load Nivaran data:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadRiskProfile();
-  }, [selectedProjectId]);
 
   const handleEvaluateCustom = async () => {
     setEvaluating(true);
@@ -163,12 +181,14 @@ export default function NivaranView({ lang: propLang }) {
       <div className="space-y-6 font-sans pb-16">
         
         {/* ═══════ 1. COMMAND HEADER ═══════ */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <Scale className="w-48 h-48 text-amber-500" />
+        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-visible z-30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+            <div className="absolute top-0 right-0 p-8 opacity-10">
+              <Scale className="w-48 h-48 text-amber-500" />
+            </div>
           </div>
 
-          <div className="space-y-3 max-w-3xl relative z-10">
+          <div className="space-y-3 max-w-2xl relative z-10">
             <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
               <Scale className="w-3.5 h-3.5 text-white" />
               <span>{isHi ? 'निवारण · विधिक एवं विवाद राडार' : 'NIVARAN · LEGAL & DISPUTE RADAR'}</span>
@@ -176,76 +196,104 @@ export default function NivaranView({ lang: propLang }) {
             <h1 className="font-heading font-extrabold text-[22px] sm:text-[28px] tracking-tight text-white leading-tight">
               {isHi ? 'अनुबंध विवाद जोखिम एवं सुभेद्यता पूर्व-निवारण' : 'Contract Dispute Risk & Vulnerability Preemption'}
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-2xl">
+            <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-xl">
               {isHi
                 ? 'सीपीडब्ल्यूडी जीसीसी / ईपीसी खंडों की एनएलपी जांच, संविदाकार वाद इतिहास का अनुभवजन्य विश्लेषण, और उच्च न्यायालय स्थगन से पूर्व कार्य-स्थगन रोकने हेतु पूर्वानुमानात्मक मध्यस्थता मॉडलिंग।'
                 : 'NLP scrutiny of CPWD GCC / EPC clauses, empirical analysis of contractor litigation history, and predictive arbitration modeling to preempt contractor work-stoppages before high-court stays.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 relative z-10">
-            <div className="bg-slate-800/80 px-4 py-3 rounded-xl border border-slate-700 text-right min-w-[150px] shadow-sm">
-              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold font-mono">
-                {isHi ? 'निगरानी किए गए अनुबंध' : 'Monitored Contracts'}
-              </div>
-              <div className="text-[24px] font-heading font-extrabold text-white leading-tight mt-0.5">2,207</div>
-              <div className="text-[11px] text-red-400 font-mono mt-0.5 font-bold">
-                {isHi ? '६४.२% उच्च / गंभीर जोखिम' : '64.2% High / Critical Risk'}
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-30">
+            <ProjectCombobox
+              className="w-full sm:w-80 lg:w-96 shrink-0"
+              projects={projects}
+              value={searchInput}
+              onChange={setSearchInput}
+              onSelect={(p) => handleSelectProject(p.project_id, p)}
+              onSubmitRaw={(q) => handleSelectProject(q)}
+              loading={loading}
+              submitLabel={isHi ? "ऑडिट करें" : "Audit"}
+              busyLabel={isHi ? "ऑडिट जारी…" : "Auditing…"}
+              label={isHi ? "विवाद ऑडिट हेतु परियोजना खोजें" : "Find a project to audit"}
+            />
           </div>
         </div>
 
-        {/* ═══════ 2. STREAMLINED PROJECT DOSSIER BAR ═══════ */}
-        <div className="panel p-3.5 bg-gov-surface border border-gov-border rounded-sm flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <Building2 className="w-5 h-5 text-[#0060B6] shrink-0" />
-            <div className="min-w-0 flex-1">
-              <div className="text-[9.5px] font-bold text-gov-muted uppercase tracking-wider font-heading">
-                {isHi ? 'लेखापरीक्षाधीन सक्रिय परियोजना संचिका' : 'Active Project Dossier Under Audit'}
+        {/* Loading State */}
+        {loading && (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[360px]">
+            <div className="w-12 h-12 rounded-full border-4 border-amber-500/20 border-t-amber-600 animate-spin" />
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">
+                {isHi ? 'अनुबंध विधिक संवेदनशीलता और मध्यस्थता संभावना की जांच जारी…' : 'Auditing Contract Legal Vulnerability & Arbitration Probability…'}
+              </p>
+              <p className="text-xs text-slate-500">
+                {isHi ? 'सीपीडब्ल्यूडी जीसीसी खंड, संविदाकार वाद इतिहास और लंबित दावों का विश्लेषण' : 'Analyzing CPWD GCC clauses, contractor dispute history, and pending claims'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State Hero — Ready to Run */}
+        {!profileData && !loading && (
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[440px]">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-xs">
+              <Scale className="w-8 h-8" />
+            </div>
+            <div className="max-w-md space-y-2">
+              <h3 className="text-xl font-bold text-slate-800">
+                {isHi ? "विवाद जोखिम ऑडिट के लिए तैयार" : "Ready to Audit Legal Dispute Risk"}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {isHi
+                  ? <>ऊपर खोज बार में कोई भी एमओएसपीआई परियोजना चुनें या दर्ज करें, फिर अनुबंध विधिक संवेदनशीलता, सीपीडब्ल्यूडी जीसीसी खंड और मध्यस्थता जोखिम का मूल्यांकन करने हेतु <strong className="text-slate-700">"ऑडिट करें"</strong> पर क्लिक करें।</>
+                  : <>Select or search any MoSPI project in the search bar above, then click <strong className="text-slate-700">"Audit"</strong> to evaluate contract clause vulnerabilities, CPWD GCC risks, and empirical contractor arbitration probability.</>}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-2">
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "खंड-वार संवेदनशीलता" : "Clause Scrutiny"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "सीपीडब्ल्यूडी खंड १०सीसी और स्थल सुपुर्दगी में अस्पष्टता का पता लगाना" : "Flagging asymmetric indemnities and possession delay liabilities"}
+                </p>
               </div>
-              <select
-                value={selectedProjectId}
-                onChange={(e) => setSelectedProjectId(e.target.value)}
-                className="font-heading font-bold text-[13px] text-gov-navy bg-gov-surface-2 border border-gov-border rounded-xs px-2.5 py-1 mt-0.5 focus:outline-none focus:border-[#0060B6] cursor-pointer w-full max-w-xl truncate"
-              >
-                {projects.length > 0 ? (
-                  projects.map((p) => (
-                    <option key={p.project_id} value={p.project_id}>
-                      {p.project_name} (#{p.project_id}) — ₹{Number(p.total_sanctioned_cost_cr || 0).toLocaleString('en-IN')} {isHi ? 'करोड़' : 'Cr'}
-                    </option>
-                  ))
-                ) : (
-                  <option value="PRJ-NH-2026-089">Bharatmala Express Highway Expansion (Package 4)</option>
-                )}
-              </select>
+
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-rose-100/60 text-rose-700 flex items-center justify-center">
+                  <Gavel className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "मध्यस्थता संभावना" : "Arbitration Probability"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "संविदाकार के ऐतिहासिक वाद और लंबित बिलों का अनुभवजन्य मॉडल" : "Empirical modeling of contractor litigation record and pending invoices"}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "पूर्व-निवारण परामर्श" : "Preemption Advisory"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "उच्च न्यायालय स्थगन से पूर्व विधिक समाधान एवं संशोधन सिफारिशें" : "Actionable legal amendments before contractor site work-stoppages"}
+                </p>
+              </div>
             </div>
           </div>
+        )}
 
-          {meta && (
-            <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-900 border border-blue-200 font-bold text-[11px]">
-                {meta.sector}
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-gov-surface-2 text-gov-navy border border-gov-border font-heading font-bold text-[11px]">
-                <Building2 className="w-3.5 h-3.5 text-gov-muted" aria-hidden="true" />
-                <span>{meta.executing_agency}</span>
-              </span>
-              <span className="px-2.5 py-1 rounded bg-gov-surface-2 text-gov-navy border border-gov-border font-mono font-bold text-[11px]">
-                ₹{Number(meta.total_sanctioned_cost_cr || 0).toLocaleString('en-IN')} {isHi ? 'करोड़' : 'Cr'}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {loading ? (
-          <div className="panel p-10 text-center text-xs text-gov-muted space-y-2">
-            <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <div>{isHi ? 'अनुबंध विधिक संवेदनशीलता और मध्यस्थता संभावना की जांच जारी...' : 'Auditing contract legal vulnerability and arbitration probability...'}</div>
-          </div>
-        ) : (
+        {/* ═══════ 2. BALANCED 2-COLUMN MAIN CONTENT ═══════ */}
+        {profileData && !loading && (
           <>
-            {/* ═══════ 3. BALANCED 2-COLUMN MAIN CONTENT ═══════ */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Left Column: Dispute Risk Assessment */}
@@ -521,7 +569,6 @@ export default function NivaranView({ lang: propLang }) {
                 </div>
               )}
             </div>
-
           </>
         )}
 

@@ -176,7 +176,7 @@ export default function KaryaDakshataSimulator({ lang: propLang }) {
               </div>
               
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                <span>{isHi ? 'निष्पादन विश्वसनीयता सिमुलेटर' : 'EXECUTION RELIABILITY SIMULATOR'}</span>
+                <span>{isHi ? 'कार्य-दक्षता' : 'KARYA-DAKSHATA'}</span>
                 <span className="text-xs px-2.5 py-1 rounded-md bg-white/10 text-slate-300 font-mono font-normal">
                   {isHi ? `${agencies.length} एजेंसियां सूचीबद्ध` : `${agencies.length} AGENCIES CATALOGUED`}
                 </span>

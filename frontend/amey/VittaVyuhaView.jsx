@@ -86,13 +86,15 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden"
       >
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <DollarSign className="w-48 h-48 text-amber-500" />
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute top-0 right-0 p-8 opacity-10">
+            <DollarSign className="w-48 h-48 text-amber-500" />
+          </div>
         </div>
         <div className="space-y-3 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <DollarSign className="w-3.5 h-3.5 text-white" />
-            <span>{isHi ? "मॉड्यूल ३ · पूंजी आवंटन एवं अनुकूलन" : "MODULE 3 · CAPITAL ALLOCATION & OPTIMIZATION"}</span>
+            <span>{isHi ? "पूंजी आवंटन एवं अनुकूलन" : "CAPITAL ALLOCATION & OPTIMIZATION"}</span>
           </div>
           <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
             {isHi ? "वित्त-व्यूह पूंजी अनुकूलक" : "VITTA-VYUHA Capital Optimizer"}
@@ -128,15 +130,6 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
               </div>
             </div>
           )}
-
-          <button
-            onClick={() => runAllocation(budget, riskKappa, enforceNer)}
-            disabled={loading}
-            className="w-full sm:w-auto min-w-[270px] bg-slate-100 hover:bg-emerald-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-emerald-600 font-extrabold py-3.5 px-6 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-emerald-500/25 cursor-pointer disabled:opacity-50 group"
-          >
-            <DollarSign className="w-4 h-4 text-emerald-600 group-hover:text-white transition-colors" />
-            <span>{loading ? (isHi ? 'रैखिक प्रोग्राम अनुकूलित हो रहा है…' : 'Optimizing Linear Program…') : (isHi ? 'पूंजी आवंटन अनुकूलित करें' : 'Optimize Capital Allocation')}</span>
-          </button>
         </div>
       </motion.div>
 

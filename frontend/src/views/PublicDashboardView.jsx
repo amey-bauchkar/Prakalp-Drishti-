@@ -229,37 +229,15 @@ export default function PublicDashboardView() {
       variants={containerVariants}
       className="space-y-6 font-sans pb-24 max-w-7xl mx-auto text-slate-900"
     >
-      {/* ── Sovereign Institutional Telemetry Strip ── */}
-      <motion.div 
-        variants={itemVariants} 
-        className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 rounded-lg bg-[#071320] text-[11px] font-mono text-slate-300 shadow-2xs border border-[#102A40]"
-      >
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="flex items-center gap-1.5 text-white font-bold uppercase tracking-wider">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            {t('nagrik_transparency', lang)}
-          </span>
-          <span className="text-[#24425C] font-bold" aria-hidden="true">/</span>
-          <span className="text-slate-300 font-semibold">{t('nagrik_rti_mandate', lang)}</span>
-          <span className="text-[#24425C] font-bold" aria-hidden="true">/</span>
-          <span className="text-white font-bold">
-            {loading ? t('prov_loading', lang)
-              : loadError ? t('register_unavailable', lang)
-              : `${formatCount(portfolioStats.total)} ${t('projects_unit', lang)} · ${formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })}`}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-0.5 rounded border border-slate-700/80 text-xs">
-          <span className="text-slate-300 text-[10px] uppercase font-bold tracking-widest">{t('nagrik_dossier', lang)}:</span>
-          <span className="font-bold text-amber-400 font-mono">#{selectedProjectId}</span>
-        </div>
-      </motion.div>
-
       {/* ── Sovereign Institutional Command Header ── */}
       <motion.div 
         variants={itemVariants} 
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gov-navy via-slate-900 to-gov-navy border border-slate-700/60 shadow-xl text-white p-6 sm:p-8 z-20"
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#071320] via-[#0D2137] to-[#071320] border border-slate-700/80 shadow-2xl text-white p-6 sm:p-8 z-20"
       >
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none rounded-2xl overflow-hidden"></div>
+        {/* Tactical Ambient Radial Aura */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-radial from-amber-500/10 via-sky-500/5 to-transparent blur-3xl pointer-events-none z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(#38bdf810_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none z-0" />
+        
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2.5 max-w-3xl">
             <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
@@ -269,12 +247,6 @@ export default function PublicDashboardView() {
             <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold font-heading text-white tracking-tight leading-tight">
               {t('nagrik_title', lang)}
             </h1>
-            {/* Was: "Proactive public disclosure ... Inspect geocoded site locations,
-                CCEA sanctioned vs revised capex baselines, physical milestones, and
-                statutory environmental clearances in real time." On a phone that
-                paragraph filled the entire first screen, and it was written for the
-                same reader as the officer console. Same facts, same statutory anchor,
-                readable by the audience it is for. */}
             <p className="text-sm text-slate-200 leading-relaxed max-w-2xl font-sans">
               {t('nagrik_lede', lang)}
             </p>
@@ -284,16 +256,17 @@ export default function PublicDashboardView() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0 relative z-10">
-            {/* Read from the fetch. These were literals, so with the API down the
-                page went on asserting national totals under an empty register. */}
-            <div className="p-4 rounded-xl bg-black/40 border border-white/20 backdrop-blur-md shadow-inner text-right min-w-[190px]">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">{t('total_approved_cost', lang)}</div>
+            <div className="p-4 rounded-xl bg-black/40 border border-white/20 backdrop-blur-md shadow-inner text-right min-w-[200px]">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold flex items-center justify-end gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{t('total_approved_cost', lang)}</span>
+              </div>
               <div className="text-2xl sm:text-3xl font-black text-white font-mono mt-0.5">
                 {loadError ? '—' : formatCr(portfolioStats.totalCapex, { lakhCrore: true, lang })}
               </div>
-              <div className="text-[11px] text-white flex items-center justify-end gap-1 mt-1 font-mono font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" aria-hidden="true" />
-                {loadError ? t('register_unavailable', lang) : `${formatCount(portfolioStats.total)} ${t('projects_published', lang)}`}
+              <div className="text-[11px] text-amber-300 flex items-center justify-end gap-1 mt-1 font-mono font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                <span>{loadError ? t('register_unavailable', lang) : `${formatCount(portfolioStats.total)} ${t('projects_published', lang)}`}</span>
               </div>
             </div>
           </div>
@@ -959,6 +932,28 @@ function PublicMetadataTab({
               )}
             </div>
 
+            {/* Quick Sector Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[10.5px] font-mono no-scrollbar">
+              {['All', 'ROAD TRANSPORT AND HIGHWAYS', 'RAILWAYS', 'POWER', 'PETROLEUM'].map((sec) => {
+                const isSelected = selectedSector === sec;
+                const label = sec === 'All' ? 'All Sectors' : sec.replace('ROAD TRANSPORT AND HIGHWAYS', 'Highways').replace('PETROLEUM', 'Petroleum').replace('RAILWAYS', 'Railways').replace('POWER', 'Power');
+                return (
+                  <button
+                    key={sec}
+                    type="button"
+                    onClick={() => setSelectedSector(sec)}
+                    className={`px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                      isSelected
+                        ? 'bg-gov-navy text-amber-300 border-gov-navy shadow-xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               <select
                 value={selectedSector}
@@ -1513,6 +1508,29 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
         <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-700" />
         <div>
           <strong className="text-slate-950 font-bold">Right to Information Act, 2005 · Section 4(1)(b)(xi) Mandate.</strong> Proactive disclosure of sanctioned budgetary outlays, cumulative spending against physical progress milestones, and statutory CPWD price adjustments.
+        </div>
+      </div>
+
+      {/* Citizen Educational Callout Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/90 text-slate-900 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>What does a 20% Cost Overrun trigger for taxpayers?</span>
+          </div>
+          <p className="text-[12px] text-slate-700 leading-relaxed font-sans">
+            Under Union Cabinet governance rules, any central infrastructure project exceeding its originally sanctioned capex by &ge; 20% cannot spend additional public funds without formal reappraisal and revised financial sanction from the Cabinet Committee on Economic Affairs (CCEA).
+          </p>
+        </div>
+
+        <div className="p-4 rounded-xl bg-sky-50/70 border border-sky-200/90 text-slate-900 shadow-2xs space-y-1.5">
+          <div className="flex items-center gap-2 text-sky-900 font-bold text-xs">
+            <Building2 className="w-4 h-4 text-sky-600 shrink-0" />
+            <span>How does MoSPI audit price escalations?</span>
+          </div>
+          <p className="text-[12px] text-slate-700 leading-relaxed font-sans">
+            CPWD Clause 10CC enforces statutory formula-based price adjustment ceilings tied directly to official RBI Wholesale Price Index (WPI) variances for cement, steel, fuel, and labor indices — ensuring contractors cannot submit arbitrary inflation claims.
+          </p>
         </div>
       </div>
 

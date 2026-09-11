@@ -82,15 +82,17 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden z-20"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-visible z-30"
       >
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <FileText className="w-48 h-48 text-amber-500" />
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute top-0 right-0 p-8 opacity-10">
+            <FileText className="w-48 h-48 text-amber-500" />
+          </div>
         </div>
         <div className="space-y-3 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <FileText className="w-3.5 h-3.5 text-white" />
-            <span>{isHi ? "मॉड्यूल ४ · कार्यपालक शासन" : "MODULE 4 · EXECUTIVE GOVERNANCE"}</span>
+            <span>{isHi ? "कार्यपालक शासन" : "EXECUTIVE GOVERNANCE"}</span>
           </div>
           <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
             {isHi ? "प्रगति-सारथी कैबिनेट टिप्पणी" : "PRAGATI-SAARTHI Cabinet Note"}

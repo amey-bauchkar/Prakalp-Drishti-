@@ -54,9 +54,7 @@ export default function ProjectCombobox({
   const results = useMemo(() => {
     const q = (value || '').trim().toLowerCase();
     if (!q) {
-      return [...projects]
-        .sort((a, b) => (a.project_name || '').localeCompare(b.project_name || '', undefined, { sensitivity: 'base' }))
-        .slice(0, MAX_RESULTS);
+      return [];
     }
     return projects
       .filter((p) => {
@@ -160,7 +158,7 @@ export default function ProjectCombobox({
   const dark = tone === 'dark';
 
   return (
-    <div ref={rootRef} className={`relative ${className}`}>
+    <div ref={rootRef} className={`relative z-40 ${className}`}>
       {/* A real label. It is visually subdued on the dark command headers but it is
           in the accessibility tree, which the placeholder never was. */}
       <label
@@ -226,7 +224,7 @@ export default function ProjectCombobox({
           role="listbox"
           aria-label="Matching projects"
           data-lenis-prevent
-          className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-y-auto z-40 max-h-80 divide-y divide-slate-800/80 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full"
+          className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-y-auto z-[100] max-h-80 divide-y divide-slate-800/80 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full"
         >
           {results.map((p, i) => (
             <li
@@ -254,7 +252,7 @@ export default function ProjectCombobox({
       {/* An empty result set must say so. Previously the panel simply did not render,
           leaving the user to guess whether the search had run. */}
       {open && value && results.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl z-40 px-3.5 py-3">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl z-[100] px-3.5 py-3">
           <p className="text-xs text-slate-200">
             No project matches <span className="font-mono font-bold text-amber-400">{value}</span>.
           </p>
