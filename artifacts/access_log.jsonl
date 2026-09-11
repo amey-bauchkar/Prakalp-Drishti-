@@ -2478,3 +2478,9 @@
 {"ts": "2026-09-11T18:47:25", "user": "monitor", "role": "monitoring_officer", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-09-11T18:47:26", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-09-11T18:47:26", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-11T18:50:11", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-09-11T18:50:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-11T18:50:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-11T18:50:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-11T18:50:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_analytics"}
+{"ts": "2026-09-11T18:50:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_analytics"}
