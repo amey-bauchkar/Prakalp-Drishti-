@@ -177,6 +177,8 @@ export const DICTIONARY = {
     tab_money_desc: 'What each project was approved for, and what it costs now',
     tab_permissions: 'Permissions and approvals',
     tab_permissions_desc: 'Forest, environment, wildlife and land clearances each project needed',
+    tab_grievance: 'Citizen Grievance & Vigilance',
+    tab_grievance_desc: 'File ground proof, report stalled worksites & track CPGRAMS 30-day resolution',
     projects_unit: 'projects',
 
     // ── Provenance strip ──
@@ -405,6 +407,8 @@ export const DICTIONARY = {
     tab_money_desc: 'प्रत्येक परियोजना की स्वीकृत लागत और वर्तमान लागत',
     tab_permissions: 'अनुमतियां एवं स्वीकृतियां',
     tab_permissions_desc: 'वन, पर्यावरण, वन्यजीव एवं भूमि संबंधी आवश्यक स्वीकृतियां',
+    tab_grievance: 'नागरिक शिकायत एवं सतर्कता',
+    tab_grievance_desc: 'जमीनी साक्ष्य दर्ज करें, रुकी परियोजनाओं की रिपोर्ट दें एवं 30-दिवसीय समाधान ट्रैक करें',
     projects_unit: 'परियोजनाएं',
 
     // ── Provenance strip ──

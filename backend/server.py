@@ -20,7 +20,8 @@ if BACKEND_DIR not in sys.path:
 
 from analytics_engine.state_resolution import resolve_state
 
-from fastapi import FastAPI, Query, HTTPException, Depends, Response
+from fastapi import FastAPI, Query, HTTPException, Depends, Response, Request
+from backend.grievance_service import GrievanceCreate, save_grievance, list_recent_grievances, track_grievance
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from backend import config
@@ -407,6 +408,26 @@ if os.path.exists(IMAGERY_DIR):
 assets_dir = os.path.join(STATIC_DIR, "assets")
 if os.path.exists(assets_dir):
     app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+# ── Citizen Grievance & Feedback Ingestion API (Supabase PostgreSQL) ────────
+@app.post("/api/grievances")
+async def submit_grievance(payload: GrievanceCreate, request: Request):
+    """Store citizen grievance in Supabase PostgreSQL (or local fallback)."""
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    return save_grievance(payload, client_ip=client_ip)
+
+@app.get("/api/grievances")
+def get_recent_grievances(limit: int = Query(50, ge=1, le=200)):
+    """Retrieve recent citizen grievances."""
+    return list_recent_grievances(limit=limit)
+
+@app.get("/api/grievances/track/{tracking_id:path}")
+def track_citizen_grievance(tracking_id: str):
+    """Retrieve grievance tracking status and CPGRAMS 30-day statutory SLA countdown."""
+    res = track_grievance(tracking_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Tracking ID '{tracking_id}' not found.")
+    return res
 
 # SPA Fallback: Serve index.html for all frontend routes (Single Unified URL)
 @app.get("/{full_path:path}")

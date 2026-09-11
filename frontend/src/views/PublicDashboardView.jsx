@@ -12,6 +12,7 @@ import {
 import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
 import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
 import ClearanceStagesInfoGuide from '../components/ClearanceStagesInfoGuide';
+import NagrikGrievanceDesk from '../components/NagrikGrievanceDesk';
 // The corpus writes "Not specified" where a field was never recorded. Rendered
 // verbatim it reads as a broken string ("...asset in Not specified executed by...");
 // an em dash says "not recorded" without pretending to be a value.
@@ -219,6 +220,13 @@ export default function PublicDashboardView() {
       desc: t('tab_permissions_desc', lang),
       icon: Landmark,
       badge: 'PARIVESH'
+    },
+    {
+      id: 'grievance',
+      label: t('tab_grievance', lang),
+      desc: t('tab_grievance_desc', lang),
+      icon: ShieldAlert,
+      badge: 'CPGRAMS'
     }
   ];
 
@@ -303,7 +311,7 @@ export default function PublicDashboardView() {
       {/* ── Sovereign Institutional Segmented Tab Rail ── */}
       <motion.nav 
         variants={itemVariants} 
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3" 
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" 
         role="tablist" 
         aria-label={t('nagrik_transparency', lang)}
         onKeyDown={onTabKeyDown}
@@ -452,6 +460,22 @@ export default function PublicDashboardView() {
             transition={{ duration: 0.18, ease: "easeInOut" }}
           >
             <PublicClearancesTab />
+          </motion.div>
+        )}
+
+        {activeTab === 'grievance' && (
+          <motion.div
+            key="grievance"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18, ease: "easeInOut" }}
+          >
+            <NagrikGrievanceDesk
+              projects={projects}
+              lang={lang}
+              selectedProjectId={selectedProjectId}
+            />
           </motion.div>
         )}
       </AnimatePresence>
