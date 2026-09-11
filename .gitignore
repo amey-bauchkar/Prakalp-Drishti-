@@ -90,3 +90,7 @@ paimana_extracted/satellite_data/wayback_cache/
 # Local pre-audit backup artifacts
 artifacts/_pre_audit_backup/
 
+# Runtime access logs
+artifacts/access_log.jsonl
+
+

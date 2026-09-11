@@ -52,7 +52,7 @@
 │                                           DATA LAKE PROVENANCE MATRIX                                           │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │ 1. MoSPI PAIMANA Portal & APIs     ──► 25 Statutory CUF Fields (April 2026 Baseline + Multi-Month Cycles)       │
-│ 2. Sentinel-2 / Landsat / Esri     ──► Dual-Epoch Optical + SAR Radar Imagery (Zero-Trust Physical Audit)       │
+│ 2. Esri World Imagery / Wayback    ──► Dual-Epoch RGB Optical, 2.08–2.35 m/px measured (no SAR, no NIR)         │
 │ 3. IMD Meteorological Gridded Data ──► 20-Year State Rainfall Departures (Working-Window Contraction)           │
 │ 4. DPIIT / MoSPI WPI Indices       ──► Commodity Price Escalation: Steel, Cement, Bitumen & Fuel (Clause 10CC)  │
 │ 5. NSE / BSE Public Disclosures    ──► Executing PSU Debt/Equity, Working Capital & Stock Drawdowns (Leading)   │
@@ -180,7 +180,7 @@ Our live application features a sovereign header adhering to **GIGW 3.0 standard
 ├─────────────────────────────────────────────────────────────────────────────────────────────┤
 │                               SPECIALIZED PILLAR PORTALS                                    │
 ├─────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 4. SATYA-KAVACH (/satya-kavach) ──► 20% CCEA Threshold Anti-Gaming & Clearances Pipeline   │
+│ 4. SATYA-KAVACH (/satya-kavach) ──► 20% CCEA Threshold Density Test & Clearances Pipeline  │
 │ 5. ARTHA-NIVARAN (/artha-nivaran) ──► PSU Balance Sheet Solvency & Legal Litigation Radar   │
 │ 6. SETU-VARSHA (/setu-varsha)  ──► IMD Monsoon Contagion War Room & Satellite Verification  │
 │ 7. KARYA-DAKSHATA (/karya-dakshata) ──► Agency Historical Delivery Multiplier Simulator     │
@@ -198,9 +198,9 @@ Inside `/decision-hub`, policymakers have access to **10 dedicated analytical en
 
 ### 2. 🕒 Kaal-Chakra Survival Forecast (`kaal_chakra`)
 * **Role**: Replaces misleading single-date deadlines with probabilistic completion curves.
-* **Math**: **Log-logistic Accelerated Failure Time (AFT) survival model**, fitted by penalised maximum likelihood under **right-censoring** (160 observed completions vs 1,988 censored) using `scipy` L-BFGS-B. Sector/entity effects shrink under a Normal(0, τ²) prior, τ chosen by 5-fold cross-validation. Wrapped in split-conformal intervals at a **measured 93.3% coverage**.
+* **Math**: **Log-logistic Accelerated Failure Time (AFT) survival model**, fitted by penalised maximum likelihood under **right-censoring** (115 observed completions vs 1,988 censored; 45 future-dated proxies excluded) using `scipy` L-BFGS-B. Sector/entity effects shrink under a Normal(0, τ²) prior, τ = 0.15 chosen by 5-fold cross-validation. The displayed P10–P95 fan is split-conformally calibrated on the engine's own median at a **measured 79.0% coverage (nominal 85%)** on 596 held-out projects. The 93.3% figure in older material belonged to a different interval and is withdrawn.
 * **⚠️ Weibull is NOT fitted** — only log-logistic. Say "log-logistic AFT", never "Weibull".
-* **⚠️ If asked how strong the fit is, answer honestly**: at a 7.4% event rate the median is extrapolated past the follow-up window, and only **Roads & Highways (145 completions)** moves on its own evidence — the other 18 sectors sit near the pooled baseline because the prior put them there. Every group ships with its event count and a `data` / `prior-dominated` tag in `artifacts/aft_survival.json`.
+* **⚠️ If asked how strong the fit is, answer honestly**: at a 5.5% event rate the median is extrapolated past the follow-up window, and only **Roads & Highways (101 completions)** moves on its own evidence — the other 18 sectors sit near the pooled baseline because the prior put them there. The 3.31× baseline is an upper-ish bound: the register sheds completed projects (0 completions in the 1980–2004 cohort), so the sample is survivor-biased toward slow projects. Every group ships with its event count and a `data` / `prior-dominated` tag in `artifacts/aft_survival.json`.
 * **Output**: Strictly monotonic, non-crossing quantiles: $P_{10}$ (Optimistic), $P_{50}$ (Expected Median), $P_{80}$ (Prudent Budget Baseline), and $P_{95}$ (Tail Disaster Worst-Case).
 
 ### 3. 💰 Vitta-Vyuha Linear Reallocation (`vitta_vyuha`)
@@ -287,7 +287,7 @@ Inside `/decision-hub`, policymakers have access to **10 dedicated analytical en
 > **⚠️ NEVER say the system "switches to SAR".** It does not. SAR is a designed-but-unpopulated layer, and claiming otherwise is contradicted by our own source.
 
 ### Q6: "How does your optimization model help during sudden budget cuts?"
-> **Answer**: *"Our VITTA-VYUHA engine is formulated as a Two-Stage Stochastic Linear Program with CVaR90 risk control, solved in 8.7 milliseconds on the HiGHS open-source solver. If the Ministry of Finance cuts available capex from ₹10,000 Cr to ₹6,000 Cr, the policymaker drags the interactive slider and the engine instantly re-optimises capital to protect high-multiplier, near-commissioning assets while maintaining the statutory 10% North-East funding floor. It is deliberately an LP rather than a MILP — every capital tranche is genuinely divisible, and because the formulation is continuous the dual variables are valid, which is what lets us publish real shadow prices per constraint. A MILP has no valid duals, so it could not defend the numbers we put in front of the Cabinet."*
+> **Answer**: *"Our VITTA-VYUHA engine is formulated as a Two-Stage Stochastic Linear Program with CVaR90 risk control, solved in about ten milliseconds on the HiGHS open-source solver (the exact time is on the result as `solve_time_ms`). If the Ministry of Finance cuts available capex from ₹10,000 Cr to ₹6,000 Cr, the policymaker drags the interactive slider and the engine instantly re-optimises capital to protect high-multiplier, near-commissioning assets while maintaining the statutory 10% North-East funding floor. It is deliberately an LP rather than a MILP — every capital tranche is genuinely divisible, and because the formulation is continuous the dual variables are valid, which is what lets us publish real shadow prices per constraint. A MILP has no valid duals, so it could not defend the numbers we put in front of the Cabinet."*
 
 ### Q7: "How is this different from the existing PAIMANA / OCMS portal?"
 > **Answer**: *"PAIMANA is a descriptive reporting portal—it records what contractors upload. Prakalp Drishti transforms it into an active, zero-trust system: (1) we verify claims via satellites, (2) replace static deadlines with calibrated P10–P95 survival fan charts, (3) model cross-ministry domino delays via supply chain DAGs, (4) de-bias proposals with KARYA-DAKSHATA, and (5) provide prescriptive capital allocation optimization."*

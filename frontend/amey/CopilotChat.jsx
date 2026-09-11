@@ -124,11 +124,13 @@ export default function CopilotChat({ projectId }) {
     setBusy(true);
 
     try {
-      const res = await apiFetch(`/api/amey/copilot/${projectId}/ask`, {
+      const res = await apiFetch(`/api/amey/ask`, {
         method: 'POST',
         body: JSON.stringify({
           question: q,
+          project_id: String(projectId),
           prior_turns: historyForApi,
+          history: historyForApi,
         }),
       });
 

@@ -14,7 +14,7 @@
    - [3.4 PRAGATI-SAARTHI: 3-Layer Zero-Hallucination & Merkle Proof Lineage](#34-pragati-saarthi-3-layer-zero-hallucination--merkle-proof-lineage)
    - [3.5 UNIFIED CAUSAL COCKPIT & SOVEREIGN AGENCY INDEX (AEAI)](#35-unified-causal-cockpit--sovereign-agency-index-aeai)
 4. [The 4 Auxiliary Forensics & Environmental Modules](#4-the-4-auxiliary-forensics--environmental-modules)
-   - [4.1 SATYA-KAVACH: 20% CCEA Anti-Gaming & CPWD Clause 10CC Audit (Tanmay)](#41-satya-kavach-20-ccea-anti-gaming--cpwd-clause-10cc-audit-tanmay)
+   - [4.1 SATYA-KAVACH: 20% CCEA Threshold Density Test & CPWD Clause 10CC Audit (Tanmay)](#41-satya-kavach-20-ccea-threshold-density-test--cpwd-clause-10cc-audit-tanmay)
    - [4.2 ARTHA-NETRA: PSU Corporate Leverage & Stock Drawdown Risk (Parth)](#42-artha-netra-psu-corporate-leverage--stock-drawdown-risk-parth)
    - [4.3 VARSHA-SPEED: IMD Monsoon Working-Window Optimization (Janhavi)](#43-varsha-speed-imd-monsoon-working-window-optimization-janhavi)
    - [4.4 KARYA-DAKSHATA & EO-AUDITOR: Agency Reliability & Orbit Corroboration (Soham & Aditya)](#44-karya-dakshata--eo-auditor-agency-reliability--orbit-corroboration-soham--aditya)
@@ -226,10 +226,10 @@ Generates statutory actionable directives citing verified metric IDs, operating 
 
 ---
 
-### 4.1 SATYA-KAVACH: 20% CCEA Anti-Gaming & CPWD Clause 10CC Audit (Tanmay)
+### 4.1 SATYA-KAVACH: 20% CCEA Threshold Density Test & CPWD Clause 10CC Audit (Tanmay)
 - **Module Lead**: Tanmay (`modules/tanmay/`, `frontend/tanmay/`)
 - **Core Functionality**:
-  1. **McCrary Density Discontinuity Test**: Detects artificial clustering of budget revisions in the **18.0%–19.99% zone** (Density Ratio $1.49\times, p < 0.001$), proving strategic cost capping to avoid mandatory Cabinet Committee on Economic Affairs (CCEA) re-appraisal.
+  1. **McCrary (2008) Density Discontinuity Test** at the 20% CCEA re-appraisal threshold, computed in `analytics_engine/mccrary.py` (bandwidth capped at 1σ; empirical size 7% at nominal 5%, power 99% by simulation). **Live result: θ = +0.076, z = 0.41, p = 0.68 — no density discontinuity at 20%.** The descriptive two-bin ratio is 1.65× (28 vs 17), 95% CI [0.90, 3.01], spanning 1.0. Any earlier claim of a 1.49× spike at p < 0.001 is withdrawn; a significant result would show the threshold shapes where revisions land, not intent.
   2. **Statutory CPWD Clause 10CC Audit**: Hardcodes the legal 85% escalable rule ($V_L = 0.85 \times [\dots]$) with material/labor indices locked strictly to the **bid submission date**, flagging unjustified contractor margin expansion.
 
 ---

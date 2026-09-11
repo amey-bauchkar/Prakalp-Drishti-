@@ -371,10 +371,16 @@ class CopilotQuestion(BaseModel):
     # Caller-supplied and therefore ATTACKER-CONTROLLED: sanitised on the way in,
     # and its numbers are explicitly excluded from the admissible fact set.
     history: List[Dict[str, str]] = Field(default_factory=list)
+    prior_turns: Optional[List[Dict[str, str]]] = None
 
 
+@router.post("/copilot/{project_id}/ask")
 @router.post("/ask")
-def ask_copilot(q: CopilotQuestion):
+def ask_copilot(q: CopilotQuestion, project_id: Optional[str] = None):
+    if project_id:
+        q.project_id = project_id
+    if q.prior_turns and not q.history:
+        q.history = q.prior_turns
     """Outcome (h): dual-mode grounded Q&A with multi-turn memory.
 
     The question is routed to one of three modes, each with a different safety

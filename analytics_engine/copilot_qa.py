@@ -39,6 +39,7 @@ _INTENTS = [
     ("evidence",  r"(proof|evidence|audit trail|verif\w*|lineage|merkle|provenance|trust\w*|"
                   r"how do (i|we|you) know|is (this|that) (true|reliable|accurate)|says who)"),
     ("contagion", r"(depend\w*|connect\w*|cascad\w*|contagion|downstream|upstream|ripple|network)"),
+    ("monsoon",   r"(monsoon|rain\w*|weather|flood\w*|varsha|precipitation|working[- ]window)"),
     ("risk",      r"(risk\w*|danger\w*|concern\w*|likelihood|how safe|red flag|troubl\w*)"),
     ("schedule",  r"\b(when|finish|complete|deadline|date|delay|late|slip|schedule|timeline|overdue)\b"),
     ("cost",      r"\b(cost|overrun|budget|capex|escalat|crore|expensive|money)\b"),
@@ -549,6 +550,28 @@ def answer_question(question: str, project_id: str = "400188") -> Dict:
                 f". Combined capex at stake ₹{q['capex_at_risk_cr']:,.0f} Cr.")
         except Exception:
             answer = "The early-warning queue is currently unavailable."
+
+    elif intent == "monsoon":
+        cite(f"fact_cost_{pid}")
+        try:
+            from modules.janhavi.service import STATE_GEO_PROFILES
+            prof = STATE_GEO_PROFILES.get(fc.state, {})
+            base_lost = prof.get("base_lost_days", 45)
+            elasticity = prof.get("elasticity", 1.15)
+            terrain = prof.get("terrain", "Regional terrain")
+            tier = prof.get("risk_tier", "MODERATE_SEASONAL").replace("_", " ")
+            answer = (
+                f"Project #{pid} is in {fc.state} ({terrain}; {tier} zone). Historical IMD analysis "
+                f"models an average loss of {base_lost} working days per monsoon season, with an excess-rainfall "
+                f"elasticity of {elasticity:.2f}x. Mitigation protocol: advance critical civil earthwork, subgrade "
+                f"compaction, and deep foundation pours before the high-precipitation months (June–September)."
+            )
+        except Exception:
+            answer = (
+                f"Project #{pid} is in {fc.state}. Seasonal monsoon weather contracts the effective "
+                f"annual construction window. Foundation works and bridge piers should be prioritised "
+                f"outside peak rainfall periods."
+            )
 
     elif intent == "agency":
         cite(f"fact_cost_{pid}")

@@ -6,10 +6,10 @@
   <title>PRAKALP-DRISHTI — Complete Mathematical Formulations Compendium</title>
   <meta name="description" content="Comprehensive mathematical and algorithmic reference compendium for all decision engines in PRAKALP-DRISHTI, MoSPI Central Sector Mega-Projects Decision Intelligence.">
 
-  <!-- KaTeX for pristine LaTeX mathematical rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <!-- KaTeX for pristine LaTeX mathematical rendering (Offline local first with CDN fallback) -->
+  <link rel="stylesheet" href="./vendor/katex/katex.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css'">
+  <script defer src="./vendor/katex/katex.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js'"></script>
+  <script defer src="./vendor/katex/contrib/auto-render.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js'"></script>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -541,7 +541,7 @@
 
       <div style="margin-top: 1.5rem; padding: 0.85rem; background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0; font-size: 0.72rem; color: #64748B;">
         <strong style="color: #0F172A; display: block; margin-bottom: 0.25rem;">PRECISION VERIFIED:</strong>
-        All 41 formulation statements independently recomputed down to $10^{-9}$ in <code>tests/test_engine_precision.py</code>.
+        Every numeric figure on this page is read from <code>artifacts/</code> or the engine source. The formulations marked <em>Verified</em> are recomputed independently in <code>tests/test_engine_precision.py</code> (67 checks) and <code>tests/test_math_audit.py</code> (52 checks); those not so marked are stated, not re-derived.
       </div>
     </nav>
 
@@ -581,7 +581,7 @@
               <tbody>
                 <tr><td><span class="var-sym">t</span></td><td>Elapsed project duration since formal sanction</td><td>Months ($t > 0$)</td><td>Empirical (12 to 180 mo)</td></tr>
                 <tr><td><span class="var-sym">b = \exp(\mu)</span></td><td>Scale parameter (AFT median project duration)</td><td>Months ($b > 0$)</td><td>Function of covariates</td></tr>
-                <tr><td><span class="var-sym">a = 1/\sigma</span></td><td>Shape parameter governing non-monotonic hazard</td><td>Dimensionless ($a > 0$)</td><td>$\sigma = 0.5312$ ($a \approx 1.88$)</td></tr>
+                <tr><td><span class="var-sym">a = 1/\sigma</span></td><td>Shape parameter governing non-monotonic hazard</td><td>Dimensionless ($a > 0$)</td><td>$\sigma = 0.3488$ ($a = 1/\sigma \approx 2.87$), from <code>aft_survival.json</code></td></tr>
                 <tr><td><span class="var-sym">z</span></td><td>Standardized log-logistic covariate score</td><td>Dimensionless ($-\infty, \infty$)</td><td>$(\ln t - \mu)/\sigma$</td></tr>
               </tbody>
             </table>
@@ -598,27 +598,27 @@
                 <span class="formula-number">EQ 1.2</span>
                 <span>AFT Penalized Log-Likelihood with Right-Censoring</span>
               </div>
-              <button class="copy-latex-btn" onclick="copyLatex(this, '\\mathcal{L}_{\\text{pen}}(\\boldsymbol{\\theta}) = -\\sum_{i=1}^N \\left[ e_i \\left(-\\ln \\sigma - \\ln t_i + z_i - 2\\ln(1+e^{z_i})\\right) + (1-e_i)\\left(-\\ln(1+e^{z_i})\\right) \\right] + \\frac{\\tau}{2} \\sum_{j} \\beta_j^2')">Copy LaTeX</button>
+              <button class="copy-latex-btn" onclick="copyLatex(this, '\\mathcal{L}_{\\text{pen}}(\\boldsymbol{\\theta}) = -\\sum_{i=1}^N \\left[ e_i \\left(-\\ln \\sigma - \\ln t_i + z_i - 2\\ln(1+e^{z_i})\\right) + (1-e_i)\\left(-\\ln(1+e^{z_i})\\right) \\right] + \\frac{1}{2\\tau^2} \\sum_{g \\in \\text{sector} \\cup \\text{entity}} \\beta_g^2')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$\mathcal{L}_{\text{pen}}(\boldsymbol{\theta}) = -\sum_{i=1}^N \left[ e_i \ln f(t_i \mid \mathbf{x}_i) + (1 - e_i) \ln S(t_i \mid \mathbf{x}_i) \right] + \frac{\tau}{2} \sum_{j=1}^P \beta_j^2$$
+              $$\mathcal{L}_{\text{pen}}(\boldsymbol{\theta}) = -\sum_{i=1}^N \left[ e_i \ln f(t_i \mid \mathbf{x}_i) + (1 - e_i) \ln S(t_i \mid \mathbf{x}_i) \right] + \frac{1}{2\tau^2} \sum_{g \in \text{sector} \cup \text{entity}} \beta_g^2$$
             </div>
             <p class="formula-desc">
-              Objective minimized via L-BFGS-B to train the AFT coefficients across $N = 2,207$ projects. Uncompleted projects ($e_i = 0$) contribute their survival probability $\ln S(t_i)$, while completed projects ($e_i = 1$) contribute their exact density $\ln f(t_i)$. $\tau$ is the cross-validated $L_2$ regularization penalty.
+              Objective minimized via L-BFGS-B over $N = 2,103$ projects ($ 115$ observed completions, $1,988$ right-censored; $45$ rows whose completion proxy lies after the as-of date are excluded as not yet observed). Ongoing projects ($e_i = 0$) contribute $\ln S(t_i)$; completed projects ($e_i = 1$) contribute $\ln f(t_i)$. The penalty is a Normal$(0, \tau^2)$ prior on the sector and entity effects only, with $\tau$ chosen by 5-fold cross-validated held-out log-likelihood. The completion proxy is the final revised target date: MoSPI records no actual completion date, and the register sheds completed projects, so the baseline multiplier is an upper-ish bound (see <code>survivorship</code> in the artefact).
             </p>
             <table class="variables-table">
               <thead><tr><th>Parameter</th><th>Role</th><th>Value / Bounds</th><th>Optimum in Code</th></tr></thead>
               <tbody>
-                <tr><td><span class="var-sym">\beta_0</span></td><td>Global intercept baseline</td><td>$\mathbb{R}$</td><td>$3.4124$ ($\exp(\beta_0) = 30.34\text{ mo}$)</td></tr>
-                <tr><td><span class="var-sym">\beta_1</span></td><td>Cost elasticity $\log_{10}(\text{Sanctioned Capex})$</td><td>$\mathbb{R}$</td><td>$+0.1685$</td></tr>
-                <tr><td><span class="var-sym">\beta_2</span></td><td>Commissioning date reset coefficient</td><td>$\mathbb{R}$</td><td>$+0.1142\text{ per reset}$</td></tr>
-                <tr><td><span class="var-sym">\gamma_s, \delta_e</span></td><td>Sector and Agency fixed effects</td><td>$\mathbb{R}$</td><td>Sum-to-zero constrained</td></tr>
-                <tr><td><span class="var-sym">\tau</span></td><td>$L_2$ shrinkage parameter</td><td>$\tau \ge 0$</td><td>$\tau^* = 0.05$ (minimizes held-out CV NLL)</td></tr>
+                <tr><td><span class="var-sym">\beta_0</span></td><td>Global intercept baseline</td><td>$\mathbb{R}$</td><td>$1.1971$ ($\exp(\beta_0) = 3.31\times$ planned duration)</td></tr>
+                <tr><td><span class="var-sym">\beta_1</span></td><td>Cost elasticity $\log_{10}(\text{Sanctioned Capex})$</td><td>$\mathbb{R}$</td><td>$+0.1204$ per $\log_{10}(\text{cost}/100)$ (SE 0.1134)</td></tr>
+                <tr><td><span class="var-sym">\beta_2</span></td><td>Commissioning date reset coefficient</td><td>$\mathbb{R}$</td><td>$+0.5174$ per reset tier (SE 0.1363); enters as $\exp(\beta_2 \cdot \text{resets})$</td></tr>
+                <tr><td><span class="var-sym">\gamma_s, \delta_e</span></td><td>Sector and Agency fixed effects</td><td>$\mathbb{R}$</td><td>Shrunk under Normal$(0, \tau^2)$; 18 of 19 sectors tagged prior-dominated</td></tr>
+                <tr><td><span class="var-sym">\tau</span></td><td>$L_2$ shrinkage parameter</td><td>$\tau \ge 0$</td><td>$\tau^* = 0.15$ (minimizes held-out CV NLL; profile in artefact)</td></tr>
               </tbody>
             </table>
             <div class="verification-box">
               <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-              <span>Verified: NLL recomputes to 804.6108 vs 804.6103 in artefact. L-BFGS restart yields 0.0000 nats improvement (stationary point).</span>
+              <span>Verified: independent censored log-logistic NLL at these coefficients recomputes to 804.6108 vs 804.6103 in the artefact; an L-BFGS restart from them improves the penalised objective by 0.0000 nats (stationary point); every multiplier equals $\exp(\text{coefficient})$.</span>
             </div>
           </div>
 
@@ -635,20 +635,20 @@
               $$\hat{Q}_\alpha(x) = \max \left( \text{cummax}\left( \hat{T}_{\text{raw}} \cdot \exp(q_\alpha) \right), \; t_{\text{curr}} + c_\alpha \cdot \max\left( \frac{100 - \text{prog}}{100}, 0.15 \right) \right)$$
             </div>
             <p class="formula-desc">
-              Conformal quantile prediction fan across $\alpha \in \{0.10, 0.50, 0.80, 0.95\}$ months. The raw median duration is multiplied by the empirical calibration log-ratio quantiles $\exp(q_\alpha)$, enforced to be strictly monotonic via cumulative maximum, and floored so the forecast cannot pre-date current calendar progress.
+              Split-conformal calibration of the engine's own raw median: $q_\alpha$ is the finite-sample quantile (rank $\lceil (n+1)\alpha \rceil$) of the residual $r = \ln(\text{official target} / \hat{T}_{\text{raw}})$ over $596$ forward-looking calibration projects. All four multipliers are below 1: the raw AFT / earned-value median runs late against official targets, and the calibration pulls it in. The fan is rearranged to be monotone and floored so no quantile pre-dates time already elapsed. Overdue projects ($616$) are excluded from calibration because an overdue official target is censored, not observed, information.
             </p>
             <table class="variables-table">
               <thead><tr><th>Quantile $\alpha$</th><th>Log-Ratio $q_\alpha$</th><th>Multiplier $\exp(q_\alpha)$</th><th>Floor Coefficient $c_\alpha$</th></tr></thead>
               <tbody>
-                <tr><td>P10 (Optimistic)</td><td>$-0.2614$</td><td>$0.7700$</td><td>$+0.5\text{ mo}$</td></tr>
-                <tr><td>P50 (Median)</td><td>$+0.0000$</td><td>$1.0000$</td><td>$+1.0\text{ mo}$</td></tr>
-                <tr><td>P80 (Planning Cap)</td><td>$+0.3365$</td><td>$1.4000$</td><td>$+2.0\text{ mo}$</td></tr>
-                <tr><td>P95 (Tail Exposure)</td><td>$+0.6931$</td><td>$2.0000$</td><td>$+4.0\text{ mo}$</td></tr>
+                <tr><td>P10 (Optimistic)</td><td>$-1.4417$</td><td>$0.2365$</td><td>$+0.5\text{ mo}$</td></tr>
+                <tr><td>P50 (Median)</td><td>$-0.7768$</td><td>$0.4599$</td><td>$+1.0\text{ mo}$</td></tr>
+                <tr><td>P80 (Planning Cap)</td><td>$-0.1793$</td><td>$0.8358$</td><td>$+2.0\text{ mo}$</td></tr>
+                <tr><td>P95 (Tail Exposure)</td><td>$-0.0246$</td><td>$0.9757$</td><td>$+4.0\text{ mo}$</td></tr>
               </tbody>
             </table>
             <div class="verification-box">
               <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-              <span>Verified: 0 monotonicity violations ($P10 \le P50 \le P80 \le P95$) across all sampled projects. Empirical coverage = 79.03%.</span>
+              <span>Verified: quantiles reproduce bit-for-bit from seed 42; 0 monotonicity violations on sampled forecasts; the displayed 10–95% band covers $79.03\%$ of $596$ held-out projects at a nominal 85% ($50.8\%$ uncalibrated), measured end to end on <code>forecast_project()</code>. Under nominal; stated as such.</span>
             </div>
           </div>
 
@@ -704,10 +704,10 @@
               $$ES_j = \begin{cases} 0 & \text{if } \text{Pred}(j) = \emptyset \\ \max_{i \in \text{Pred}(j)} (EF_i + \text{lead}_{ij}) & \text{otherwise} \end{cases}, \qquad EF_j = ES_j + \max(D_j, 6.0)$$
             </div>
             <div class="math-display">
-              $$LF_i = \begin{cases} \max_{n \in G} EF_n & \text{if } \text{Succ}(i) = \emptyset \\ \min_{j \in \text{Succ}(i)} (LS_j - \text{lead}_{ij}) & \text{otherwise} \end{cases}, \qquad LS_i = LF_i - D_i$$
+              $$LF_i = \begin{cases} \max_{n \in \text{comp}(i)} EF_n & \text{if } \text{Succ}(i) = \emptyset \\ \min_{j \in \text{Succ}(i)} (LS_j - \text{lead}_{ij}) & \text{otherwise} \end{cases}, \qquad LS_i = LF_i - \max(D_i, 6.0)$$
             </div>
             <p class="formula-desc">
-              Determines the earliest and latest possible start and completion boundaries across the infrastructure directed acyclic graph (DAG). Node durations $D_j$ represent physical delay months with a statutory minimum duration floor of 6.0 months.
+              Determines the earliest and latest possible start and completion boundaries across the infrastructure directed acyclic graph (DAG). Node durations $D_j$ are observed delay months with an engine floor of 6.0 months (a modelling floor, not a statutory one). The late finish of a sink is the finish of its own weakly-connected component, so an isolated project is never measured against an unrelated corridor's horizon. Verified: ES/EF reproduced on every node.
             </p>
           </div>
 
@@ -748,11 +748,11 @@
               $$\phi_i(v) = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!(|N| - |S| - 1)!}{|N|!} [v(S \cup \{i\}) - v(S)], \qquad \sum_{i \in N} \phi_i(v) = \sum_{i \in N} C_{\text{locked}}(i)$$
             </div>
             <p class="formula-desc">
-              $C_{\text{locked}}(i)$ quantifies idle capital tied up by delays (indexed against a 48-month statutory benchmark). The Shapley value $\phi_i(v)$ solves the cooperative contagion game: it calculates each bottleneck node's marginal causal contribution to total downstream locked capital across all possible coalition permutations, satisfying the Pareto Efficiency axiom.
+              $C_{\text{locked}}(i)$ is a policy normalisation, not a model output: sanctioned capital counts as fully locked at 48 months of delay and linearly below. The Shapley value is taken over the reachability game $v(S) = \sum \text{cost}$ over $\bigcup_{i \in S}(\{i\} \cup \text{desc}(i))$, estimated by permutation Monte Carlo ($M = 300$, seeded). Because $\text{reach}(i)$ includes $i$, a sink is worth $\text{cost}/(1 + \#\text{ancestors})$ and an isolated project exactly its own cost. The final rescaling to locked-capital units is a unit conversion; efficiency itself holds because per-permutation marginals telescope to $v(N)$.
             </p>
             <div class="verification-box">
               <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-              <span>Verified: $\sum \phi_i$ equals total locked capital (Efficiency Axiom satisfied; maximum divergence $< 0.1\%$).</span>
+              <span>Verified: on a 6-node DAG the estimator matches exact enumeration within 0.006 of share and reproduces the sink closed form; the persisted <code>shapley.parquet</code> equals a fresh seeded compute (max diff 0.0); $\sum \phi_i$ equals total locked capital within 0.1%. Edges are inferred (275 sector supply-chain + 1,070 geo-adjacency $\le$ 50 km), each carrying its basis; 1,050 of 2,207 projects are isolated.</span>
             </div>
           </div>
 
@@ -779,10 +779,10 @@
                 <span class="formula-number">EQ 3.1</span>
                 <span>Portfolio Completion Optimization Linear Program</span>
               </div>
-              <button class="copy-latex-btn" onclick="copyLatex(this, '\\max_{\\mathbf{x}} \\sum_{i=1}^N \\text{Return}_i \\cdot x_i \\quad \\text{s.t.} \\quad \\sum_{i=1}^N x_i \\le B, \\; \\sum_{i \\in \\text{NER}} x_i \\ge 0.10 \\cdot B, \\; 0 \\le x_i \\le \\text{Req}_i')">Copy LaTeX</button>
+              <button class="copy-latex-btn" onclick="copyLatex(this, '\\min_{x, \\eta, \\zeta} -(1-\\kappa) \\sum_{i,t} \\bar{r}_{it} x_{it} + \\kappa \\left[ \\eta + \\frac{1}{1-\\alpha} \\sum_s p_s \\zeta_s \\right] \\quad \\text{s.t.} \\; \\zeta_s \\ge -\\sum_{i,t} r_{sit} x_{it} - \\eta, \\; \\sum x_{it} \\le B, \\; \\sum_{\\text{NER}} x \\ge 0.10 \\sum x, \\; 0 \\le x_{it} \\le u_{it}')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$\max_{\mathbf{x} \in \mathbb{R}^N} \sum_{i=1}^N \left( \text{PriorityIndex}_i - \kappa \cdot \text{RiskFactor}_i \right) \cdot x_i$$
+              $$\min_{\mathbf{x}, \eta, \boldsymbol{\zeta}} \; -(1-\kappa) \sum_{i=1}^N \sum_{t=1}^3 \bar{r}_{it} \, x_{it} \;+\; \kappa \left[ \eta + \frac{1}{1-\alpha} \sum_{s=1}^3 p_s \zeta_s \right], \qquad \zeta_s \ge -\sum_{i,t} r_{sit} x_{it} - \eta, \; \zeta_s \ge 0, \; \eta \text{ free}$$
             </div>
             <div class="math-display">
               $$\text{subject to} \quad \sum_{i=1}^N x_i \le B \quad [\text{Dual: } \pi_B \ge 0]$$
@@ -791,10 +791,10 @@
               $$\sum_{i \in \text{NER}} x_i \ge 0.10 \times \sum_{i=1}^N x_i \quad [\text{Dual: } \pi_{\text{NER}} \ge 0]$$
             </div>
             <div class="math-display">
-              $$0 \le x_i \le \text{RequestedCapex}_i \quad \forall i \in \{1, \dots, N\}$$
+              $$0 \le x_{it} \le u_{it} = \text{demand}_i \cdot f_t, \quad f = (0.40, 0.35, 0.25), \qquad \frac{x_{i,t+1}}{u_{i,t+1}} \le \frac{x_{it}}{u_{it}} \quad (\text{tranche fill order})$$
             </div>
             <p class="formula-desc">
-              Solves the optimal quarterly capex disbursement vector $\mathbf{x}$. $\kappa \in [0, 1]$ is the minister's risk-aversion dial. $B$ is the central fiscal allocation pool. The statutory North-Eastern Region (NER) 10% floor enforces that at least 10% of total outlay flows to the eight North-Eastern states.
+              A convex mean–CVaR trade-off, both terms in the same yield-weighted-Cr units: $\kappa = 0$ maximises expected scenario yield, $\kappa = 1$ maximises the 90% tail-average yield. $r_{sit} = \theta_{si} \cdot \text{yield}_i \cdot m_t$ with $\theta_{si} = \text{clip}(1 - \text{severity}_s \cdot \text{risk}_i, 0.05, 1.10)$, $\bar{r}_{it} = \sum_s p_s r_{sit}$, $\alpha = 0.90$. Scenarios $p = (0.50, 0.35, 0.15)$, severities $(-0.05, 0.15, 0.45)$ are <strong>declared policy</strong>, not estimated (no realised-yield history exists), and are returned on every result under <code>cvar_diagnostics</code>. Every variable is continuous (HiGHS via <code>milp</code> with <code>integrality = 0</code>), so this is an LP with valid duals; $B$ is the pool; the NER floor is the statutory 10%. Verified: budget, tranche bounds and NER floor hold at every (B, κ) tested; complementary slackness $\max|\text{slack} \cdot \text{dual}| = 5.7 \times 10^{-14}$.
             </p>
           </div>
 
@@ -811,11 +811,11 @@
               $$\pi(B) = \frac{\partial V^*(B)}{\partial B} \ge 0, \qquad \pi(B_1) \ge \pi(B_2) \ge \pi(B_3) \quad \text{for } B_1 < B_2 < B_3$$
             </div>
             <p class="formula-desc">
-              The shadow price $\pi(B)$ quantifies the marginal increase in national portfolio completion propensity achievable by increasing the budget pool by ₹1 Crore. By convex duality, $V^*(B)$ is concave, proving diminishing marginal returns to scale.
+              The shadow price $\pi(B)$ is the LP dual of the budget row: the marginal objective value (yield-weighted Cr) of one more ₹1 Cr in the pool. The LP value function is concave in $B$, so $\pi$ is non-increasing. The figures below are the duals HiGHS returned at $\kappa = 0.5$; none is synthesised, and if the solve fails no dual is reported.
             </p>
             <div class="case-box">
               <strong>Measured Shadow Prices on Live Central Pool:</strong>
-              $B = \text{₹3,000 Cr} \implies \pi = 2.55$; $B = \text{₹8,000 Cr} \implies \pi = 1.48$; $B = \text{₹15,000 Cr} \implies \pi = 1.02$; $B = \text{₹25,000 Cr} \implies \pi = 0.65$. Monotone non-increasing holds bit-for-bit.
+              $B = \text{₹3,000 Cr} \implies \pi = 2.55$; $B = \text{₹8,000 Cr} \implies \pi = 1.48$; $B = \text{₹15,000 Cr} \implies \pi = 1.02$; $B = \text{₹25,000 Cr} \implies \pi = 0.65$. Monotone non-increasing holds on these four solves.
             </div>
           </div>
 
@@ -832,7 +832,7 @@
               $$\text{CVaR}_{90}(\mathbf{x}) = \mathbb{E}[R(\mathbf{x})] - \text{TailAverageReturn}_{10\%}(\mathbf{x}) = \sum_{s} p_s R_s(\mathbf{x}) - \frac{\sum_{s \in \text{Tail}} p_s R_s(\mathbf{x})}{\sum_{s \in \text{Tail}} p_s}$$
             </div>
             <p class="formula-desc">
-              Measures the capital at risk in the worst 10% of adverse macroeconomic and monsoon scenarios. Computed via Rockafellar-Uryasev auxiliary variables inside the LP formulation.
+              Reported tail loss = expected scenario return minus the 90% tail-average return of the solved allocation, on a κ-invariant yardstick (κ = 0 tranche multipliers) so two calls with different κ are comparable. With $p_{\text{severe}} = 0.15 > 1 - \alpha = 0.10$ the tail lies inside the severe-slippage scenario, so $\text{CVaR}_{0.90}$ equals that scenario's outcome and $\zeta = 0$ at the optimum — the correct Rockafellar–Uryasev solution for a three-point distribution. The three scenarios are delivery-slippage states, not macroeconomic or monsoon scenarios. Verified: the auxiliary variables reproduce the tail computed directly from scenario returns on every call; tail loss falls monotonically as κ rises.
             </p>
           </div>
 
@@ -868,10 +868,10 @@
               $$\text{Ratio} = \frac{n_{[18\%, 20\%)}}{n_{[20\%, 22\%)}}, \qquad \text{CI}_{95\%} = \text{Ratio} \cdot \exp\left( \pm 1.96 \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \right)$$
             </div>
             <p class="formula-desc">
-              Identifies projects whose revised cost intentionally bunches just below the Cabinet Committee on Economic Affairs (CCEA) 20% mandatory re-approval threshold. The two-bin ratio $n_1/n_2$ compares projects in the $[18\%, 20\%)$ proximity zone against the $[20\%, 22\%)$ zone with a log-Poisson 95% confidence interval.
+              Counts revisions that land just below the Cabinet Committee on Economic Affairs (CCEA) 20% re-approval threshold. It is a descriptive count and says nothing about intent. The two-bin ratio $n_1/n_2$ compares projects in the $[18\%, 20\%)$ proximity zone against the $[20\%, 22\%)$ zone with a log-Poisson 95% confidence interval.
             </p>
             <div class="case-box">
-              <strong>Corpus Recomputation:</strong> $n_1 = 28$ projects, $n_2 = 17$ projects. Ratio $= 1.65$. Recomputed 95% CI: $[0.90, 3.01]$. Matches database records.
+              <strong>Corpus Recomputation:</strong> $n_1 = 28$ projects, $n_2 = 17$ projects. Ratio $= 1.65$. Recomputed 95% CI: $[0.90, 3.01]$. Matches the engine. The interval spans 1.0 and the ratio moves with the bin width (1.22× at 1 pt, 1.65× at 2 pt, 1.49× at 5 pt): descriptive only.
             </div>
           </div>
 
@@ -891,11 +891,11 @@
               $$\text{SE}(\hat{\theta}) = \sqrt{\frac{1}{N h} \cdot \frac{24}{5} \cdot \left( \frac{1}{\hat{f}^+} + \frac{1}{\hat{f}^-} \right)}, \qquad z = \frac{\hat{\theta}}{\text{SE}(\hat{\theta})}, \qquad p = 2(1 - \Phi(|z|))$$
             </div>
             <p class="formula-desc">
-              Formal econometric test for strategic manipulation of reported cost overruns around $c = 20.00\%$. Uses cutoff-aligned triangular kernel weighted least squares (WLS) on both sides of the boundary with bandwidth $h$.
+              McCrary (2008) density-discontinuity test at $c = 20\%$: cutoff-aligned histogram (bin width $b = 2\hat{\sigma} N^{-1/2}$), triangular-kernel local-linear density on each side, plug-in bandwidth capped at one standard deviation (the uncapped plug-in rejects a smooth null 96% of the time; capped, empirical size is 7% at nominal 5% and power 99% against +5% planted mass — simulated in <code>tests/test_math_audit.py</code>). A significant $\theta < 0$ would show the threshold shapes where revisions land; it would not show intent.
             </p>
             <div class="verification-box">
               <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-              <span>Verified: $\hat{\theta} = 0.0757$, $\text{SE} = 0.2098$, $z = 0.361$, $p = 0.718$ reproduced bit-for-bit from weighted least squares.</span>
+              <span>Live corpus, $N = 1,138$, $h = 34.8$: $\hat{\theta} = +0.0757$, $\text{SE} = 0.1838$, $z = 0.412$, $p = 0.6806$ two-sided, $p = 0.6597$ one-sided for bunching below — <strong>no density discontinuity at 20%</strong>. Verified: $\hat{\theta}$, SE, $z$ and $p$ recomputed with an independent weighted least-squares fit.</span>
             </div>
           </div>
 
@@ -929,13 +929,13 @@
                 <span class="formula-number">EQ 4.4</span>
                 <span>60/40 Administrative Review Priority Triage Score</span>
               </div>
-              <button class="copy-latex-btn" onclick="copyLatex(this, 'S_{\\text{priority}} = \\text{round}\\left( 60 \\cdot \\left(1 - \\frac{d_{\\text{CCEA}}}{2.0}\\right) + 40 \\cdot \\min\\left(1.0, \\; \\frac{E_{\\text{excess}}}{0.20 \\cdot C_0}\\right), \\; 0 \\right)')">Copy LaTeX</button>
+              <button class="copy-latex-btn" onclick="copyLatex(this, 'S_{\\text{priority}} = \\text{round}\\left( 60 \\cdot \\left(1 - \\frac{d_{\\text{CCEA}}}{2.0}\\right) + 40 \\cdot \\min\\left(1.0, \\; \\frac{E_{\\text{excess}}}{0.15 \\cdot C_0}\\right), \\; 0 \\right)')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$S_{\text{priority}} = \text{round}\left( 60 \times \left(1 - \frac{d_{\text{CCEA}}}{2.0}\right) + 40 \times \min\left(1.0, \; \frac{E_{\text{excess}}}{0.20 \times C_0}\right), \; 0 \right) \in [0, 100]$$
+              $$S_{\text{priority}} = \text{round}\left( 60 \times \left(1 - \frac{d_{\text{CCEA}}}{2.0}\right) + 40 \times \min\left(1.0, \; \frac{E_{\text{excess}}}{0.15 \times C_0}\right), \; 0 \right) \in [0, 100]$$
             </div>
             <p class="formula-desc">
-              Objective triage order ranking projects for CCEA and CAG forensic audit review. 60 points max assigned for proximity to the 20% boundary ($d_{\text{CCEA}} \le 2.0\text{ pp}$), and 40 points max assigned for cost increases exceeding justified Clause 10CC inflation.
+              A review-priority order for the [18%, 20%) band: up to 60 points for proximity to the threshold and up to 40 for revised cost above the Clause 10CC cap, saturating at 15% of original cost. The 60/40 split is a declared policy weight; nothing is fitted. It orders which files are opened first — it is not a probability and not a finding, and intent is never inferred.
             </p>
           </div>
 
@@ -967,7 +967,7 @@
               $$A_{\text{rain}} = \frac{R_{\text{observed}} - R_{\text{normal}}}{R_{\text{normal}}}, \qquad D_{\text{lost}} = \max\left( 5.0, \; D_{\text{base}} \times (1.0 + A_{\text{rain}} \cdot \eta_{\text{elasticity}}) \right)$$
             </div>
             <p class="formula-desc">
-              $A_{\text{rain}}$ is the monsoon rainfall deviation from long-period average (LPA). $D_{\text{base}}$ is the state's historical unworkable rain days during southwest/northeast monsoon. $\eta_{\text{elasticity}}$ is the state-specific sensitivity coefficient calibrated from IMD state-year matrices (2005–2025).
+              $A_{\text{rain}}$ is the monsoon rainfall deviation from long-period average (LPA). $D_{\text{base}}$ is the state's historical unworkable rain days during southwest/northeast monsoon. $\eta_{\text{elasticity}}$ and $D_{\text{base}}$ are <strong>declared expert parameters</strong> per State/UT (climatic zone and terrain), not coefficients fitted to a downtime series — no per-state construction-downtime record exists to fit against. The IMD 2005–2025 departure matrix (756 state-years) supplies the anomaly history they are applied to.
             </p>
           </div>
 
@@ -1004,7 +1004,7 @@
         <div class="engine-header">
           <div>
             <h2><span>6. KARYA-DAKSHATA</span> <span class="engine-tag">Execution Velocity Simulator</span></h2>
-            <p>Capital expenditure absorption rates, contractor burnout stress ratios, and realistic execution velocity bounds.</p>
+            <p>Re-pricing of a proposal at the executing agency's measured historical delivery multiple, with a declared-weight reliability score.</p>
           </div>
         </div>
 
@@ -1014,22 +1014,21 @@
             <div class="formula-top">
               <div class="formula-title">
                 <span class="formula-number">EQ 6.1</span>
-                <span>Historical Velocity, Required Velocity & Absorption Stress</span>
+                <span>Agency Delivery Multiple & Reliability Score</span>
               </div>
-              <button class="copy-latex-btn" onclick="copyLatex(this, 'v_{\\text{hist}} = \\frac{\\text{Exp}_{\\text{cum}}}{t_{\\text{elapsed}}}, \\quad v_{\\text{req}} = \\frac{C_{\\text{revised}} - \\text{Exp}_{\\text{cum}}}{t_{\\text{rem}}}, \\quad R_{\\text{stress}} = \\frac{v_{\\text{req}}}{v_{\\text{hist}}}')">Copy LaTeX</button>
+              <button class="copy-latex-btn" onclick="copyLatex(this, 'C_{\\text{exp}} = C_{\\text{base}} (1 + \\overline{\\text{overrun}}_a / 100), \\quad T_{\\text{exp}} = T_{\\text{base}} + 30.4375 \\, \\overline{\\text{delay}}_a, \\quad \\text{Reliability}_a = \\max(0, 100 - 0.6 \\, \\text{DelayRate}_a - 0.4 \\cdot \\min(\\overline{\\text{overrun}}_a, 200)/2)')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$v_{\text{hist}} = \frac{\text{Cumulative Expenditure (₹ Cr)}}{\text{Elapsed Months since Sanction}} \quad [\text{₹ Cr / month}]$$
+              $$C_{\text{expected}} = C_{\text{base}} \left( 1 + \frac{\overline{\text{overrun}}_a}{100} \right), \qquad T_{\text{expected}} = T_{\text{base}} + 30.4375 \cdot \overline{\text{delay}}_a \;[\text{days}]$$
             </div>
             <div class="math-display">
-              $$v_{\text{req}} = \frac{\text{Remaining Unspent Budget (₹ Cr)}}{\text{Remaining Target Months}} \quad [\text{₹ Cr / month}]$$
+              $$\text{Reliability}_a = \max\left( 0, \; 100 - \left[ 0.6 \cdot \text{DelayRate}_a + 0.4 \cdot \frac{\min(\overline{\text{overrun}}_a, 200)}{2} \right] \right) \in [0, 100]$$
             </div>
             <div class="math-display">
-              $$R_{\text{stress}} = \frac{v_{\text{req}}}{v_{\text{hist}}} \quad \begin{cases} < 1.0 & \text{Adequate / On Schedule} \\ 1.0 - 1.5 & \text{Moderate Velocity Strain} \\ > 1.5 & \text{High Risk / Physically Unviable} \end{cases}$$
+              $$\overline{\text{overrun}}_a, \; \overline{\text{delay}}_a, \; \text{DelayRate}_a \; = \; \text{agency } a\text{'s mean cost overrun (\%), mean slippage (months) and share of projects delayed, over its projects in the corpus}$$
             </div>
             <p class="formula-desc">
-              Compares the required financial burn rate against the executing agency's demonstrated peak absorption capacity. If $R_{\text{stress}} > 1.5$, achieving the target requires contractor machinery and labour deployment exceeding $150\%$ of historical maximum, signaling an unrealistic target date.
-            </p>
+              Arithmetic on the historical record, not a forecast of the specific proposal: the base cost and timeline are scaled by the agency's measured mean overrun and slippage across its projects in the corpus. The 60/40 split inside the reliability score is a declared presentation weight, not a fitted parameter, and is labelled so in the payload (<code>basis</code>).</p>
           </div>
 
         </div>
@@ -1057,16 +1056,16 @@
               <button class="copy-latex-btn" onclick="copyLatex(this, '\\text{RSI} = \\frac{\\text{Days Pending}}{\\text{Statutory SLA Benchmark Days}}')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$\text{RSI} = \frac{\text{Days Under Departmental Review}}{\text{Statutory SLA Benchmark Days}}$$
+              $$\text{RSI}_{\text{stage}} = \frac{\text{days pending}}{\text{benchmark days}}, \qquad \text{RSI} = \frac{\sum_{\text{stage}} w_{\text{stage}} \cdot \text{RSI}_{\text{stage}}}{\sum_{\text{stage}} w_{\text{stage}}}$$
             </div>
             <table class="variables-table">
-              <thead><tr><th>Clearance Stage</th><th>Governing Statutory Act</th><th>Benchmark SLA</th><th>Escalation Threshold</th></tr></thead>
+              <thead><tr><th>Clearance Stage (code)</th><th>Benchmark days (declared)</th><th>Weight $w$</th><th>Stagnation rule (as implemented)</th></tr></thead>
               <tbody>
-                <tr><td>Forest Clearance Stage-I</td><td>Van (Sanrakshan Evam Samvardhan) Adhiniyam</td><td>120 Days</td><td>$\text{RSI} > 1.0$ (PMO Alert)</td></tr>
-                <tr><td>Forest Clearance Stage-II</td><td>MoEFCC In-Principle Compliance</td><td>90 Days</td><td>$\text{RSI} > 1.0$ (State Chief Sec)</td></tr>
-                <tr><td>Environmental Clearance (EIA/EMP)</td><td>Environment Protection Act 1986</td><td>105 Days</td><td>$\text{RSI} > 1.2$ (EAC Query Loop)</td></tr>
-                <tr><td>Wildlife Clearance</td><td>Wildlife Protection Act 1972</td><td>180 Days</td><td>$\text{RSI} > 1.0$ (NBWL Standing Comm)</td></tr>
-                <tr><td>Land Acquisition (CALA)</td><td>RFCTLARR Act 2013 §19 Gazette</td><td>180 Days</td><td>$\text{RSI} > 1.5$ (Revenue Secretary)</td></tr>
+                <tr><td>Forest clearance</td><td>120</td><td>0.30</td><td rowspan="5">A stage is <em>stagnated</em> when $\text{RSI}_{\text{stage}} \ge 1.25$, or its status is QUERY_RAISED / LOOPBACK with days pending $> 0.75 \times$ benchmark. A <em>paperwork loopback</em> is flagged at $\ge 2$ loopbacks, or LOOPBACK status, or QUERY_RAISED past the benchmark. Benchmarks and weights are declared engine constants (<code>modules/aditya/modules/anumati.py</code>), not statutory SLAs, and are labelled so.</td></tr>
+                <tr><td>Land acquisition (RFCTLARR)</td><td>180</td><td>0.25</td></tr>
+                <tr><td>Environmental clearance</td><td>105</td><td>0.20</td></tr>
+                <tr><td>Wildlife clearance</td><td>90</td><td>0.15</td></tr>
+                <tr><td>Utility / right-of-way</td><td>60</td><td>0.10</td></tr>
               </tbody>
             </table>
           </div>
@@ -1075,16 +1074,15 @@
             <div class="formula-top">
               <div class="formula-title">
                 <span class="formula-number">EQ 7.2</span>
-                <span>Idle Capital Daily Delay Cost Overrun Burn</span>
+                <span>Overdue-Days Cost Impact (input-driven)</span>
               </div>
-              <button class="copy-latex-btn" onclick="copyLatex(this, '\\text{Burn}_{\\text{daily}} = \\frac{C_{\\text{revised}} \\cdot r_{\\text{WACC}}}{365} + \\text{EscalationRate}_{\\text{daily}} \\quad (\\text{₹ Cr / day})')">Copy LaTeX</button>
+              <button class="copy-latex-btn" onclick="copyLatex(this, '\\text{Impact}_{\\text{Cr}} = \\text{DailyOverrun}_{\\text{Cr/day}} \\times \\max(0, \\text{days pending} - \\text{benchmark})')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$\text{Burn}_{\text{daily}} = \frac{C_{\text{revised}} \times r_{\text{WACC}}}{365} + \text{EscalationRate}_{\text{daily}} \quad [\text{₹ Cr / day}]$$
+              $$\text{Impact}_{\text{Cr}} = \text{DailyOverrun}_{\text{Cr/day}} \times \max(0, \; \text{days pending} - \text{benchmark days})$$
             </div>
             <p class="formula-desc">
-              Quantifies public capital lost per day of regulatory hold-up, linking bureaucratic inactivity to cost overruns. $r_{\text{WACC}}$ represents the weighted average cost of government borrowing (assumed at 8.0% p.a. sovereign bond yield).
-            </p>
+              The daily overrun figure is an <strong>input supplied with the request</strong> (<code>estimated_daily_cost_overrun_cr</code>), not a rate the engine derives; the engine multiplies it by the days a stage is past its benchmark. No cost of capital or sovereign yield is assumed anywhere in this module.</p>
           </div>
 
         </div>
@@ -1155,7 +1153,7 @@
         <div class="engine-header">
           <div>
             <h2><span>9. UNIFIED RISK COCKPIT</span> <span class="engine-tag">Composite Risk Scoring</span></h2>
-            <p>Weighted multi-criteria risk synthesis and triage classification across all 2,207 Central Sector mega-projects.</p>
+            <p>Weighted mean over the components available for each project (a missing signal is renormalised out, never scored as zero), with declared policy weights — there is no ground-truth risk label to fit them against. Verified: score and band recomputed on all 2,207 projects; priority = score × log₁₀(1 + capex).</p>
           </div>
         </div>
 
@@ -1173,13 +1171,13 @@
               $$\text{RiskScore} = \frac{\sum_{k \in \mathcal{A}} w_k \cdot C_k}{\sum_{k \in \mathcal{A}} w_k} \in [0, 100]$$
             </div>
             <table class="variables-table">
-              <thead><tr><th>Component ($C_k$)</th><th>Description</th><th>Statutory Weight ($w_k$)</th></tr></thead>
+              <thead><tr><th>Component ($C_k$)</th><th>Definition (as implemented in <code>risk_index.py</code>)</th><th>Declared weight ($w_k$)</th></tr></thead>
               <tbody>
-                <tr><td>Delay Duration Risk</td><td>Normalized ratio of actual delay to baseline duration</td><td>$w_1 = 0.25$</td></tr>
-                <tr><td>Cost Overrun Risk</td><td>Percentage cost inflation above original sanctioned budget</td><td>$w_2 = 0.25$</td></tr>
-                <tr><td>Regulatory RSI</td><td>Clearances pending beyond statutory SLA benchmarks</td><td>$w_3 = 0.20$</td></tr>
-                <tr><td>Network Contagion</td><td>Downstream locked capital from Setu-Graph CPM float</td><td>$w_4 = 0.15$</td></tr>
-                <tr><td>Hydro-Meteorological</td><td>Monsoon working window loss and flood stretch factor</td><td>$w_5 = 0.15$</td></tr>
+                <tr><td>Schedule risk</td><td>$100 \cdot (1 - P(\text{official target met}))$ from KAAL-CHAKRA (EQ 1.4)</td><td>$w_1 = 0.30$</td></tr>
+                <tr><td>Cost-overrun risk</td><td>Model-predicted overrun % (sector median as explicit fallback), clipped to [0, 100]</td><td>$w_2 = 0.25$</td></tr>
+                <tr><td>Ground-truth (EO) risk</td><td>Catalogue status where the EO verdict is reliable: ACTIVITY_ANOMALY 90 · LOW_CHANGE_OBSERVED 55 · CHANGE_CONFIRMED 10; otherwise absent</td><td>$w_3 = 0.20$</td></tr>
+                <tr><td>Contagion risk</td><td>$100 \cdot C_{\text{locked}}(i) / P_{90}(C_{\text{locked}})$ — delay-locked own capital relative to the portfolio; <em>per node, does not traverse DAG edges</em></td><td>$w_4 = 0.15$</td></tr>
+                <tr><td>Governance risk</td><td>$60 \cdot \min(\text{resets}, 3)/3 + 0.4 \cdot \text{agency delay rate}$, clipped to [0, 100]</td><td>$w_5 = 0.10$</td></tr>
               </tbody>
             </table>
             <div class="case-box" style="margin-top: 0.5rem;">
@@ -1229,10 +1227,10 @@
               <button class="copy-latex-btn" onclick="copyLatex(this, 'r = \\frac{\\sum_{i=1}^n (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum_{i=1}^n (x_i - \\bar{x})^2 \\sum_{i=1}^n (y_i - \\bar{y})^2}}')">Copy LaTeX</button>
             </div>
             <div class="math-display">
-              $$r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2 \sum_{i=1}^n (y_i - \bar{y})^2}} = +0.0040 \quad (n = 852\text{ reliable pairs})$$
+              $$r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2 \sum_{i=1}^n (y_i - \bar{y})^2}} = +0.0040 \quad (n = 1,588\text{ site-level projects})$$
             </div>
             <p class="formula-desc">
-              Measures Pearson correlation between satellite-observed optical surface change $x_i$ and self-reported contractor physical progress $y_i$. The near-zero correlation ($r \approx 0.004$) demonstrates that satellite observation provides an orthogonal, independent audit verification channel that cannot be spoofed by self-reported PSU progress milestones.
+              Measures Pearson correlation between satellite-observed optical surface change $x_i$ and self-reported contractor physical progress $y_i$. The near-zero correlation ($r = +0.004$, $p = 0.87$; Spearman $\rho = +0.024$) is the reason no satellite-derived completion percentage is computed anywhere: imagery carries no information about the reported completion fraction, so the layer reports activity evidence, never a percentage. The figure is persisted with the catalogue's hash in <code>artifacts/eo_progress_independence.json</code> and recomputed by <code>eo_independence.py</code>.
             </p>
           </div>
 

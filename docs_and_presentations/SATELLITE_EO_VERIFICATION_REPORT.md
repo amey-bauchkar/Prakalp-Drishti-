@@ -1,3 +1,20 @@
+> ## ⛔ SUPERSEDED DOCUMENT — DO NOT QUOTE
+>
+> This report predates the claims ledger and describes capabilities the platform
+> **does not have and explicitly refuses** (see [CLAIMS.md](../CLAIMS.md) §3):
+>
+> * **No Sentinel-2 L2A, no Sentinel-1 SAR, no NDBI/NDVI.** The only imagery ingested is
+>   ESRI World Imagery / Wayback, RGB, at a measured 2.08–2.35 m/px. Those bands do not
+>   exist in this build, so no spectral index is computed.
+> * **No satellite-derived completion percentage** ("31.2% vs 74% claimed" and every
+>   "+N pts" figure below). Surface change and reported progress correlate at r = +0.004
+>   (n = 1,588; `artifacts/eo_progress_independence.json`), so the engine reports activity
+>   evidence only and never a percentage. The `VERIFIED_ON_TRACK` / disbursal verdicts here
+>   were derived from a circular estimate that was removed.
+>
+> Retained for the record of what was retracted. The live methodology is in
+> `analytics_engine/temporal_audit.py` and `analytics_engine/satellite_precision_engine.py`.
+
 # 🛰️ PRATIBIMB / SATYA: Earth-Observation Satellite Verification Report
 ### *Independent Multi-Sensor Orbital Audit of Infrastructure Capital Assets*
 **Ministry of Statistics & Programme Implementation (MoSPI) | SIH 2026 Problem Statement ID: SIH26103**
