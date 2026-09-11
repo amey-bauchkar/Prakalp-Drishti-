@@ -162,10 +162,20 @@ class PragatiSaarthiEngine:
             }
         ]
 
+        # Only the two constraint duals the LP actually produces are listed as
+        # shadow prices. The agency row previously carried a literal 1.42 under the
+        # label "shadow price"; no agency burn-rate constraint exists in the LP, so
+        # the row now reports the agency's derived marginal-yield indicator from the
+        # allocation result, tagged as such, or null when the agency is not in the pool.
+        _agency_ind = (alloc_res.agency_marginal_yield_indicator or {}).get(str(forecast.canonical_entity))
         binding_constraints = [
-            {"constraint": "Agency Burn Rate Ceiling", "agency": forecast.canonical_entity, "shadow_price": 1.42},
-            {"constraint": "North-Eastern Statutory Floor (10%)", "agency": "National", "shadow_price": alloc_res.shadow_price_ner_pi},
-            {"constraint": "Budget Capex Pool Scarcity", "agency": "MoF", "shadow_price": alloc_res.shadow_price_budget_pi}
+            {"constraint": "Agency Marginal-Yield Indicator (derived; not an LP dual)",
+             "agency": forecast.canonical_entity,
+             "shadow_price": _agency_ind,
+             "basis": "mean base yield of the agency's pooled projects x budget dual x 1.15, clipped to [0.35, 3.50]"
+                      if _agency_ind is not None else "agency not in this quarter's candidate pool"},
+            {"constraint": "North-Eastern Statutory Floor (10%)", "agency": "National", "shadow_price": alloc_res.shadow_price_ner_pi, "basis": "LP dual (HiGHS)"},
+            {"constraint": "Budget Capex Pool Scarcity", "agency": "MoF", "shadow_price": alloc_res.shadow_price_budget_pi, "basis": "LP dual (HiGHS)"}
         ]
 
         bilingual_sections = [

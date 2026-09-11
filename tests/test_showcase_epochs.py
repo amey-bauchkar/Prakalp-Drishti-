@@ -224,8 +224,9 @@ else:
     offenders = [b for b in BANNED if f'"{b}' in text or f"_{b}" in text]
     check("the artefact exports no progress or discrepancy figure",
           not offenders, str(offenders))
-    check("the artefact states the r=0.007 limitation",
-          "0.007" in payload.get("method", ""))
+    check("the artefact states the EO/progress independence limitation",
+          "correlate at r = " in payload.get("method", "") or "0.007" in payload.get("method", ""),
+          payload.get("method", "")[:120])
 
 
 # ---------------------------------------------------------------------------------

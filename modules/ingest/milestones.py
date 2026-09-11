@@ -8,8 +8,8 @@ PRAKALP-DRISHTI: MILESTONE & TEMPORAL AUDIT ROUTER (KAAL-DARPAN)
 WHAT THE TIMELINE RETURNS, AND WHAT IT REFUSES TO
 --------------------------------------------------
 Each milestone carries an EVIDENCE verdict, not a completion figure and not a fraud
-score. Surface change and reported progress correlate at r = 0.007 in this corpus, so
-no satellite-derived progress percentage is computed and no claimed-minus-detected
+score. Surface change and reported progress are uncorrelated in this corpus (measured
+in artifacts/eo_progress_independence.json), so no satellite-derived progress percentage is computed and no claimed-minus-detected
 discrepancy exists anywhere in this module.
 
 The one verdict that asks for action, NO_ACTIVITY_DETECTED, recommends a physical

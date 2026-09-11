@@ -1,49 +1,74 @@
 """
-PRAKALP-DRISHTI: CONFORMALISED QUANTILE CALIBRATION (KAAL-CHAKRA)
+PRAKALP-DRISHTI: SPLIT-CONFORMAL CALIBRATION OF THE KAAL-CHAKRA FAN
 
-Turns the "90% coverage guarantee" from an asserted number into a measured one.
+Turns the fan's coverage from a borrowed number into a measured one.
 
-The problem this replaces
+The defect this replaces
 ------------------------
-KAAL-CHAKRA advertised "Conformalized Quantile Regression (P10-P95)" with a "90%
-coverage guarantee", but the interval was produced by
-
-    cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) * rem_uncertainty_scale
-
--- four hand-chosen constants. There was no calibration set, no conformity score, and
-no measurement of whether the intervals actually covered anything. The guarantee was a
-label, not a property.
+The previous version fitted GradientBoosting quantile regressors for schedule SLIP
+(RevisedDate - OriginalEndDate), calibrated a conformity quantile Q for THAT model,
+measured 93.3% test coverage for THAT model's interval -- and KAAL-CHAKRA then
+discarded the regressors, added +/-Q to a log-logistic quantile of TOTAL DURATION
+around its own blended median, and reported the 93.3% on the result. On the same
+450 test projects the fan it actually displayed covered the observed target 19.8%
+of the time. A coverage guarantee is a property of one specific interval; it does
+not transfer to a different one.
 
 What is calibrated here
 -----------------------
-The target is SCHEDULE SLIPPAGE: how far a project's official completion date moves,
+The quantity KAAL-CHAKRA actually displays. Let
 
-    slip_months = RevisedDate - OriginalEndDate
+    m_i  = the engine's raw (uncalibrated) median total duration for project i,
+           in months from sanction   -- KaalChakraEngine.raw_median_months()
+    y_i  = the observed months from sanction to the OFFICIAL REVISED COMPLETION DATE
 
-This is a genuine observable, available for 1,800 projects in the MoSPI corpus. It is
-deliberately NOT "actual completion date", which the dataset does not contain for
-ongoing projects -- claiming to calibrate against real completions would repeat the
-overclaiming this module exists to remove. The honest statement is: given a project's
-sector, executing entity, cost, planned duration and reported progress, how much does
-its official target date slip, and with what interval?
+and the log-ratio residual
 
-Method: split-conformal CQR (Romano, Patterson & Candes, NeurIPS 2019)
----------------------------------------------------------------------
-  1. partition the labelled rows into train / calibration / test, disjointly;
-  2. fit quantile regressors at the low and high nominal levels on TRAIN;
-  3. on CALIBRATION compute the conformity score
-         E_i = max( q_lo(x_i) - y_i ,  y_i - q_hi(x_i) )
-     which is positive exactly when the nominal interval misses y_i;
-  4. take Q = the ceil((n+1)(1-alpha))/n empirical quantile of E;
-  5. the conformalised interval is [q_lo - Q, q_hi + Q].
+    r_i  = log(y_i / m_i).
 
-Step 4 is what buys the guarantee: for exchangeable data the resulting interval has
-finite-sample marginal coverage of at least 1-alpha, whatever the underlying model
-does. TEST is then used to report the coverage actually achieved -- a number the
-system can defend rather than assert.
+On a calibration split (disjoint from the split the coverage is later measured on)
+the finite-sample quantile of r is taken at each level the fan exposes:
 
-Run as a script to (re)fit; KAAL-CHAKRA consumes the saved artefact at runtime, so no
-model fitting happens on the request path.
+    q_alpha  =  r_(ceil((n+1) alpha))   for alpha in {0.10, 0.50, 0.80, 0.95}
+
+and the displayed fan is  P_alpha = m_i * exp(q_alpha).
+
+Why the log ratio: the AFT is a log-scale model, project durations span 3 to 300
+months, and a multiplicative correction is the one that is scale-free across that
+range. Why the 0.50 level is included: exp(q_0.50) is the engine's bias correction.
+If the raw median runs late -- and under the survivorship bias in aft_survival.py it
+does -- q_0.50 < 0 and the fan is pulled earlier. Nothing about that is hidden: the
+raw median is returned alongside the calibrated one.
+
+Guarantee and measurement
+-------------------------
+For exchangeable (project, residual) pairs, each P_alpha has finite-sample marginal
+coverage >= alpha (Vovk et al. 2005; Lei et al. 2018), and the band [P10, P95] has
+coverage >= 0.85 -- the difference of the two levels, since the band is two one-sided
+quantiles of the same residual. That is the nominal figure. The number the product
+reports is then MEASURED on the untouched test split.
+
+Which projects can calibrate a forecast
+---------------------------------------
+Only those whose official target still lies AHEAD of the as-of date. For a project
+already past its target and not complete, the target is not an observation of
+completion -- it is the information that completion exceeds it, i.e. a censored
+value, exactly as in aft_survival.py. Calibrating point residuals on it would repeat
+the censored-as-event error the survival model exists to avoid, and it is also the
+population for which the fan's "no earlier than today" floor is active by
+construction. Overdue projects are therefore excluded from calibration and the
+share excluded is published.
+
+Coverage is then measured on the fan the engine DISPLAYS -- forecast_project()
+end to end, floors included -- not on an intermediate quantity.
+
+Target caveat, stated as before
+-------------------------------
+y is the official revised target, not actual completion; MoSPI records no actual
+completion date for ongoing projects. This is the only completion-like observable,
+and it is the same one the previous version used.
+
+Run as a script to (re)fit; KAAL-CHAKRA consumes the saved artefact at runtime.
 """
 
 from __future__ import annotations
@@ -52,165 +77,141 @@ import json
 import math
 import os
 import sys
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 from analytics_engine.corpus_source import load_corpus
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
-ENTITY_MAPPING_PATH = os.path.join(BASE_DIR, "paimana_extracted", "CANONICAL_ENTITIES_MAPPING.json")
 ARTIFACT_PATH = os.path.join(BASE_DIR, "artifacts", "conformal_calibration.json")
 
 RANDOM_SEED = 42
-# Nominal quantile levels the fan chart exposes.
 QUANTILE_LEVELS = [0.10, 0.50, 0.80, 0.95]
-# Target marginal coverage for the outer P10-P95 band.
-TARGET_COVERAGE = 0.90
+BAND = (0.10, 0.95)
+NOMINAL_BAND_COVERAGE = BAND[1] - BAND[0]     # 0.85
 
-# Filters that define a usable labelled row. Both bounds are generous; they exist to
-# drop date-entry errors (a 1900 end date, a 25-year "slip") rather than to shape the
-# distribution towards a flattering result.
 MIN_PLANNED_MONTHS, MAX_PLANNED_MONTHS = 3.0, 400.0
-MIN_SLIP_MONTHS, MAX_SLIP_MONTHS = -12.0, 300.0
-
-
-def _load_entity_map() -> Dict[str, str]:
-    if not os.path.exists(ENTITY_MAPPING_PATH):
-        return {}
-    with open(ENTITY_MAPPING_PATH, "r", encoding="utf-8") as f:
-        raw = json.load(f).get("mapping_by_raw_string", {})
-    return {k: (v or {}).get("canonical_id") or "OTHER" for k, v in raw.items()}
+MIN_TARGET_MONTHS, MAX_TARGET_MONTHS = 3.0, 480.0
 
 
 def build_labelled_frame() -> pd.DataFrame:
-    """Rows where schedule slippage is actually observed."""
+    """Projects where the official revised completion date is observed."""
     df = load_corpus()
-    ent = _load_entity_map()
-
     orig = pd.to_datetime(df["OriginalEndDate"], errors="coerce", dayfirst=True)
     rev = pd.to_datetime(df["RevisedDate"], errors="coerce", dayfirst=True)
     sanc = pd.to_datetime(df["SanctionDate"], errors="coerce", dayfirst=True)
 
     out = pd.DataFrame({
         "project_id": df["ProjectId"].astype(str),
-        "sector": df["SectorName"].astype(str),
-        "entity": df["COMPANYNAME"].astype(str).map(lambda x: ent.get(x, "OTHER")),
-        "orig_cost": pd.to_numeric(df["OriginalCost"], errors="coerce").fillna(500.0),
-        "rev_cost": pd.to_numeric(df["RevisedCost"], errors="coerce"),
-        "progress": pd.to_numeric(df["PhysicalProgress"], errors="coerce").fillna(25.0),
         "planned_months": (orig - sanc).dt.days / 30.4375,
-        "slip_months": (rev - orig).dt.days / 30.4375,
+        "target_months": (rev - sanc).dt.days / 30.4375,
     })
-    out["rev_cost"] = out["rev_cost"].fillna(out["orig_cost"])
-    out["overrun_pct"] = np.where(
-        out["orig_cost"] > 0, (out["rev_cost"] - out["orig_cost"]) / out["orig_cost"] * 100.0, 0.0)
-
     ok = (
         out["planned_months"].between(MIN_PLANNED_MONTHS, MAX_PLANNED_MONTHS)
-        & out["slip_months"].between(MIN_SLIP_MONTHS, MAX_SLIP_MONTHS)
-        & out["slip_months"].notna()
+        & out["target_months"].between(MIN_TARGET_MONTHS, MAX_TARGET_MONTHS)
     )
     return out[ok].reset_index(drop=True)
 
 
-def _design_matrix(frame: pd.DataFrame, sectors: list, entities: list) -> np.ndarray:
-    """Numeric features + one-hot sector/entity. Kept deliberately small: with ~900
-    training rows a wide encoding would overfit, and conformal calibration corrects
-    the interval width but cannot repair a badly overfit point predictor."""
-    num = np.column_stack([
-        frame["planned_months"].to_numpy(float),
-        np.log10(np.maximum(frame["orig_cost"].to_numpy(float), 1.0)),
-        frame["progress"].to_numpy(float),
-        np.clip(frame["overrun_pct"].to_numpy(float), -100.0, 500.0),
-    ])
-    sec = np.column_stack([(frame["sector"] == s).to_numpy(float) for s in sectors]) \
-        if sectors else np.empty((len(frame), 0))
-    ent = np.column_stack([(frame["entity"] == e).to_numpy(float) for e in entities]) \
-        if entities else np.empty((len(frame), 0))
-    return np.hstack([num, sec, ent])
+def _finite_sample_quantile(values: np.ndarray, level: float) -> float:
+    """r_(ceil((n+1)*level)), clipped to the sample. The conformal quantile."""
+    n = len(values)
+    rank = math.ceil((n + 1) * level)
+    rank = min(max(rank, 1), n)
+    return float(np.sort(values)[rank - 1])
 
 
-def fit_and_calibrate(alpha: float = 1.0 - TARGET_COVERAGE) -> dict:
-    from sklearn.ensemble import GradientBoostingRegressor
+def fit_and_calibrate() -> dict:
+    # Imported here so the module can be read without booting the engine.
+    from analytics_engine.kaal_chakra import get_kaal_chakra_engine
+    engine = get_kaal_chakra_engine()
+    # Calibrate against the RAW median: the engine must not already be applying a
+    # previous calibration while we compute a new one.
+    engine.conformal = None
 
     frame = build_labelled_frame()
     n = len(frame)
     if n < 300:
         raise RuntimeError(f"Only {n} labelled rows; too few to calibrate honestly.")
 
+    cores = [engine._forecast_core(pid) for pid in frame["project_id"]]
+    raw_median = np.array([c["median_expected_duration"] for c in cores])
+    elapsed = np.array([c["current_months"] for c in cores])
+    y_all = frame["target_months"].to_numpy(float)
+
+    # Forward-looking targets only: see the docstring. The overdue share is reported.
+    forward = y_all >= elapsed
+    n_overdue_excluded = int((~forward).sum())
+    frame = frame[forward].reset_index(drop=True)
+    raw_median = raw_median[forward]
+    y = y_all[forward]
+    n = len(frame)
+    r = np.log(y / np.maximum(raw_median, 1e-6))
+
     rng = np.random.default_rng(RANDOM_SEED)
     idx = rng.permutation(n)
-    n_tr, n_cal = int(n * 0.50), int(n * 0.25)
-    tr, cal, te = idx[:n_tr], idx[n_tr:n_tr + n_cal], idx[n_tr + n_cal:]
+    n_cal = int(n * 0.50)
+    cal, te = idx[:n_cal], idx[n_cal:]
 
-    # Categories are taken from TRAIN only. Deriving them from the full frame would
-    # leak information about calibration/test rows into the feature space.
-    sectors = sorted(frame.iloc[tr]["sector"].value_counts().head(12).index.tolist())
-    entities = sorted(frame.iloc[tr]["entity"].value_counts().head(12).index.tolist())
+    # --- calibration split: one quantile per displayed level ------------------
+    log_q = {str(a): _finite_sample_quantile(r[cal], a) for a in QUANTILE_LEVELS}
 
-    X = _design_matrix(frame, sectors, entities)
-    y = frame["slip_months"].to_numpy(float)
+    # --- test split: what the DISPLAYED fan actually covers ------------------
+    # Install the calibration on the engine and call forecast_project() end to end,
+    # so floors and monotone rearrangement are inside the measurement.
+    engine.conformal = {"log_ratio_quantiles": log_q, "method": "calibrating", "n_test": 0,
+                        "empirical_coverage_on_test": float("nan")}
+    disp = []
+    for i in te:
+        fc = engine.forecast_project(frame.iloc[i]["project_id"])
+        sanc = engine.df[engine.df["ProjectId"].astype(str) == frame.iloc[i]["project_id"]].iloc[0]["SanctionDate"]
+        disp.append([(pd.Timestamp(getattr(fc, k)) - sanc).days / 30.4375
+                     for k in ("p10_date", "p50_date", "p80_date", "p95_date")])
+    disp = np.array(disp)
+    engine.conformal = None
+    lo, p50_cal, hi = disp[:, 0], disp[:, 1], disp[:, 3]
+    covered = (y[te] >= lo) & (y[te] <= hi)
+    band_cov = float(np.mean(covered))
+    per_level_cov = {a: float(np.mean(y[te] <= disp[:, j])) for j, a in enumerate(QUANTILE_LEVELS)}
 
-    lo_q, hi_q = alpha / 2.0, 1.0 - alpha / 2.0
-    models = {}
-    for level in sorted(set(QUANTILE_LEVELS + [lo_q, hi_q])):
-        m = GradientBoostingRegressor(
-            loss="quantile", alpha=float(level),
-            n_estimators=200, max_depth=3, learning_rate=0.05,
-            min_samples_leaf=20, random_state=RANDOM_SEED,
-        )
-        m.fit(X[tr], y[tr])
-        models[level] = m
-
-    # --- split-conformal correction on the calibration split -----------------
-    q_lo_cal = models[lo_q].predict(X[cal])
-    q_hi_cal = models[hi_q].predict(X[cal])
-    scores = np.maximum(q_lo_cal - y[cal], y[cal] - q_hi_cal)
-
-    n_cal_eff = len(scores)
-    rank = math.ceil((n_cal_eff + 1) * (1.0 - alpha))
-    rank = min(max(rank, 1), n_cal_eff)
-    Q = float(np.sort(scores)[rank - 1])
-
-    # --- honest evaluation on the untouched test split -----------------------
-    q_lo_te = models[lo_q].predict(X[te]) - Q
-    q_hi_te = models[hi_q].predict(X[te]) + Q
-    covered = (y[te] >= q_lo_te) & (y[te] <= q_hi_te)
-    empirical_coverage = float(np.mean(covered))
-    mean_width = float(np.mean(q_hi_te - q_lo_te))
-
-    # Uncalibrated baseline, to show what the correction actually bought.
-    raw_cov = float(np.mean((y[te] >= models[lo_q].predict(X[te])) &
-                            (y[te] <= models[hi_q].predict(X[te]))))
-
-    # Per-quantile residual offsets, so the existing P10/P50/P80/P95 fan can be
-    # driven by calibrated numbers instead of the hand-picked [-3, 0, 4.5, 9].
-    per_quantile = {}
-    for level in QUANTILE_LEVELS:
-        resid = y[cal] - models[level].predict(X[cal])
-        per_quantile[str(level)] = {
-            "residual_offset_months": float(np.quantile(resid, level)),
-            "calibration_mae_months": float(np.mean(np.abs(resid))),
-        }
+    # Uncalibrated baseline: the log-logistic quantiles of the raw median, which is
+    # what the engine displays when no artefact is present.
+    sigma = float(engine.model_weights.get("sigma", 0.35))
+    lo_u = raw_median[te] * (BAND[0] / (1 - BAND[0])) ** sigma
+    hi_u = raw_median[te] * (BAND[1] / (1 - BAND[1])) ** sigma
+    raw_cov = float(np.mean((y[te] >= lo_u) & (y[te] <= hi_u)))
 
     return {
-        "method": "split-conformal CQR (Romano, Patterson & Candes 2019)",
-        "target": "schedule slippage in months (RevisedDate - OriginalEndDate)",
-        "target_caveat": (
-            "Slippage of the OFFICIAL target date, not actual completion. The corpus "
-            "does not record actual completion for ongoing projects."),
-        "alpha": alpha,
-        "target_coverage": 1.0 - alpha,
-        "n_labelled": int(n),
-        "n_train": int(len(tr)), "n_calibration": int(n_cal_eff), "n_test": int(len(te)),
-        "conformal_quantile_Q_months": round(Q, 3),
-        "empirical_coverage_on_test": round(empirical_coverage, 4),
+        "method": "split-conformal on the engine's own median, log-ratio residual quantiles",
+        "references": ["Vovk, Gammerman & Shafer 2005", "Lei, G'Sell, Rinaldo, Tibshirani & Wasserman 2018",
+                       "Romano, Patterson & Candes 2019 (CQR)"],
+        "calibrated_quantity": "KaalChakraEngine.raw_median_months (uncalibrated blended AFT/earned-value median)",
+        "target": "months from sanction to the OFFICIAL REVISED completion date",
+        "target_caveat": ("The official revised target, not actual completion; the corpus records "
+                          "no actual completion date for ongoing projects."),
+        "residual": "r = log(target_months / raw_median_months)",
+        "n_labelled": int(n), "n_calibration": int(len(cal)), "n_test": int(len(te)),
+        "n_overdue_excluded": n_overdue_excluded,
+        "population": ("Projects whose official revised target lies ahead of the as-of date. "
+                       "Overdue projects carry censored, not observed, completion information and "
+                       "are excluded from calibration; for them the displayed P10 is 'no earlier "
+                       "than now' by construction."),
+        "measured_on": "forecast_project() end to end, floors and monotone rearrangement included",
+        "log_ratio_quantiles": log_q,
+        "multipliers": {k: round(math.exp(v), 4) for k, v in log_q.items()},
+        "bias_correction_note": (
+            f"exp(q_0.50) = {math.exp(log_q['0.5']):.3f}: the displayed P50 is the raw median "
+            f"times this. Below 1.0 means the raw AFT/earned-value median runs late against "
+            f"official targets; see aft_survival.json 'survivorship'."),
+        "nominal_band": list(BAND),
+        "nominal_band_coverage": NOMINAL_BAND_COVERAGE,
+        "empirical_coverage_on_test": round(band_cov, 4),
+        "per_level_coverage_on_test": {str(k): round(v, 4) for k, v in per_level_cov.items()},
         "uncalibrated_coverage_on_test": round(raw_cov, 4),
-        "mean_interval_width_months": round(mean_width, 2),
-        "per_quantile": per_quantile,
-        "sectors": sectors, "entities": entities,
+        "mean_band_width_months": round(float(np.mean(hi - lo)), 2),
+        "p50_test_mae_months": round(float(np.mean(np.abs(y[te] - p50_cal))), 2),
+        "raw_median_test_mae_months": round(float(np.mean(np.abs(y[te] - raw_median[te]))), 2),
         "random_seed": RANDOM_SEED,
     }
 
@@ -220,7 +221,10 @@ def load_calibration() -> Optional[dict]:
         return None
     try:
         with open(ARTIFACT_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+            art = json.load(f)
+        # An artefact from the superseded design has no per-level quantiles and must
+        # not be consumed as though it calibrated this fan.
+        return art if "log_ratio_quantiles" in art else None
     except Exception:
         return None
 
@@ -235,17 +239,19 @@ def main() -> None:
     with open(ARTIFACT_PATH, "w", encoding="utf-8") as f:
         json.dump(res, f, indent=2)
 
-    print("SPLIT-CONFORMAL CALIBRATION — KAAL-CHAKRA")
-    print("=" * 62)
-    print(f"  target                    : {res['target']}")
-    print(f"  labelled rows             : {res['n_labelled']}  "
-          f"(train {res['n_train']} / cal {res['n_calibration']} / test {res['n_test']})")
-    print(f"  conformal quantile Q      : {res['conformal_quantile_Q_months']} months")
+    print("SPLIT-CONFORMAL CALIBRATION OF THE KAAL-CHAKRA FAN")
+    print("=" * 66)
+    print(f"  calibrated quantity       : {res['calibrated_quantity']}")
+    print(f"  labelled rows             : {res['n_labelled']}  (cal {res['n_calibration']} / test {res['n_test']})  overdue excluded: {res['n_overdue_excluded']}")
+    print(f"  multipliers on raw median : {res['multipliers']}")
+    print(f"  {res['bias_correction_note']}")
     print()
-    print(f"  nominal coverage          : {res['target_coverage']:.0%}")
-    print(f"  MEASURED coverage on test : {res['empirical_coverage_on_test']:.1%}   <-- the defensible number")
+    print(f"  nominal band [P10, P95]   : {res['nominal_band_coverage']:.0%}")
+    print(f"  MEASURED coverage on test : {res['empirical_coverage_on_test']:.1%}   <-- for THIS fan")
+    print(f"  per-level (P<=alpha)      : {res['per_level_coverage_on_test']}")
     print(f"  uncalibrated would be     : {res['uncalibrated_coverage_on_test']:.1%}")
-    print(f"  mean interval width       : {res['mean_interval_width_months']} months")
+    print(f"  P50 MAE months  raw -> cal: {res['raw_median_test_mae_months']} -> {res['p50_test_mae_months']}")
+    print(f"  mean band width           : {res['mean_band_width_months']} months")
     print()
     print(f"Wrote {ARTIFACT_PATH}")
 

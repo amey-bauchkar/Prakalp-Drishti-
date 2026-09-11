@@ -41,6 +41,7 @@ TESTS = [
     "test_eo_honesty.py",
     "test_temporal_audit.py",
     "test_showcase_epochs.py",
+    "test_math_audit.py",
 ]
 
 # pytest modules and debug scripts are run separately, not by this runner.

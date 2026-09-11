@@ -71,7 +71,9 @@ export default function AnumatiView() {
   const anumati = profileData?.anumati_assessment;
   const meta = profileData?.project_metadata;
   const stages = anumati?.stage_breakdown || [];
-  const rsi = anumati?.regulatory_stagnation_index ?? 1.85;
+  // Computed per project by modules/aditya/modules/anumati.py. No fallback literal:
+  // an absent value renders as absent, never as an invented ratio.
+  const rsi = anumati?.regulatory_stagnation_index;
 
   const handleCopyMemo = () => {
     if (anumati?.recommended_escalation_memo) {
@@ -112,9 +114,11 @@ export default function AnumatiView() {
                 <div className="text-[9.5px] text-slate-500 mt-0.5">PARIVESH &amp; GAD Sync</div>
               </div>
               <div>
-                <div className="text-[10.5px] font-bold text-slate-400 uppercase">Mean Stagnation (RSI)</div>
-                <div className="font-mono text-[22px] font-extrabold text-amber-400 mt-0.5">1.72×</div>
-                <div className="text-[9.5px] text-slate-500 mt-0.5">vs Benchmark Timeline</div>
+                <div className="text-[10.5px] font-bold text-slate-400 uppercase">Stagnation Index (RSI)</div>
+                <div className="font-mono text-[22px] font-extrabold text-amber-400 mt-0.5">
+                  {Number.isFinite(Number(rsi)) ? `${Number(rsi).toFixed(2)}×` : '—'}
+                </div>
+                <div className="text-[9.5px] text-slate-500 mt-0.5">this project vs benchmark timeline</div>
               </div>
             </div>
           </div>

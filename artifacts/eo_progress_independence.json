@@ -1,0 +1,31 @@
+{
+  "computed_at": "2026-09-11T08:14:33+00:00",
+  "catalog_path": "paimana_extracted\\satellite_data\\ALL_2207_PROJECTS_SATELLITE_CATALOG.json",
+  "catalog_sha256": "b1293aa19ac2c1c27c4e49e9b376ea5f160c6545845f72fe115f80041c3bf635",
+  "n_catalog": 2207,
+  "n_reliable": 1588,
+  "overall": {
+    "n": 1588,
+    "pearson_r": 0.004,
+    "pearson_p": 0.8729,
+    "spearman_rho": 0.0237,
+    "spearman_p": 0.3445
+  },
+  "by_asset_geometry": {
+    "LINEAR": {
+      "n": 1326,
+      "pearson_r": 0.0011,
+      "pearson_p": 0.9686,
+      "spearman_rho": 0.0059,
+      "spearman_p": 0.8312
+    },
+    "POINT": {
+      "n": 262,
+      "pearson_r": 0.0292,
+      "pearson_p": 0.6378,
+      "spearman_rho": 0.1098,
+      "spearman_p": 0.076
+    }
+  },
+  "reading": "Pearson r between pixel-derived surface change and agency-reported physical progress over projects with a reliable EO verdict. A value near zero with a large p-value means imagery carries no information about the reported completion fraction; the satellite layer therefore reports activity evidence, never a completion percentage."
+}

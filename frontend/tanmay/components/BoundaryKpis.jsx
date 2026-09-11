@@ -7,14 +7,16 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
   const isHi = lang === 'hi';
   const kpi = summaryData?.kpi_metrics || {};
   const boundary = summaryData?.boundary_metrics || {};
-  const signal = summaryData?.mccrary_bunching_signal || {};
+  // Two objects now: the descriptive two-bin ratio and the actual McCrary test.
+  const signal = summaryData?.boundary_bin_ratio || summaryData?.mccrary_bunching_signal || {};
+  const mcc = summaryData?.mccrary_density_test || {};
 
-  const totalN = boundary.active_revised_population_n || kpi.active_revised_projects || 1183;
-  const unrevisedN = boundary.excluded_unrevised_n || kpi.no_revision_on_file_projects || 1024;
-  const suspiciousN = boundary.numerator_count || signal.numerator_count || 28;
-  const breachedN = boundary.denominator_count || signal.denominator_count || 17;
-  const ratio = boundary.ratio || signal.boundary_bin_mass_ratio || 1.65;
-  const ci95 = boundary.confidence_interval_95?.string || signal.confidence_interval_95 || '[0.91, 2.97]';
+  const totalN = boundary.active_revised_population_n ?? kpi.active_revised_projects ?? 0;
+  const unrevisedN = boundary.excluded_unrevised_n ?? kpi.no_revision_on_file_projects ?? 0;
+  const suspiciousN = boundary.numerator_count ?? signal.numerator_count ?? 0;
+  const breachedN = boundary.denominator_count ?? signal.denominator_count ?? 0;
+  const ratio = boundary.ratio ?? signal.boundary_bin_mass_ratio ?? '—';
+  const ci95 = boundary.confidence_interval_95?.string ?? signal.confidence_interval_95 ?? '—';
 
   const cards = [
     {
@@ -29,12 +31,12 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
       iconColor: "text-slate-600"
     },
     {
-      title: isHi ? "संदेहास्पद क्षेत्र [18%, 20%)" : "SUSPICIOUS ZONE [18%, 20%)",
+      title: isHi ? "सीमा से नीचे [18%, 20%)" : "JUST BELOW THRESHOLD [18%, 20%)",
       metric: `n = ${suspiciousN}`,
       desc: isHi
-        ? "20% सीसीईए कैबिनेट पुनः अनुमोदन सीमा से ठीक पहले रुकने वाली परियोजनाओं का असामान्य संकेंद्रण।"
-        : "Anomalous concentration of projects stopping just below the 20% CCEA Cabinet re-approval line.",
-      badgeText: isHi ? "+64.7% वृद्धि (सीमा उल्लंघन की तुलना में)" : "+64.7% step vs breached",
+        ? "20% सीसीईए कैबिनेट पुनः अनुमोदन सीमा से ठीक नीचे स्थित संशोधन। एक वर्णनात्मक गणना; अभिप्राय का साक्ष्य नहीं।"
+        : "Revisions landing just below the 20% CCEA Cabinet re-approval line. A descriptive count, not evidence of intent.",
+      badgeText: isHi ? `${ratio}x बनाम [20%, 22%)` : `${ratio}x vs [20%, 22%)`,
       icon: AlertTriangle,
       borderTop: "border-t-amber-500",
       iconColor: "text-amber-500",
@@ -52,15 +54,26 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
       iconColor: "text-rose-500"
     },
     {
-      title: isHi ? "बंचिंग अनुपात (संदेह स्कोर)" : "BUNCHING RATIO (SUSPICION SCORE)",
-      metric: `${ratio}x`,
-      desc: isHi
-        ? `सीमांत पर सांख्यिकीय रूप से महत्वपूर्ण संकुलन अनुपात (95% CI: ${ci95})।`
-        : `Statistically significant clustering ratio at boundary (95% CI: ${ci95}).`,
-      badgeText: isHi ? "p < 0.05 विसंगति" : "p < 0.05 Anomaly",
+      // The McCrary (2008) density-discontinuity test at the 20% cutoff, reported as
+      // computed. The card that stood here read "Statistically significant clustering
+      // ratio ... p < 0.05 Anomaly" over a two-bin ratio whose 95% CI included 1.0.
+      title: isHi ? "मैक्रेरी घनत्व परीक्षण (20%)" : "McCRARY DENSITY TEST AT 20%",
+      metric: mcc.available
+        ? `p = ${Number(mcc.p_two_sided).toFixed(2)}`
+        : (isHi ? "अनुपलब्ध" : "unavailable"),
+      desc: mcc.available
+        ? (isHi
+            ? `घनत्व अनुपात ${Number(mcc.density_ratio_right_over_left).toFixed(2)} (ऊपर/नीचे), z = ${Number(mcc.z).toFixed(2)}, बैंडविड्थ ${Number(mcc.bandwidth).toFixed(1)}। ${mcc.significant_at_5pct_two_sided ? "सीमा पर विच्छिन्नता है।" : "सीमा पर कोई विच्छिन्नता नहीं।"} द्वि-बिन अनुपात ${ratio}x (95% CI ${ci95}) वर्णनात्मक है।`
+            : `Density ratio ${Number(mcc.density_ratio_right_over_left).toFixed(2)} (above/below), z = ${Number(mcc.z).toFixed(2)}, bandwidth ${Number(mcc.bandwidth).toFixed(1)} pts. ${mcc.significant_at_5pct_two_sided ? "Discontinuity detected at the cutoff." : "No discontinuity at the cutoff."} The two-bin ratio ${ratio}x (95% CI ${ci95}) is descriptive only.`)
+        : (isHi ? "परीक्षण नहीं चल सका।" : "The test could not be run on this sample."),
+      badgeText: mcc.available
+        ? (mcc.significant_at_5pct_two_sided
+            ? (isHi ? "p < 0.05" : "p < 0.05")
+            : (isHi ? "महत्वपूर्ण नहीं" : "Not significant"))
+        : "—",
       icon: ShieldAlert,
-      borderTop: "border-t-indigo-600",
-      iconColor: "text-indigo-600"
+      borderTop: mcc.available && mcc.significant_at_5pct_two_sided ? "border-t-rose-600" : "border-t-slate-500",
+      iconColor: mcc.available && mcc.significant_at_5pct_two_sided ? "text-rose-600" : "text-slate-600"
     }
   ];
 

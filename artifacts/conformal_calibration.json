@@ -1,62 +1,48 @@
 {
-  "method": "split-conformal CQR (Romano, Patterson & Candes 2019)",
-  "target": "schedule slippage in months (RevisedDate - OriginalEndDate)",
-  "target_caveat": "Slippage of the OFFICIAL target date, not actual completion. The corpus does not record actual completion for ongoing projects.",
-  "alpha": 0.09999999999999998,
-  "target_coverage": 0.9,
-  "n_labelled": 1800,
-  "n_train": 900,
-  "n_calibration": 450,
-  "n_test": 450,
-  "conformal_quantile_Q_months": 5.185,
-  "empirical_coverage_on_test": 0.9333,
-  "uncalibrated_coverage_on_test": 0.8467,
-  "mean_interval_width_months": 61.78,
-  "per_quantile": {
-    "0.1": {
-      "residual_offset_months": 0.0,
-      "calibration_mae_months": 24.655769734071328
-    },
-    "0.5": {
-      "residual_offset_months": 0.046519693088105336,
-      "calibration_mae_months": 16.17188826224201
-    },
-    "0.8": {
-      "residual_offset_months": 5.44086749603146,
-      "calibration_mae_months": 19.636074732603134
-    },
-    "0.95": {
-      "residual_offset_months": 19.633162845645856,
-      "calibration_mae_months": 35.89972623648016
-    }
+  "method": "split-conformal on the engine's own median, log-ratio residual quantiles",
+  "references": [
+    "Vovk, Gammerman & Shafer 2005",
+    "Lei, G'Sell, Rinaldo, Tibshirani & Wasserman 2018",
+    "Romano, Patterson & Candes 2019 (CQR)"
+  ],
+  "calibrated_quantity": "KaalChakraEngine.raw_median_months (uncalibrated blended AFT/earned-value median)",
+  "target": "months from sanction to the OFFICIAL REVISED completion date",
+  "target_caveat": "The official revised target, not actual completion; the corpus records no actual completion date for ongoing projects.",
+  "residual": "r = log(target_months / raw_median_months)",
+  "n_labelled": 1192,
+  "n_calibration": 596,
+  "n_test": 596,
+  "n_overdue_excluded": 616,
+  "population": "Projects whose official revised target lies ahead of the as-of date. Overdue projects carry censored, not observed, completion information and are excluded from calibration; for them the displayed P10 is 'no earlier than now' by construction.",
+  "measured_on": "forecast_project() end to end, floors and monotone rearrangement included",
+  "log_ratio_quantiles": {
+    "0.1": -1.4416572348611447,
+    "0.5": -0.7768216942622609,
+    "0.8": -0.179338637820215,
+    "0.95": -0.024597890440196505
   },
-  "sectors": [
-    "Aviation & Aviation Infrastructure",
-    "Coal",
-    "Education",
-    "Electricity Generation",
-    "Energy Storage",
-    "Healthcare",
-    "Oil & Gas",
-    "Railways",
-    "Roads & Highways",
-    "Transmission & Distribution",
-    "Waste & Water",
-    "Water Resources"
+  "multipliers": {
+    "0.1": 0.2365,
+    "0.5": 0.4599,
+    "0.8": 0.8358,
+    "0.95": 0.9757
+  },
+  "bias_correction_note": "exp(q_0.50) = 0.460: the displayed P50 is the raw median times this. Below 1.0 means the raw AFT/earned-value median runs late against official targets; see aft_survival.json 'survivorship'.",
+  "nominal_band": [
+    0.1,
+    0.95
   ],
-  "entities": [
-    "AAI",
-    "COAL_INDIA",
-    "EMPLOYEE_S_STATE_INSURANCE_COM",
-    "INDIAN_RAILWAYS",
-    "JAL_SHAKTI",
-    "MINISTRYOFPETROLEUMNATURALGAS",
-    "MOHUA",
-    "MoRTH",
-    "NHAI",
-    "NHIDCL",
-    "PETROLEUM_GAS",
-    "POWERGRID"
-  ],
+  "nominal_band_coverage": 0.85,
+  "empirical_coverage_on_test": 0.7903,
+  "per_level_coverage_on_test": {
+    "0.1": 0.1728,
+    "0.5": 0.5688,
+    "0.8": 0.8238,
+    "0.95": 0.9597
+  },
+  "uncalibrated_coverage_on_test": 0.5084,
+  "mean_band_width_months": 100.86,
+  "p50_test_mae_months": 22.71,
+  "raw_median_test_mae_months": 99.95,
   "random_seed": 42
 }

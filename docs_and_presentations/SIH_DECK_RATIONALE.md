@@ -30,7 +30,8 @@ CSV bootstrap and a Postgres read produce the same root.
 
 **Engines.**
 - **KAAL-CHAKRA** — log-logistic AFT fitted by penalised MLE under right-censoring
-  (160 observed completions, 1,988 censored), then split-conformal CQR for P10–P95.
+  (115 observed completions, 1,988 censored), then split-conformal calibration of the
+  displayed P10–P95 fan on the engine's own median (79.0% measured at nominal 85%).
 - **SETU-GRAPH** — Tarjan SCC condensation to a DAG, Max-Plus float algebra separating
   free float from total float, permutation Monte-Carlo Shapley criticality.
 - **VITTA-VYUHA** — two-stage stochastic **LP** (HiGHS) with Rockafellar–Uryasev CVaR₉₀
@@ -63,7 +64,7 @@ project's own claims ledger:
 | "VIIRS Nighttime Lights Index" | Not implemented |
 | "sub-meter satellite change detection" | **Refused** — measured GSD 2.08–2.35 m/px |
 | "HiGHS **MILP** solver" | All variables continuous — it is an LP |
-| "EO-Observed Surface Activity: 31.2% vs 74% claimed → 42.8-point divergence" | The removed circular metric. Surface change vs progress correlates at **r = 0.007** |
+| "EO-Observed Surface Activity: 31.2% vs 74% claimed → 42.8-point divergence" | The removed circular metric. Surface change vs progress correlates at **r = +0.004** (`artifacts/eo_progress_independence.json`) |
 | "DPR-Quality Scorer (NLP, 0–100)" | The `soham` module returned `np.random.uniform(42,64)` and was **deleted** |
 | "₹8,420 Cr downstream exposure", "Mumbai Metro P10–P95" | Illustrative numbers with no artifact behind them |
 | TimescaleDB, DuckDB-WASM, Next.js, deck.gl | Actual stack: FastAPI, React+Vite, Supabase Postgres |
@@ -106,7 +107,7 @@ definition, and slide 4 exists purely to prove the thing runs.
 | Innovation | Something genuinely new | Buried under 11 modules | Rebaselining-aware delay accounting made the headline |
 | AI/ML credibility | Honest about method | Overclaimed (NDVI, SAR, MILP) | Retracted; refusal ledger put **on the slide** |
 | Data credibility | Sourced and dated | Mixed real + illustrative | Only reproducible figures; Merkle root printed |
-| Validation | Measured, with baselines | Absent | 93.3% coverage, 12.2% lift over sector-mean, ablation disclosed |
+| Validation | Measured, with baselines | Absent | 79.0% fan coverage measured on the displayed fan, 12.2% lift over sector-mean, ablation disclosed |
 | Feasibility | Working prototype | Claimed, not shown | Live portal screenshot + 476/476 + 87 endpoints |
 | Visual communication | Diagram-led | Text-heavy | 3 custom diagrams, 2 screenshots, no paragraph blocks |
 
@@ -123,7 +124,7 @@ definition, and slide 4 exists purely to prove the thing runs.
 3. **Provenance to the row.** RFC 6962 Merkle root over canonically-serialised rows; every
    briefing figure carries an inclusion proof that fails closed.
 4. **Honest Earth observation.** Real dated epochs resolved from 196 archive releases, with
-   a documented refusal to convert imagery into a completion percentage (r = 0.007).
+   a documented refusal to convert imagery into a completion percentage (r = +0.004, persisted).
 5. **Sovereign by default.** Air-gapped operation is the default configuration, not a mode.
 
 **What a judge should remember 30 minutes later:** *the team that found half of India's
@@ -136,7 +137,7 @@ project delay is invisible — and published what their own model cannot do.*
 Problem → half the delay is hidden by rebaselining · Stakes → ₹14.60 L Cr unmonitored ·
 Insight → measure against the original baseline · Solution → five engines over PAIMANA ·
 Engine → censored survival + conformal calibration + graph float + LP duals + dated imagery ·
-Proof → 476/476, 93.3% coverage, live portal · Scale → Postgres write path already live ·
+Proof → all suites green, 79.0% measured fan coverage, live portal · Scale → Postgres write path already live ·
 Impact → governance, economic, administrative, civic · End state → every Cabinet number
 independently verifiable.
 
@@ -166,13 +167,13 @@ independently verifiable.
 | 629 projects invisible; ₹14.60 L Cr; 50.5%; 620 vs 1,249; base 2,043 | Computed from `OriginalEndDate` / `RevisedDate` / `PhysicalProgress` at 2026-06-30 |
 | ₹5.66 L Cr escalation on 1,183 revised projects (+23.0%) | Same corpus |
 | WDFC: ₹51,101 → ₹1,24,005 Cr (+142.7%), 96% progress, 45-month date move, 7.3% | `GET /api/amey/forecast/705237` |
-| 93.3% coverage (84.7% uncalibrated), 450 held-out | `artifacts/conformal_calibration.json` |
+| 79.0% fan coverage at nominal 85% (50.8% uncalibrated), 596 held-out, measured on `forecast_project()` | `artifacts/conformal_calibration.json` |
 | 160 events / 1,988 censored; 7.4% event rate | `artifacts/aft_survival.json`, `CLAIMS.md` |
 | 12.2% MAE lift vs sector-mean; ablation 16.24 → 17.90 | `CLAIMS.md` §4 |
 | 476/476 assertions, 19 suites | `tests/verify_features.py`, `tests/run_all_tests.py` — re-run and green |
 | 87 endpoints | `/openapi.json` |
 | 26 dated epochs, 5 sites, 196 releases probed | `SHOWCASE_EPOCHS.json` |
-| GSD 2.08–2.35 m/px; r = 0.007 | `satellite_precision_engine.py`, `temporal_audit.py` |
+| GSD 2.08–2.35 m/px; r = +0.004 | `satellite_precision_engine.py`, `eo_independence.py` |
 
 **Sourced (external, cited on slide 6):** MoSPI/PAIMANA, ESRI Wayback, IMD, ECI, DPIIT/RBI,
 NSE/BSE, RTI Act 2005, RFCTLARR 2013, CPWD GCC 10CC.

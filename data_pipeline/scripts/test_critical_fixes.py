@@ -55,10 +55,10 @@ def test_2_vitta_vyuha_agencies():
     assert len(entities) > 1, f"Expected multiple entities, got: {entities}"
     
     # Check dynamic agency shadow prices
-    assert isinstance(res.agency_shadow_prices, dict), "agency_shadow_prices must be a dict"
-    assert len(res.agency_shadow_prices) >= 3, "Expected at least 3 agency shadow prices"
+    assert isinstance(res.agency_marginal_yield_indicator, dict), "agency_marginal_yield_indicator must be a dict"
+    assert len(res.agency_marginal_yield_indicator) >= 3, "Expected at least 3 agency indicators"
     assert res.shadow_price_budget_pi > 0, "pi_budget must be positive"
-    print(f"  Dynamic Agency Shadow Prices: {res.agency_shadow_prices}")
+    print(f"  Agency marginal-yield indicators: {res.agency_marginal_yield_indicator}")
     print(f"  Budget Dual Multiplier: pi={res.shadow_price_budget_pi:.3f}, NER Dual: pi={res.shadow_price_ner_pi:.3f}")
     print("  ✅ PASS: Dynamic agencies and genuine LP dual shadow prices verified!")
 

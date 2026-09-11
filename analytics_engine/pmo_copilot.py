@@ -69,7 +69,8 @@ class PMOCopilotEngine:
             "fact_id": sat_fact_id,
             "label": "Orbital Optical Surface-Change Measurement",
             # Reports the measurement, not a completion estimate. Imagery cannot say
-            # what fraction of a DPR is done (r=0.007 against reported progress).
+            # what fraction of a DPR is done (r ~ 0 against reported progress; see
+            # artifacts/eo_progress_independence.json).
             "value": f"{sat_audit.get('surface_change_pct', 0.0)}% of sampled ground structurally changed {vintage_span}{pctl_txt}",
             "unit": "PERCENT",
             "merkle_root": sat_audit["audit_hash"]

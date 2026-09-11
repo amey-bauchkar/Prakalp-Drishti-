@@ -31,9 +31,10 @@ copied from the contractor figure it purported to audit. It correlated more stro
 with the claim (0.768) than with the pixels (0.645), so inflating a claim inflated its
 own verification and suppressed the divergence the tool exists to surface.
 
-Removing the anchor alone would not have rescued it. Measured on the 1,584 site-level
-projects, surface change and reported progress correlate at 0.007 -- no relationship
-at all, and it stays ~0 split by asset geometry (POINT -0.019, LINEAR +0.022). One
+Removing the anchor alone would not have rescued it. Measured on the site-level
+projects, surface change and reported progress are uncorrelated (r ~ 0 overall and
+within each asset geometry; the current figures are recomputed from this catalogue by
+analytics_engine/eo_independence.py into artifacts/eo_progress_independence.json). One
 800x800 tile simply cannot express what fraction of a DPR is finished, least of all
 for a 50 km corridor sampled at a single point.
 
@@ -223,9 +224,9 @@ def classify(results: list) -> None:
 
     Why this is not a progress estimate
     -----------------------------------
-    Measured across the 1,584 site-level projects, the correlation between reported
-    progress and pixel-derived surface change is 0.007 -- i.e. none. It stays ~0 when
-    split by asset geometry (POINT -0.019, LINEAR +0.022). The imagery therefore
+    Measured across the site-level projects, the correlation between reported
+    progress and pixel-derived surface change is ~0 (artifacts/eo_progress_independence.json
+    holds the current value, by asset geometry too). The imagery therefore
     CANNOT support a statement of the form "orbital observation says this project is
     N% complete", and the previous release's attempt to produce one only looked
     plausible because 45% of its value was copied from the claim it was auditing.
@@ -338,6 +339,17 @@ def main():
     with open(DOSSIER_PATH, "w", encoding="utf-8") as f:
         json.dump([r for r in results if r.get("eo_verdict_reliable")][:100], f, indent=2)
     print(f"\nWrote {CATALOG_PATH}")
+    # Persist the independence figure the whole satellite layer cites, computed
+    # from the catalogue just written rather than quoted from memory.
+    try:
+        import sys as _sys
+        _sys.path.insert(0, BASE_DIR)
+        from analytics_engine.eo_independence import write_artifact
+        art = write_artifact(CATALOG_PATH)
+        print(f"eo_progress_independence: r={art['overall']['pearson_r']:+.4f} "
+              f"n={art['n_reliable']} -> artifacts/eo_progress_independence.json")
+    except Exception as exc:  # pragma: no cover
+        print(f"eo_progress_independence NOT written: {exc}")
 
 
 if __name__ == "__main__":

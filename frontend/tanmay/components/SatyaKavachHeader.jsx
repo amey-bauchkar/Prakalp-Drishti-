@@ -51,7 +51,7 @@ export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loadin
             </>
           ) : (
             <>
-              Statistical screening engine that detects artificial cost-overrun capping just below the <strong>20% Cabinet approval limit</strong>. Evaluates McCrary bunching density jumps and audits CPWD GCC Clause 10CC price variations.
+              Statistical screen for whether cost revisions cluster just below the <strong>20% Cabinet re-approval threshold</strong>. Runs a McCrary (2008) density-discontinuity test at the cutoff and audits CPWD GCC Clause 10CC price variations against the statutory formula. A discontinuity would show the threshold shapes where revisions land; it would not show intent.
             </>
           )}
         </p>

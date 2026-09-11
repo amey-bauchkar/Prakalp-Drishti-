@@ -9,7 +9,14 @@ described as a MILP. Capital tranches are genuinely divisible, so the continuous
 relaxation is the correct model here -- but the label had to match the mathematics.
 A true MILP would add a binary fund/defer indicator per project with a minimum viable
 tranche; that is a deliberate future upgrade, not what runs today.
-SOS2 S-Curves, Statutory 10% NER Floor, Dual Shadow Prices, and Closure Error Diagnostics.
+Tranche fill-order rows (not SOS2 -- see the constraint block), Statutory 10% NER
+Floor, Dual Shadow Prices, and a solver-agreement diagnostic.
+
+Objective: a convex mean-CVaR trade-off, (1-kappa) * E[scenario yield] against
+kappa * CVaR_0.90 of the scenario loss, both in the same yield-weighted-Cr units.
+The three scenarios and their severities are declared policy (there is no realised-
+yield history to estimate them from) and are returned on every result under
+`cvar_diagnostics` together with the Rockafellar-Uryasev cross-check.
 """
 
 import os
@@ -222,30 +229,71 @@ class VittaVyuhaEngine:
         ])
 
         # Risk-adjusted effective yield per project (wider spread than before)
-        # At κ=1, a project with risk_normalized=1.5 gets its yield cut by ~75%
-        # while a project with risk_normalized=0.3 gets a ~15% boost
-        risk_penalty = 1.0 - 1.2 * kappa * np.clip(risk_normalized - 0.4, -0.3, 1.5)
-        effective_yield = np.maximum(0.05, base_yield * risk_penalty)
-
-        # Scenarios for Two-Stage Stochastic Loss (S=3)
+        # =====================================================================
+        # MEAN-CVaR OBJECTIVE (Rockafellar-Uryasev, 2000)
+        # =====================================================================
+        # Risk enters the objective ONCE, through a scenario model of how much of a
+        # project's base yield is realised. Scenarios are DECLARED POLICY, not
+        # estimated: MoSPI publishes no realised-yield history to fit a loss
+        # distribution against, so the three states below are hand-set and exposed
+        # on the result for the reviewer to see.
+        #
+        #   scenario s          p_s    severity_s   realised fraction theta_{s,i}
+        #   delivery as planned 0.50   -0.05        1 + 0.05 * risk_i  (mild upside)
+        #   mild slippage       0.35    0.15        1 - 0.15 * risk_i
+        #   severe slippage     0.15    0.45        1 - 0.45 * risk_i
+        #
+        # theta_{s,i} = clip(1 - severity_s * risk_i, 0.05, 1.10), with risk_i the
+        # delay/progress risk index normalised to mean 1. A high-risk project loses
+        # more of its yield in a bad scenario than a low-risk one; that project-
+        # specific tail is what gives CVaR information the mean does not carry.
+        # (The previous version applied a common theta_s to every project, so every
+        # scenario ranked projects identically and the CVaR term moved the allocation
+        # by 1.2% at any weight; on top of that a separate kappa-scaled
+        # "risk_penalty" cut the same risk into the mean term a second time.)
+        #
+        # Objective (minimised):
+        #     -(1 - kappa) * sum_{i,t} rbar_{i,t} x_{i,t}
+        #     + kappa * [ eta + 1/(1-alpha) * sum_s p_s zeta_s ]
+        # with  rbar_{i,t} = sum_s p_s theta_{s,i} * base_yield_i * tranche_mult_t
+        #       zeta_s >= L_s(x) - eta,  L_s(x) = -sum_{i,t} theta_{s,i} base_yield_i mult_t x_{i,t}
+        #       zeta_s >= 0, eta free.
+        # Both terms are in the same units (yield-weighted Cr), so kappa is a genuine
+        # convex trade-off: kappa=0 maximises expected yield, kappa=1 maximises the
+        # alpha-tail average yield.
+        #
+        # Granularity: with p = (0.50, 0.35, 0.15) and alpha = 0.90, the worst 10% of
+        # probability mass lies entirely inside the severe scenario, so CVaR_0.90 equals
+        # the severe-scenario loss exactly and the optimum has eta = L_severe, zeta = 0.
+        # That is the correct R-U solution for a three-point distribution, not a defect.
         p_scenarios = np.array([0.50, 0.35, 0.15])
-        theta_scenarios = np.array([1.05, 0.95, 0.80])
+        severity_scenarios = np.array([-0.05, 0.15, 0.45])
         S = 3
+        CVAR_ALPHA = 0.90
+        theta_si = np.clip(1.0 - np.outer(severity_scenarios, risk_normalized), 0.05, 1.10)  # (S, N)
+        theta_bar = p_scenarios @ theta_si                                                    # (N,)
+        # Mean term coefficients; kept under the historical name because the tranche
+        # and reporting code below reads it.
+        effective_yield = base_yield * theta_bar
+        mean_weight = 1.0 - kappa
+        cvar_weight = kappa
 
         # Decision variables layout: [x_1_t1..x_N_t1, x_1_t2..x_N_t2, x_1_t3..x_N_t3, eta, zeta_1..zeta_S]
         num_vars = N * T + 1 + S
 
-        # Objective: minimize -sum_i sum_t (effective_yield_i * tranche_mult_t * x_i_t)
-        #            + kappa * (eta + 1/(1-alpha) * sum_s p_s * zeta_s)
         c = np.zeros(num_vars)
         for t in range(T):
-            c[t*N:(t+1)*N] = -effective_yield * tranche_yield_mult[t]
-        c[N*T] = kappa * 0.1      # eta coefficient
-        c[N*T+1:] = kappa * 0.1 * (p_scenarios / (1.0 - 0.90))
+            c[t*N:(t+1)*N] = -mean_weight * effective_yield * tranche_yield_mult[t]
+        c[N*T] = cvar_weight                                    # eta
+        c[N*T+1:] = cvar_weight * (p_scenarios / (1.0 - CVAR_ALPHA))  # zeta_s
 
-        # SOS2 ordering constraints: tranche t+1 can only be used if tranche t is full
-        # x_{i,t+1} <= tranche_ub_{i,t+1} * (x_{i,t} / tranche_ub_{i,t})
-        # Linearized: x_{i,t+1} * tranche_ub_{i,t} - x_{i,t} * tranche_ub_{i,t+1} <= 0
+        # Tranche fill-order constraints: the fill FRACTION of tranche t+1 may not
+        # exceed that of tranche t. (Not SOS2, which they were previously labelled: SOS2
+        # restricts the number of adjacent non-zeros. With strictly decreasing tranche
+        # yields the LP fills tranche 1 first anyway, so these rows are a safeguard for
+        # the kappa=0 corner where the yields nearly coincide.)
+        # x_{i,t+1} / ub_{i,t+1} <= x_{i,t} / ub_{i,t}
+        # Linearised: x_{i,t+1} * ub_{i,t} - x_{i,t} * ub_{i,t+1} <= 0
         sos2_rows = []
         for t in range(T - 1):
             for i in range(N):
@@ -271,16 +319,19 @@ class VittaVyuhaEngine:
                 else:
                     A_ner[0, t*N + i] = -0.10
 
-        # 3. CVaR auxiliary constraints (Rockafellar-Uryasev)
+        # 3. CVaR auxiliary constraints (Rockafellar-Uryasev):
+        #        zeta_s >= L_s(x) - eta   <=>   R_s(x) + eta + zeta_s >= 0
+        #    where R_s(x) = sum_{i,t} theta_{s,i} base_yield_i mult_t x_{i,t} is the
+        #    scenario return and L_s = -R_s its loss. No arbitrary target or scale:
+        #    the row is in the same yield-weighted Cr units as the mean term.
         A_cvar = np.zeros((S, num_vars))
         b_cvar_l = np.zeros(S)
         for s in range(S):
-            theta_s = theta_scenarios[s]
             for t in range(T):
-                A_cvar[s, t*N:(t+1)*N] = theta_s * base_yield * 0.15
+                A_cvar[s, t*N:(t+1)*N] = theta_si[s] * base_yield * tranche_yield_mult[t]
             A_cvar[s, N*T] = 1.0           # eta
             A_cvar[s, N*T + 1 + s] = 1.0   # zeta_s
-            b_cvar_l[s] = B * 0.10 * (s + 1)
+            b_cvar_l[s] = 0.0
 
         # Stack all constraints
         n_sos2 = A_sos2.shape[0]
@@ -299,6 +350,7 @@ class VittaVyuhaEngine:
 
         # Variable Bounds
         lb = np.zeros(num_vars)
+        lb[N*T] = -np.inf              # eta is the VaR level and is FREE
         ub_full = np.full(num_vars, np.inf)
         ub_full[:N*T] = tranche_ub
         bounds = Bounds(lb, ub_full)
@@ -318,15 +370,20 @@ class VittaVyuhaEngine:
 
         A_ub_mat = np.array(A_ub_list)
         b_ub_vec = np.array(b_ub_list)
-        bounds_lp = [(0.0, tranche_ub[i]) for i in range(N*T)] + [(0.0, None) for _ in range(1 + S)]
+        # eta is the VaR level and is FREE (it may be negative when the tail is a gain);
+        # only the zeta_s excess variables are non-negative.
+        bounds_lp = [(0.0, tranche_ub[i]) for i in range(N*T)] + [(None, None)] + [(0.0, None) for _ in range(S)]
 
         res_lp = linprog(c=c, A_ub=A_ub_mat, b_ub=b_ub_vec, bounds=bounds_lp, method="highs")
 
         # Extract allocations: sum tranches per project
+        x_full = None
         if res_milp.success:
+            x_full = res_milp.x
             x_raw = res_milp.x[:N*T]
             milp_obj = float(res_milp.fun)
         elif res_lp.success:
+            x_full = res_lp.x
             x_raw = res_lp.x[:N*T]
             milp_obj = float(res_lp.fun)
         else:
@@ -386,7 +443,65 @@ class VittaVyuhaEngine:
             np.sum(allocations_raw * _propensity) / max(total_allocated, 1.0) * 100.0,
             0.0, 100.0))
         portfolio_risk = float(np.sum(allocations_raw * risk_normalized) / max(total_allocated, 1.0))
-        cvar_loss = float(round(portfolio_risk * 100.0, 1))
+
+        # CVaR reported from the solved scenario returns, in the LP's own units.
+        # (Previously this field carried allocation-weighted risk index x 100, which
+        # is not a CVaR, not a loss and not in Cr.) Tail loss = expected return minus
+        # the alpha-tail average return, so it is >= 0 and falls as kappa rises.
+        def _tail_average(returns):
+            """alpha-tail average return: walk scenarios from the lowest return upward
+            until (1 - alpha) of probability mass is consumed."""
+            tail_mass, tail_ret, remaining = 1.0 - CVAR_ALPHA, 0.0, 1.0 - CVAR_ALPHA
+            for s_ in np.argsort(returns):
+                take = min(remaining, p_scenarios[s_])
+                tail_ret += take * returns[s_]
+                remaining -= take
+                if remaining <= 1e-12:
+                    break
+            return tail_ret / tail_mass
+
+        # (a) In the LP's own units, for the Rockafellar-Uryasev cross-check.
+        scen_returns_lp = np.array([float(A_cvar[s, :N*T] @ x_raw) for s in range(S)])   # R_s(x*)
+        tail_avg_lp = _tail_average(scen_returns_lp)
+        eta_star = float(x_full[N*T]) if x_full is not None else float("nan")
+        zeta_star = x_full[N*T+1:] if x_full is not None else np.full(S, np.nan)
+        ru_cvar = float(eta_star + np.sum(p_scenarios * zeta_star) / (1.0 - CVAR_ALPHA)) if x_full is not None else float("nan")
+
+        # (b) On a kappa-INVARIANT yardstick for reporting. The LP's tranche yield
+        # multipliers are themselves kappa-modulated (steeper diminishing returns at
+        # high kappa), so scenario returns in LP units are not comparable across two
+        # calls with different kappa: a lower tail at kappa=1 could be the yardstick
+        # shrinking rather than the portfolio getting safer. The reported figures use
+        # the kappa=0 multipliers so that the only thing that changes between calls
+        # is the allocation.
+        ref_mult = np.array([1.0, 0.92, 0.85])
+        scen_returns = np.array([
+            float(sum(theta_si[s] * base_yield * ref_mult[t] @ x_raw[t*N:(t+1)*N] for t in range(T)))
+            for s in range(S)])
+        expected_return = float(p_scenarios @ scen_returns)
+        tail_avg_return = _tail_average(scen_returns)
+        cvar_loss = float(max(0.0, expected_return - tail_avg_return))
+        cvar_diagnostics = {
+            "alpha": CVAR_ALPHA,
+            "scenario_probabilities": [float(p) for p in p_scenarios],
+            "scenario_severities": [float(v) for v in severity_scenarios],
+            "scenario_returns": [round(float(r), 2) for r in scen_returns],
+            "expected_return": round(expected_return, 2),
+            "tail_average_return": round(float(tail_avg_return), 2),
+            "tail_loss": round(cvar_loss, 2),
+            "var_eta": round(eta_star, 2) if np.isfinite(eta_star) else None,
+            "zeta": [round(float(z), 4) for z in zeta_star] if x_full is not None else None,
+            "lp_units_scenario_returns": [round(float(r), 2) for r in scen_returns_lp],
+            "lp_units_tail_average_return": round(float(tail_avg_lp), 2),
+            "ru_tail_average_return": round(-ru_cvar, 2) if np.isfinite(ru_cvar) else None,
+            "ru_agrees": bool(np.isfinite(ru_cvar) and abs(-ru_cvar - tail_avg_lp) < 1e-3 * max(1.0, abs(tail_avg_lp))),
+            "mean_weight": round(mean_weight, 3),
+            "cvar_weight": round(cvar_weight, 3),
+            "units": "yield-weighted Cr (base_yield index x allocated Cr), kappa=0 tranche multipliers",
+            "note": ("Scenarios are declared policy, not estimated. With p_severe = 0.15 > "
+                     "1 - alpha = 0.10 the 90% tail lies inside the severe scenario, so "
+                     "CVaR_0.90 equals the severe-scenario outcome and zeta = 0 at the optimum."),
+        }
 
         # SOLVER-AGREEMENT DIAGNOSTIC (deliberately NOT called a duality gap).
         #
@@ -410,12 +525,12 @@ class VittaVyuhaEngine:
             mask = (self.candidate_df["CANONICAL_ENTITY"] == entity).values
             if np.any(mask):
                 ent_yield = float(np.mean(base_yield[mask]))
+                # A DERIVED indicator (agency yield x budget dual x 1.15, clipped), not a
+                # dual of any constraint. Named for what it is on the result.
                 agency_shadow_prices[str(entity)] = round(float(np.clip(ent_yield * pi_budget * 1.15, 0.35, 3.50)), 2)
 
-        # Fallback keys if sparse
-        for default_ent, default_p in [("NHAI", 1.42), ("MoRTH", 1.15), ("INDIAN_RAILWAYS", 1.85), ("POWERGRID", 0.95), ("COAL_INDIA", 1.30)]:
-            if default_ent not in agency_shadow_prices:
-                agency_shadow_prices[default_ent] = default_p
+        # No fallback entries: an agency absent from the candidate pool has no
+        # indicator, and a literal standing in for one is a fabricated number.
 
         # Project Allocations Output
         project_allocs = []
@@ -446,12 +561,13 @@ class VittaVyuhaEngine:
             expected_completion_yield=round(expected_yield, 2),
             portfolio_completion_propensity_perc=round(completion_propensity_perc, 2),
             cvar90_tail_loss=round(cvar_loss, 2),
+            cvar_diagnostics=cvar_diagnostics,
             ner_allocated_cr=round(ner_allocated, 2),
             ner_share_perc=round(ner_share, 2),
             ner_floor_met=ner_share >= 9.9,
             shadow_price_budget_pi=round(pi_budget, 3),
             shadow_price_ner_pi=round(pi_ner, 3),
-            agency_shadow_prices=agency_shadow_prices,
+            agency_marginal_yield_indicator=agency_shadow_prices,
             allocations=project_allocs,
             closure_error_perc=closure_error,
             ner_coverage=getattr(self, "_state_coverage", None),
@@ -481,8 +597,8 @@ if __name__ == "__main__":
     print(f"  NER Allocated: ₹{res.ner_allocated_cr:,.2f} Cr ({res.ner_share_perc:.1f}% vs 10% statutory floor)")
     print(f"  Priority Index (not a %): {res.expected_completion_yield:.2f}")
     print(f"  Completion Propensity:    {res.portfolio_completion_propensity_perc:.2f}%")
-    print(f"  CVaR90 Tail Loss: ₹{res.cvar90_tail_loss:,.2f} Cr")
+    print(f"  CVaR90 Tail Loss: {res.cvar90_tail_loss:,.2f} (yield-weighted Cr; E[R] - 90% tail-average R)")
     print(f"  Dual Shadow Price π(Budget): {res.shadow_price_budget_pi:.3f} (₹ return per ₹1 Cr capex)")
     print(f"  Linearization Closure Error: {res.closure_error_perc}%")
-    print(f"  Solve Time: {res.solve_time_ms} ms (Sub-2s guarantee met!)")
+    print(f"  Solve Time: {res.solve_time_ms} ms")
     print("\nVerified VITTA-VYUHA Two-Stage Stochastic LP optimizer successfully generated!")

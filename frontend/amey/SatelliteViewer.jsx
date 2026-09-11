@@ -930,8 +930,9 @@ non-performance — see the imagery-currency note above.</div>
           </p>
           <p className="text-[11px] text-gov-muted leading-relaxed mt-1.5">
             Comparing photographs shows whether the ground <em>changed</em>. It cannot
-            show a percentage complete — across this programme, surface change and
-            reported progress correlate at 0.007, which is effectively not at all.
+            show a percentage complete — across this programme the measured correlation
+            between surface change and reported progress is effectively zero (published in
+            the audit artifact eo_progress_independence.json).
             Treat the pictures as one piece of evidence beside the reported figures,
             not as a verdict on them.
           </p>

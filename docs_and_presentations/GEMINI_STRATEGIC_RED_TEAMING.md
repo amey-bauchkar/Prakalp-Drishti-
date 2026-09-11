@@ -3,10 +3,11 @@
 > This file predates the claims ledger and contains figures that have since been
 > **withdrawn as unsupported**. In particular:
 >
-> * **`p < 0.001` for the 20% bunching test does not exist.** No p-value is computed
->   anywhere in the codebase. The live measurement is a bin-mass ratio of **1.65×
->   (28 vs 17 projects), 95% CI [0.90, 3.01]** — an interval that spans 1.0, so the
->   signal is **not statistically significant**. The `1.49×` figure here is also stale.
+> * **`p < 0.001` for the 20% bunching test does not exist.** The McCrary (2008)
+>   density-discontinuity test is now actually computed (`analytics_engine/mccrary.py`)
+>   and on the live corpus gives **θ = +0.076, z = 0.41, p = 0.68**: **no discontinuity
+>   at 20%**. The descriptive two-bin ratio is 1.65× (28 vs 17), 95% CI [0.90, 3.01],
+>   spanning 1.0. The `1.49×` figure here is stale.
 > * Any statement here that bunching **"proves"** rent-seeking, gaming or
 >   misrepresentation is **retracted**. The engine reports a screening indicator for
 >   audit triage and explicitly refuses to allege intent.

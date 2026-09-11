@@ -348,13 +348,13 @@ export default function NivaranView({ lang: propLang }) {
                     <div>
                       <div className="flex justify-between font-bold mb-1">
                         <span className="text-gov-navy font-heading text-[11px]">{isHi ? 'संविदाकार पिछला विवाद रिकॉर्ड' : 'Contractor Past Dispute Record'}</span>
-                        <span className="text-red-600 font-mono">{niv?.contractor_litigation_index ?? 78.5} / 100</span>
+                        <span className="text-red-600 font-mono">{Number.isFinite(Number(niv?.contractor_litigation_index)) ? niv.contractor_litigation_index : '—'} / 100</span>
                       </div>
                       <div className="text-[10px] text-gov-muted mb-1">
                         {isHi ? 'ऐतिहासिक मुकदमों, दावों और अदालती स्थगनों की आवृत्ति।' : 'Frequency of historical lawsuits, claims, and stay orders.'}
                       </div>
                       <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-red-500 h-full rounded-full" style={{ width: `${niv?.contractor_litigation_index ?? 78.5}%` }} />
+                        <div className="bg-red-500 h-full rounded-full" style={{ width: `${Number.isFinite(Number(niv?.contractor_litigation_index)) ? niv.contractor_litigation_index : 0}%` }} />
                       </div>
                     </div>
                   </div>

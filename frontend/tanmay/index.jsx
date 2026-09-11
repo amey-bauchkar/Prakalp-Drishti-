@@ -128,11 +128,11 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
               {lang === 'hi' ? (
                 <>
-                  मैकक्रैरी बंचिंग घनत्व परीक्षण चलाने, १९.९% पर कृत्रिम लागत संशोधनों की स्क्रीनिंग करने और खंड १०सीसी दावों के ऑडिट के लिए ऊपर <strong className="text-slate-700 dark:text-slate-300">"न्यायालयिक लेखापरीक्षा चलाएं"</strong> पर क्लिक करें।
+                  २०% सीमा पर मैकक्रैरी घनत्व-असांतत्य परीक्षण चलाने, [१८%, २०%) पट्टी में संशोधनों की गणना करने और खंड १०सीसी दावों के ऑडिट के लिए ऊपर <strong className="text-slate-700 dark:text-slate-300">"न्यायालयिक लेखापरीक्षा चलाएं"</strong> पर क्लिक करें।
                 </>
               ) : (
                 <>
-                  Click <strong className="text-slate-700 dark:text-slate-300">"EXECUTE FORENSIC AUDIT"</strong> above to trigger the McCrary bunching density test, screen artificial cost revisions at 19.9%, and audit Clause 10CC claims.
+                  Click <strong className="text-slate-700 dark:text-slate-300">"EXECUTE FORENSIC AUDIT"</strong> above to run the McCrary density-discontinuity test at the 20% threshold, count revisions landing in the [18%, 20%) band, and audit Clause 10CC claims.
                 </>
               )}
             </p>
@@ -147,7 +147,7 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
                 {lang === 'hi' ? 'सीसीईए २०% सीमा स्क्रीन' : 'CCEA 20% Threshold Screen'}
               </h4>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
-                {lang === 'hi' ? '[१८%, २०%) स्वीकृति परिहार पट्टी में कृत्रिम बंचिंग का पता लगाता है' : 'Detects artificial bunching in the [18%, 20%) approval avoidance band'}
+                {lang === 'hi' ? '२०% सीसीईए सीमा पर घनत्व-असांतत्य का परीक्षण करता है; अभिप्राय का निष्कर्ष नहीं निकालता' : 'Tests for a density discontinuity at the 20% CCEA threshold; does not infer intent'}
               </p>
             </div>
 

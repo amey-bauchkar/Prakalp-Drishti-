@@ -31,7 +31,8 @@ const itemVariants = {
  * WHAT THIS SCREEN DOES NOT SHOW, AND WHY
  * ---------------------------------------
  * There is no "satellite-measured progress %" and no claimed-minus-detected discrepancy
- * score. Surface change and reported progress correlate at r = 0.007 in this corpus, so
+ * score. Surface change and reported progress are uncorrelated in this corpus (the measured
+ * r is published by the API in `methodology` from artifacts/eo_progress_independence.json), so
  * a satellite-derived completion figure would be a guess formatted as a measurement, and
  * a fraud badge computed from it would accuse named contractors on the strength of
  * noise. That figure existed in this system once and was removed for being 45%-weighted
@@ -212,7 +213,7 @@ function MilestoneSatelliteViewer({ projectId, entry, epochs }) {
 }
 
 /* ── The detail panel for the selected milestone ─────────────────────────── */
-function MilestoneDetail({ entry, projectId, epochs }) {
+function MilestoneDetail({ entry, projectId, epochs, methodology }) {
   if (!entry) {
     return (
       <p className="notation">Select a milestone on the timeline to see its evidence.</p>
@@ -273,9 +274,9 @@ function MilestoneDetail({ entry, projectId, epochs }) {
       <MilestoneSatelliteViewer projectId={projectId} entry={entry} epochs={epochs} />
 
       <p className="notation">
-        Claimed progress and observed change are reported side by side and are never
-        subtracted. They correlate at r = 0.007 in this corpus, so no satellite-derived
-        completion figure exists and no discrepancy score is computed.
+        {methodology
+          ? methodology
+          : 'Claimed progress and observed change are reported side by side and are never subtracted; no satellite-derived completion figure exists and no discrepancy score is computed.'}
       </p>
     </div>
   );
@@ -458,7 +459,7 @@ function TimelineInner({ projectId }) {
 
           <div className="panel">
             <div className="panel-head"><span className="panel-title">Evidence &amp; Satellite Imagery for Selected Period</span></div>
-            <div className="panel-body-lg"><MilestoneDetail entry={selected} projectId={pid} epochs={data.epochs} /></div>
+            <div className="panel-body-lg"><MilestoneDetail entry={selected} projectId={pid} epochs={data.epochs} methodology={data.methodology} /></div>
           </div>
 
           <div className="panel">

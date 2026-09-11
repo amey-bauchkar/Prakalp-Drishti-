@@ -36,8 +36,8 @@ Censoring
 ---------
 The event is "project reaches 100% physical progress".
 
-    PhysicalProgress >= 100  ->  event observed        (164 projects)
-    PhysicalProgress <  100  ->  right-censored        (2,043 projects)
+    PhysicalProgress >= 100  ->  event observed        (see artefact n_events)
+    PhysicalProgress <  100  ->  right-censored        (see artefact n_right_censored)
 
 A censored project contributes log S(t) -- the information that its true duration
 EXCEEDS its elapsed duration. This is the entire reason to use survival analysis here:
@@ -55,7 +55,7 @@ reason this module reports intervals rather than point certainties.
 
 Shrinkage
 ---------
-164 events across 22 sectors and 103 canonical entities is a 7.4% event rate, and the
+Roughly 115 usable events across 22 sectors and 103 canonical entities is a ~5% event rate, and the
 cells are wildly unbalanced -- Roads & Highways holds 1,181 projects, Energy Storage
 holds a handful. Fitting 125 free group effects unpenalised would produce confident
 nonsense in the thin cells.
@@ -70,8 +70,10 @@ group is published WITH its event count so a reviewer can see which multipliers 
 carried by data and which are carried by the prior.
 
 Run as a script to (re)fit. KAAL-CHAKRA consumes the saved artefact at runtime, so no
-optimisation happens on the request path. The conformal interval wrapper is unchanged
-and still supplies the calibrated P10-P95 band at a measured 93.3% coverage.
+optimisation happens on the request path. After a refit, re-run
+analytics_engine/conformal_calibration.py: the conformal band is calibrated on the
+engine's own median, which this artefact feeds, and its measured coverage is recorded
+in artifacts/conformal_calibration.json (not here).
 """
 
 from __future__ import annotations
@@ -162,12 +164,23 @@ def load_frame() -> pd.DataFrame:
     dur_event = (completion_proxy - df["SanctionDate"]).dt.days / 30.4375
     dur_censored = (AS_OF - df["SanctionDate"]).dt.days / 30.4375
 
+    # A project at 100% physical progress whose completion PROXY (its last revised
+    # target) lies AFTER the as-of date has no observable duration: the proxy is a
+    # forecast, not a record. 45 of 160 events carried one. Treating them as events at
+    # a date that has not happened corrupts the likelihood; treating them as censored
+    # at AS_OF understates them. They are excluded from the fit and the count is
+    # published so the loss is visible.
+    proxy_in_future = completed & (completion_proxy > AS_OF)
+    df["ProxyInFuture"] = proxy_in_future
+    completed = completed & ~proxy_in_future
+
     df["Event"] = completed.astype(int)
     df["DurationMonths"] = np.where(completed, dur_event, dur_censored)
 
     df = df[
         df["SanctionDate"].notna()
         & df["PlannedMonths"].notna()
+        & ~df["ProxyInFuture"]
         & np.isfinite(df["DurationMonths"])
         & (df["DurationMonths"] >= MIN_MONTHS)
         & (df["DurationMonths"] <= MAX_MONTHS)
@@ -175,6 +188,30 @@ def load_frame() -> pd.DataFrame:
     ].copy()
 
     return df
+
+
+def survivorship_diagnostic(df: pd.DataFrame) -> Dict:
+    """
+    Event rate by sanction cohort. Published with the artefact because it is the
+    evidence for the caveat below: a register of ONGOING projects sheds completed
+    ones, so the oldest cohorts show near-zero completion not because nothing
+    finished but because what finished has left. Right-censoring corrects for
+    "not finished yet"; it cannot correct for "finished and removed before we
+    looked". The fitted baseline is therefore an upper-ish bound on the true
+    multiplier, and is labelled as such rather than presented as a point estimate.
+    """
+    yr = df["SanctionDate"].dt.year
+    out = []
+    for lo, hi in [(1980, 2005), (2005, 2010), (2010, 2015), (2015, 2020), (2020, 2030)]:
+        m = (yr >= lo) & (yr < hi)
+        n = int(m.sum()); ev = int(df.loc[m, "Event"].sum())
+        out.append({"sanction_years": f"{lo}-{hi - 1}", "n": n, "events": ev,
+                    "event_rate": round(ev / n, 4) if n else None})
+    return {"by_cohort": out,
+            "reading": ("Cohorts sanctioned before 2005 show ~0 completions. Projects that "
+                        "finished years ago are not in a register of ongoing projects; the "
+                        "sample is survivor-biased toward slow projects and the baseline "
+                        "multiplier is inflated accordingly.")}
 
 
 def _group_levels(series: pd.Series, min_n: int) -> List[str]:
@@ -304,6 +341,11 @@ def run() -> Dict:
 
     n_events = int(event.sum())
     n_censored = int((1 - event).sum())
+    n_future_proxy_excluded = int(load_corpus().pipe(lambda d: (
+        (pd.to_numeric(d["PhysicalProgress"], errors="coerce").fillna(0) >= 100.0)
+        & (pd.to_datetime(d["RevisedDate"], errors="coerce", dayfirst=True)
+             .fillna(pd.to_datetime(d["OriginalEndDate"], errors="coerce", dayfirst=True)) > AS_OF)
+    ).sum()))
 
     # ── SELECTING tau ────────────────────────────────────────────────────────────
     # By CROSS-VALIDATED held-out log-likelihood, not by the in-sample fit.
@@ -396,6 +438,11 @@ def run() -> Dict:
         "n_observations": int(len(df)),
         "n_events": n_events,
         "n_right_censored": n_censored,
+        "n_events_excluded_future_proxy": n_future_proxy_excluded,
+        "survivorship": survivorship_diagnostic(df),
+        "baseline_caveat": ("The baseline multiplier is fitted on a register that retains ongoing "
+                            "projects and sheds completed ones. Treat it as an upper-ish bound, "
+                            "not a point estimate of typical overrun. See 'survivorship'."),
         "event_rate": round(n_events / max(1, len(df)), 4),
         "min_group_n": MIN_GROUP_N,
         "shrinkage_prior": "Normal(0, tau^2) on sector/entity effects",

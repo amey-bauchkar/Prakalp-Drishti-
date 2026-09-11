@@ -289,13 +289,31 @@ class RiskIndexEngine:
                 "components_available": len(avail),
                 "components_total": len(COMPONENT_WEIGHTS),
                 "capex_cr": round(float(cost_cr), 2),
-                # Exposure-weighted priority: sqrt damps the cost term so a single
-                # mega-project cannot monopolise the queue purely on size.
-                "priority_score": round(float(score) * math.sqrt(max(cost_cr, 1.0)) / 100.0, 2),
+                # Exposure-weighted priority. sqrt(cost) did NOT damp enough: measured
+                # Spearman(priority, capex) was 0.955 against 0.576 for the risk score,
+                # so the "early-warning queue" was in rank terms the cost table. Cost
+                # now enters as log10(1 + cost) -- a Rs 1 lakh crore project weighs
+                # ~5x a Rs 100 crore one, not ~30x -- and the risk score carries the
+                # ranking. Both correlations are published in coverage so the balance
+                # is auditable rather than asserted.
+                "priority_score": round(float(score) * math.log10(1.0 + max(cost_cr, 0.0)), 2),
                 "eo_verdict_reliable": bool(cat.get("eo_verdict_reliable")),
             }
 
         self.ranked = sorted(self.scores.values(), key=lambda r: -r["priority_score"])
+        # Publish what the priority actually tracks, so the queue's construction can be
+        # checked against the data rather than the docstring.
+        try:
+            from scipy.stats import spearmanr as _sp
+            _pr = [r["priority_score"] for r in self.ranked]
+            _cx = [r["capex_cr"] for r in self.ranked]
+            _rs = [r["risk_score"] for r in self.ranked]
+            self._rank_diag = {
+                "spearman_priority_vs_capex": round(float(_sp(_pr, _cx).correlation), 3),
+                "spearman_priority_vs_risk_score": round(float(_sp(_pr, _rs).correlation), 3),
+            }
+        except Exception:
+            self._rank_diag = {}
         bands: Dict[str, int] = {}
         for r in self.scores.values():
             bands[r["risk_band"]] = bands.get(r["risk_band"], 0) + 1
@@ -303,6 +321,8 @@ class RiskIndexEngine:
             "projects_scored": len(self.scores),
             "with_ground_truth_signal": n_with_eo,
             "band_distribution": bands,
+            "priority_construction": "risk_score x log10(1 + capex_cr)",
+            "rank_diagnostics": self._rank_diag,
             "sectors": sorted(list(set(r["sector"] for r in self.scores.values() if r.get("sector")))),
             "weights": COMPONENT_WEIGHTS,
             "weights_note": "Declared policy weights, not fitted -- no ground-truth risk "

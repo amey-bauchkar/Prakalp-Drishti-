@@ -223,7 +223,7 @@ def run_cia_audit():
             # budget constraint isn't binding -- only reject a negative or NaN value.
             assert res.shadow_price_budget_pi >= 0.0, f"Invalid budget dual price at B={b}: {res.shadow_price_budget_pi}"
             assert res.closure_error_perc < 5.0, f"Closure error above bound: {res.closure_error_perc}%"
-            assert len(res.agency_shadow_prices) > 0, "Missing agency shadow prices"
+            assert len(res.agency_marginal_yield_indicator) > 0, "Missing agency indicators"
     print(f"  • VITTA-VYUHA Verdict: 20/20 LP Stress Scenarios Optimal (100% NER Floor, HiGHS Duals & Closure Error < 5%)")
 
     # Verify a targeted delay shock genuinely re-optimizes the LP for a real candidate project

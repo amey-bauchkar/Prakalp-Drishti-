@@ -44,7 +44,8 @@ const CONFIDENCE_STYLES = {
 };
 
 // Statuses describe what the imagery OBSERVED, never a completion percentage.
-// Surface change and reported progress correlate at 0.007 across the corpus, so the
+// Surface change and reported progress are uncorrelated across the corpus (measured in
+// artifacts/eo_progress_independence.json), so the
 // old "N% observed vs M% claimed, X pts divergence" framing was not supportable.
 const STATUS_STYLES = {
   ACTIVITY_ANOMALY: { cls: 'bg-rose-100 text-rose-800 border-rose-300', label: 'Activity Anomaly — Field Visit' },
