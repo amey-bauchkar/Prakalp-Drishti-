@@ -45,8 +45,8 @@ _cache: Optional[dict] = None
 def _sha256(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
+        content = f.read().replace(b"\r\n", b"\n")
+        h.update(content)
     return h.hexdigest()
 
 
