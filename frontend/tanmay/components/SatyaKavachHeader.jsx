@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Scale, ShieldAlert, CheckCircle2, Landmark, RefreshCw } from 'lucide-react';
+import { Scale, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getStoredLanguage } from '../../src/lib/i18n';
 
-export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loading, hasData = true, lang: propLang }) {
+export default function SatyaKavachHeader({ flaggedCount = 28, hasData = true, lang: propLang }) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
 
   useEffect(() => {
@@ -78,23 +78,6 @@ export default function SatyaKavachHeader({ flaggedCount = 28, onRefresh, loadin
           )}
         </div>
       </div>
-
-      {onRefresh && (
-        <div className="shrink-0 w-full lg:w-auto relative z-10">
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="w-full lg:w-auto min-w-[270px] bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white border-2 border-slate-300 hover:border-indigo-600 font-extrabold py-3.5 px-6 rounded-xl text-xs font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 shadow-xs hover:shadow-lg hover:shadow-indigo-500/25 cursor-pointer disabled:opacity-50 group"
-          >
-            <Scale className="w-4 h-4 text-indigo-600 group-hover:text-white transition-colors" />
-            <span>
-              {loading
-                ? (lang === 'hi' ? 'लेखापरीक्षा जारी…' : 'Auditing Portfolios…')
-                : (lang === 'hi' ? 'न्यायालयिक लेखापरीक्षा चलाएं' : 'Execute Forensic Audit')}
-            </span>
-          </button>
-        </div>
-      )}
     </motion.div>
   );
 }

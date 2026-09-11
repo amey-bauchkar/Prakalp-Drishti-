@@ -16,7 +16,10 @@ df['REAL_DELAY_MONTHS'] = df.apply(compute_delay, axis=1)
 df['RevisedCost'] = pd.to_numeric(df['RevisedCost'], errors='coerce').fillna(500.0)
 df['PhysicalProgress'] = pd.to_numeric(df['PhysicalProgress'], errors='coerce').fillna(25.0)
 
-cand = df.sort_values(by='RevisedCost', ascending=False).head(60).copy()
+is_ner_all = df['StateName'].isin(['Assam', 'Arunachal Pradesh', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Sikkim', 'Tripura'])
+ner_sample = df[is_ner_all].nlargest(15, "RevisedCost")
+non_ner_sample = df[~is_ner_all].nlargest(45, "RevisedCost")
+cand = pd.concat([ner_sample, non_ner_sample]).reset_index(drop=True)
 N = len(cand)
 
 costs = cand['RevisedCost'].values

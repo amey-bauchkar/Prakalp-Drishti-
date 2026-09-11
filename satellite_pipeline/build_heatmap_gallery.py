@@ -202,7 +202,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <div class="kpi-card">
             <div>
-                <div class="kpi-val" id="kpiCapex" style="color: var(--accent-orange);">₹31.4L Cr</div>
+                <div class="kpi-val" id="kpiCapex" style="color: var(--accent-orange);">₹47.44L Cr</div>
                 <div class="kpi-label">Total Portfolio Capex Monitored</div>
             </div>
             <div style="font-size: 28px;">💰</div>

@@ -261,6 +261,12 @@ class SatyaKavachEngine:
                     "clause_10cc_excess_max_40": round(excess_score, 1),
                     "weights_note": "declared 60/40 policy weights; a triage order, not a probability or a finding",
                 },
+                "priority_score": review_priority,
+                "priority_level": priority_tier,
+                "priority_driver": priority_basis,
+                "suspicion_score": review_priority,
+                "suspicion_level": priority_tier,
+                "suspicion_driver": priority_basis,
             })
 
         return {

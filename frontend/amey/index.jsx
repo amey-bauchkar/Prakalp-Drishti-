@@ -281,7 +281,7 @@ export default function AmeyMasterView() {
                   <img
                     src="/logos/india_map.png"
                     alt="Republic of India Map"
-                    className="max-h-full max-w-full object-contain mix-blend-multiply"
+                    className="max-h-full max-w-full object-contain drop-shadow-xs"
                   />
                 </div>
                 <div>
@@ -319,7 +319,7 @@ export default function AmeyMasterView() {
           {/* 2-Column Statutory Directives & Analytical Corpus */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             {/* Left: General Information */}
-            <div className="lg:col-span-5 panel p-6 sm:p-7 flex flex-col justify-between rounded-2xl">
+            <div className="lg:col-span-5 panel tiranga-top-strip p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden rounded-2xl">
               <div>
                 <h3 className="font-heading font-extrabold text-[17px] sm:text-[18px] text-gov-navy border-b border-border-default pb-3 mb-4 flex items-center gap-2">
                   <Layers className="w-4.5 h-4.5 text-gov-saffron" />
@@ -352,7 +352,7 @@ export default function AmeyMasterView() {
             </div>
 
             {/* Right: Feature Focus Card */}
-            <div className="lg:col-span-7 panel p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden rounded-2xl">
+            <div className="lg:col-span-7 panel tiranga-top-strip p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden rounded-2xl">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10.5px] font-bold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light px-3 py-1 rounded border border-gov-gold-border">
@@ -410,7 +410,7 @@ export default function AmeyMasterView() {
             <div className="text-[11px] font-bold uppercase tracking-widest text-gov-saffron">
               Independent Analytical Engines
             </div>
-            <h2 className="font-cinzel text-[26px] sm:text-[30px] font-bold text-gov-navy tracking-tight leading-none">
+            <h2 className="font-heading font-extrabold text-[26px] sm:text-[30px] text-gov-navy tracking-tight leading-none">
               OVERSIGHT PROGRAMMES
             </h2>
             <p className="text-text-secondary text-[14px] sm:text-[15px]">
@@ -515,7 +515,7 @@ export default function AmeyMasterView() {
           {/* 3 Executive Bulletins */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             {/* Notice 1 */}
-            <div className="bulletin-paper-card p-5 sm:p-6 flex flex-col justify-between rounded-2xl min-h-[190px]">
+            <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
                   <span className="text-gov-saffron uppercase">Cabinet Flash</span>
@@ -529,14 +529,10 @@ export default function AmeyMasterView() {
                   mandating revised administrative approval submission.
                 </p>
               </div>
-              <div className="pt-3 mt-3 border-t border-slate-100 text-[12.5px] font-bold text-gov-navy hover:text-gov-saffron cursor-pointer flex items-center gap-1">
-                <span>Read Dispatch</span>
-                <ChevronRight className="w-4 h-4" />
-              </div>
             </div>
 
             {/* Notice 2 */}
-            <div className="bulletin-paper-card p-5 sm:p-6 flex flex-col justify-between rounded-2xl min-h-[190px]">
+            <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
                   <span className="text-emerald-700 uppercase">Solvency Alert</span>
@@ -550,14 +546,10 @@ export default function AmeyMasterView() {
                   compression below 1.5x, signalling potential execution slowdowns.
                 </p>
               </div>
-              <div className="pt-3 mt-3 border-t border-slate-100 text-[12.5px] font-bold text-gov-navy hover:text-gov-saffron cursor-pointer flex items-center gap-1">
-                <span>Read Dispatch</span>
-                <ChevronRight className="w-4 h-4" />
-              </div>
             </div>
 
             {/* Notice 3 */}
-            <div className="bulletin-paper-card p-5 sm:p-6 flex flex-col justify-between rounded-2xl min-h-[190px]">
+            <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
                   <span className="text-blue-700 uppercase">Weather Advisory</span>
@@ -570,10 +562,6 @@ export default function AmeyMasterView() {
                   Varsha-Speed regression estimates 2 to 5 months additional slippage for coastal highway and railway packages 
                   impacted by +22% monsoon precipitation anomaly.
                 </p>
-              </div>
-              <div className="pt-3 mt-3 border-t border-slate-100 text-[12.5px] font-bold text-gov-navy hover:text-gov-saffron cursor-pointer flex items-center gap-1">
-                <span>Read Dispatch</span>
-                <ChevronRight className="w-4 h-4" />
               </div>
             </div>
           </div>

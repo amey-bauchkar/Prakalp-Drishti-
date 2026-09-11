@@ -246,7 +246,8 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
 
           <TableBody className="divide-y divide-slate-100 font-sans">
             {paginatedProjects.map((p, idx) => {
-              const isHighSuspicion = (p.review_priority_score || 0) >= 65;
+              const score = p.review_priority_score ?? p.priority_score ?? p.suspicion_score ?? 0;
+              const isHighSuspicion = score >= 65;
               const isUltraClose = (p.distance_to_boundary_pp || 0) <= 0.5;
 
               return (
@@ -319,18 +320,18 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                     <div className="flex flex-col items-center gap-1">
                       <span
                         className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono inline-block border ${
-                          p.review_priority_score >= 70
+                          score >= 70
                             ? 'bg-rose-50 text-rose-800 border-rose-300'
-                            : p.review_priority_score >= 40
+                            : score >= 40
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
-                        {p.review_priority_score ?? 'N/A'}/100
+                        {(p.review_priority_score ?? p.priority_score ?? p.suspicion_score) ?? 'N/A'}/100
                       </span>
-                      {p.review_priority_basis && (
-                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.review_priority_basis}>
-                          {p.review_priority_basis}
+                      {(p.review_priority_basis || p.priority_driver || p.suspicion_driver) && (
+                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.review_priority_basis || p.priority_driver || p.suspicion_driver}>
+                          {p.review_priority_basis || p.priority_driver || p.suspicion_driver}
                         </span>
                       )}
                     </div>

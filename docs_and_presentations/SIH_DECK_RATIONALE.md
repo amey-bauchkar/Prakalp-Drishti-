@@ -24,7 +24,7 @@ analytical tier above it.
 87 live API endpoints, 18 views, 19 test suites, 476 assertions.
 
 **Data path.** `corpus_source.py` is a single read seam. Supabase PostgreSQL
-(ap-south-1, Mumbai) is the write path; an in-memory pandas frame is the read path.
+(ap-southeast-1, Singapore) is the write path; an in-memory pandas frame is the read path.
 The corpus is sealed as an RFC 6962 Merkle root over canonically-serialised rows, so a
 CSV bootstrap and a Postgres read produce the same root.
 

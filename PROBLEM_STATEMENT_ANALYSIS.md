@@ -22,7 +22,7 @@
 
 ## 1. Executive Summary & National Stakes
 
-The Government of India, through the **Ministry of Statistics and Programme Implementation (MoSPI)** and its **Infrastructure and Project Monitoring Division (IPMD)**, oversees the execution of **2,207 Central Sector Infrastructure Mega-Projects** ($\ge ₹150\text{ Crore}$ each), representing a total sanctioned public capital outlay of over **₹31.4 to ₹41.78 Lakh Crore (~$380B to $500B USD)**.
+The Government of India, through the **Ministry of Statistics and Programme Implementation (MoSPI)** and its **Infrastructure and Project Monitoring Division (IPMD)**, oversees the execution of **2,207 Central Sector Infrastructure Mega-Projects** ($\ge ₹150\text{ Crore}$ each), representing a total public capital outlay of over **₹47.44 Lakh Crore (~$570B USD)** (₹41.78 Lakh Crore original sanctioned outlay).
 
 These projects form the foundational arteries of India’s economic growth:
 - **Railways** (Dedicated Freight Corridors, high-speed lines, station redevelopments)

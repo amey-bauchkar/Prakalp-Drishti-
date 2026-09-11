@@ -167,7 +167,7 @@ for **2 of 70 surveyed sites**, and only those two are described as sub-metre.
 
 **Answer honestly — the weakness is known and bounded.**
 
-Writes go to Supabase PostgreSQL (ap-south-1, Mumbai) with append-only triggers, a
+Writes go to Supabase PostgreSQL (ap-southeast-1, Singapore) with append-only triggers, a
 `prev_hash` row chain and RLS. **Reads are served from a single in-memory pandas frame**,
 which is what delivers the measured **7 ms** forecast latency. That is correct at 2,207
 rows and would not survive continuous national ingestion — a shared cache or columnar

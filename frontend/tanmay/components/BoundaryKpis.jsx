@@ -100,6 +100,11 @@ export default function BoundaryKpis({ summaryData, lang = 'en' }) {
                 <Metric className="text-slate-900 font-heading font-black text-2xl">
                   {c.metric}
                 </Metric>
+                {c.subMetric && (
+                  <div className="text-[11px] font-mono text-slate-500 mt-1 font-medium leading-tight">
+                    {c.subMetric}
+                  </div>
+                )}
                 <Text className="mt-2 text-xs text-slate-600 leading-relaxed font-sans">
                   {c.desc}
                 </Text>

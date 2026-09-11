@@ -1,7 +1,7 @@
 # PRAKALP-DRISHTI: Problem Statement & National Context
 
 ## 1. Executive Summary & National Stakes
-The Government of India, through the **Ministry of Statistics and Programme Implementation (MoSPI)** and the **Infrastructure and Project Monitoring Division (IPMD)**, monitors **2,207 Central Sector Infrastructure Mega-Projects** (each valued at $\ge ₹150\text{ Crore}$), representing a total sanctioned public capital outlay of over **₹31.4 Lakh Crore (~$380 Billion USD)**.
+The Government of India, through the **Ministry of Statistics and Programme Implementation (MoSPI)** and the **Infrastructure and Project Monitoring Division (IPMD)**, monitors **2,207 Central Sector Infrastructure Mega-Projects** (each valued at $\ge ₹150\text{ Crore}$), representing a total public capital outlay of over **₹47.44 Lakh Crore (~$570 Billion USD)** (₹41.78 Lakh Crore original sanctioned).
 
 These projects span critical infrastructure arteries: **Railways, National Highways (MoRTH/NHAI), Power & Renewable Energy, Petroleum & Natural Gas, Coal, Civil Aviation, Shipping & Ports, Steel, and Water Resources**.
 

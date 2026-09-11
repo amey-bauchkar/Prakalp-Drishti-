@@ -611,17 +611,20 @@
   .card-gov-programme:hover { border-color: var(--line-strong); transform: none; box-shadow: none; }
   .card-parchment-gold { background: var(--gold-wash); border-color: var(--gov-gold-border, #E4D3A8); }
 
-  .bulletin-paper-card { position: relative; }
-  .bulletin-paper-card::before {
+  .bulletin-paper-card,
+  .tiranga-top-strip { position: relative; }
+  .bulletin-paper-card::before,
+  .tiranga-top-strip::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
+    height: 2.5px;
     background: linear-gradient(90deg,
       var(--tri-saffron) 0%, var(--tri-saffron) 33.33%,
       #FFFFFF 33.33%, #FFFFFF 66.66%,
       var(--tri-green) 66.66%, var(--tri-green) 100%);
     border-radius: 0;
+    z-index: 10;
   }
 
   .circular-partner-badge {
