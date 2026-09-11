@@ -371,7 +371,6 @@ export default function DecisionHubView() {
                     onSelectProject={(id) => {
                       setSelectedProjectId(String(id));
                       localStorage.setItem('prakalp:selectedProjectId', String(id));
-                      selectEngine('unified_cockpit');
                     }}
                   />
                 )}

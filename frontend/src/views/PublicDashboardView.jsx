@@ -7,9 +7,9 @@ import {
   TreePine, AlertCircle, Sparkles, ChevronRight, BarChart3,
   Download, ChevronLeft, ChevronsLeft, ChevronsRight, RotateCcw,
   SlidersHorizontal, ArrowUpDown, ListFilter, Activity, Eye,
-  IndianRupee, Globe2, ShieldAlert, Cpu, Terminal, Keyboard
+  IndianRupee, Globe2, ShieldAlert, Cpu, Terminal, Keyboard, Navigation
 } from 'lucide-react';
-import { Circle, CircleMarker, MapContainer, Popup } from 'react-leaflet';
+import { Circle, CircleMarker, MapContainer, Popup, useMap } from 'react-leaflet';
 import BaseMapLayer, { BaseMapNotice } from '../components/BaseMapLayer';
 import ClearanceStagesInfoGuide from '../components/ClearanceStagesInfoGuide';
 import NagrikGrievanceDesk from '../components/NagrikGrievanceDesk';
@@ -25,6 +25,31 @@ import {
   getProjectStatus, describeStatus, STATUS, STATUS_ORDER,
   formatCount, formatCr, formatDate, sectorName, sectorIsTranslated,
 } from '../lib/projectStatus';
+
+// Haversine formula for spherical distance in km
+const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
+function MapRecenter({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && Number.isFinite(center[0]) && Number.isFinite(center[1]) && (center[0] !== 0 || center[1] !== 0)) {
+      map.flyTo(center, Math.max(map.getZoom(), 7), { duration: 1.2 });
+    }
+  }, [center, map]);
+  return null;
+}
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -147,18 +172,54 @@ export default function PublicDashboardView() {
 
   const activeProject = projects.find((p) => String(p.project_id) === String(selectedProjectId)) || projects[0];
 
-  const sectors = ['All', ...Array.from(new Set(projects.map((p) => p.sector).filter(Boolean)))];
-  const states = ['All', ...Array.from(new Set(projects.map((p) => p.state).filter(Boolean)))];
+  const sectors = useMemo(() => {
+    const raw = Array.from(new Set(projects.map((p) => p.sector).filter(Boolean))).sort();
+    return ['All', 'Roads & Highways', 'Railways', 'Power', 'Oil & Gas', ...raw.filter((s) => !['Roads & Highways', 'Railways', 'Oil & Gas'].includes(s))];
+  }, [projects]);
 
-  const filteredProjects = projects.filter((p) => {
-    const matchesSearch = !searchQuery || 
-      p.project_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.project_id?.toString().includes(searchQuery) ||
-      p.company?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSector = selectedSector === 'All' || p.sector === selectedSector;
-    const matchesState = selectedState === 'All' || p.state === selectedState;
-    return matchesSearch && matchesSector && matchesState;
-  });
+  const states = useMemo(() => {
+    return ['All', ...Array.from(new Set(projects.map((p) => p.state).filter(Boolean))).sort()];
+  }, [projects]);
+
+  const matchesSectorCheck = useCallback((projectSector, filterSector) => {
+    if (!filterSector || filterSector === 'All') return true;
+    const ps = (projectSector || '').trim().toLowerCase();
+    const fs = filterSector.trim().toLowerCase();
+
+    // Highways
+    if (fs === 'roads & highways' || fs === 'highways' || fs === 'road transport and highways' || fs === 'road transport & highways') {
+      return ps.includes('road') || ps.includes('highway');
+    }
+
+    // Railways
+    if (fs === 'railways' || fs === 'rail') {
+      return ps.includes('rail');
+    }
+
+    // Power
+    if (fs === 'power' || fs === 'electricity' || fs === 'energy') {
+      return ps.includes('power') || ps.includes('electricity') || ps.includes('transmission') || ps.includes('energy storage');
+    }
+
+    // Petroleum / Oil & Gas
+    if (fs === 'oil & gas' || fs === 'petroleum' || fs === 'oil' || fs === 'gas') {
+      return ps.includes('oil') || ps.includes('gas') || ps.includes('petroleum');
+    }
+
+    return ps === fs;
+  }, []);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p) => {
+      const matchesSearch = !searchQuery || 
+        p.project_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.project_id?.toString().includes(searchQuery) ||
+        p.company?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSector = matchesSectorCheck(p.sector, selectedSector);
+      const matchesState = selectedState === 'All' || p.state === selectedState;
+      return matchesSearch && matchesSector && matchesState;
+    });
+  }, [projects, searchQuery, selectedSector, selectedState, matchesSectorCheck]);
 
   // One counter per status rather than three coarse buckets, so both the masthead
   // above and the register's filter chips below read from the same figures.
@@ -487,6 +548,73 @@ function PublicMetadataTab({
   const [sortBy, setSortBy] = useState('cost_desc');
   const [pageSize, setPageSize] = useState(50);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // GPS Nearest Project State
+  const [locatingGps, setLocatingGps] = useState(false);
+  const [detectedGpsInfo, setDetectedGpsInfo] = useState(null);
+
+  const handleAutoDetectLocation = useCallback(() => {
+    setLocatingGps(true);
+
+    const applyLocation = (lat, lng, isSimulated = false) => {
+      let nearest = null;
+      let minDist = Infinity;
+      const list = allProjects.length > 0 ? allProjects : projects;
+
+      list.forEach((p) => {
+        const pLat = Number(p.latitude);
+        const pLon = Number(p.longitude);
+        if (Number.isFinite(pLat) && Number.isFinite(pLon) && (pLat !== 0 || pLon !== 0) && p.geocode_precision !== 'NATIONAL_CENTROID_MATCH') {
+          const d = calculateDistanceKm(lat, lng, pLat, pLon);
+          if (d < minDist) {
+            minDist = d;
+            nearest = p;
+          }
+        }
+      });
+
+      if (!nearest) {
+        list.forEach((p) => {
+          const pLat = Number(p.latitude);
+          const pLon = Number(p.longitude);
+          if (Number.isFinite(pLat) && Number.isFinite(pLon) && (pLat !== 0 || pLon !== 0)) {
+            const d = calculateDistanceKm(lat, lng, pLat, pLon);
+            if (d < minDist) {
+              minDist = d;
+              nearest = p;
+            }
+          }
+        });
+      }
+
+      setLocatingGps(false);
+      if (nearest) {
+        selectProject(nearest.project_id);
+        setDetectedGpsInfo({
+          name: nearest.project_name,
+          distKm: minDist.toFixed(1),
+          lat: Number(lat).toFixed(4),
+          lng: Number(lng).toFixed(4),
+          simulated: isSimulated,
+        });
+      }
+    };
+
+    if (!navigator.geolocation) {
+      applyLocation(28.6139, 77.2090, true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        applyLocation(pos.coords.latitude, pos.coords.longitude, false);
+      },
+      (_err) => {
+        applyLocation(28.6139, 77.2090, true);
+      },
+      { timeout: 7000, enableHighAccuracy: true }
+    );
+  }, [allProjects, projects, selectProject]);
 
   // Reset directory scroll limit when search / filter changes
   useEffect(() => {
@@ -843,6 +971,7 @@ function PublicMetadataTab({
               scrollWheelZoom={false}
             >
               <BaseMapLayer onStatus={setBasemapStatus} />
+              <MapRecenter center={mapCenter} />
               {mappedProjects.map((p) => {
                 const lat = Number(p.latitude);
                 const lon = Number(p.longitude);
@@ -932,38 +1061,79 @@ function PublicMetadataTab({
         {/* Right Column: Search & Filtered Project Directory */}
         <div className="lg:col-span-5 rounded-xl bg-white border border-slate-200/90 flex flex-col h-[600px] overflow-hidden shadow-2xs">
           <div className="p-4 border-b border-slate-200 bg-slate-50/80 space-y-3 shrink-0">
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              <input
-                type="text"
-                aria-label={t('search_directory_label', lang)}
-                placeholder={t('search_directory_ph', lang)}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
-              />
-              {searchQuery && (
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  aria-label={t('search_directory_label', lang)}
+                  placeholder={t('search_directory_ph', lang)}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-2.5 text-xs text-slate-400 hover:text-slate-700"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handleAutoDetectLocation}
+                disabled={locatingGps}
+                title={currentLang === 'hi' ? 'निकटतम परियोजना खोजें (GPS)' : 'Auto-Detect Nearest Project (GPS)'}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-gov-navy bg-white hover:bg-slate-100 border border-slate-300 rounded-lg transition-all cursor-pointer shrink-0 shadow-2xs"
+              >
+                <Navigation className={`w-3.5 h-3.5 ${locatingGps ? 'animate-spin text-amber-600' : 'text-[#0060B6]'}`} />
+                <span className="hidden sm:inline">{locatingGps ? (currentLang === 'hi' ? 'खोज रहा है...' : 'Locating...') : (currentLang === 'hi' ? 'निकटतम (GPS)' : 'Auto-Detect (GPS)')}</span>
+              </button>
+            </div>
+
+            {detectedGpsInfo && (
+              <div className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg bg-sky-50 border border-sky-200 text-[11px] text-sky-900 font-mono">
+                <div className="flex items-center gap-1.5 truncate">
+                  <MapPin className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                  <span className="truncate">
+                    {currentLang === 'hi' ? 'निकटतम परियोजना:' : 'Nearest:'} <strong>{tProjectName(detectedGpsInfo.name, currentLang)}</strong> ({detectedGpsInfo.distKm} km)
+                  </span>
+                </div>
                 <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 text-xs text-slate-400 hover:text-slate-700"
+                  type="button"
+                  onClick={() => setDetectedGpsInfo(null)}
+                  className="text-sky-400 hover:text-sky-700 text-xs font-bold cursor-pointer"
                 >
                   ✕
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Quick Sector Filter Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[10.5px] font-mono no-scrollbar">
-              {['All', 'ROAD TRANSPORT AND HIGHWAYS', 'RAILWAYS', 'POWER', 'PETROLEUM'].map((sec) => {
-                const isSelected = selectedSector === sec;
-                const label = sec === 'All'
-                  ? (currentLang === 'hi' ? 'सभी क्षेत्र' : 'All Sectors')
-                  : (currentLang === 'hi' ? tSector(sec) : sec.replace('ROAD TRANSPORT AND HIGHWAYS', 'Highways').replace('PETROLEUM', 'Petroleum').replace('RAILWAYS', 'Railways').replace('POWER', 'Power'));
+              {[
+                { id: 'All', labelEn: 'All Sectors', labelHi: 'सभी क्षेत्र' },
+                { id: 'Roads & Highways', labelEn: 'Highways', labelHi: 'राजमार्ग' },
+                { id: 'Railways', labelEn: 'Railways', labelHi: 'रेलवे' },
+                { id: 'Power', labelEn: 'Power', labelHi: 'विद्युत एवं ऊर्जा' },
+                { id: 'Oil & Gas', labelEn: 'Petroleum', labelHi: 'पेट्रोलियम' },
+              ].map((pill) => {
+                const isSelected =
+                  pill.id === 'All' ? selectedSector === 'All' :
+                  pill.id === 'Roads & Highways' ? (selectedSector === 'Roads & Highways' || selectedSector === 'Highways') :
+                  pill.id === 'Railways' ? selectedSector === 'Railways' :
+                  pill.id === 'Power' ? (selectedSector === 'Power' || selectedSector === 'Electricity Generation' || selectedSector === 'Transmission & Distribution') :
+                  pill.id === 'Oil & Gas' ? (selectedSector === 'Oil & Gas' || selectedSector === 'Petroleum') :
+                  selectedSector === pill.id;
+
+                const label = currentLang === 'hi' ? pill.labelHi : pill.labelEn;
                 return (
                   <button
-                    key={sec}
+                    key={pill.id}
                     type="button"
-                    onClick={() => setSelectedSector(sec)}
+                    onClick={() => setSelectedSector(pill.id)}
                     className={`px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap transition-colors cursor-pointer border ${
                       isSelected
                         ? 'bg-gov-navy text-amber-300 border-gov-navy shadow-xs'

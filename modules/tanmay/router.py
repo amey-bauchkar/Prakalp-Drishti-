@@ -164,7 +164,7 @@ def _get_or_build_clearance_cache():
             estimated_daily_cost_overrun_cr=float(stages[0].get("estimated_daily_cost_overrun_cr") or 0.5),
             stages=details,
         ))
-        payload = assessment.dict()
+        payload = assessment.model_dump() if hasattr(assessment, "model_dump") else assessment.dict()
         payload["state"] = stages[0].get("state") or "Pan-India"
         payload["sector"] = stages[0].get("sector") or "Infrastructure"
         payload["proposal_numbers"] = [s.get("proposal_no") for s in stages if s.get("proposal_no")]
@@ -221,9 +221,12 @@ def get_clearance_portfolio(
 
         if q and q.strip():
             q_low = q.strip().lower()
+            q_clean = q_low.lstrip("#").strip()
             filtered = [p for p in filtered if (
                 q_low in str(p.get("project_name", "")).lower() or
-                q_low in str(p.get("project_id", "")).lower() or
+                (q_clean and q_clean in str(p.get("project_id", "")).lower()) or
+                q_low in str(p.get("state", "")).lower() or
+                q_low in str(p.get("sector", "")).lower() or
                 any(q_low in str(pn).lower() for pn in p.get("proposal_numbers", []))
             )]
 

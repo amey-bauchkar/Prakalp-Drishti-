@@ -165,42 +165,85 @@ export default function NagrikGrievanceDesk({ projects = [], lang = null, select
     }).slice(0, 100);
   }, [activeProjectList, projectSearchQuery]);
 
+  // Haversine formula for spherical distance in km
+  const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
   // Proximity GPS Finder
   const handleDetectNearestProject = () => {
-    if (!navigator.geolocation) {
-      alert(isHi ? 'आपके ब्राउज़र में जीपीएस लोकेशन समर्थित नहीं है।' : 'Geolocation is not supported by your browser.');
-      return;
-    }
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocating(false);
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        setGpsLocation({ lat: lat.toFixed(4), lng: lng.toFixed(4) });
 
-        // Find nearest project in list if coords exist
-        let nearest = null;
-        let minDist = Infinity;
+    const applyLocation = (lat, lng, isSimulated = false) => {
+      let nearest = null;
+      let minDist = Infinity;
+
+      activeProjectList.forEach((p) => {
+        const pLat = Number(p.latitude);
+        const pLon = Number(p.longitude);
+        if (Number.isFinite(pLat) && Number.isFinite(pLon) && (pLat !== 0 || pLon !== 0) && p.geocode_precision !== 'NATIONAL_CENTROID_MATCH') {
+          const d = calculateDistanceKm(lat, lng, pLat, pLon);
+          if (d < minDist) {
+            minDist = d;
+            nearest = p;
+          }
+        }
+      });
+
+      // If all had centroid match, fallback to any valid coords
+      if (!nearest) {
         activeProjectList.forEach((p) => {
-          if (p.latitude && p.longitude) {
-            const d = Math.hypot(p.latitude - lat, p.longitude - lng);
+          const pLat = Number(p.latitude);
+          const pLon = Number(p.longitude);
+          if (Number.isFinite(pLat) && Number.isFinite(pLon) && (pLat !== 0 || pLon !== 0)) {
+            const d = calculateDistanceKm(lat, lng, pLat, pLon);
             if (d < minDist) {
               minDist = d;
               nearest = p;
             }
           }
         });
-        if (nearest) {
-          setProjectId(String(nearest.project_id));
-        }
+      }
+
+      setGpsLocation({
+        lat: Number(lat).toFixed(4),
+        lng: Number(lng).toFixed(4),
+        simulated: isSimulated,
+        nearestDistKm: nearest && Number.isFinite(minDist) ? minDist.toFixed(1) : null,
+        nearestName: nearest ? nearest.project_name : null,
+      });
+
+      if (nearest) {
+        setProjectId(String(nearest.project_id));
+        setProjectSearchQuery(nearest.project_name);
+        setShowProjectSuggestions(false);
+      }
+      setLocating(false);
+    };
+
+    if (!navigator.geolocation) {
+      applyLocation(28.6139, 77.2090, true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        applyLocation(pos.coords.latitude, pos.coords.longitude, false);
       },
-      (err) => {
-        setLocating(false);
-        // Default to demo GPS tag for realistic simulation
-        setGpsLocation({ lat: '28.6139', lng: '77.2090', simulated: true });
+      (_err) => {
+        // Fallback to central Delhi telemetry coords when browser blocks/denies GPS
+        applyLocation(28.6139, 77.2090, true);
       },
-      { timeout: 8000 }
+      { timeout: 7000, enableHighAccuracy: true }
     );
   };
 
@@ -483,13 +526,20 @@ export default function NagrikGrievanceDesk({ projects = [], lang = null, select
                 </div>
 
                 {gpsLocation && (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-50 border border-sky-200 text-xs text-sky-900 font-mono">
-                    <MapPin className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                    <span>
-                      {isHi ? 'सत्यापित भू-निर्देशांक:' : 'Detected Ground Telemetry:'} <strong>Lat {gpsLocation.lat}°, Long {gpsLocation.lng}°</strong>
-                    </span>
-                    <span className="ml-auto text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-sky-200 text-sky-800">
-                      EXIF Verified
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3.5 py-2.5 rounded-lg bg-sky-50 border border-sky-200 text-xs text-sky-900 font-mono">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <MapPin className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                      <span>
+                        {isHi ? 'सत्यापित भू-निर्देशांक:' : 'Detected Ground Telemetry:'} <strong>Lat {gpsLocation.lat}°, Long {gpsLocation.lng}°</strong>
+                      </span>
+                      {gpsLocation.nearestDistKm && (
+                        <span className="text-emerald-700 font-bold bg-emerald-100/80 px-2 py-0.5 rounded text-[11px]">
+                          📍 {isHi ? `${gpsLocation.nearestDistKm} किमी दूरी पर निकटतम कार्यस्थल` : `${gpsLocation.nearestDistKm} km to nearest worksite`}
+                        </span>
+                      )}
+                    </div>
+                    <span className="self-start sm:self-auto text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-sky-200 text-sky-800 shrink-0">
+                      {gpsLocation.simulated ? (isHi ? 'क्षेत्रीय केंद्रक टेलीमेट्री' : 'Regional Centroid GPS') : 'EXIF Verified'}
                     </span>
                   </div>
                 )}

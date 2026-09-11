@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,8 +71,24 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
+    setTamperState({ kind: 'idle' });
     setDrawerOpen(true);
   };
+
+  // Lock body scroll and handle ESC key while drawer is open
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [drawerOpen]);
 
   return (
     <div className="space-y-8 font-sans relative pb-10">
@@ -284,7 +301,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                   </span>
                 </div>
                 <motion.div 
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
                   variants={{
                     hidden: { opacity: 0 },
                     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
@@ -380,186 +397,199 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         </motion.div>
       )}
 
-      {/* Slide-Out Audit Lineage Drawer */}
-      {drawerOpen && activeFact && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex justify-end transition-opacity">
-          <div data-lenis-prevent className="w-full max-w-md bg-white h-full shadow-2xl p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
-            <div className="flex items-center justify-between border-b border-border-default pb-4">
-              <div className="flex items-center gap-2.5">
-                <Database className="w-5 h-5 text-gov-navy" />
-                <div>
-                  <h3 className="text-[16px] font-bold text-gov-navy font-heading">Data Source &amp; Audit Proof</h3>
-                  <span className="text-[10.5px] font-mono text-text-muted">Metric ID: {activeFact.fact_id}</span>
-                </div>
-              </div>
-              <button
+      {/* Slide-Out Audit Lineage Drawer (Portaled to document.body to prevent containing-block transforms and layout overflow) */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {drawerOpen && activeFact && (
+            <div className="fixed inset-0 z-[9999] overflow-hidden flex justify-end font-sans">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => setDrawerOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-text-muted transition-colors"
+                className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity cursor-pointer"
+              />
+
+              {/* Slide-over Drawer Panel */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 28, stiffness: 300 }}
+                data-lenis-prevent
+                className="relative z-10 w-full max-w-md bg-white shadow-2xl border-l border-slate-200 h-screen max-h-screen overflow-y-auto p-6 sm:p-7 space-y-6 flex flex-col font-sans"
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Fact Value Card */}
-            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5">
-              <span className="text-[11px] font-bold text-text-muted uppercase">{activeFact.label}</span>
-              <p className="text-[28px] font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
-              <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Against Official Database
-              </span>
-            </div>
-
-            {/* Cryptographic Hashes & Positional Proof */}
-            <div className="space-y-4">
-              <h4 className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading border-b border-slate-200 pb-2">Source Verification Details</h4>
-              
-              <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Query Verification Hash</span>
-                  <p className="font-mono text-xs font-semibold text-slate-800">{formatHash(activeFact.lineage?.query_sha256)}</p>
-                </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.query_sha256, 'query')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors">
-                  {copiedHash === 'query' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-
-              <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dataset Snapshot Fingerprint</span>
-                  <p className="font-mono text-xs font-semibold text-slate-800">{formatHash(activeFact.lineage?.dataset_sha256)}</p>
-                </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.dataset_sha256, 'dataset')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors">
-                  {copiedHash === 'dataset' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-
-              <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Step-by-Step Proof Path</span>
-                <div data-lenis-prevent className="relative pl-3 space-y-3 max-h-40 overflow-y-auto">
-                  <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-400 to-emerald-200/20"></div>
-                  {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
-                    activeFact.lineage.merkle_proof.map((p, idx) => (
-                      <div key={idx} className="relative flex items-center justify-between text-[10px] font-mono pl-4">
-                        <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
-                        <span className="text-slate-700 font-medium truncate max-w-[180px]">{formatHash(p.hash)}</span>
-                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold uppercase text-[9px] border border-slate-200">{p.position}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="relative flex items-center text-[11px] font-mono pl-4">
-                      <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
-                      <span className="text-slate-500 font-semibold italic">Verified Leaf Record (No Parent Hops)</span>
+                <div className="flex items-center justify-between border-b border-border-default pb-4 shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <Database className="w-5 h-5 text-gov-navy" />
+                    <div>
+                      <h3 className="text-[16px] font-bold text-gov-navy font-heading">Data Source &amp; Audit Proof</h3>
+                      <span className="text-[10.5px] font-mono text-text-muted">Metric ID: {activeFact.fact_id}</span>
                     </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-900 via-[#0a192f] to-slate-900 p-4 rounded-xl shadow-lg border border-slate-700/50 flex justify-between items-center relative overflow-hidden group/key">
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none"></div>
-                <div className="space-y-1.5 relative z-10">
-                  <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                    <Lock className="w-3 h-3" /> Audit Security Key
-                  </span>
-                  <p className="font-mono text-xs font-black text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)] tracking-wide">{formatHash(activeFact.lineage?.merkle_root || data?.merkle_root)}</p>
-                </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.merkle_root || data?.merkle_root, 'root')} className="relative z-10 p-2.5 bg-black/40 border border-slate-600 rounded-lg hover:border-emerald-400/50 hover:bg-emerald-900/20 text-slate-300 hover:text-emerald-400 transition-all">
-                  {copiedHash === 'root' ? <Check className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Interactive Live Tamper Defense Test */}
-            <div className="p-5 bg-gov-navy text-white rounded-2xl border border-slate-700 space-y-3.5">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <span className="text-xs font-bold text-gov-saffron-light uppercase flex items-center gap-1.5 font-heading leading-tight">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" /> Real-Time Cryptographic Merkle Verification Test
-                </span>
-                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-sm font-mono shrink-0 self-start sm:self-auto"> Live Verification
-                </span>
-              </div>
-              <p className="text-[12px] text-slate-300 leading-snug font-sans"> Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
-              </p>
-              
-              <div className="space-y-2">
-                <label className="text-[10.5px] font-bold text-slate-400 uppercase font-mono">Enter Value to Test</label>
-                <div className="flex flex-col gap-2.5">
-                  <input
-                    type="text"
-                    defaultValue={activeFact.value}
-                    id="tamperInput"
-                    className="w-full bg-black/40 border border-slate-600 rounded-xl px-3 py-2.5 text-xs font-mono text-white focus:outline-none focus:border-gov-saffron min-w-0"
-                  />
+                  </div>
                   <button
-                    onClick={async () => {
-                      // Result goes through React state, never innerHTML.
-                      //
-                      // This block used to build the outcome string with
-                      // `resEl.innerHTML = ...` and interpolate `inputVal`, which
-                      // is whatever the user typed into the field above. Entering
-                      // `<img src=x onerror=alert(1)>` executed it. That is DOM
-                      // XSS in the tamper-verification widget specifically — the
-                      // control whose whole purpose is proving a value was not
-                      // altered. React escapes interpolated text by default, so
-                      // rendering from state removes the injection point rather
-                      // than trying to filter it.
-                      const inputVal = document.getElementById('tamperInput').value;
-                      setTamperState({ kind: 'checking' });
-                      try {
-                        const docHash = data?.doc_hash || 'unknown';
-                        const factId = activeFact.fact_id;
-                        const verifyUrl = `/api/amey/verify/${docHash}/${factId}?project_id=${projectId}`;
-                        const resp = await fetch(verifyUrl);
-                        if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
-                        const result = await resp.json();
-
-                        const serverValue = result.value;
-                        const proofValid = result.proof_valid;
-                        const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
-
-                        if (proofValid && valuesMatch) {
-                          setTamperState({ kind: 'authentic' });
-                        } else if (proofValid && !valuesMatch) {
-                          setTamperState({ kind: 'tampered', entered: inputVal, audited: serverValue });
-                        } else {
-                          setTamperState({ kind: 'proof_failed' });
-                        }
-                      } catch (err) {
-                        setTamperState({ kind: 'error', message: err.message });
-                      }
-                    }}
-                    className="btn-saffron-pill w-full justify-center px-3.5 py-2.5 text-xs font-bold uppercase transition-all shrink-0"
-                  > Validate Lineage Hash
+                    onClick={() => setDrawerOpen(false)}
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-text-muted transition-colors cursor-pointer"
+                    aria-label="Close drawer"
+                  >
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="mt-2 text-[11.5px] leading-snug">
-                  {tamperState.kind === 'checking' && (
-                    <span className="text-sky-400 font-bold animate-pulse">Checking proof against official database record...</span>
-                  )}
-                  {tamperState.kind === 'authentic' && (
-                    <span className="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>
-                  )}
-                  {tamperState.kind === 'tampered' && (
-                    <span className="text-rose-400 font-bold">
-                      FAKE DATA DETECTED: Entered "{tamperState.entered}" does not match audited value "{tamperState.audited}". Edit rejected immediately!
-                    </span>
-                  )}
-                  {tamperState.kind === 'proof_failed' && (
-                    <span className="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>
-                  )}
-                  {tamperState.kind === 'error' && (
-                    <span className="text-amber-400 font-bold">Verification check error: {tamperState.message}. Ensure backend is running.</span>
-                  )}
-                </div>
-              </div>
-            </div>
 
-            <button
-              onClick={() => setDrawerOpen(false)}
-              className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider"
-            > Close Drawer
-            </button>
-          </div>
-        </div>
+                {/* Fact Value Card */}
+                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5 shrink-0">
+                  <span className="text-[11px] font-bold text-text-muted uppercase">{activeFact.label}</span>
+                  <p className="text-[28px] font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
+                  <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Against Official Database
+                  </span>
+                </div>
+
+                {/* Cryptographic Hashes & Positional Proof */}
+                <div className="space-y-4">
+                  <h4 className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading border-b border-slate-200 pb-2">Source Verification Details</h4>
+                  
+                  <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
+                    <div className="space-y-1 min-w-0 pr-2">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Query Verification Hash</span>
+                      <p className="font-mono text-xs font-semibold text-slate-800 truncate">{formatHash(activeFact.lineage?.query_sha256)}</p>
+                    </div>
+                    <button onClick={() => handleCopy(activeFact.lineage?.query_sha256, 'query')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors shrink-0 cursor-pointer">
+                      {copiedHash === 'query' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
+                    <div className="space-y-1 min-w-0 pr-2">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dataset Snapshot Fingerprint</span>
+                      <p className="font-mono text-xs font-semibold text-slate-800 truncate">{formatHash(activeFact.lineage?.dataset_sha256)}</p>
+                    </div>
+                    <button onClick={() => handleCopy(activeFact.lineage?.dataset_sha256, 'dataset')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors shrink-0 cursor-pointer">
+                      {copiedHash === 'dataset' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 space-y-3">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Step-by-Step Proof Path</span>
+                    <div data-lenis-prevent className="relative pl-3 space-y-3 max-h-40 overflow-y-auto">
+                      <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-400 to-emerald-200/20"></div>
+                      {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
+                        activeFact.lineage.merkle_proof.map((p, idx) => (
+                          <div key={idx} className="relative flex items-center justify-between text-[10px] font-mono pl-4">
+                            <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
+                            <span className="text-slate-700 font-medium truncate max-w-[180px]">{formatHash(p.hash)}</span>
+                            <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold uppercase text-[9px] border border-slate-200 shrink-0">{p.position}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="relative flex items-center text-[11px] font-mono pl-4">
+                          <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
+                          <span className="text-slate-500 font-semibold italic">Verified Leaf Record (No Parent Hops)</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-slate-900 via-[#0a192f] to-slate-900 p-4 rounded-xl shadow-lg border border-slate-700/50 flex justify-between items-center relative overflow-hidden group/key">
+                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+                    <div className="space-y-1.5 relative z-10 min-w-0 pr-2">
+                      <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <Lock className="w-3 h-3 shrink-0" /> Audit Security Key
+                      </span>
+                      <p className="font-mono text-xs font-black text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)] tracking-wide truncate">{formatHash(activeFact.lineage?.merkle_root || data?.merkle_root)}</p>
+                    </div>
+                    <button onClick={() => handleCopy(activeFact.lineage?.merkle_root || data?.merkle_root, 'root')} className="relative z-10 p-2.5 bg-black/40 border border-slate-600 rounded-lg hover:border-emerald-400/50 hover:bg-emerald-900/20 text-slate-300 hover:text-emerald-400 transition-all shrink-0 cursor-pointer">
+                      {copiedHash === 'root' ? <Check className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Interactive Live Tamper Defense Test */}
+                <div className="p-5 bg-gov-navy text-white rounded-2xl border border-slate-700 space-y-3.5 shrink-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-gov-saffron-light uppercase flex items-center gap-1.5 font-heading leading-tight">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" /> Real-Time Cryptographic Merkle Verification Test
+                    </span>
+                    <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-sm font-mono shrink-0 self-start sm:self-auto"> Live Verification
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-slate-300 leading-snug font-sans"> Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
+                  </p>
+                  
+                  <div className="space-y-2" key={activeFact.fact_id}>
+                    <label className="text-[10.5px] font-bold text-slate-400 uppercase font-mono">Enter Value to Test</label>
+                    <div className="flex flex-col gap-2.5">
+                      <input
+                        type="text"
+                        defaultValue={activeFact.value}
+                        id="tamperInput"
+                        className="w-full bg-black/40 border border-slate-600 rounded-xl px-3 py-2.5 text-xs font-mono text-white focus:outline-none focus:border-gov-saffron min-w-0"
+                      />
+                      <button
+                        onClick={async () => {
+                          const inputVal = document.getElementById('tamperInput').value;
+                          setTamperState({ kind: 'checking' });
+                          try {
+                            const docHash = data?.doc_hash || 'unknown';
+                            const factId = activeFact.fact_id;
+                            const verifyUrl = `/api/amey/verify/${docHash}/${factId}?project_id=${projectId}`;
+                            const resp = await fetch(verifyUrl);
+                            if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+                            const result = await resp.json();
+
+                            const serverValue = result.value;
+                            const proofValid = result.proof_valid;
+                            const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
+
+                            if (proofValid && valuesMatch) {
+                              setTamperState({ kind: 'authentic' });
+                            } else if (proofValid && !valuesMatch) {
+                              setTamperState({ kind: 'tampered', entered: inputVal, audited: serverValue });
+                            } else {
+                              setTamperState({ kind: 'proof_failed' });
+                            }
+                          } catch (err) {
+                            setTamperState({ kind: 'error', message: err.message });
+                          }
+                        }}
+                        className="btn-saffron-pill w-full justify-center px-3.5 py-2.5 text-xs font-bold uppercase transition-all shrink-0 cursor-pointer"
+                      > Validate Lineage Hash
+                      </button>
+                    </div>
+                    <div className="mt-2 text-[11.5px] leading-snug">
+                      {tamperState.kind === 'checking' && (
+                        <span className="text-sky-400 font-bold animate-pulse">Checking proof against official database record...</span>
+                      )}
+                      {tamperState.kind === 'authentic' && (
+                        <span className="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>
+                      )}
+                      {tamperState.kind === 'tampered' && (
+                        <span className="text-rose-400 font-bold">
+                          FAKE DATA DETECTED: Entered "{tamperState.entered}" does not match audited value "{tamperState.audited}". Edit rejected immediately!
+                        </span>
+                      )}
+                      {tamperState.kind === 'proof_failed' && (
+                        <span className="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>
+                      )}
+                      {tamperState.kind === 'error' && (
+                        <span className="text-amber-400 font-bold">Verification check error: {tamperState.message}. Ensure backend is running.</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setDrawerOpen(false)}
+                  className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider cursor-pointer shrink-0"
+                > Close Drawer
+                </button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </div>
   );
