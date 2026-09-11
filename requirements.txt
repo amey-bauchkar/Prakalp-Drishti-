@@ -16,6 +16,10 @@ uvicorn>=0.30.0
 pydantic>=2.7.0
 python-multipart>=0.0.9
 
+# --- database (PostgreSQL / Supabase) ---
+psycopg[binary]>=3.1.0
+psycopg2-binary>=2.9.9
+
 # --- data + numerics ---
 pandas>=2.0.0
 numpy>=1.26.0

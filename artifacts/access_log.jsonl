@@ -2686,3 +2686,15 @@
 {"ts": "2026-09-12T03:59:15", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-09-12T04:01:30", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
 {"ts": "2026-09-12T04:01:30", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:13:17", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:13:17", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:19:15", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:19:15", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:19:35", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:19:35", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:19:44", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_briefing"}
+{"ts": "2026-09-12T04:20:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-12T04:20:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-12T04:20:22", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "allocate_capital"}
+{"ts": "2026-09-12T04:20:32", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
+{"ts": "2026-09-12T04:20:32", "user": "admin", "role": "administrator", "action": "ALLOW", "detail": "read_alerts"}
