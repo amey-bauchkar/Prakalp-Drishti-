@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import ProjectCombobox from '../src/components/ProjectCombobox';
 import DataUnavailable from '../src/components/DataUnavailable';
-import { getStoredLanguage, t, toHindiDigits } from '../src/lib/i18n';
+import { getStoredLanguage, t, toHindiDigits, translateProjectName, translateSector, translateState, translateAgency } from '../src/lib/i18n';
 
 export default function UnifiedCockpitView({ selectedProjectId = '', onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId || '619092');
@@ -569,14 +569,14 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                     <span>{isHi ? "समयसीमा पूर्वानुमान // काल-चक्र" : "TIMELINE FORECAST // KAAL-CHAKRA"}</span>
                   </div>
                   <h3 className="font-extrabold text-[16px] text-slate-900 leading-snug">
-                    {forecast?.project_name || (isHi ? 'परियोजना प्रोफ़ाइल लोड हो रही है…' : 'Loading Project Profile…')}
+                    {forecast?.project_name ? translateProjectName(forecast.project_name, lang) : (isHi ? 'परियोजना प्रोफ़ाइल लोड हो रही है…' : 'Loading Project Profile…')}
                   </h3>
                   <div className="text-[11px] text-slate-500 font-mono flex items-center gap-2">
                     <span>#{forecast?.project_id}</span>
                     <span>•</span>
-                    <span>{forecast?.sector}</span>
+                    <span>{translateSector(forecast?.sector, lang)}</span>
                     <span>•</span>
-                    <span>{forecast?.state}</span>
+                    <span>{translateState(forecast?.state, lang)}</span>
                   </div>
                 </div>
 

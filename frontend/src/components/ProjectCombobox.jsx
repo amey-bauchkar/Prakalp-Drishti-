@@ -24,7 +24,7 @@ import { Search } from 'lucide-react';
  * then name prefix, then alphabetical.
  */
 
-import { getStoredLanguage, toHindiDigits } from '../lib/i18n';
+import { getStoredLanguage, toHindiDigits, translateProjectName, translateSector } from '../lib/i18n';
 
 const MAX_RESULTS = 100;
 
@@ -35,15 +35,27 @@ export default function ProjectCombobox({
   onSelect,
   onSubmitRaw,
   loading = false,
-  submitLabel = 'Search',
-  busyLabel = 'Working…',
-  label = 'Find a project',
-  hint = 'Type a project name or MoSPI code, then use the arrow keys to choose.',
+  submitLabel,
+  busyLabel,
+  label,
+  hint,
   placeholder,
-  isHi = false,
+  isHi: propIsHi,
   tone = 'dark',
   className = '',
 }) {
+  const [lang, setLang] = useState(() => getStoredLanguage());
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = propIsHi !== undefined ? propIsHi : lang === 'hi';
+  const resolvedSubmitLabel = submitLabel || (isHi ? 'खोजें' : 'Search');
+  const resolvedBusyLabel = busyLabel || (isHi ? 'प्रतीक्षारत…' : 'Working…');
+  const resolvedLabel = label || (isHi ? 'परियोजना खोजें' : 'Find a project');
+  const resolvedHint = hint || (isHi ? 'परियोजना नाम या एमओएसपीआई कोड दर्ज करें, फिर चुनने के लिए तीर कुंजियों का उपयोग करें।' : 'Type a project name or MoSPI code, then use the arrow keys to choose.');
+
   const uid = useId().replace(/:/g, '');
   const inputId = `pc-input-${uid}`;
   const listId = `pc-list-${uid}`;
@@ -171,7 +183,7 @@ export default function ProjectCombobox({
           dark ? 'text-slate-300' : 'text-gov-muted'
         }`}
       >
-        {label}
+        {resolvedLabel}
       </label>
 
       <form
@@ -206,11 +218,11 @@ export default function ProjectCombobox({
           className="inline-flex items-center justify-center rounded-lg text-xs font-bold font-mono uppercase tracking-wider transition-all h-11 px-4 py-2 bg-slate-100 hover:bg-amber-500 text-slate-800 hover:text-slate-950 border border-slate-300 hover:border-amber-500 gap-1.5 shrink-0 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Search className="w-3.5 h-3.5" aria-hidden="true" />
-          <span>{loading ? busyLabel : submitLabel}</span>
+          <span>{loading ? resolvedBusyLabel : resolvedSubmitLabel}</span>
         </button>
       </form>
 
-      <p id={hintId} className="sr-only">{hint}</p>
+      <p id={hintId} className="sr-only">{resolvedHint}</p>
 
       {/* Result count, announced without stealing focus. */}
       <div role="status" aria-live="polite" className="sr-only">
@@ -246,13 +258,17 @@ export default function ProjectCombobox({
                 i === active ? 'bg-slate-700' : 'hover:bg-slate-800/90'
               }`}
             >
-              <span className="text-sm font-bold text-slate-100">{p.project_name}</span>
+              <span className="text-sm font-bold text-slate-100">
+                {translateProjectName(p.project_name, isHi ? 'hi' : 'en')}
+              </span>
               <span className="flex items-center gap-2 text-[11px] font-mono">
                 <span className="text-amber-400 font-bold">
                   {isHi ? `आईडी: ${toHindiDigits(p.project_id)}` : `ID: ${p.project_id}`}
                 </span>
                 <span className="text-slate-400" aria-hidden="true">·</span>
-                <span className="text-slate-300 font-medium truncate">{p.sector}</span>
+                <span className="text-slate-300 font-medium truncate">
+                  {translateSector(p.sector, isHi ? 'hi' : 'en')}
+                </span>
               </span>
             </li>
           ))}

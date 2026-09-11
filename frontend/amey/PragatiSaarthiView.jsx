@@ -241,7 +241,8 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               {/* Header Info */}
               <div className="border-b border-border-default pb-5 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider"> Cabinet Review Reference Dossier: MoSPI Project Record #{data.project_id}
+                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider">
+                    {isHi ? `कैबिनेट समीक्षा संदर्भ डोज़ियर: एमओएसपीआई परियोजना रिकॉर्ड #${data.project_id}` : `Cabinet Review Reference Dossier: MoSPI Project Record #${data.project_id}`}
                   </span>
                   <span className="text-[11.5px] font-mono text-text-muted font-bold">{data.generated_at}</span>
                 </div>

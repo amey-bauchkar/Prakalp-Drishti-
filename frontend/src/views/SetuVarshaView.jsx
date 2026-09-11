@@ -8,7 +8,7 @@ import {
 import SatelliteViewer from '../../amey/SatelliteViewer.jsx';
 import VarshaStateProfiles from '../../janhavi/index.jsx';
 import LoginGate from '../../amey/LoginGate.jsx';
-import { getStoredLanguage } from '../lib/i18n';
+import { getStoredLanguage, translateProjectName, translateState, translateSector } from '../lib/i18n';
 
 const API = '';
 
@@ -369,13 +369,13 @@ export default function SetuVarshaView({ selectedProjectId = '619092', lang: pro
                                     title={isHi ? 'इस परियोजना के लिए ज़मीनी सत्य छवि दिखाएं' : 'Show ground-truth imagery for this project'}
                                   >
                                     <td>
-                                      <span className="font-semibold text-gov-navy">
-                                        {String(n.project_name || '').slice(0, 54)}
+                                      <span className="font-semibold text-gov-navy" title={translateProjectName(n.project_name, lang)}>
+                                        {translateProjectName(n.project_name, lang)}
                                       </span>
                                       <span className="block text-[9.5px] font-mono text-gov-muted">#{n.project_id}</span>
                                     </td>
-                                    <td className="text-[10.5px]">{n.state}</td>
-                                    <td className="text-[10.5px]">{n.sector}</td>
+                                    <td className="text-[10.5px]">{translateState(n.state, lang)}</td>
+                                    <td className="text-[10.5px]">{translateSector(n.sector, lang)}</td>
                                     <td className="num font-semibold text-amber-700">
                                       {n.climate_delay_months} {isHi ? 'माह' : 'mo'}
                                     </td>

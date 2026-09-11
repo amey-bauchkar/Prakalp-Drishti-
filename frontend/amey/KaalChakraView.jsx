@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Clock, AlertTriangle, ShieldCheck, CheckCircle2, Search, Sparkles, Satellite, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, AlertTriangle, ShieldCheck, CheckCircle2, Sparkles, Satellite } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Card, Metric, Text, ProgressBar, BadgeDelta, Flex, Grid } from "@tremor/react";
 import ProjectCombobox from '../src/components/ProjectCombobox';
-import { getStoredLanguage } from '../src/lib/i18n';
+import { getStoredLanguage, translateProjectName, translateSector, translateAgency } from '../src/lib/i18n';
 
 export default function KaalChakraView({ selectedProjectId = "", onSelectProject, lang: propLang }) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
@@ -21,7 +21,6 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
   const [error, setError] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [projectList, setProjectList] = useState([]);
-  const [enlargedImage, setEnlargedImage] = useState(null);
 
   const fetchForecast = async (id = projectId) => {
     const cleanId = String(id || projectId).trim();
@@ -260,11 +259,11 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
                     {isHi ? `परियोजना आईडी #${data.project_id}` : `Project ID #${data.project_id}`}
                   </span>
                   <BadgeDelta deltaType="unchanged" size="xs" className="truncate max-w-[150px]">
-                    {data.sector}
+                    {translateSector(data.sector, lang)}
                   </BadgeDelta>
                 </div>
                 <h2 className="text-lg font-bold text-slate-900 leading-snug font-heading">
-                  {data.project_name}
+                  {translateProjectName(data.project_name, lang)}
                 </h2>
               </div>
 
@@ -319,7 +318,9 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
                   <Text className="text-[10px] uppercase font-bold text-slate-400">
                     {isHi ? "कार्यान्वयन एजेंसी" : "Agency"}
                   </Text>
-                  <Text className="text-sm font-semibold text-slate-800 mt-1 truncate" title={data.canonical_entity}>{data.canonical_entity}</Text>
+                  <Text className="text-sm font-semibold text-slate-800 mt-1 truncate" title={translateAgency(data.canonical_entity, lang)}>
+                    {translateAgency(data.canonical_entity, lang)}
+                  </Text>
                 </Card>
               </Grid>
 
@@ -350,60 +351,6 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
               </div>
             </Card>
 
-            {/* Satellite Optical Evidence Card */}
-            <Card className="shadow-sm border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <Text className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
-                   {isHi ? "उपग्रह ऑप्टिकल सत्यापन" : "Satellite Verification"}
-                </Text>
-                <BadgeDelta deltaType="increase" size="xs">{isHi ? "ऑप्टिकल" : "Optical"}</BadgeDelta>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div 
-                  className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Enlarge the baseline satellite image"
-                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_BEFORE.jpg`, title: `${data.baseline_vintage || '2014'} Baseline`, type: 'before' })}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_BEFORE.jpg`, title: `${data.baseline_vintage || '2014'} Baseline`, type: 'before' }); } }}
-                >
-                  <img src={`/satellite-imagery/${data.project_id}_BEFORE.jpg`} alt="Before" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
-                  <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
-                    <Satellite className="w-5 h-5 text-slate-400 mb-1" />
-                  </div>
-                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-slate-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">{data.baseline_vintage || '2014'} Baseline</div>
-                  
-                  {/* Hover overlay hint */}
-                  <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
-                      <Search className="w-3 h-3" /> Inspect
-                    </div>
-                  </div>
-                </div>
-                
-                <div 
-                  className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-100 aspect-video group cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Enlarge the current satellite image"
-                  onClick={() => setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_AFTER.jpg`, title: `${data.current_vintage ? (data.current_vintage.includes('2026') ? '2026' : data.current_vintage.slice(0, 10)) : '2026'} Current`, type: 'after' })}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setEnlargedImage({ src: `/satellite-imagery/${data.project_id}_AFTER.jpg`, title: `${data.current_vintage ? (data.current_vintage.includes('2026') ? '2026' : data.current_vintage.slice(0, 10)) : '2026'} Current`, type: 'after' }); } }}
-                >
-                  <img src={`/satellite-imagery/${data.project_id}_AFTER.jpg`} alt="After" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }} />
-                  <div style={{ display: 'none' }} className="absolute inset-0 flex-col items-center justify-center p-2 text-center bg-slate-100">
-                    <Satellite className="w-5 h-5 text-slate-400 mb-1" />
-                  </div>
-                  <div className="absolute bottom-2 left-2 z-20 bg-white/90 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded shadow-sm">{data.current_vintage ? (data.current_vintage.includes('2026') ? '2026 Current' : data.current_vintage.slice(0, 10) + ' Current') : '2026 Current'}</div>
-                  
-                  {/* Hover overlay hint */}
-                  <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5 transform scale-95 group-hover:scale-100 transition-transform">
-                      <Search className="w-3 h-3" /> Inspect
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
           </motion.div>
 
           {/* ══ Right Column: Probabilistic Fan Chart Visualizer ══ */}
@@ -617,79 +564,6 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
           </motion.div>
         </motion.div>
       )}
-
-      {/* Lightbox Modal for Satellite Images */}
-      <AnimatePresence>
-        {enlargedImage && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-900/60 backdrop-blur-sm"
-            onClick={() => setEnlargedImage(null)}
-          >
-            <motion.div 
-              initial={{ scale: 0.95, y: 20, opacity: 0 }} 
-              animate={{ scale: 1, y: 0, opacity: 1 }} 
-              exit={{ scale: 0.95, y: 20, opacity: 0 }} 
-              transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-              className="relative max-w-5xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${enlargedImage.type === 'after' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'}`}>
-                    <Satellite className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-slate-800 tracking-wide text-sm flex items-center gap-2">
-                      {enlargedImage.title}
-                      {enlargedImage.type === 'after' && (
-                        <span className="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Latest Pass</span>
-                      )}
-                    </h3>
-                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">Project #{data?.project_id} · Optical Verification</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setEnlargedImage(null)}
-                  className="p-2 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              {/* Image Container */}
-              <div className="relative bg-slate-100/50 w-full flex items-center justify-center" style={{ height: '65vh' }}>
-                <img 
-                  src={enlargedImage.src} 
-                  alt={enlargedImage.title} 
-                  className="w-full h-full object-contain drop-shadow-md p-4"
-                  onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex'; }}
-                />
-                <div style={{ display: 'none' }} className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400">
-                  <Satellite className="w-12 h-12 mb-3 opacity-20" />
-                  <p className="text-sm">High-resolution imagery not available for this site.</p>
-                </div>
-
-                {/* Annotation Badges overlay */}
-                {enlargedImage.type === 'after' && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md text-emerald-700 border border-emerald-200/50 text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Verified Construction Footprint
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
     </div>
   );

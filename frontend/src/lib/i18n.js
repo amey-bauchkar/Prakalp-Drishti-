@@ -1,14 +1,36 @@
 /**
- * Bilingual Support Engine (English / हिन्दी)
+ * Central Bilingual Support Engine (English / राजभाषा हिन्दी)
  * Meets GIGW 3.0 Section 5.1 (Language Options on Government Portals).
  *
  * Persists the preferred language across sessions in localStorage.
  * Dispatches 'prakalp:languageChanged' event whenever the language toggles.
+ * Provides reactive `useLanguage()` hook for zero-reload bilingual UI.
  */
+
+import { useState, useEffect } from 'react';
+import { HOME_STRINGS } from './i18n/homeStrings.js';
+import { POLICY_STRINGS } from './i18n/policyStrings.js';
+import { NAGRIK_STRINGS } from './i18n/nagrikStrings.js';
+import { DECISION_HUB_STRINGS } from './i18n/decisionHubStrings.js';
+import {
+  translateSector,
+  translateState,
+  translateStatus,
+  translateAgency,
+  translateProjectName,
+} from './i18n/sectors.js';
+
+export {
+  translateSector,
+  translateState,
+  translateStatus,
+  translateAgency,
+  translateProjectName,
+};
 
 const LANG_KEY = 'prakalp:a11y:lang';
 
-export const DICTIONARY = {
+const BASE_DICTIONARY = {
   en: {
     // Navigation
     nav_home: 'HOME',
@@ -29,8 +51,6 @@ export const DICTIONARY = {
     lang_toggle: 'हिन्दी',
     lang_title: 'Switch to Hindi / हिन्दी में देखें',
 
-    // Status Badges
-
     // Citizen Dashboard
     sort_by: 'Sort by',
 
@@ -47,13 +67,12 @@ export const DICTIONARY = {
     cost_movement: 'Cost movement',
     capital_locked: 'Capital locked',
 
-    // Workspaces & Engines (MoSPI Decision Hub)
-
     // Institutional Verifications & Legal Terms
     merkle_verified: 'Merkle-verified',
     audit_certified: 'Audit Certified',
     system_operational: 'SYSTEM OPERATIONAL',
-    // -- Footer link labels --
+
+    // Footer link labels
     ftlink_hyperlink: 'Hyperlinking policy & terms',
     ftlink_0: 'Nagrik Portal (Public Citizens)',
     ftlink_1: 'Decision Intelligence Hub',
@@ -65,7 +84,8 @@ export const DICTIONARY = {
     ftlink_7: 'Privacy Policy (DPDP Act)',
     ftlink_8: 'Accessibility Statement (GIGW 3.0)',
     ftlink_9: 'Feedback & Grievance Redressal',
-    // ── Footer ──
+
+    // Footer
     ft_ministry_line: 'Ministry of Statistics & Programme Implementation · Govt. of India',
     ft_blurb: 'National infrastructure monitoring and decision-intelligence system for Central Sector projects of ₹150 crore and above. Supports statutory oversight, empirical risk analysis and delivery tracking.',
     ft_nodal_division: 'Nodal Division:',
@@ -80,7 +100,22 @@ export const DICTIONARY = {
     ft_intended_owner: 'Intended owner:',
     ft_copyright: 'Ministry of Statistics & Programme Implementation, Government of India.',
 
-    // ── Pagination ──
+    // External Portal Links
+    ext_mospi: 'MoSPI Official Website',
+    ext_pm_gatishakti: 'PM GatiShakti NMP',
+    ext_ogd: 'Open Government Data (OGD)',
+    ext_niti_aayog: 'NITI Aayog',
+    ext_paimana: 'PAIMANA Repository',
+    ext_meghraj: 'NIC MeghRaj Cloud',
+
+    // 404 & Loading States
+    not_found_code: 'HTTP 404 · Page Not Found',
+    not_found_title: 'This page is not part of the portal',
+    not_found_desc: 'The address you requested does not match any module. It may have been retired or renamed. Use the navigation above, or return to the decision console.',
+    not_found_btn: 'Go to Decision Hub',
+    loading_section: 'Loading this section…',
+
+    // Pagination
     pg_filtered_projects: 'filtered projects',
     pg_total_corpus: 'total in the register',
     pg_page: 'Page',
@@ -91,14 +126,15 @@ export const DICTIONARY = {
 
     sort_ascending: 'sorted ascending',
     sort_descending: 'sorted descending',
-    // ── Remaining register chrome ──
+
+    // Register chrome
     reg_export_csv: 'Export CSV ledger',
     reg_corpus_label: 'MoSPI Central Sector',
     reg_centroid_approx: 'Approximate location',
     reg_caption: 'Central Sector projects register. Column headers can be activated to change the sort order.',
     reg_showing_of: 'shown of',
 
-    // ── Accessibility bar (screen-reader text) ──
+    // Accessibility bar
     skip_to_content: 'Skip to main content',
     a11y_size_normal: 'Normal text size (100%)',
     a11y_size_large: 'Larger text size (115%)',
@@ -107,7 +143,7 @@ export const DICTIONARY = {
     a11y_contrast_off: 'Higher contrast is off',
     a11y_size_group: 'Text size',
 
-    // ── Project spotlight card ──
+    // Project spotlight card
     sp_physical_progress: 'Physical Progress',
     sp_executing_agency: 'Executing Agency',
     sp_original_sanction: 'Original Sanction Date',
@@ -121,46 +157,21 @@ export const DICTIONARY = {
     sp_milestone_track: 'Milestone Track',
     sp_realized: 'Realized',
 
-    // ── Map panel ──
+    // Map panel
     map_sites_title: 'Pan-India project sites',
     map_georeferenced_n: 'georeferenced',
     map_unmapped_n: 'not georeferenced',
     map_geocoder: 'GeoNames 5-tier geocoding engine',
 
-    // -- Decision Hub workspaces & engines --
+    // Workspaces & Engines
     ws_radar: 'Portfolio Radar',
     ws_dossier: 'Project Dossier 360',
     ws_allocator: 'Capital Allocator',
     ws_governance: 'Governance & Validation',
-    eng_watchlist: 'Early Warning Queue',
-    eng_watchlist_desc: 'Ranked portfolio watchlist across all 2,207 projects',
-    eng_satya_kavach: 'SATYA KAVACH',
-    eng_satya_kavach_desc: '20% threshold proximity & Clause 10CC inflation audit',
-    eng_setu_varsha: 'SETU VARSHA',
-    eng_setu_varsha_desc: 'Weather shock, river basin & dependency graph',
-    eng_unified_cockpit: 'Unified Risk Cockpit',
-    eng_unified_cockpit_desc: 'Survival curve, expenditure trajectory & satellite geocodes',
-    eng_kaal_chakra: 'KAAL CHAKRA',
-    eng_kaal_chakra_desc: 'Conformalized Weibull finish date & delay quantification',
-    eng_pragati_saarthi: 'PRAGATI SAARTHI',
-    eng_pragati_saarthi_desc: 'Executive brief & cryptographically sealed SHA-256 audit trail',
-    eng_vitta_vyuha: 'VITTA VYUHA',
-    eng_vitta_vyuha_desc: 'HiGHS linear programming solver with 10% NER statutory floor',
-    eng_karya_dakshata: 'KARYA DAKSHATA',
-    eng_karya_dakshata_desc: 'Stress-test agency absorption rates and execution velocity',
-    eng_nivaran: 'Nivaran Legal Radar',
-    eng_nivaran_desc: 'Contract disputes, arbitration claims & court stay risks',
-    eng_artha_nivaran: 'ARTHA NIVARAN',
-    eng_artha_nivaran_desc: 'Altman Z-Score solvency, working capital & dispute exposure',
-    eng_agency_index: 'Agency Track Record',
-    eng_agency_index_desc: 'MoSPI agency efficiency index & satellite coordinate precision',
-    eng_benchmark: 'Scientific Model Validation',
-    eng_benchmark_desc: 'Empirical benchmark vs OLS and historical sector baselines',
 
-    // ── Prototype notice (short form for narrow viewports) ──
     proto_desc_short: 'not an official Government of India service.',
 
-    // ── Nagrik: hero & framing ──
+    // Nagrik Hero
     nagrik_eyebrow: 'CITIZEN CHARTER · OPEN DATA INITIATIVE · RTI ACT §4(1)(B)',
     nagrik_title: 'Public Infrastructure Transparency & Oversight',
     nagrik_lede: 'Every Central Government project over ₹150 crore, published in full. See where it is being built, what it was approved to cost, what it costs now, and whether it is running late.',
@@ -172,7 +183,7 @@ export const DICTIONARY = {
     projects_published: 'projects published',
     register_unavailable: 'Register unavailable',
 
-    // ── Nagrik: tabs ──
+    // Nagrik Tabs
     tab_find: 'Find a project near you',
     tab_find_desc: 'Locations, progress and delays for every project',
     tab_money: 'Where the money went',
@@ -183,15 +194,15 @@ export const DICTIONARY = {
     tab_grievance_desc: 'File ground proof, report stalled worksites & track CPGRAMS 30-day resolution',
     projects_unit: 'projects',
 
-    // ── Provenance strip ──
+    // Provenance
     prov_source: 'Source:',
     prov_source_val: 'MoSPI Central Sector project corpus (projects of ₹150 crore and above)',
     prov_loaded: 'Data loaded:',
     prov_loading: 'loading…',
     prov_unavailable: 'unavailable',
-    prov_delay_basis: 'Delay is measured against each project\u2019s approved completion date',
+    prov_delay_basis: 'Delay is measured against each project’s approved completion date',
 
-    // ── Register: headings, columns, controls ──
+    // Register Headings
     register_title: 'Central Sector Mega-Projects Master Public Tracking Register',
     register_subtitle_a: 'Published under Section 4(1)(b) of the Right to Information Act, 2005 — all',
     register_subtitle_b: 'Central Sector projects,',
@@ -221,12 +232,12 @@ export const DICTIONARY = {
     rows_label: 'Rows:',
     of_word: 'of',
 
-    // ── Map ──
+    // Map
     map_click_marker: 'Click any marker to inspect dossier',
     map_prev: 'Prev',
     map_next: 'Next',
 
-    // ── Empty / error states ──
+    // Errors
     err_load_title: 'Project data could not be loaded',
     err_load_detail: 'The portal cannot reach the project database right now. Figures elsewhere on this page may be incomplete or out of date.',
     err_retry: 'Try again',
@@ -234,12 +245,10 @@ export const DICTIONARY = {
     err_no_match_detail: 'Try a broader search term, or clear the filters to see the full register.',
     err_clear_filters: 'Clear all filters',
 
-    // ── Copilot ──
+    // Copilot
     copilot_input_label: 'Ask a question about this project',
     copilot_ask: 'Ask',
     copilot_transcript: 'Copilot conversation',
-
-    // ── Decision Hub chrome ──
   },
   hi: {
     // Navigation
@@ -261,8 +270,6 @@ export const DICTIONARY = {
     lang_toggle: 'English',
     lang_title: 'अंग्रेजी में देखें / Switch to English',
 
-    // Status Badges
-
     // Citizen Dashboard
     sort_by: 'क्रमबद्ध करें',
 
@@ -279,13 +286,12 @@ export const DICTIONARY = {
     cost_movement: 'लागत वृद्धि',
     capital_locked: 'अवरुद्ध पूंजी',
 
-    // Workspaces & Engines (MoSPI Decision Hub)
-
     // Institutional Verifications & Legal Terms
     merkle_verified: 'मर्कल-प्रमाणित',
     audit_certified: 'लेखापरीक्षा प्रमाणित',
     system_operational: 'प्रणाली क्रियाशील',
-    // -- Footer link labels --
+
+    // Footer link labels
     ftlink_hyperlink: 'हाइपरलिंकिंग नीति एवं शर्तें',
     ftlink_0: 'नागरिक पोर्टल (आम नागरिक)',
     ftlink_1: 'निर्णय आसूचना केंद्र',
@@ -297,7 +303,8 @@ export const DICTIONARY = {
     ftlink_7: 'गोपनीयता नीति (डीपीडीपी अधिनियम)',
     ftlink_8: 'सुगम्यता विवरण (GIGW 3.0)',
     ftlink_9: 'प्रतिक्रिया एवं शिकायत निवारण',
-    // ── Footer ──
+
+    // Footer
     ft_ministry_line: 'सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय · भारत सरकार',
     ft_blurb: '₹150 करोड़ एवं अधिक की केंद्रीय क्षेत्र परियोजनाओं हेतु राष्ट्रीय अवसंरचना अनुश्रवण एवं निर्णय-आसूचना प्रणाली। वैधानिक निगरानी, आनुभविक जोखिम विश्लेषण एवं निष्पादन अनुश्रवण में सहायक।',
     ft_nodal_division: 'नोडल प्रभाग:',
@@ -312,7 +319,22 @@ export const DICTIONARY = {
     ft_intended_owner: 'प्रस्तावित स्वामी:',
     ft_copyright: 'सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय, भारत सरकार।',
 
-    // ── Pagination ──
+    // External Portal Links
+    ext_mospi: 'सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय',
+    ext_pm_gatishakti: 'पीएम गतिशक्ति राष्ट्रीय मास्टर प्लान',
+    ext_ogd: 'ओपन गवर्नमेंट डेटा (ओजीडी)',
+    ext_niti_aayog: 'नीति आयोग',
+    ext_paimana: 'पैमाना (PAIMANA) रिपॉजिटरी',
+    ext_meghraj: 'एनआईसी मेघराज क्लाउड',
+
+    // 404 & Loading States
+    not_found_code: 'एचटीटीपी ४०४ · पृष्ठ नहीं मिला',
+    not_found_title: 'यह पृष्ठ पोर्टल का भाग नहीं है',
+    not_found_desc: 'आपके द्वारा अनुरोधित पता किसी मॉड्यूल से मेल नहीं खाता है। इसे बंद या पुनर्गठित किया गया हो सकता है। शीर्ष नेविगेशन का उपयोग करें या निर्णय केंद्र पर वापस जाएं।',
+    not_found_btn: 'निर्णय केंद्र पर जाएं',
+    loading_section: 'यह अनुभाग लोड हो रहा है…',
+
+    // Pagination
     pg_filtered_projects: 'फ़िल्टर की गई परियोजनाएं',
     pg_total_corpus: 'रजिस्टर में कुल',
     pg_page: 'पृष्ठ',
@@ -323,14 +345,15 @@ export const DICTIONARY = {
 
     sort_ascending: 'आरोही क्रम में',
     sort_descending: 'अवरोही क्रम में',
-    // ── Remaining register chrome ──
+
+    // Register chrome
     reg_export_csv: 'सीएसवी रजिस्टर डाउनलोड करें',
     reg_corpus_label: 'सांख्यिकी मंत्रालय केंद्रीय क्षेत्र',
     reg_centroid_approx: 'अनुमानित अवस्थिति',
     reg_caption: 'केंद्रीय क्षेत्र परियोजना रजिस्टर। क्रम बदलने हेतु स्तंभ शीर्षक सक्रिय किए जा सकते हैं।',
     reg_showing_of: 'में से दिखाया जा रहा',
 
-    // ── Accessibility bar (screen-reader text) ──
+    // Accessibility bar
     skip_to_content: 'मुख्य सामग्री पर जाएं',
     a11y_size_normal: 'सामान्य अक्षर आकार (100%)',
     a11y_size_large: 'बड़ा अक्षर आकार (115%)',
@@ -339,7 +362,7 @@ export const DICTIONARY = {
     a11y_contrast_off: 'उच्च कंट्रास्ट बंद है',
     a11y_size_group: 'अक्षर आकार',
 
-    // ── Project spotlight card ──
+    // Project spotlight card
     sp_physical_progress: 'भौतिक प्रगति',
     sp_executing_agency: 'कार्यान्वयन एजेंसी',
     sp_original_sanction: 'मूल स्वीकृति तिथि',
@@ -353,46 +376,22 @@ export const DICTIONARY = {
     sp_milestone_track: 'मील-पत्थर प्रगति',
     sp_realized: 'पूर्ण',
 
-    // ── Map panel ──
+    // Map panel
     map_sites_title: 'अखिल भारतीय परियोजना स्थल',
     map_georeferenced_n: 'भू-संदर्भित',
     map_unmapped_n: 'भू-संदर्भ रहित',
     map_geocoder: 'जियोनेम्स 5-स्तरीय भू-संदर्भन इंजन',
 
-    // -- Decision Hub workspaces & engines --
+    // Workspaces & Engines
     ws_radar: 'पोर्टफोलियो राडार',
     ws_dossier: 'परियोजना डोज़ियर 360',
     ws_allocator: 'पूंजी पुनरावंटन',
     ws_governance: 'शासन एवं सत्यापन',
-    eng_watchlist: 'प्रारंभिक चेतावनी कतार',
-    eng_watchlist_desc: '२,२०७ परियोजनाओं में शीघ्र चेतावनी प्राथमिकता सूची',
-    eng_satya_kavach: 'SATYA KAVACH',
-    eng_satya_kavach_desc: 'CCEA २०% सीमा निकटता एवं Clause 10CC मूल्य वृद्धि',
-    eng_setu_varsha: 'SETU VARSHA',
-    eng_setu_varsha_desc: 'मौसम आघात, नदी बेसिन एवं परियोजना संक्रामकता',
-    eng_unified_cockpit: 'एकीकृत जोखिम कॉकपिट',
-    eng_unified_cockpit_desc: 'उत्तरजीविता वक्र, व्यय प्रक्षेपवक्र एवं उपग्रह साक्ष्य',
-    eng_kaal_chakra: 'KAAL CHAKRA',
-    eng_kaal_chakra_desc: 'वाइबुल फिनिश तिथि एवं परिमाणित विलंब जोखिम',
-    eng_pragati_saarthi: 'PRAGATI SAARTHI',
-    eng_pragati_saarthi_desc: 'कार्यकारी विवरण एवं क्रिप्टोग्राफिक मर्कल ऑडिट ट्रेल',
-    eng_vitta_vyuha: 'VITTA VYUHA',
-    eng_vitta_vyuha_desc: 'HiGHS लीनियर प्रोग्रामिंग सॉल्वर एवं १०% पूर्वोत्तर सांविधिक कोटा',
-    eng_karya_dakshata: 'KARYA DAKSHATA',
-    eng_karya_dakshata_desc: 'पूंजी अवशोषण एवं निष्पादन गति का विश्लेषण',
-    eng_nivaran: 'निवारण विधिक राडार',
-    eng_nivaran_desc: 'अनुबंध विवाद, मध्यस्थता दावे एवं न्यायालय स्थगन जोखिम',
-    eng_artha_nivaran: 'ARTHA NIVARAN',
-    eng_artha_nivaran_desc: 'ऑल्टमैन Z-स्कोर शोधनक्षमता एवं कानूनी विवाद',
-    eng_agency_index: 'एजेंसी ट्रैक रिकॉर्ड',
-    eng_agency_index_desc: 'मंत्रालय एजेंसी दक्षता सूचकांक एवं उपग्रह सटीकता',
-    eng_benchmark: 'वैज्ञानिक मॉडल सत्यापन',
-    eng_benchmark_desc: '२,२०७ परियोजनाओं पर OLS व आधारभूत तुलना',
 
-    // ── Prototype notice (short form for narrow viewports) ──
     proto_desc_short: 'यह भारत सरकार की आधिकारिक सेवा नहीं है।',
 
-    // ── Nagrik: hero & framing ──
+    // Nagrik Hero
+    nagrik_eyebrow: 'नागरिक अधिकार पत्र · खुला डेटा पहल · आरटीआई धारा ४(१)(ख)',
     nagrik_title: 'सार्वजनिक अवसंरचना पारदर्शिता एवं निगरानी',
     nagrik_lede: '₹150 करोड़ से अधिक की प्रत्येक केंद्रीय परियोजना, पूर्ण विवरण सहित प्रकाशित। देखिए कि निर्माण कहाँ हो रहा है, स्वीकृत लागत क्या थी, वर्तमान लागत क्या है, और क्या परियोजना विलंबित है।',
     nagrik_rti_note: 'यह जानकारी सूचना का अधिकार अधिनियम, 2005 की धारा 4(1)(ख) के अंतर्गत प्रकाशित है — इसे देखने के लिए आपको आरटीआई आवेदन करने की आवश्यकता नहीं है।',
@@ -403,7 +402,7 @@ export const DICTIONARY = {
     projects_published: 'परियोजनाएं प्रकाशित',
     register_unavailable: 'रजिस्टर अनुपलब्ध',
 
-    // ── Nagrik: tabs ──
+    // Nagrik Tabs
     tab_find: 'अपने निकट की परियोजना खोजें',
     tab_find_desc: 'प्रत्येक परियोजना की अवस्थिति, प्रगति एवं विलंब',
     tab_money: 'व्यय का विवरण',
@@ -414,7 +413,7 @@ export const DICTIONARY = {
     tab_grievance_desc: 'जमीनी साक्ष्य दर्ज करें, रुकी परियोजनाओं की रिपोर्ट दें एवं 30-दिवसीय समाधान ट्रैक करें',
     projects_unit: 'परियोजनाएं',
 
-    // ── Provenance strip ──
+    // Provenance
     prov_source: 'स्रोत:',
     prov_source_val: 'सांख्यिकी मंत्रालय केंद्रीय क्षेत्र परियोजना संग्रह (₹150 करोड़ एवं अधिक की परियोजनाएं)',
     prov_loaded: 'आंकड़े प्राप्त:',
@@ -422,7 +421,7 @@ export const DICTIONARY = {
     prov_unavailable: 'अनुपलब्ध',
     prov_delay_basis: 'विलंब की गणना प्रत्येक परियोजना की स्वीकृत पूर्णता तिथि के सापेक्ष की गई है',
 
-    // ── Register: headings, columns, controls ──
+    // Register Headings
     register_title: 'केंद्रीय क्षेत्र वृहद परियोजना सार्वजनिक अनुश्रवण रजिस्टर',
     register_subtitle_a: 'सूचना का अधिकार अधिनियम, 2005 की धारा 4(1)(ख) के अंतर्गत प्रकाशित — कुल',
     register_subtitle_b: 'केंद्रीय क्षेत्र परियोजनाएं,',
@@ -452,12 +451,12 @@ export const DICTIONARY = {
     rows_label: 'पंक्तियां:',
     of_word: 'में से',
 
-    // ── Map ──
+    // Map
     map_click_marker: 'विवरण देखने हेतु किसी चिह्न पर क्लिक करें',
     map_prev: 'पिछला',
     map_next: 'अगला',
 
-    // ── Empty / error states ──
+    // Errors
     err_load_title: 'परियोजना आंकड़े लोड नहीं हो सके',
     err_load_detail: 'पोर्टल इस समय परियोजना डेटाबेस तक नहीं पहुंच पा रहा है। इस पृष्ठ के अन्य आंकड़े अपूर्ण अथवा पुराने हो सकते हैं।',
     err_retry: 'पुनः प्रयास करें',
@@ -465,13 +464,28 @@ export const DICTIONARY = {
     err_no_match_detail: 'व्यापक खोज शब्द आज़माएं, अथवा संपूर्ण रजिस्टर देखने हेतु फ़िल्टर हटाएं।',
     err_clear_filters: 'सभी फ़िल्टर हटाएं',
 
-    // ── Copilot ──
+    // Copilot
     copilot_input_label: 'इस परियोजना के विषय में प्रश्न पूछें',
     copilot_ask: 'पूछें',
     copilot_transcript: 'सह-पायलट संवाद',
+  },
+};
 
-    // ── Decision Hub chrome ──
-  }
+export const DICTIONARY = {
+  en: {
+    ...BASE_DICTIONARY.en,
+    ...(HOME_STRINGS?.en || {}),
+    ...(POLICY_STRINGS?.en || {}),
+    ...(NAGRIK_STRINGS?.en || {}),
+    ...(DECISION_HUB_STRINGS?.en || {}),
+  },
+  hi: {
+    ...BASE_DICTIONARY.hi,
+    ...(HOME_STRINGS?.hi || {}),
+    ...(POLICY_STRINGS?.hi || {}),
+    ...(NAGRIK_STRINGS?.hi || {}),
+    ...(DECISION_HUB_STRINGS?.hi || {}),
+  },
 };
 
 export function toHindiDigits(val) {
@@ -504,4 +518,33 @@ export function setStoredLanguage(lang) {
 export function t(key, lang = null) {
   const currentLang = lang || getStoredLanguage();
   return DICTIONARY[currentLang]?.[key] || DICTIONARY['en']?.[key] || key;
+}
+
+/**
+ * React hook that re-renders the component on language change
+ * and exposes all translation and formatting utilities.
+ */
+export function useLanguage() {
+  const [lang, setLangState] = useState(() => getStoredLanguage());
+
+  useEffect(() => {
+    const onLang = (e) => setLangState(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+
+  const isHi = lang === 'hi';
+
+  return {
+    lang,
+    isHi,
+    t: (key) => t(key, lang),
+    tDigits: (val) => (isHi ? toHindiDigits(val) : val),
+    tSector: (sec) => translateSector(sec, lang),
+    tState: (st) => translateState(st, lang),
+    tStatus: (st) => translateStatus(st, lang),
+    tAgency: (ag) => translateAgency(ag, lang),
+    tProjectName: (name) => translateProjectName(name, lang),
+    setLang: (l) => setStoredLanguage(l),
+  };
 }

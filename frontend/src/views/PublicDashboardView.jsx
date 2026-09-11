@@ -20,7 +20,7 @@ const NULLISH = /^(not specified|n\/?a|nan|nat|none|null|-)$/i;
 const orDash = (v) => (v == null || NULLISH.test(String(v).trim()) ? '—' : v);
 import StatusBadge, { StatusGlyph, StatusLegend } from '../components/StatusBadge';
 import DataUnavailable from '../components/DataUnavailable';
-import { getStoredLanguage, t } from '../lib/i18n';
+import { getStoredLanguage, t, useLanguage, translateProjectName, translateState, translateSector } from '../lib/i18n';
 import {
   getProjectStatus, describeStatus, STATUS, STATUS_ORDER,
   formatCount, formatCr, formatDate, sectorName, sectorIsTranslated,
@@ -96,13 +96,7 @@ export default function PublicDashboardView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
   const [selectedState, setSelectedState] = useState('All');
-  const [lang, setLang] = useState(() => getStoredLanguage());
-
-  useEffect(() => {
-    const onLang = (e) => setLang(e.detail || getStoredLanguage());
-    window.addEventListener('prakalp:languageChanged', onLang);
-    return () => window.removeEventListener('prakalp:languageChanged', onLang);
-  }, []);
+  const { lang, isHi, t, tDigits, tSector, tState, tStatus, tProjectName } = useLanguage();
 
   // Fetch project list.
   //
@@ -478,6 +472,8 @@ function PublicMetadataTab({
   portfolioStats,
   lang = 'en',
 }) {
+  const { lang: hookLang, isHi, t, tDigits, tSector, tState, tStatus, tProjectName } = useLanguage();
+  const currentLang = lang || hookLang;
   const [basemapStatus, setBasemapStatus] = useState('ok');
   const [dirLimit, setDirLimit] = useState(100);
   const [mapNavIndex, setMapNavIndex] = useState(0);
@@ -543,16 +539,16 @@ function PublicMetadataTab({
       if (target) {
         selectProject(target.project_id);
         const st = getProjectStatus(target);
-        const statusTxt = lang === 'hi' ? (st.hiLabel || st.label) : st.label;
+        const statusTxt = currentLang === 'hi' ? (st.hiLabel || st.label) : st.label;
         setMapLiveAnnouncement(
-          lang === 'hi'
-            ? `मानचित्र परियोजना ${next + 1}/${mappedProjects.length}: ${target.project_name}, ${target.state || 'भारत'}। स्थिति: ${statusTxt}`
+          currentLang === 'hi'
+            ? `मानचित्र परियोजना ${next + 1}/${mappedProjects.length}: ${tProjectName(target.project_name, currentLang)}, ${tState(target.state, currentLang) || 'भारत'}। स्थिति: ${statusTxt}`
             : `Project ${next + 1} of ${mappedProjects.length}: ${target.project_name}, ${target.state || 'India'}. Status: ${statusTxt}`
         );
       }
       return next;
     });
-  }, [mappedProjects, lang]);
+  }, [mappedProjects, currentLang]);
 
   // Handle directory scroll to load more
   const handleDirScroll = (e) => {
@@ -710,13 +706,13 @@ function PublicMetadataTab({
                 </span>
                 <StatusBadge project={activeProject} />
               </div>
-              <h2 lang="en" className="text-xl sm:text-2xl font-extrabold text-gov-navy font-heading tracking-tight">
-                {activeProject.project_name}
+              <h2 lang={currentLang} className="text-xl sm:text-2xl font-extrabold text-gov-navy font-heading tracking-tight">
+                {tProjectName(activeProject.project_name, currentLang)}
               </h2>
             </div>
             <div className="flex items-center gap-4 shrink-0 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <div className="text-right">
-                <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">{t('sp_physical_progress', lang)}</div>
+                <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">{t('sp_physical_progress', currentLang)}</div>
                 <div className="text-2xl font-extrabold text-gov-navy font-mono">{progressPct.toFixed(1)}%</div>
               </div>
               <div className="w-12 h-12 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shadow-2xs">
@@ -728,11 +724,11 @@ function PublicMetadataTab({
           {/* 4 Metric Cells in Spotlight HUD */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-5">
             <div className="p-3.5 rounded-lg bg-slate-50/90 border border-slate-200">
-              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_executing_agency', lang)}</span>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">{t('sp_executing_agency', currentLang)}</span>
               <span className="text-sm font-bold text-gov-navy truncate block mt-0.5">{activeProject.company || '—'}</span>
               <span className="text-xs text-slate-600 flex items-center gap-1 mt-1 font-medium">
                 <MapPin className="w-3 h-3 text-slate-500" aria-hidden="true" />{' '}
-                <span lang="en">{orDash(activeProject.state) === '—' ? 'Pan-India' : activeProject.state}</span>
+                <span lang={currentLang}>{orDash(activeProject.state) === '—' ? (currentLang === 'hi' ? 'अखिल भारतीय' : 'Pan-India') : tState(activeProject.state, currentLang)}</span>
               </span>
             </div>
 
@@ -897,16 +893,16 @@ function PublicMetadataTab({
                     >
                       <Popup>
                         <div className="p-1 font-sans text-xs space-y-1.5 min-w-[200px]">
-                          <div className="font-bold text-slate-950 leading-tight">{p.project_name}</div>
-                          <div className="text-slate-600 font-mono text-[10px]">ID #{p.project_id} · <span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span></div>
-                          <div className="text-slate-900 font-bold font-mono">Cost: ₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} Cr</div>
+                          <div className="font-bold text-slate-950 leading-tight">{tProjectName(p.project_name, currentLang)}</div>
+                          <div className="text-slate-600 font-mono text-[10px]">ID #{p.project_id} · <span lang={sectorIsTranslated(p.sector, currentLang) ? undefined : 'en'}>{sectorName(p.sector, currentLang)}</span></div>
+                          <div className="text-slate-900 font-bold font-mono">{currentLang === 'hi' ? 'लागत: ' : 'Cost: '}₹{Number(p.revised_cost_cr || 0).toLocaleString('en-IN')} {currentLang === 'hi' ? 'करोड़' : 'Cr'}</div>
                           <div className="text-slate-700 font-semibold flex items-center gap-1.5">
                             <StatusGlyph status={pStat} size={10} />
-                            Progress: {p.progress_perc}% — {pStat.label}
+                            {currentLang === 'hi' ? 'प्रगति: ' : 'Progress: '}{p.progress_perc}% — {currentLang === 'hi' ? (pStat.hiLabel || pStat.label) : pStat.label}
                           </div>
                           {approx && (
                             <div className="text-amber-950 bg-amber-50 border border-amber-300 rounded p-1 text-[10px] leading-snug">
-                              <strong>Approximate Centroid.</strong> Plotted at {String(p.geocode_precision || '').toLowerCase().includes('state') ? 'state' : 'national'} centroid.
+                              <strong>{currentLang === 'hi' ? 'अनुमानित केंद्रक।' : 'Approximate Centroid.'}</strong> {currentLang === 'hi' ? 'राज्य अथवा राष्ट्रीय केंद्रक पर चिह्नित।' : `Plotted at ${String(p.geocode_precision || '').toLowerCase().includes('state') ? 'state' : 'national'} centroid.`}
                             </div>
                           )}
                           <div className="pt-1">
@@ -914,7 +910,7 @@ function PublicMetadataTab({
                               onClick={() => handleSelectAndFocus(p.project_id)}
                               className="w-full text-center py-1.5 bg-slate-900 hover:bg-black text-white rounded font-bold text-[11px] transition-colors"
                             >
-                              Inspect Dossier
+                              {currentLang === 'hi' ? 'डोज़ियर देखें' : 'Inspect Dossier'}
                             </button>
                           </div>
                         </div>
@@ -960,7 +956,9 @@ function PublicMetadataTab({
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[10.5px] font-mono no-scrollbar">
               {['All', 'ROAD TRANSPORT AND HIGHWAYS', 'RAILWAYS', 'POWER', 'PETROLEUM'].map((sec) => {
                 const isSelected = selectedSector === sec;
-                const label = sec === 'All' ? 'All Sectors' : sec.replace('ROAD TRANSPORT AND HIGHWAYS', 'Highways').replace('PETROLEUM', 'Petroleum').replace('RAILWAYS', 'Railways').replace('POWER', 'Power');
+                const label = sec === 'All'
+                  ? (currentLang === 'hi' ? 'सभी क्षेत्र' : 'All Sectors')
+                  : (currentLang === 'hi' ? tSector(sec) : sec.replace('ROAD TRANSPORT AND HIGHWAYS', 'Highways').replace('PETROLEUM', 'Petroleum').replace('RAILWAYS', 'Railways').replace('POWER', 'Power'));
                 return (
                   <button
                     key={sec}
@@ -986,7 +984,7 @@ function PublicMetadataTab({
                 aria-label="Filter by sector"
               >
                 {sectors.map((s) => (
-                  <option key={s} value={s}>{s}</option>
+                  <option key={s} value={s}>{s === 'All' ? (currentLang === 'hi' ? 'सभी क्षेत्र' : 'All Sectors') : (currentLang === 'hi' ? tSector(s) : s)}</option>
                 ))}
               </select>
               <select
@@ -996,14 +994,14 @@ function PublicMetadataTab({
                 aria-label="Filter by state"
               >
                 {states.map((s) => (
-                  <option key={s} value={s}>{s}</option>
+                  <option key={s} value={s}>{s === 'All' ? (currentLang === 'hi' ? 'सभी राज्य' : 'All States') : (currentLang === 'hi' ? tState(s) : s)}</option>
                 ))}
               </select>
             </div>
 
             {(selectedSector !== 'All' || selectedState !== 'All' || searchQuery) && (
               <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
-                <span>{projects.length} of {allProjects.length || 2207} match</span>
+                <span>{projects.length} {currentLang === 'hi' ? 'में से' : 'of'} {allProjects.length || 2207} {currentLang === 'hi' ? 'परियोजनाएं' : 'match'}</span>
                 <button
                   onClick={() => {
                     setSearchQuery('');
@@ -1012,7 +1010,7 @@ function PublicMetadataTab({
                   }}
                   className="text-slate-900 hover:underline flex items-center gap-1 font-semibold"
                 >
-                  <RotateCcw className="w-3 h-3" /> Reset
+                  <RotateCcw className="w-3 h-3" /> {currentLang === 'hi' ? 'रीसेट' : 'Reset'}
                 </button>
               </div>
             )}
@@ -1066,17 +1064,17 @@ function PublicMetadataTab({
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-mono text-[10.5px] font-bold text-slate-900">#{p.project_id}</span>
-                            <span className="text-[10px] font-semibold text-slate-600 truncate"><span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span></span>
+                            <span className="text-[10px] font-semibold text-slate-600 truncate"><span lang={sectorIsTranslated(p.sector, currentLang) ? undefined : 'en'}>{sectorName(p.sector, currentLang)}</span></span>
                           </div>
-                          <span lang="en" className="block text-xs font-bold text-slate-900 truncate">{p.project_name}</span>
-                          <span lang="en" className="block text-[11px] text-slate-600 truncate mt-0.5">{p.company} · {p.state}</span>
+                          <span lang={currentLang} className="block text-xs font-bold text-slate-900 truncate">{tProjectName(p.project_name, currentLang)}</span>
+                          <span lang={currentLang} className="block text-[11px] text-slate-600 truncate mt-0.5">{p.company} · {tState(p.state, currentLang)}</span>
                         </div>
                         <div className="text-right shrink-0">
                           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${pStat.badgeClass}`}>
                             <StatusGlyph status={pStat} size={8} />
                             {p.progress_perc}%
                           </span>
-                          <span className="sr-only">{describeStatus(p, lang)}</span>
+                          <span className="sr-only">{describeStatus(p, currentLang)}</span>
                           <div className="font-mono font-bold text-xs text-slate-900 mt-1.5">
                             {formatCr(p.revised_cost_cr)}
                           </div>
@@ -1091,20 +1089,20 @@ function PublicMetadataTab({
                 {dirLimit < projects.length && (
                   <div className="p-4 bg-slate-50 text-center space-y-2 border-t border-slate-200">
                     <p className="text-xs text-slate-500 font-mono">
-                      Showing {dirLimit} of {projects.length.toLocaleString('en-IN')} projects
+                      {currentLang === 'hi' ? `${projects.length.toLocaleString('en-IN')} में से ${dirLimit} परियोजनाएं दिखा रहे हैं` : `Showing ${dirLimit} of ${projects.length.toLocaleString('en-IN')} projects`}
                     </p>
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => setDirLimit((prev) => Math.min(prev + 100, projects.length))}
                         className="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-100 transition-colors shadow-2xs"
                       >
-                        Load +100 More
+                        {currentLang === 'hi' ? '+100 और लोड करें' : 'Load +100 More'}
                       </button>
                       <button
                         onClick={() => setDirLimit(projects.length)}
                         className="px-3 py-1.5 text-xs bg-slate-900 text-white rounded-lg font-bold hover:bg-black transition-colors shadow-2xs"
                       >
-                        Show All ({projects.length.toLocaleString('en-IN')})
+                        {currentLang === 'hi' ? `सभी दिखाएं (${projects.length.toLocaleString('en-IN')})` : `Show All (${projects.length.toLocaleString('en-IN')})`}
                       </button>
                     </div>
                   </div>
@@ -1114,7 +1112,7 @@ function PublicMetadataTab({
           </div>
 
           <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
-            <span>Showing {Math.min(dirLimit, projects.length).toLocaleString('en-IN')} of {projects.length.toLocaleString('en-IN')}</span>
+            <span>{currentLang === 'hi' ? `${projects.length.toLocaleString('en-IN')} में से ${Math.min(dirLimit, projects.length).toLocaleString('en-IN')} दिखा रहे हैं` : `Showing ${Math.min(dirLimit, projects.length).toLocaleString('en-IN')} of ${projects.length.toLocaleString('en-IN')}`}</span>
             <span className="text-slate-700 font-semibold">{t('reg_corpus_label', lang)}</span>
           </div>
         </div>
@@ -1239,27 +1237,27 @@ function PublicMetadataTab({
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-              <span id="register-sort-label">Sort:</span>
+              <span id="register-sort-label">{t('sort_by', currentLang)}:</span>
               <select
                 aria-labelledby="register-sort-label"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer"
               >
-                <option value="cost_desc">Cost: highest first</option>
-                <option value="cost_asc">Cost: lowest first</option>
-                <option value="delay_desc">Delay: most delayed</option>
-                <option value="delay_asc">Delay: least delayed</option>
-                <option value="progress_desc">Progress: highest first</option>
-                <option value="progress_asc">Progress: lowest first</option>
-                <option value="id_asc">Project ID</option>
-                <option value="name_asc">Project name (A–Z)</option>
-                <option value="name_desc">Project name (Z–A)</option>
+                <option value="cost_desc">{currentLang === 'hi' ? 'लागत: उच्चतम पहले' : 'Cost: highest first'}</option>
+                <option value="cost_asc">{currentLang === 'hi' ? 'लागत: न्यूनतम पहले' : 'Cost: lowest first'}</option>
+                <option value="delay_desc">{currentLang === 'hi' ? 'विलंब: सर्वाधिक विलंबित' : 'Delay: most delayed'}</option>
+                <option value="delay_asc">{currentLang === 'hi' ? 'विलंब: न्यूनतम विलंबित' : 'Delay: least delayed'}</option>
+                <option value="progress_desc">{currentLang === 'hi' ? 'प्रगति: उच्चतम पहले' : 'Progress: highest first'}</option>
+                <option value="progress_asc">{currentLang === 'hi' ? 'प्रगति: न्यूनतम पहले' : 'Progress: lowest first'}</option>
+                <option value="id_asc">{currentLang === 'hi' ? 'परियोजना आईडी' : 'Project ID'}</option>
+                <option value="name_asc">{currentLang === 'hi' ? 'परियोजना नाम (क-ज्ञ / A-Z)' : 'Project name (A–Z)'}</option>
+                <option value="name_desc">{currentLang === 'hi' ? 'परियोजना नाम (ज्ञ-क / Z-A)' : 'Project name (Z–A)'}</option>
               </select>
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-              <span id="register-rows-label">{t('rows_label', lang)}</span>
+              <span id="register-rows-label">{t('rows_label', currentLang)}</span>
               <select
                 aria-labelledby="register-rows-label"
                 value={pageSize}
@@ -1270,7 +1268,7 @@ function PublicMetadataTab({
                 <option value={50}>50</option>
                 <option value={100}>100</option>
                 <option value={250}>250</option>
-                <option value="All">All 2,207</option>
+                <option value="All">{currentLang === 'hi' ? 'सभी 2,207' : 'All 2,207'}</option>
               </select>
             </div>
           </div>
@@ -1348,16 +1346,16 @@ function PublicMetadataTab({
 
                       {/* Column 2: Name & Sector */}
                       <td className="p-3.5">
-                        <div lang="en" className="font-bold text-slate-950 text-xs leading-snug">
-                          {p.project_name}
+                        <div lang={currentLang} className="font-bold text-slate-950 text-xs leading-snug">
+                          {tProjectName(p.project_name, currentLang)}
                         </div>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                           <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
-                            <span lang={sectorIsTranslated(p.sector, lang) ? undefined : 'en'}>{sectorName(p.sector, lang)}</span>
+                            <span>{tSector(p.sector, currentLang)}</span>
                           </span>
                           {p.location_is_approximate && (
                             <span className="text-[10px] text-amber-900 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-medium">
-                              {t('reg_centroid_approx', lang)}
+                              {t('reg_centroid_approx', currentLang)}
                             </span>
                           )}
                         </div>
@@ -1365,22 +1363,22 @@ function PublicMetadataTab({
 
                       {/* Column 3: Executing Agency & State */}
                       <td className="p-3.5">
-                        <div lang="en" className="text-xs font-semibold text-slate-800 truncate max-w-[200px]" title={p.company}>
+                        <div className="text-xs font-semibold text-slate-800 truncate max-w-[200px]" title={p.company}>
                           {orDash(p.company)}
                         </div>
                         <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
                           <MapPin className="w-3 h-3 text-slate-400" />
-                          <span lang="en">{orDash(p.state) === '—' ? 'Pan-India' : p.state}</span>
+                          <span>{orDash(p.state) === '—' ? (currentLang === 'hi' ? 'अखिल भारतीय' : 'Pan-India') : tState(p.state, currentLang)}</span>
                         </div>
                       </td>
 
                       {/* Column 4: Cost */}
                       <td className="p-3.5 text-right font-mono">
                         <div className="font-bold text-xs text-slate-950">
-                          ₹{revCost.toLocaleString('en-IN')} Cr
+                          ₹{revCost.toLocaleString('en-IN')} {currentLang === 'hi' ? 'करोड़' : 'Cr'}
                         </div>
                         <div className="text-[10px] text-slate-500">
-                          Orig: ₹{origCost.toLocaleString('en-IN')} Cr
+                          {currentLang === 'hi' ? 'मूल: ' : 'Orig: '}₹{origCost.toLocaleString('en-IN')} {currentLang === 'hi' ? 'करोड़' : 'Cr'}
                           {costDiff > 0 && (
                             <span className="text-amber-800 ml-1 font-semibold">
                               (+{costDiffPct.toFixed(0)}%)
@@ -1405,10 +1403,10 @@ function PublicMetadataTab({
                       {/* Column 6: Delay */}
                       <td className="p-3.5">
                         <div className={`font-mono font-bold text-xs ${delayed > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
-                          {delayed > 0 ? `+${delayed} Mos` : 'Nil Delay'}
+                          {delayed > 0 ? `+${delayed} ${currentLang === 'hi' ? 'माह' : 'Mos'}` : (currentLang === 'hi' ? 'शून्य विलंब' : 'Nil Delay')}
                         </div>
                         <div className="text-[10px] text-slate-500 font-mono truncate">
-                          Target: {p.target_date?.slice(0, 10) || '—'}
+                          {currentLang === 'hi' ? 'लक्षित: ' : 'Target: '}{p.target_date?.slice(0, 10) || '—'}
                         </div>
                       </td>
 
@@ -1422,9 +1420,9 @@ function PublicMetadataTab({
                         <button
                           onClick={() => handleSelectAndFocus(p.project_id)}
                           className="px-3 py-1.5 bg-slate-100 hover:bg-slate-950 hover:text-white text-slate-800 rounded-lg text-xs font-bold transition-colors border border-slate-200 shadow-2xs"
-                          title="Focus in active dossier and map"
+                          title={currentLang === 'hi' ? 'सक्रिय डॉसियर और मानचित्र में देखें' : 'Focus in active dossier and map'}
                         >
-                          Inspect
+                          {currentLang === 'hi' ? 'निरीक्षण' : 'Inspect'}
                         </button>
                       </td>
                     </tr>
@@ -1508,6 +1506,7 @@ function PublicMetadataTab({
    TAB 2: FINANCIAL TRANSPARENCY (RTI SECTION 4(1)(b))
    ═════════════════════════════════════════════════════════════════════════════ */
 function PublicFinancialTab({ projects, activeProject, selectProject }) {
+  const { lang, isHi, t, tDigits, tSector, tState, tStatus, tProjectName, tAgency } = useLanguage();
   if (!activeProject) return null;
 
   const origCost = Number(activeProject.original_cost_cr || 0);
@@ -1531,7 +1530,12 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
       <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs shadow-2xs">
         <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-700" />
         <div>
-          <strong className="text-slate-950 font-bold">Right to Information Act, 2005 · Section 4(1)(b)(xi) Mandate.</strong> Proactive disclosure of sanctioned budgetary outlays, cumulative spending against physical progress milestones, and statutory CPWD price adjustments.
+          <strong className="text-slate-950 font-bold">
+            {lang === 'hi' ? 'सूचना का अधिकार अधिनियम, 2005 · धारा 4(1)(ख)(xi) अधिदेश।' : 'Right to Information Act, 2005 · Section 4(1)(b)(xi) Mandate.'}
+          </strong>{' '}
+          {lang === 'hi'
+            ? 'स्वीकृत बजटीय परिव्यय, भौतिक प्रगति मील के पत्थरों के सापेक्ष संचयी व्यय, एवं वैधानिक सीपीडब्ल्यूडी मूल्य समायोजन का सक्रिय प्रकटीकरण।'
+            : 'Proactive disclosure of sanctioned budgetary outlays, cumulative spending against physical progress milestones, and statutory CPWD price adjustments.'}
         </div>
       </div>
 
@@ -1540,20 +1544,24 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
         <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200/90 text-slate-900 shadow-2xs space-y-1.5">
           <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>What does a 20% Cost Overrun trigger for taxpayers?</span>
+            <span>{lang === 'hi' ? 'करदाताओं के लिए 20% लागत वृद्धि का क्या अर्थ है?' : 'What does a 20% Cost Overrun trigger for taxpayers?'}</span>
           </div>
           <p className="text-[12px] text-slate-700 leading-relaxed font-sans">
-            Under Union Cabinet governance rules, any central infrastructure project exceeding its originally sanctioned capex by &ge; 20% cannot spend additional public funds without formal reappraisal and revised financial sanction from the Cabinet Committee on Economic Affairs (CCEA).
+            {lang === 'hi'
+              ? 'केंद्रीय मंत्रिमंडल शासन नियमों के तहत, मूल स्वीकृत पूंजीगत व्यय से ≥ 20% अधिक होने पर कोई भी केंद्रीय अवसंरचना परियोजना आर्थिक मामलों की मंत्रिमंडलीय समिति (CCEA) से औपचारिक पुनर्मूल्यांकन और संशोधित वित्तीय स्वीकृति के बिना अतिरिक्त सार्वजनिक धन खर्च नहीं कर सकती।'
+              : 'Under Union Cabinet governance rules, any central infrastructure project exceeding its originally sanctioned capex by ≥ 20% cannot spend additional public funds without formal reappraisal and revised financial sanction from the Cabinet Committee on Economic Affairs (CCEA).'}
           </p>
         </div>
 
         <div className="p-4 rounded-xl bg-sky-50/70 border border-sky-200/90 text-slate-900 shadow-2xs space-y-1.5">
           <div className="flex items-center gap-2 text-sky-900 font-bold text-xs">
             <Building2 className="w-4 h-4 text-sky-600 shrink-0" />
-            <span>How does MoSPI audit price escalations?</span>
+            <span>{lang === 'hi' ? 'सांख्यिकी मंत्रालय (MoSPI) मूल्य वृद्धि का ऑडिट कैसे करता है?' : 'How does MoSPI audit price escalations?'}</span>
           </div>
           <p className="text-[12px] text-slate-700 leading-relaxed font-sans">
-            CPWD Clause 10CC enforces statutory formula-based price adjustment ceilings tied directly to official RBI Wholesale Price Index (WPI) variances for cement, steel, fuel, and labor indices — ensuring contractors cannot submit arbitrary inflation claims.
+            {lang === 'hi'
+              ? 'सीपीडब्ल्यूडी खंड 10CC सीमेंट, स्टील, ईंधन और श्रम सूचकांकों के लिए आधिकारिक आरबीआई थोक मूल्य सूचकांक (WPI) भिन्नताओं से सीधे बंधे वैधानिक सूत्र-आधारित मूल्य समायोजन की सीमा लागू करता है - जिससे यह सुनिश्चित होता है कि ठेकेदार मनमाने मुद्रास्फीति दावे प्रस्तुत न कर सकें।'
+              : 'CPWD Clause 10CC enforces statutory formula-based price adjustment ceilings tied directly to official RBI Wholesale Price Index (WPI) variances for cement, steel, fuel, and labor indices — ensuring contractors cannot submit arbitrary inflation claims.'}
           </p>
         </div>
       </div>
@@ -1561,29 +1569,53 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
       {/* Top 4 Financial Metric Cells */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Sanctioned Baseline</span>
-          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">Cr</span></span>
-          <span className="text-xs text-slate-500 mt-1 block">CCEA Approved Baseline</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Revised Sanctioned Cost</span>
-          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">Cr</span></span>
-          <span className={`text-xs mt-1 block font-mono font-semibold ${costVariance > 0 ? 'text-amber-800' : 'text-emerald-700'}`}>
-            {costVariance > 0 ? `+₹${costVariance.toLocaleString('en-IN')} Cr (+${costVariancePct.toFixed(1)}%)` : 'Within Initial Outlay'}
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">
+            {lang === 'hi' ? 'स्वीकृत आधारभूत परिव्यय' : 'Sanctioned Baseline'}
+          </span>
+          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">
+            ₹{origCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">{lang === 'hi' ? 'करोड़' : 'Cr'}</span>
+          </span>
+          <span className="text-xs text-slate-500 mt-1 block">
+            {lang === 'hi' ? 'सीसीईए अनुमोदित आधारभूत परिव्यय' : 'CCEA Approved Baseline'}
           </span>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">Cumulative Disbursal (Est.)</span>
-          <span className="text-2xl font-extrabold text-emerald-700 font-mono block mt-1">₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">Cr</span></span>
-          <span className="text-xs text-slate-500 mt-1 block">Tied to {progressPerc}% physical milestone</span>
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">
+            {lang === 'hi' ? 'संशोधित स्वीकृत लागत' : 'Revised Sanctioned Cost'}
+          </span>
+          <span className="text-2xl font-extrabold text-slate-950 font-mono block mt-1">
+            ₹{revCost.toLocaleString('en-IN')} <span className="text-xs font-normal text-slate-500">{lang === 'hi' ? 'करोड़' : 'Cr'}</span>
+          </span>
+          <span className={`text-xs mt-1 block font-mono font-semibold ${costVariance > 0 ? 'text-amber-800' : 'text-emerald-700'}`}>
+            {costVariance > 0
+              ? `+₹${costVariance.toLocaleString('en-IN')} ${lang === 'hi' ? 'करोड़' : 'Cr'} (+${costVariancePct.toFixed(1)}%)`
+              : (lang === 'hi' ? 'प्रारंभिक परिव्यय के भीतर' : 'Within Initial Outlay')}
+          </span>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">CPWD WPI Escalation</span>
-          <span className="text-2xl font-extrabold text-slate-900 font-mono block mt-1">₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">Cr</span></span>
-          <span className="text-xs text-slate-500 mt-1 block">Statutory Clause 10CC buffer</span>
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">
+            {lang === 'hi' ? 'संचयी संवितरण (अनुमानित)' : 'Cumulative Disbursal (Est.)'}
+          </span>
+          <span className="text-2xl font-extrabold text-emerald-700 font-mono block mt-1">
+            ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">{lang === 'hi' ? 'करोड़' : 'Cr'}</span>
+          </span>
+          <span className="text-xs text-slate-500 mt-1 block">
+            {lang === 'hi' ? `${progressPerc}% भौतिक मील के पत्थर से संबद्ध` : `Tied to ${progressPerc}% physical milestone`}
+          </span>
+        </div>
+
+        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold block">
+            {lang === 'hi' ? 'सीपीडब्ल्यूडी थोक मूल्य वृद्धि' : 'CPWD WPI Escalation'}
+          </span>
+          <span className="text-2xl font-extrabold text-slate-900 font-mono block mt-1">
+            ₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })} <span className="text-xs font-normal text-slate-500">{lang === 'hi' ? 'करोड़' : 'Cr'}</span>
+          </span>
+          <span className="text-xs text-slate-500 mt-1 block">
+            {lang === 'hi' ? 'वैधानिक खंड 10CC बफर' : 'Statutory Clause 10CC buffer'}
+          </span>
         </div>
       </div>
 
@@ -1593,7 +1625,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           <div className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-slate-900" />
             <h3 className="text-base font-extrabold text-slate-950">
-              Visual Capex Comparison · {activeProject.project_name}
+              {lang === 'hi' ? 'दृश्य पूंजीगत व्यय तुलना' : 'Visual Capex Comparison'} · {tProjectName(activeProject.project_name, lang)}
             </h3>
           </div>
           <span className="px-2.5 py-1 rounded bg-slate-100 border border-slate-200 text-slate-900 font-mono font-bold text-xs">
@@ -1605,8 +1637,12 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 1: Sanctioned Initial */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-slate-700">1. Initial Approved Budget (CCEA Baseline)</span>
-              <span className="font-bold text-slate-950">₹{origCost.toLocaleString('en-IN')} Cr (100% Baseline)</span>
+              <span className="font-semibold text-slate-700">
+                {lang === 'hi' ? '1. प्रारंभिक स्वीकृत बजट (सीसीईए आधार)' : '1. Initial Approved Budget (CCEA Baseline)'}
+              </span>
+              <span className="font-bold text-slate-950">
+                ₹{origCost.toLocaleString('en-IN')} {lang === 'hi' ? 'करोड़ (100% आधार)' : 'Cr (100% Baseline)'}
+              </span>
             </div>
             <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
               <div
@@ -1619,9 +1655,11 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 2: Revised Budget */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-slate-700">2. Revised Sanctioned Budget (MoSPI RCE)</span>
+              <span className="font-semibold text-slate-700">
+                {lang === 'hi' ? '2. संशोधित स्वीकृत बजट (MoSPI आरसीई)' : '2. Revised Sanctioned Budget (MoSPI RCE)'}
+              </span>
               <span className="font-bold text-slate-950">
-                ₹{revCost.toLocaleString('en-IN')} Cr ({costVariancePct >= 0 ? `+${costVariancePct.toFixed(1)}%` : '0%'})
+                ₹{revCost.toLocaleString('en-IN')} {lang === 'hi' ? 'करोड़' : 'Cr'} ({costVariancePct >= 0 ? `+${costVariancePct.toFixed(1)}%` : '0%'})
               </span>
             </div>
             <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
@@ -1635,9 +1673,11 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
           {/* Bar 3: Cumulative Disbursed */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="font-semibold text-slate-700">3. Cumulative Disbursed Amount (Milestone Realized)</span>
+              <span className="font-semibold text-slate-700">
+                {lang === 'hi' ? '3. संचयी संवितरित राशि (मील का पत्थर प्राप्त)' : '3. Cumulative Disbursed Amount (Milestone Realized)'}
+              </span>
               <span className="font-bold text-emerald-700">
-                ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr ({progressPerc}% of Revised)
+                ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })} {lang === 'hi' ? 'करोड़' : 'Cr'} ({progressPerc}% {lang === 'hi' ? 'संशोधित का' : 'of Revised'})
               </span>
             </div>
             <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden border border-slate-200">
@@ -1651,40 +1691,58 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
 
         <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 font-mono">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-400" /> Approved Baseline</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-900" /> Revised Budget</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-600" /> Disbursed Funds</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-400" /> {lang === 'hi' ? 'अनुमोदित आधार' : 'Approved Baseline'}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-slate-900" /> {lang === 'hi' ? 'संशोधित बजट' : 'Revised Budget'}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-emerald-600" /> {lang === 'hi' ? 'संवितरित धनराशि' : 'Disbursed Funds'}</span>
           </div>
-          <span className="text-slate-900 font-semibold">RTI §4(1)(b)(xi) Standardized Realization</span>
+          <span className="text-slate-900 font-semibold">
+            {lang === 'hi' ? 'आरटीआई §4(1)(ख)(xi) मानकीकृत संवितरण' : 'RTI §4(1)(b)(xi) Standardized Realization'}
+          </span>
         </div>
       </div>
 
       {/* Detailed Ledger */}
       <div className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-2xs">
         <div className="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
-          <span className="text-sm font-bold text-slate-950">Public Expenditure Breakdown</span>
-          <span className="text-xs font-mono text-slate-500">Executing PSU: {activeProject.company}</span>
+          <span className="text-sm font-bold text-slate-950">
+            {lang === 'hi' ? 'सार्वजनिक व्यय विवरण' : 'Public Expenditure Breakdown'}
+          </span>
+          <span className="text-xs font-mono text-slate-500">
+            {lang === 'hi' ? 'निष्पादक सार्वजनिक उपक्रम:' : 'Executing PSU:'} {tAgency(activeProject.company)}
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-mono uppercase tracking-wider text-slate-600 font-bold">
-                <th className="p-3.5 pl-4">Expenditure Head</th>
-                <th className="p-3.5">Sanctioned Reference</th>
-                <th className="p-3.5 text-right">Amount (₹ Cr)</th>
-                <th className="p-3.5 pr-4">Statutory Audit Status</th>
+                <th className="p-3.5 pl-4">{lang === 'hi' ? 'व्यय शीर्ष' : 'Expenditure Head'}</th>
+                <th className="p-3.5">{lang === 'hi' ? 'स्वीकृति संदर्भ' : 'Sanctioned Reference'}</th>
+                <th className="p-3.5 text-right">{lang === 'hi' ? 'राशि (₹ करोड़)' : 'Amount (₹ Cr)'}</th>
+                <th className="p-3.5 pr-4">{lang === 'hi' ? 'वैधानिक ऑडिट स्थिति' : 'Statutory Audit Status'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-mono">
               <tr className="hover:bg-slate-50">
-                <td className="p-3.5 pl-4 font-bold text-slate-950">Initial Approved Baseline</td>
-                <td className="p-3.5 text-slate-600 font-sans">Cabinet Committee on Economic Affairs (CCEA)</td>
+                <td className="p-3.5 pl-4 font-bold text-slate-950">
+                  {lang === 'hi' ? 'प्रारंभिक अनुमोदित आधारभूत परिव्यय' : 'Initial Approved Baseline'}
+                </td>
+                <td className="p-3.5 text-slate-600 font-sans">
+                  {lang === 'hi' ? 'आर्थिक मामलों की मंत्रिमंडलीय समिति (CCEA)' : 'Cabinet Committee on Economic Affairs (CCEA)'}
+                </td>
                 <td className="p-3.5 text-right font-bold text-slate-950">₹{origCost.toLocaleString('en-IN')}</td>
-                <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">APPROVED</span></td>
+                <td className="p-3.5 pr-4">
+                  <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+                    {lang === 'hi' ? 'स्वीकृत' : 'APPROVED'}
+                  </span>
+                </td>
               </tr>
               <tr className="hover:bg-slate-50">
-                <td className="p-3.5 pl-4 font-bold text-slate-950">Cumulative Cost Variation / Revised Scope</td>
-                <td className="p-3.5 text-slate-600 font-sans">MoSPI Revised Cost Estimates (RCE)</td>
+                <td className="p-3.5 pl-4 font-bold text-slate-950">
+                  {lang === 'hi' ? 'संचयी लागत भिन्नता / संशोधित दायरा' : 'Cumulative Cost Variation / Revised Scope'}
+                </td>
+                <td className="p-3.5 text-slate-600 font-sans">
+                  {lang === 'hi' ? 'सांख्यिकी मंत्रालय संशोधित लागत अनुमान (RCE)' : 'MoSPI Revised Cost Estimates (RCE)'}
+                </td>
                 <td className={`p-3.5 text-right font-bold ${costVariance > 0 ? 'text-amber-800' : 'text-slate-800'}`}>
                   ₹{costVariance.toLocaleString('en-IN')}
                 </td>
@@ -1692,25 +1750,43 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
                   <span className={`px-2 py-0.5 rounded border text-[10px] font-bold ${
                     costVariancePct >= 20 ? 'bg-rose-50 text-rose-800 border-rose-300' : 'bg-amber-50 text-amber-900 border-amber-300'
                   }`}>
-                    {costVariancePct >= 20 ? 'CCEA REAPPRAISAL TRIGGERED' : 'WITHIN DELEGATED POWERS'}
+                    {costVariancePct >= 20 
+                      ? (lang === 'hi' ? 'सीसीईए पुनर्मूल्यांकन अपेक्षित' : 'CCEA REAPPRAISAL TRIGGERED')
+                      : (lang === 'hi' ? 'प्रत्यायोजित शक्तियों के भीतर' : 'WITHIN DELEGATED POWERS')}
                   </span>
                 </td>
               </tr>
               <tr className="hover:bg-slate-50">
-                <td className="p-3.5 pl-4 font-bold text-slate-950">Contractor Cumulative Realization</td>
-                <td className="p-3.5 text-slate-600 font-sans">Physical Milestone Verification</td>
+                <td className="p-3.5 pl-4 font-bold text-slate-950">
+                  {lang === 'hi' ? 'ठेकेदार संचयी संवितरण' : 'Contractor Cumulative Realization'}
+                </td>
+                <td className="p-3.5 text-slate-600 font-sans">
+                  {lang === 'hi' ? 'भौतिक मील का पत्थर सत्यापन' : 'Physical Milestone Verification'}
+                </td>
                 <td className="p-3.5 text-right font-bold text-emerald-700">
                   ₹{estDisbursed.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">DISBURSED</span></td>
+                <td className="p-3.5 pr-4">
+                  <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+                    {lang === 'hi' ? 'संवितरित' : 'DISBURSED'}
+                  </span>
+                </td>
               </tr>
               <tr className="hover:bg-slate-50">
-                <td className="p-3.5 pl-4 font-bold text-slate-950">CPWD Clause 10CC Escalation Allocation</td>
-                <td className="p-3.5 text-slate-600 font-sans">Wholesale Price Index (WPI) Formula</td>
+                <td className="p-3.5 pl-4 font-bold text-slate-950">
+                  {lang === 'hi' ? 'सीपीडब्ल्यूडी खंड 10CC मूल्य वृद्धि आवंटन' : 'CPWD Clause 10CC Escalation Allocation'}
+                </td>
+                <td className="p-3.5 text-slate-600 font-sans">
+                  {lang === 'hi' ? 'थोक मूल्य सूचकांक (WPI) सूत्र' : 'Wholesale Price Index (WPI) Formula'}
+                </td>
                 <td className="p-3.5 text-right font-bold text-slate-900">
                   ₹{wpiInflationAllowance.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
                 </td>
-                <td className="p-3.5 pr-4"><span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-bold">INDEX-TIED</span></td>
+                <td className="p-3.5 pr-4">
+                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-bold">
+                    {lang === 'hi' ? 'सूचकांक-संबद्ध' : 'INDEX-TIED'}
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -1724,6 +1800,7 @@ function PublicFinancialTab({ projects, activeProject, selectProject }) {
    TAB 3: ENVIRONMENTAL & STATUTORY CLEARANCE STATUS (ANUMATI)
    ═════════════════════════════════════════════════════════════════════════════ */
 function PublicStageChecklist({ stages }) {
+  const { lang } = useLanguage();
   const [expanded, setExpanded] = useState(false);
   if (!stages || stages.length === 0) return null;
 
@@ -1734,7 +1811,7 @@ function PublicStageChecklist({ stages }) {
     <div className="space-y-2 pt-2 border-t border-slate-200/80">
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-mono uppercase text-slate-500 font-bold tracking-wider">
-          Statutory Stage Checklist ({stages.length})
+          {lang === 'hi' ? `वैधानिक चरण चेकलिस्ट (${stages.length})` : `Statutory Stage Checklist (${stages.length})`}
         </span>
         {hasMore && (
           <button
@@ -1742,7 +1819,7 @@ function PublicStageChecklist({ stages }) {
             onClick={() => setExpanded(!expanded)}
             className="text-[10px] font-bold text-blue-600 hover:text-blue-800 transition-colors"
           >
-            {expanded ? 'Show Less' : `+${stages.length - 3} More Stages`}
+            {expanded ? (lang === 'hi' ? 'कम दिखाएं' : 'Show Less') : (lang === 'hi' ? `+${stages.length - 3} और चरण` : `+${stages.length - 3} More Stages`)}
           </button>
         )}
       </div>
@@ -1774,19 +1851,19 @@ function PublicStageChecklist({ stages }) {
                       <span>{st.stage_name}</span>
                       {st.paperwork_loopback_detected && (
                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                          <RotateCcw className="w-2.5 h-2.5" /> Loopback
+                          <RotateCcw className="w-2.5 h-2.5" /> {lang === 'hi' ? 'लूपबैक' : 'Loopback'}
                         </span>
                       )}
                     </div>
                     <p className="text-[10px] text-slate-500 truncate mt-0.5" title={st.department}>
-                      {st.department || 'Statutory Review Authority'}
+                      {st.department || (lang === 'hi' ? 'वैधानिक समीक्षा प्राधिकरण' : 'Statutory Review Authority')}
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <div className="font-mono font-bold text-[10.5px] text-slate-900">
-                    {st.days_pending}d <span className="text-[9.5px] font-normal text-slate-500">/ {st.benchmark_days}d SLA</span>
+                    {st.days_pending}{lang === 'hi' ? ' दिन' : 'd'} <span className="text-[9.5px] font-normal text-slate-500">/ {st.benchmark_days}{lang === 'hi' ? ' दिन एसएलए' : 'd SLA'}</span>
                   </div>
                   <span className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-mono font-bold mt-0.5 ${
                     isStag
@@ -1809,7 +1886,7 @@ function PublicStageChecklist({ stages }) {
                   />
                 </div>
                 <span className="text-[9px] font-mono text-slate-500 shrink-0 font-semibold">
-                  {percent}% SLA consumed
+                  {percent}% {lang === 'hi' ? 'एसएलए व्यतीत' : 'SLA consumed'}
                 </span>
               </div>
             </div>
@@ -1821,6 +1898,7 @@ function PublicStageChecklist({ stages }) {
 }
 
 function PublicClearancesTab() {
+  const { lang, isHi, t, tDigits, tSector, tState, tStatus, tProjectName } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -1863,42 +1941,63 @@ function PublicClearancesTab() {
       <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs shadow-2xs">
         <Landmark className="w-4 h-4 text-slate-800 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-slate-950 font-bold">PARIVESH Statutory Clearance Transparency.</strong> Real-time regulatory tracking for all 2,207 Central Sector mega-projects across Forest Stage-I/II, Environmental Impact Assessment (EIA), Wildlife Clearances, and Land Acquisition approvals.
+          <strong className="text-slate-950 font-bold">
+            {lang === 'hi' ? 'परिवेश (PARIVESH) वैधानिक मंजूरी पारदर्शिता।' : 'PARIVESH Statutory Clearance Transparency.'}
+          </strong>{' '}
+          {lang === 'hi'
+            ? 'वन चरण-I/II, पर्यावरण प्रभाव आकलन (EIA), वन्यजीव मंजूरी, एवं भूमि अधिग्रहण स्वीकृतियों के अंतर्गत सभी 2,207 केंद्रीय क्षेत्र महा-परियोजनाओं की वास्तविक समय विनियामक निगरानी।'
+            : 'Real-time regulatory tracking for all 2,207 Central Sector mega-projects across Forest Stage-I/II, Environmental Impact Assessment (EIA), Wildlife Clearances, and Land Acquisition approvals.'}
         </div>
       </div>
 
       {/* 4 National Summary KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Clearance Corpus</div>
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">
+            {lang === 'hi' ? 'मंजूरी कुल परियोजनाएं' : 'Clearance Corpus'}
+          </div>
           <div className="text-2xl font-extrabold text-slate-950 font-mono mt-1">
             {data?.total_portfolio_projects || 2207}
           </div>
-          <div className="text-xs text-slate-500 mt-1 font-mono">7,257 active filings</div>
+          <div className="text-xs text-slate-500 mt-1 font-mono">
+            {lang === 'hi' ? '7,257 सक्रिय आवेदन' : '7,257 active filings'}
+          </div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Total Forest Diverted</div>
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">
+            {lang === 'hi' ? 'कुल अपवर्तित वन भूमि' : 'Total Forest Diverted'}
+          </div>
           <div className="text-2xl font-extrabold text-emerald-700 font-mono mt-1">
             {data?.total_forest_diversion_ha ? `${Number(data.total_forest_diversion_ha).toLocaleString('en-IN')} ha` : '87,038 ha'}
           </div>
-          <div className="text-xs text-emerald-600 mt-1 font-mono">MoEFCC CAMPA audited</div>
+          <div className="text-xs text-emerald-600 mt-1 font-mono">
+            {lang === 'hi' ? 'पर्यावरण मंत्रालय कैम्पा ऑडिटेड' : 'MoEFCC CAMPA audited'}
+          </div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">Stalled Clearances</div>
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">
+            {lang === 'hi' ? 'अवरुद्ध मंजूरियां' : 'Stalled Clearances'}
+          </div>
           <div className="text-2xl font-extrabold text-rose-700 font-mono mt-1">
             {data?.projects_stalled ?? '—'}
           </div>
-          <div className="text-xs text-rose-600 mt-1 font-mono">RSI &gt; 1.2 loopbacks</div>
+          <div className="text-xs text-rose-600 mt-1 font-mono">
+            {lang === 'hi' ? 'आरएसआई > 1.2 लूपबैक' : 'RSI > 1.2 loopbacks'}
+          </div>
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">PMO Direct Escalations</div>
+          <div className="text-[10px] uppercase font-mono tracking-widest text-slate-500 font-bold">
+            {lang === 'hi' ? 'पीएमओ प्रत्यक्ष समीक्षा' : 'PMO Direct Escalations'}
+          </div>
           <div className="text-2xl font-extrabold text-amber-700 font-mono mt-1">
             {data?.projects_flagged_for_pmo_escalation ?? '—'}
           </div>
-          <div className="text-xs text-amber-600 mt-1 font-mono">Critical path block</div>
+          <div className="text-xs text-amber-600 mt-1 font-mono">
+            {lang === 'hi' ? 'महत्वपूर्ण पथ अवरोध' : 'Critical path block'}
+          </div>
         </div>
       </div>
 
@@ -1908,7 +2007,7 @@ function PublicClearancesTab() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Search by project name, ID (#619092), or proposal no..."
+            placeholder={lang === 'hi' ? 'परियोजना नाम, आईडी (#619092), या प्रस्ताव संख्या से खोजें...' : 'Search by project name, ID (#619092), or proposal no...'}
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -1920,7 +2019,7 @@ function PublicClearancesTab() {
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-            <span>State:</span>
+            <span>{lang === 'hi' ? 'राज्य:' : 'State:'}</span>
             <select
               value={selectedState}
               onChange={(e) => {
@@ -1930,13 +2029,15 @@ function PublicClearancesTab() {
               className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer font-sans"
             >
               {statesList.map((st) => (
-                <option key={st} value={st}>{st}</option>
+                <option key={st} value={st}>
+                  {st === 'All' ? (lang === 'hi' ? 'सभी राज्य' : 'All') : tState(st, lang)}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-600 font-mono">
-            <span>Status:</span>
+            <span>{lang === 'hi' ? 'स्थिति:' : 'Status:'}</span>
             <select
               value={selectedStatus}
               onChange={(e) => {
@@ -1945,10 +2046,10 @@ function PublicClearancesTab() {
               }}
               className="text-xs bg-white border border-slate-300 rounded-lg py-2 px-2.5 text-slate-800 focus:outline-none cursor-pointer font-sans"
             >
-              <option value="All">All Statuses</option>
-              <option value="STALLED">STALLED</option>
-              <option value="IN_PROGRESS">IN_PROGRESS</option>
-              <option value="APPROVED">APPROVED</option>
+              <option value="All">{lang === 'hi' ? 'सभी स्थितियां' : 'All Statuses'}</option>
+              <option value="STALLED">{lang === 'hi' ? 'अवरुद्ध (STALLED)' : 'STALLED'}</option>
+              <option value="IN_PROGRESS">{lang === 'hi' ? 'प्रगति पर (IN_PROGRESS)' : 'IN_PROGRESS'}</option>
+              <option value="APPROVED">{lang === 'hi' ? 'स्वीकृत (APPROVED)' : 'APPROVED'}</option>
             </select>
           </div>
         </div>
@@ -1959,18 +2060,20 @@ function PublicClearancesTab() {
         <div className="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
           <span className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-bold text-slate-900">
             <TreePine className="w-3.5 h-3.5 text-emerald-700" />
-            Statutory Clearances Pipeline
+            {lang === 'hi' ? 'वैधानिक मंजूरी पाइपलाइन' : 'Statutory Clearances Pipeline'}
           </span>
-          <span className="text-xs text-slate-500 font-mono">Showing {projects.length} of {filteredTotal} matching proposals</span>
+          <span className="text-xs text-slate-500 font-mono">
+            {lang === 'hi' ? `${filteredTotal} में से ${projects.length} प्रस्ताव दिखा रहे हैं` : `Showing ${projects.length} of ${filteredTotal} matching proposals`}
+          </span>
         </div>
 
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            Loading statutory clearances from PARIVESH portal...
+            {lang === 'hi' ? 'परिवेश (PARIVESH) पोर्टल से वैधानिक मंजूरियां लोड हो रही हैं...' : 'Loading statutory clearances from PARIVESH portal...'}
           </div>
         ) : projects.length === 0 ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            No clearance records match your search criteria. Try a different query or state.
+            {lang === 'hi' ? 'आपकी खोज से कोई मंजूरी रिकॉर्ड मेल नहीं खाता। कृपया अन्य खोज शब्द या राज्य चुनें।' : 'No clearance records match your search criteria. Try a different query or state.'}
           </div>
         ) : (
           <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1992,32 +2095,42 @@ function PublicClearancesTab() {
                           #{p.project_id}
                         </span>
                         <span className="px-2 py-0.5 rounded bg-slate-200/80 text-slate-800 text-[10px] font-semibold">
-                          {p.state || 'Pan-India'}
+                          {orDash(p.state) === '—' ? (lang === 'hi' ? 'अखिल भारतीय' : 'Pan-India') : tState(p.state, lang)}
                         </span>
-                        <span className="text-[10px] text-slate-500 truncate">({p.sector || 'Infrastructure'})</span>
+                        <span className="text-[10px] text-slate-500 truncate">
+                          ({tSector(p.sector, lang) || (lang === 'hi' ? 'अवसंरचना' : 'Infrastructure')})
+                        </span>
                       </div>
                       <h4 className="text-xs font-bold text-slate-900 leading-snug truncate" title={p.project_name}>
-                        {p.project_name}
+                        {tProjectName(p.project_name, lang)}
                       </h4>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded border text-[10px] font-mono font-bold shrink-0 ${tagCls}`}>
-                      {status}
+                      {status === 'APPROVED' ? (lang === 'hi' ? 'स्वीकृत' : 'APPROVED') : status === 'IN_PROGRESS' ? (lang === 'hi' ? 'प्रगति पर' : 'IN_PROGRESS') : status === 'STALLED' ? (lang === 'hi' ? 'अवरुद्ध' : 'STALLED') : status}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center text-xs">
                     <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Forest Diverted</span>
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">
+                        {lang === 'hi' ? 'अपवर्तित वन' : 'Forest Diverted'}
+                      </span>
                       <span className="font-mono font-bold text-slate-900 text-xs block mt-0.5">
                         {p.total_forest_diversion_ha ? `${p.total_forest_diversion_ha} ha` : '—'}
                       </span>
                     </div>
                     <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Review Period</span>
-                      <span className="font-mono font-bold text-slate-900 text-xs block mt-0.5">{p.days_overdue || 0}d</span>
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">
+                        {lang === 'hi' ? 'समीक्षा अवधि' : 'Review Period'}
+                      </span>
+                      <span className="font-mono font-bold text-slate-900 text-xs block mt-0.5">
+                        {p.days_overdue || 0}{lang === 'hi' ? ' दिन' : 'd'}
+                      </span>
                     </div>
                     <div className="p-2 rounded bg-white border border-slate-200 shadow-2xs">
-                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">Bottleneck</span>
+                      <span className="text-[9px] uppercase font-mono text-slate-500 font-bold block">
+                        {lang === 'hi' ? 'अवरोधक विभाग' : 'Bottleneck'}
+                      </span>
                       <span className="font-semibold text-slate-900 text-[10.5px] truncate block mt-0.5" title={p.bottleneck_department}>
                         {p.bottleneck_department?.split(' ')[0] || 'MoEFCC'}
                       </span>
@@ -2039,14 +2152,18 @@ function PublicClearancesTab() {
               onClick={() => setDisplayLimit((prev) => prev + 50)}
               className="px-6 py-2 rounded-lg bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-2xs transition-colors"
             >
-              Load More Proposals ({filteredTotal - projects.length} remaining)
+              {lang === 'hi' ? `और प्रस्ताव लोड करें (${filteredTotal - projects.length} शेष)` : `Load More Proposals (${filteredTotal - projects.length} remaining)`}
             </button>
           </div>
         )}
 
         <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-mono">
-          <span>Direct feed from PARIVESH statutory portal (2,207 Projects Indexed)</span>
-          <span className="text-slate-800 font-semibold">RTI §4 Environmental Disclosure</span>
+          <span>
+            {lang === 'hi' ? 'परिवेश (PARIVESH) वैधानिक पोर्टल से सीधा डेटा (2,207 परियोजनाएं सूचीबद्ध)' : 'Direct feed from PARIVESH statutory portal (2,207 Projects Indexed)'}
+          </span>
+          <span className="text-slate-800 font-semibold">
+            {lang === 'hi' ? 'आरटीआई §4 पर्यावरण प्रकटीकरण' : 'RTI §4 Environmental Disclosure'}
+          </span>
         </div>
       </div>
     </div>

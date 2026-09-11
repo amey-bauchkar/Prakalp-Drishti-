@@ -20,6 +20,7 @@ const ModelBenchmarkView     = React.lazy(() => import('./ModelBenchmarkView'));
 const SatyaKavachView        = React.lazy(() => import('../src/views/SatyaKavachView'));
 const SetuVarshaView         = React.lazy(() => import('../src/views/SetuVarshaView'));
 const KaryaDakshataSimulator = React.lazy(() => import('../src/components/KaryaDakshataSimulator'));
+const OfficerGrievanceDeskView = React.lazy(() => import('./OfficerGrievanceDeskView'));
 import { getStoredLanguage, t } from '../src/lib/i18n';
 
 /** Shown while an engine's JavaScript is fetched. A blank frame on a slow office
@@ -58,6 +59,11 @@ function normalizeEngine(id) {
     cockpit: 'unified_cockpit',
     alerts: 'watchlist',
     early_warning: 'watchlist',
+    grievances: 'grievance_desk',
+    grievance: 'grievance_desk',
+    grievance_desk: 'grievance_desk',
+    vigilance: 'grievance_desk',
+    nagrik_desk: 'grievance_desk',
   };
   return aliasMap[clean] || clean;
 }
@@ -163,6 +169,7 @@ export default function DecisionHubView() {
     {
       group: t('ws_governance', lang),
       engines: [
+        { id: 'grievance_desk', label: t('eng_grievance_desk', lang), desc: t('eng_grievance_desk_desc', lang), icon: ShieldAlert },
         { id: 'benchmark', label: t('eng_benchmark', lang), desc: t('eng_benchmark_desc', lang), icon: FlaskConical },
       ],
     },
@@ -370,6 +377,16 @@ export default function DecisionHubView() {
                 )}
                 {activeEngine === 'setu_varsha' && <SetuVarshaView lang={lang} selectedProjectId={selectedProjectId} />}
                 {activeEngine === 'karya_dakshata' && <KaryaDakshataSimulator lang={lang} />}
+                {activeEngine === 'grievance_desk' && (
+                  <OfficerGrievanceDeskView
+                    lang={lang}
+                    onSelectProject={(id) => {
+                      setSelectedProjectId(String(id));
+                      localStorage.setItem('prakalp:selectedProjectId', String(id));
+                      selectEngine('unified_cockpit');
+                    }}
+                  />
+                )}
                 </React.Suspense>
               </motion.div>
             </AnimatePresence>

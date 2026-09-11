@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Card, Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from '@tremor/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { translateProjectName, translateSector, translateState, translateAgency } from '../../src/lib/i18n';
 
 export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectProject, lang = 'en' }) {
   const isHi = lang === 'hi';
@@ -271,11 +272,11 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                           </span>
                         )}
                       </div>
-                      <span className="text-slate-900 font-semibold line-clamp-1 block text-xs">
-                        {p.project_name}
+                      <span className="text-slate-900 font-semibold line-clamp-1 block text-xs" title={translateProjectName(p.project_name, lang)}>
+                        {translateProjectName(p.project_name, lang)}
                       </span>
                       <span className="text-[11px] text-slate-500 block truncate">
-                        {p.agency && p.agency !== 'None' ? p.agency : p.sector} • {p.state || 'National'}
+                        {p.agency && p.agency !== 'None' ? translateAgency(p.agency, lang) : translateSector(p.sector, lang)} • {p.state ? translateState(p.state, lang) : (isHi ? 'राष्ट्रीय' : 'National')}
                       </span>
                     </div>
                   </TableCell>

@@ -8,7 +8,7 @@ import {
 import { apiFetch, getSession } from './authClient';
 import DataUnavailable from '../src/components/DataUnavailable';
 import { formatCount, formatCr, sectorName } from '../src/lib/projectStatus';
-import { getStoredLanguage } from '../src/lib/i18n';
+import { getStoredLanguage, translateProjectName, translateState, translateAgency } from '../src/lib/i18n';
 
 /**
  * The Decision Hub's landing panel.
@@ -550,12 +550,12 @@ export default function WatchlistView({ onOpenProject }) {
                       <span className="font-mono text-[11px] text-gov-muted">#{a.project_id}</span>
                       <span className="text-[11px] text-gov-soft">{getSectorName(a.sector, lang)}</span>
                       {a.state && a.state !== 'Not specified' && (
-                        <span className="text-[11px] text-gov-soft">· {a.state}</span>
+                        <span className="text-[11px] text-gov-soft">· {translateState(a.state, lang)}</span>
                       )}
                     </div>
 
                     <h3 className="text-[13.5px] font-heading font-bold text-gov-navy leading-snug">
-                      {a.project_name}
+                      {translateProjectName(a.project_name, lang)}
                     </h3>
 
                     {/* The endpoint's own one-line rationale, not a restatement of the score. */}
@@ -568,7 +568,7 @@ export default function WatchlistView({ onOpenProject }) {
 
                     <p className="text-[11.5px] text-gov-muted font-mono flex flex-wrap items-center gap-x-3 gap-y-1">
                       <span className="inline-flex items-center gap-1">
-                        <Building2 className="w-3 h-3" aria-hidden="true" />{a.agency}
+                        <Building2 className="w-3 h-3" aria-hidden="true" />{translateAgency(a.agency, lang)}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" aria-hidden="true" />{formatCr(a.capex_cr, { lang })}
@@ -609,7 +609,7 @@ export default function WatchlistView({ onOpenProject }) {
                   <div className="px-4 pb-4 pt-1 border-t border-gov-border">
                     <table className="w-full text-[12px] mt-2.5">
                       <caption className="sr-only">
-                        {lang === 'hi' ? `${a.project_name} हेतु जोखिम घटक` : `Risk components for ${a.project_name}`}
+                        {lang === 'hi' ? `${translateProjectName(a.project_name, lang)} हेतु जोखिम घटक` : `Risk components for ${a.project_name}`}
                       </caption>
                       <thead>
                         <tr className="text-[10px] uppercase font-mono tracking-wider text-gov-muted">

@@ -11,11 +11,23 @@ import { getStoredLanguage, t } from '../src/lib/i18n';
  * Grounded strictly on verified project facts.
  */
 
-const SUGGESTIONS = [
-  { label: 'Timeline forecast & delay causes', q: 'What is the timeline forecast and what is driving the delay?' },
-  { label: 'CCEA 20% threshold check', q: 'Is the cost overrun within the statutory CCEA limit?' },
-  { label: 'Monsoon work-window contraction', q: 'What is the monsoon impact on this project?' },
-  { label: 'Satellite change-detection verdict', q: 'Give me the satellite ground-truth verdict.' },
+const getSuggestions = (isHi) => [
+  { 
+    label: isHi ? 'समयसीमा पूर्वानुमान एवं विलंब के कारण' : 'Timeline forecast & delay causes', 
+    q: isHi ? 'परियोजना की समयसीमा का क्या पूर्वानुमान है और विलंब के मुख्य कारण क्या हैं?' : 'What is the timeline forecast and what is driving the delay?' 
+  },
+  { 
+    label: isHi ? 'सीसीईए २०% सीमा सत्यापन' : 'CCEA 20% threshold check', 
+    q: isHi ? 'क्या लागत वृद्धि सांविधिक सीसीईए सीमा के भीतर है?' : 'Is the cost overrun within the statutory CCEA limit?' 
+  },
+  { 
+    label: isHi ? 'मानसून कार्य-अवधि संकुचन' : 'Monsoon work-window contraction', 
+    q: isHi ? 'इस परियोजना पर मानसून का क्या प्रभाव है?' : 'What is the monsoon impact on this project?' 
+  },
+  { 
+    label: isHi ? 'उपग्रह परिवर्तन-पहचान निष्कर्ष' : 'Satellite change-detection verdict', 
+    q: isHi ? 'उपग्रह जमीनी-हकीकत सत्यापन निष्कर्ष प्रस्तुत करें।' : 'Give me the satellite ground-truth verdict.' 
+  },
 ];
 
 const MODE_META = {
@@ -87,65 +99,83 @@ export default function CopilotChat({ projectId }) {
   }, []);
   const [busy, setBusy] = useState(false);
   const endRef = useRef(null);
+  const isHi = lang === 'hi';
+  const suggestions = getSuggestions(isHi);
 
   useEffect(() => { setTurns([]); }, [projectId]);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [turns, busy]);
 
   // Prior turns, oldest first, in the shape the API expects. Only the text the
   // user actually saw is replayed -- never the fact payload, which would balloon
-  // the request and re-send figures the server already holds.
-  const historyFor = (transcript) =>
-    transcript
-      .filter((t) => t.role === 'user' || t.role === 'copilot')
-      .map((t) => ({
-        role: t.role === 'user' ? 'user' : 'assistant',
-        content: t.role === 'user'
-          ? t.text
-          : (t.payload?.answer_llm || t.payload?.answer || ''),
-      }))
-      .filter((m) => m.content)
-      .slice(-8);
+  // the context window on long sessions.
+  const historyForApi = turns
+    .filter((t) => t.role === 'user' || t.role === 'assistant')
+    .map((t) => ({
+      role: t.role,
+      content: t.role === 'assistant' ? (t.payload?.answer_llm || t.payload?.answer || t.text) : t.text,
+    }));
 
-  const send = async (question) => {
-    const q = (question ?? draft).trim();
+  const send = async (explicitText) => {
+    const q = (explicitText || draft).trim();
     if (!q || busy) return;
+
+    setTurns((prev) => [...prev, { role: 'user', text: q }]);
     setDraft('');
     setBusy(true);
 
-    // Snapshot BEFORE appending this turn, so the history sent is the
-    // conversation that preceded the question rather than including it.
-    const history = historyFor(turns);
-    setTurns((t) => [...t, { role: 'user', text: q }]);
+    try {
+      const res = await apiFetch(`/api/amey/copilot/${projectId}/ask`, {
+        method: 'POST',
+        body: JSON.stringify({
+          question: q,
+          prior_turns: historyForApi,
+        }),
+      });
 
-    const res = await apiFetch('/api/amey/ask', {
-      method: 'POST',
-      body: JSON.stringify({
-        question: q,
-        project_id: String(projectId),
-        history,
-      }),
-    });
+      if (!res.ok) {
+        setTurns((prev) => [
+          ...prev,
+          {
+            role: 'error',
+            text: res.error || (isHi ? 'प्रश्नोत्तरी सेवा उपलब्ध नहीं है।' : 'The query service was not available.'),
+          },
+        ]);
+        return;
+      }
 
-    setTurns((t) => [...t, res.ok
-      ? { role: 'copilot', payload: res.data }
-      : { role: 'error', text: res.error }]);
-    setBusy(false);
+      setTurns((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          text: res.data?.answer_llm || res.data?.answer || (isHi ? 'कोई विवरण नहीं लौटा।' : 'No narrative returned.'),
+          payload: res.data,
+        },
+      ]);
+    } catch (e) {
+      setTurns((prev) => [
+        ...prev,
+        {
+          role: 'error',
+          text: isHi ? 'नेटवर्क अनुरोध असफल रहा। कृपया सर्वर कनेक्टिविटी की जांच करें।' : 'Network request failed. Check server connectivity.',
+        },
+      ]);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <div className="space-y-3.5 font-sans">
-      {/* Copilot Header Strip */}
-      <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-white/10">
+    <div className="flex flex-col space-y-3 font-sans">
+      {/* Mini Title HUD */}
+      <div className="flex items-center justify-between pb-1 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-400">
-            <Sparkles className="w-3 h-3" />
-          </div>
-          <span className="text-[11px] uppercase tracking-wider font-extrabold text-amber-400 font-mono">
-            PMO Decision Copilot
+          <MessageSquare className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-[11px] font-bold text-white uppercase tracking-wider font-mono">
+            {isHi ? 'पीएमओ सह-पायलट' : 'PMO Copilot'}
           </span>
         </div>
-        <span className="text-[10px] font-mono text-slate-400 bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
-          Fact Grounded #{projectId}
+        <span className="text-[9.5px] font-mono text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded font-bold">
+          {isHi ? `तथ्य आधारित #${projectId}` : `Fact Grounded #${projectId}`}
         </span>
       </div>
 
@@ -153,10 +183,10 @@ export default function CopilotChat({ projectId }) {
       {turns.length === 0 && (
         <div className="space-y-1.5">
           <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider block">
-            Suggested Queries:
+            {isHi ? 'सुझाए गए प्रश्न:' : 'Suggested Queries:'}
           </span>
           <div className="flex flex-wrap gap-1.5">
-            {SUGGESTIONS.map((s) => (
+            {suggestions.map((s) => (
               <button
                 key={s.label}
                 onClick={() => send(s.q)}
@@ -311,7 +341,7 @@ export default function CopilotChat({ projectId }) {
           {busy && (
             <div className="flex items-center gap-2 text-[11.5px] text-amber-300 px-3 py-2 bg-amber-400/5 rounded-lg border border-amber-400/10">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Retrieving cryptographic facts &amp; evaluating proofs…
+              {isHi ? "क्रिप्टोग्राफिक तथ्य प्राप्त किए जा रहे हैं एवं प्रमाणों का मूल्यांकन जारी है…" : "Retrieving cryptographic facts & evaluating proofs…"}
             </div>
           )}
           <div ref={endRef} />

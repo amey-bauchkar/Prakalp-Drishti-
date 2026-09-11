@@ -9,6 +9,7 @@ import os
 import json
 import random
 import logging
+from contextlib import contextmanager
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, List
 from pathlib import Path
@@ -74,6 +75,31 @@ def get_database_url() -> Optional[str]:
     return url if url else None
 
 
+@contextmanager
+def get_db_cursor(db_url: str, timeout: int = 10):
+    """
+    Acquires a PostgreSQL connection using psycopg (v3) or psycopg2 (v2),
+    yields a cursor within an active transaction, commits upon success,
+    rolls back upon error, and reliably closes the connection to preserve
+    Supabase pooled connections.
+    """
+    try:
+        import psycopg as pg
+    except ImportError:
+        import psycopg2 as pg
+
+    conn = pg.connect(db_url, connect_timeout=timeout)
+    try:
+        with conn.cursor() as cur:
+            yield cur
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
 def generate_tracking_id() -> str:
     rand_num = random.randint(10000, 99999)
     return f"MOSPI/2026/GRV-{rand_num}"
@@ -106,45 +132,42 @@ def save_grievance(payload: GrievanceCreate, client_ip: Optional[str] = None) ->
     db_url = get_database_url()
     if db_url:
         try:
-            import psycopg
-            with psycopg.connect(db_url, connect_timeout=10) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        """
-                        INSERT INTO public.citizen_grievances
-                        (tracking_id, full_name, email, is_anonymous, category, other_category, category_label, 
-                         process_stage, project_id, details, latitude, longitude, evidence_name, evidence_url, 
-                         exif_verified, status, client_ip, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        RETURNING id, tracking_id, created_at;
-                        """,
-                        (
-                            tracking_id,
-                            display_name,
-                            display_email,
-                            bool(payload.is_anonymous),
-                            payload.category.strip(),
-                            (payload.otherCategory or "").strip() or None,
-                            category_label,
-                            (payload.process_stage or "GENERAL_INSPECTION").strip(),
-                            (payload.projectId or "").strip() or None,
-                            payload.details.strip(),
-                            payload.latitude,
-                            payload.longitude,
-                            payload.evidence_name,
-                            payload.evidence_url,
-                            bool(payload.exif_verified),
-                            "LOGGED",
-                            client_ip or "127.0.0.1",
-                            now,
-                            now,
-                        ),
-                    )
-                    row = cur.fetchone()
-                    if row:
-                        db_id = row[0]
-                        stored_in_db = True
-                conn.commit()
+            with get_db_cursor(db_url, timeout=10) as cur:
+                cur.execute(
+                    """
+                    INSERT INTO public.citizen_grievances
+                    (tracking_id, full_name, email, is_anonymous, category, other_category, category_label, 
+                     process_stage, project_id, details, latitude, longitude, evidence_name, evidence_url, 
+                     exif_verified, status, client_ip, created_at, updated_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id, tracking_id, created_at;
+                    """,
+                    (
+                        tracking_id,
+                        display_name,
+                        display_email,
+                        bool(payload.is_anonymous),
+                        payload.category.strip(),
+                        (payload.otherCategory or "").strip() or None,
+                        category_label,
+                        (payload.process_stage or "GENERAL_INSPECTION").strip(),
+                        (payload.projectId or "").strip() or None,
+                        payload.details.strip(),
+                        payload.latitude,
+                        payload.longitude,
+                        payload.evidence_name,
+                        payload.evidence_url,
+                        bool(payload.exif_verified),
+                        "LOGGED",
+                        client_ip or "127.0.0.1",
+                        now,
+                        now,
+                    ),
+                )
+                row = cur.fetchone()
+                if row:
+                    db_id = row[0]
+                    stored_in_db = True
         except Exception as exc:
             db_error = str(exc)
             logger.warning("PostgreSQL insertion failed, saving to local backup: %s", exc)
@@ -211,43 +234,43 @@ def track_grievance(tracking_id: str) -> Optional[Dict[str, Any]]:
     db_url = get_database_url()
     if db_url:
         try:
-            import psycopg
-            with psycopg.connect(db_url, connect_timeout=5) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        """
-                        SELECT id, tracking_id, full_name, email, is_anonymous, category, other_category, 
-                               category_label, process_stage, project_id, details, latitude, longitude, 
-                               evidence_name, evidence_url, exif_verified, status, resolution_summary, created_at
-                        FROM public.citizen_grievances
-                        WHERE UPPER(tracking_id) = %s
-                        LIMIT 1;
-                        """,
-                        (clean_id,),
-                    )
-                    r = cur.fetchone()
-                    if r:
-                        record = {
-                            "id": r[0],
-                            "trackingId": r[1],
-                            "name": r[2],
-                            "email": r[3],
-                            "isAnonymous": bool(r[4]),
-                            "category": r[5],
-                            "otherCategory": r[6],
-                            "categoryLabel": r[7],
-                            "processStage": r[8],
-                            "projectId": r[9],
-                            "details": r[10],
-                            "latitude": r[11],
-                            "longitude": r[12],
-                            "evidenceName": r[13],
-                            "evidenceUrl": r[14],
-                            "exifVerified": bool(r[15]),
-                            "status": r[16] or "LOGGED",
-                            "resolutionSummary": r[17],
-                            "createdAt": r[18].isoformat() if r[18] else datetime.now(timezone.utc).isoformat(),
-                        }
+            with get_db_cursor(db_url, timeout=5) as cur:
+                cur.execute(
+                    """
+                    SELECT id, tracking_id, full_name, email, is_anonymous, category, other_category, 
+                           category_label, process_stage, project_id, details, latitude, longitude, 
+                           evidence_name, evidence_url, exif_verified, status, resolution_summary, created_at
+                    FROM public.citizen_grievances
+                    WHERE UPPER(tracking_id) = %s
+                    LIMIT 1;
+                    """,
+                    (clean_id,),
+                )
+                r = cur.fetchone()
+                if r:
+                    record = {
+                        "id": r[0],
+                        "trackingId": r[1],
+                        "name": r[2],
+                        "email": r[3],
+                        "isAnonymous": bool(r[4]),
+                        "category": r[5],
+                        "otherCategory": r[6],
+                        "categoryLabel": r[7],
+                        "processStage": r[8],
+                        "projectId": r[9],
+                        "details": r[10],
+                        "latitude": r[11],
+                        "longitude": r[12],
+                        "evidenceName": r[13],
+                        "evidenceUrl": r[14],
+                        "exifVerified": bool(r[15]),
+                        "status": r[16] or "LOGGED",
+                        "resolutionSummary": r[17],
+                        "createdAt": r[18].isoformat() if r[18] else datetime.now(timezone.utc).isoformat(),
+                        "storedInDb": True,
+                        "recordSource": "Supabase PostgreSQL",
+                    }
         except Exception as exc:
             logger.warning("DB lookup failed for %s: %s", clean_id, exc)
 
@@ -293,21 +316,27 @@ def track_grievance(tracking_id: str) -> Optional[Dict[str, Any]]:
     days_remaining = max(0, sla_total_days - days_elapsed)
     sla_target_date = (created_dt + timedelta(days=30)).strftime("%d %b %Y")
 
-    # Determine 5-Stage Stepper Status
-    # Stage 1: Grievance Registered (Always done)
-    # Stage 2: Nodal Officer Assigned (Done if >= 1 day)
-    # Stage 3: Field Inspection Triggered (Done if >= 3 days)
-    # Stage 4: Action Taken Report (ATR) Filed (Done if >= 7 days)
-    # Stage 5: Redressed & Closed (Done if >= 14 days or resolved)
+    # Determine 5-Stage Stepper Status driven by actual statutory database status or time fallback
+    status = (record.get("status") or "LOGGED").upper()
     stage_idx = 1
-    if days_elapsed >= 14 or record.get("status") == "RESOLVED":
+    if status == "RESOLVED":
         stage_idx = 5
-    elif days_elapsed >= 7:
+    elif status in ("ATR_FILED", "SHOW_CAUSE"):
         stage_idx = 4
-    elif days_elapsed >= 3:
+    elif status == "INSPECTED":
         stage_idx = 3
-    elif days_elapsed >= 1:
+    elif status == "ASSIGNED":
         stage_idx = 2
+    else:
+        # Time-based SLA milestone fallback
+        if days_elapsed >= 14:
+            stage_idx = 5
+        elif days_elapsed >= 7:
+            stage_idx = 4
+        elif days_elapsed >= 3:
+            stage_idx = 3
+        elif days_elapsed >= 1:
+            stage_idx = 2
 
     stages = [
         {
@@ -347,6 +376,19 @@ def track_grievance(tracking_id: str) -> Optional[Dict[str, Any]]:
         },
     ]
 
+    res_summary = record.get("resolutionSummary") or record.get("resolution_summary")
+    atr_action = res_summary if res_summary else "Show-cause notice served to executing contractor under CPWD GCC Clause 2. Milestone payout frozen until work resumes."
+
+    atr_status = "UNDER_FIELD_INSPECTION"
+    if stage_idx == 5:
+        atr_status = "REDRESSED_AND_CLOSED"
+    elif stage_idx == 4:
+        atr_status = "SHOW_CAUSE_NOTICE_SERVED"
+    elif stage_idx == 3:
+        atr_status = "FIELD_INSPECTION_ACTIVE"
+    elif stage_idx == 2:
+        atr_status = "NODAL_OFFICER_ASSIGNED"
+
     return {
         "record": record,
         "sla": {
@@ -364,49 +406,194 @@ def track_grievance(tracking_id: str) -> Optional[Dict[str, Any]]:
             "inspectionOfficer": "Er. R. K. Sharma (Superintending Engineer, MoSPI Regional Cell)",
             "inspectionDate": (created_dt + timedelta(days=3)).strftime("%d %b %Y"),
             "finding": "Physical survey confirmed site machinery demobilized without approved suspension notice.",
-            "actionTaken": "Show-cause notice served to executing contractor under CPWD GCC Clause 2. Milestone payout frozen until work resumes.",
-            "status": "INTERIM_REMEDIATION_ORDER_ISSUED" if stage_idx >= 4 else "UNDER_FIELD_INSPECTION",
+            "actionTaken": atr_action,
+            "status": atr_status,
         },
     }
 
 
-def list_recent_grievances(limit: int = 50) -> List[Dict[str, Any]]:
-    """Retrieve recent grievances from PostgreSQL or local file."""
+def update_grievance_action(
+    tracking_id: str,
+    action: str,
+    officer_name: str = "MoSPI Nodal Officer",
+    notes: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Applies an administrative action to a grievance record in Supabase PostgreSQL:
+    - ASSIGN: Sets status to ASSIGNED
+    - INSPECT: Sets status to INSPECTED (Third-Party Quality Inspection triggered)
+    - SHOW_CAUSE: Sets status to ATR_FILED (CPWD GCC Clause 2 directive served)
+    - RESOLVE: Sets status to RESOLVED (Action Taken Report sealed & closed)
+    """
+    clean_id = tracking_id.strip().upper()
+    act = action.strip().upper()
+    now = datetime.now(timezone.utc)
+    now_iso = now.isoformat()
+
+    status_map = {
+        "ASSIGN": "ASSIGNED",
+        "INSPECT": "INSPECTED",
+        "SHOW_CAUSE": "ATR_FILED",
+        "RESOLVE": "RESOLVED",
+    }
+    new_status = status_map.get(act, act)
+
+    action_label_map = {
+        "ASSIGN": f"Assigned to Ministry Nodal Officer: {officer_name}",
+        "INSPECT": f"TPQA Field Inspection Dispatched by {officer_name}",
+        "SHOW_CAUSE": f"CPWD GCC Clause 2 Show-Cause Directive Issued by {officer_name}",
+        "RESOLVE": f"Redressed & Closed by {officer_name}",
+    }
+    action_heading = action_label_map.get(act, f"Action taken: {act}")
+
+    if notes and notes.strip():
+        formatted_resolution = f"[{action_heading}] {notes.strip()}"
+    else:
+        formatted_resolution = action_heading
+
+    updated_row = None
     db_url = get_database_url()
     if db_url:
         try:
-            import psycopg
-            with psycopg.connect(db_url, connect_timeout=5) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        """
-                        SELECT id, tracking_id, full_name, email, is_anonymous, category, other_category, 
-                               category_label, process_stage, project_id, details, status, created_at
-                        FROM public.citizen_grievances
-                        ORDER BY created_at DESC
-                        LIMIT %s;
-                        """,
-                        (limit,),
-                    )
-                    rows = cur.fetchall()
-                    return [
-                        {
-                            "id": r[0],
-                            "trackingId": r[1],
-                            "name": r[2],
-                            "email": r[3],
-                            "isAnonymous": bool(r[4]),
-                            "category": r[5],
-                            "otherCategory": r[6],
-                            "categoryLabel": r[7],
-                            "processStage": r[8],
-                            "projectId": r[9],
-                            "details": r[10],
-                            "status": r[11] or "LOGGED",
-                            "createdAt": r[12].isoformat() if r[12] else None,
-                        }
-                        for r in rows
-                    ]
+            with get_db_cursor(db_url, timeout=10) as cur:
+                cur.execute(
+                    """
+                    UPDATE public.citizen_grievances
+                    SET status = %s, resolution_summary = %s, updated_at = %s
+                    WHERE UPPER(tracking_id) = %s
+                    RETURNING id, tracking_id, full_name, email, is_anonymous, category, 
+                              other_category, category_label, process_stage, project_id, 
+                              details, latitude, longitude, evidence_name, evidence_url, 
+                              exif_verified, status, resolution_summary, created_at, updated_at;
+                    """,
+                    (new_status, formatted_resolution, now, clean_id)
+                )
+                r = cur.fetchone()
+                if r:
+                    updated_row = {
+                        "id": r[0],
+                        "trackingId": r[1],
+                        "name": r[2],
+                        "email": r[3],
+                        "isAnonymous": bool(r[4]),
+                        "category": r[5],
+                        "otherCategory": r[6],
+                        "categoryLabel": r[7],
+                        "processStage": r[8],
+                        "projectId": r[9],
+                        "details": r[10],
+                        "latitude": r[11],
+                        "longitude": r[12],
+                        "evidenceName": r[13],
+                        "evidenceUrl": r[14],
+                        "exifVerified": bool(r[15]),
+                        "status": r[16],
+                        "resolutionSummary": r[17],
+                        "createdAt": r[18].isoformat() if r[18] else None,
+                        "updatedAt": r[19].isoformat() if r[19] else None,
+                        "storedInDb": True,
+                    }
+        except Exception as exc:
+            logger.error("Failed to update grievance action in DB: %s", exc)
+
+    # Sync local fallback if DB failed or if local backup exists
+    if not updated_row and LOCAL_BACKUP_PATH.exists():
+        try:
+            lines = LOCAL_BACKUP_PATH.read_text(encoding="utf-8").splitlines()
+            new_lines = []
+            found = False
+            for line in lines:
+                if not line.strip():
+                    continue
+                item = json.loads(line)
+                if item.get("trackingId", "").upper() == clean_id:
+                    item["status"] = new_status
+                    item["resolution_summary"] = formatted_resolution
+                    item["updated_at"] = now_iso
+                    updated_row = item
+                    found = True
+                new_lines.append(json.dumps(item, ensure_ascii=False))
+            if found:
+                LOCAL_BACKUP_PATH.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+        except Exception as err:
+            logger.error("Failed to sync grievance action to local backup: %s", err)
+
+    if not updated_row:
+        return None
+
+    return {
+        "success": True,
+        "trackingId": clean_id,
+        "action": act,
+        "status": new_status,
+        "officerName": officer_name,
+        "resolutionSummary": formatted_resolution,
+        "updatedAt": now_iso,
+        "record": updated_row
+    }
+
+
+def list_recent_grievances(
+    limit: int = 50,
+    status: Optional[str] = None,
+    project_id: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """Retrieve recent grievances from PostgreSQL or local file with optional filters."""
+    db_url = get_database_url()
+    if db_url:
+        try:
+            with get_db_cursor(db_url, timeout=5) as cur:
+                query = """
+                    SELECT id, tracking_id, full_name, email, is_anonymous, category, other_category, 
+                           category_label, process_stage, project_id, details, status, created_at,
+                           latitude, longitude, evidence_name, evidence_url, exif_verified,
+                           resolution_summary, updated_at
+                    FROM public.citizen_grievances
+                """
+                conditions = []
+                params = []
+                if status and status.strip() and status.strip().upper() != "ALL":
+                    conditions.append("UPPER(status) = %s")
+                    params.append(status.strip().upper())
+                if project_id and project_id.strip():
+                    conditions.append("project_id = %s")
+                    params.append(project_id.strip())
+
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+
+                query += " ORDER BY created_at DESC LIMIT %s;"
+                params.append(limit)
+
+                cur.execute(query, tuple(params))
+                rows = cur.fetchall()
+                return [
+                    {
+                        "id": r[0],
+                        "trackingId": r[1],
+                        "name": r[2],
+                        "email": r[3],
+                        "isAnonymous": bool(r[4]),
+                        "category": r[5],
+                        "otherCategory": r[6],
+                        "categoryLabel": r[7],
+                        "processStage": r[8],
+                        "projectId": r[9],
+                        "details": r[10],
+                        "status": r[11] or "LOGGED",
+                        "createdAt": r[12].isoformat() if r[12] else None,
+                        "latitude": r[13],
+                        "longitude": r[14],
+                        "evidenceName": r[15],
+                        "evidenceUrl": r[16],
+                        "exifVerified": bool(r[17]),
+                        "resolutionSummary": r[18],
+                        "updatedAt": r[19].isoformat() if r[19] else None,
+                        "storedInDb": True,
+                        "recordSource": "Supabase PostgreSQL",
+                    }
+                    for r in rows
+                ]
         except Exception as exc:
             logger.warning("Failed to fetch grievances from DB: %s", exc)
 
@@ -416,9 +603,18 @@ def list_recent_grievances(limit: int = 50) -> List[Dict[str, Any]]:
         try:
             with open(LOCAL_BACKUP_PATH, "r", encoding="utf-8") as f:
                 lines = f.readlines()
-            for line in reversed(lines[-limit:]):
+            for line in reversed(lines):
                 if line.strip():
-                    results.append(json.loads(line))
+                    item = json.loads(line)
+                    if status and status.strip() and status.strip().upper() != "ALL":
+                        if (item.get("status") or "LOGGED").upper() != status.strip().upper():
+                            continue
+                    if project_id and project_id.strip():
+                        if str(item.get("projectId") or "") != project_id.strip():
+                            continue
+                    results.append(item)
+                    if len(results) >= limit:
+                        break
         except Exception as e:
             logger.error("Error reading local grievances backup: %s", e)
     return results

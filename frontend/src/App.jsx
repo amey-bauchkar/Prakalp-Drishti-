@@ -12,11 +12,10 @@ const PublicDashboardView  = React.lazy(() => import('./views/PublicDashboardVie
 const AdminIngestView      = React.lazy(() => import('./views/AdminIngestView.jsx'));
 const MilestoneTimelineView = React.lazy(() => import('./views/MilestoneTimelineView.jsx'));
 const PoliciesView         = React.lazy(() => import('./views/PoliciesView.jsx'));
-import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
 import SmoothScrollProvider, { useLenis, scrollToTop } from './components/SmoothScrollProvider.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
-import { getStoredLanguage, setStoredLanguage, t } from './lib/i18n';
+import { getStoredLanguage, setStoredLanguage, t, useLanguage } from './lib/i18n';
 
 
 
@@ -315,24 +314,24 @@ function InstitutionalFooter() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <a
-                    href="https://twitter.com/GoI_MoSPI"
+                    href="https://x.com/GoIStats?s=20"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors text-[11px] font-medium"
-                    title="Official MoSPI X (Twitter)"
+                    title="Official MoSPI X (Twitter) @GoIStats"
                   >
                     <span className="font-sans font-black text-[11px]">𝕏</span>
-                    <span>@GoI_MoSPI</span>
+                    <span>@GoIStats</span>
                   </a>
                   <a
-                    href="https://www.facebook.com/MoSPI.GoI"
+                    href="https://www.facebook.com/GoIStats/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 transition-colors text-[11px] font-medium"
-                    title="Official MoSPI Facebook"
+                    title="Official MoSPI Facebook @GoIStats"
                   >
                     <Facebook className="w-3.5 h-3.5 fill-current text-blue-400" />
-                    <span>MoSPI.GoI</span>
+                    <span>GoIStats</span>
                   </a>
                   <a
                     href="https://data.gov.in"
@@ -395,32 +394,32 @@ function InstitutionalFooter() {
               <ul className="space-y-2 text-[12.5px] text-slate-300">
                 <li>
                   <a href="https://mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    <span lang="en">MoSPI Official Website</span>
+                    <span>{t('ext_mospi', lang)}</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://pmgatishakti.gov.in/pmgatishakti/login" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    <span lang="en">PM GatiShakti NMP</span>
+                    <span>{t('ext_pm_gatishakti', lang)}</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://data.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    Open Government Data (OGD)
+                    <span>{t('ext_ogd', lang)}</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://niti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    <span lang="en">NITI Aayog</span>
+                    <span>{t('ext_niti_aayog', lang)}</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://paimana-proj.mospi.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    <span lang="en">PAIMANA Repository</span>
+                    <span>{t('ext_paimana', lang)}</span>
                   </a>
                 </li>
                 <li>
                   <a href="https://cloud.gov.in/user/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
-                    <span lang="en">NIC MeghRaj Cloud</span>
+                    <span>{t('ext_meghraj', lang)}</span>
                   </a>
                 </li>
               </ul>
@@ -490,34 +489,7 @@ function InstitutionalFooter() {
                 </li>
               </ul>
 
-              {/* Statutory Target & Technical Infrastructure */}
-              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>{t('ft_deployment_target', lang)} <strong className="text-slate-100">National Informatics Centre (NIC MeghRaj)</strong></span>
-                </div>
-                <div>{t('ft_intended_owner', lang)} <strong className="text-slate-100">{t('ft_nodal_division_val', lang)}</strong></div>
-                <div className="pt-1 flex items-center gap-2 text-[10px] text-slate-400 font-mono">
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700">GIGW 3.0 AA</span>
-                  <span>Merkle Root: e659bf58…482d</span>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Copyright Strip */}
-      <div className="bg-[#030A12] text-slate-400 text-[11.5px] py-4 border-t border-slate-800/80">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <span>&copy; {new Date().getFullYear()} {t('ft_copyright', lang)}</span>
-          <div className="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
-            <span className="font-semibold text-amber-400/90">Prakalp-Drishti v3.2 Enterprise</span>
-            <span className="text-slate-700">|</span>
-            <span className="text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              2,207 Monitored Projects
-            </span>
           </div>
         </div>
       </div>
@@ -529,19 +501,18 @@ function InstitutionalFooter() {
    A government portal must say what happened rather than showing an
    empty frame; routes do get retired, and bookmarks outlive them. */
 function NotFoundView() {
+  const { lang, t } = useLanguage();
   return (
     <div className="panel panel-accent p-8 sm:p-10 max-w-2xl mx-auto my-10 text-center">
-      <div className="microlabel mb-2">HTTP 404 · Page Not Found</div>
+      <div className="microlabel mb-2">{t('not_found_code', lang)}</div>
       <h2 className="font-heading font-extrabold text-gov-navy mb-2">
-        This page is not part of the portal
+        {t('not_found_title', lang)}
       </h2>
       <p className="text-[12.5px] text-gov-muted leading-relaxed mb-5 max-w-md mx-auto">
-        The address you requested does not match any module. It may have been
-        retired or renamed. Use the navigation above, or return to the decision
-        console.
+        {t('not_found_desc', lang)}
       </p>
       <Link to="/decision-hub" className="btn-primary">
-        Go to Decision Hub
+        {t('not_found_btn', lang)}
       </Link>
       <div className="hashline mt-5 pt-4 border-t border-gov-border">
         {typeof window !== 'undefined' ? window.location.pathname : ''}
@@ -558,10 +529,11 @@ function ProtectedRoute({ children }) {
    Shown while a route's JavaScript is fetched. Government office links can be
    slow, and a silent blank frame reads as a failure. */
 function RouteLoading() {
+  const { lang, t } = useLanguage();
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3" role="status">
       <div className="w-7 h-7 rounded-full border-2 border-gov-border border-t-gov-navy animate-spin" aria-hidden="true" />
-      <p className="text-[12.5px] text-gov-soft">Loading this section…</p>
+      <p className="text-[12.5px] text-gov-soft">{t('loading_section', lang)}</p>
     </div>
   );
 }

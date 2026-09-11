@@ -7,8 +7,17 @@ import {
   Layers, Download, ChevronRight, HelpCircle
 } from 'lucide-react';
 import { Card, Metric, Text } from '@tremor/react';
+import { getStoredLanguage, translateProjectName, translateSector, translateAgency, translateState } from '../../src/lib/i18n';
 
 export default function ProjectDossierDrawer({ projectId, onClose }) {
+  const [lang, setLang] = useState(() => getStoredLanguage());
+  useEffect(() => {
+    const onLang = (e) => setLang(e.detail || getStoredLanguage());
+    window.addEventListener('prakalp:languageChanged', onLang);
+    return () => window.removeEventListener('prakalp:languageChanged', onLang);
+  }, []);
+  const isHi = lang === 'hi';
+
   const [dossier, setDossier] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -84,21 +93,21 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
           <div className="space-y-1 pr-6 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="px-2 py-0.5 rounded-sm bg-white/10 text-[10.5px] font-mono text-amber-400 border border-white/10 uppercase tracking-wider font-bold">
-                PROJECT #{projectId}
+                {isHi ? `परियोजना #${projectId}` : `PROJECT #${projectId}`}
               </span>
               <span className="px-2 py-0.5 rounded-sm bg-rose-500/20 text-[10.5px] font-mono text-rose-300 border border-rose-500/30 uppercase tracking-wider font-bold">
-                {boundary.classification_label || "THRESHOLD PROXIMITY"}
+                {boundary.classification_label || (isHi ? "सीमा समीपता" : "THRESHOLD PROXIMITY")}
               </span>
             </div>
             <h2 className="font-heading font-extrabold text-lg text-white line-clamp-2">
-              {dossier?.project_name || `Project Dossier #${projectId}`}
+              {dossier?.project_name ? translateProjectName(dossier.project_name, lang) : (isHi ? `परियोजना डोज़ियर #${projectId}` : `Project Dossier #${projectId}`)}
             </h2>
             <p className="text-xs text-slate-300 font-mono flex items-center gap-2 flex-wrap">
-              <span>{dossier?.sector || 'Infrastructure'}</span>
+              <span>{dossier?.sector ? translateSector(dossier.sector, lang) : (isHi ? 'अवसंरचना' : 'Infrastructure')}</span>
               <span>•</span>
-              <span>Agency: {dossier?.agency || 'N/A'}</span>
+              <span>{isHi ? 'एजेंसी: ' : 'Agency: '}{dossier?.agency ? translateAgency(dossier.agency, lang) : 'N/A'}</span>
               <span>•</span>
-              <span>State: {dossier?.state || 'National'}</span>
+              <span>{isHi ? 'राज्य: ' : 'State: '}{dossier?.state ? translateState(dossier.state, lang) : (isHi ? 'राष्ट्रीय' : 'National')}</span>
             </p>
             <div className="pt-1.5">
               <button
@@ -113,7 +122,7 @@ export default function ProjectDossierDrawer({ projectId, onClose }) {
                 }}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] transition-colors cursor-pointer shadow-xs"
               >
-                <span>Open Full 360° Simulator</span>
+                <span>{isHi ? "पूर्ण ३६०° सिमुलेटर खोलें" : "Open Full 360° Simulator"}</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>

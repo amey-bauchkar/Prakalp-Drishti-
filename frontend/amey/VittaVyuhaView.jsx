@@ -3,7 +3,7 @@ import { apiFetch } from './authClient';
 import { DollarSign, Sliders, ShieldAlert, TrendingUp, CheckCircle2, Zap, BarChart2, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, Metric, Text, BadgeDelta, Flex, Grid } from "@tremor/react";
-import { getStoredLanguage } from '../src/lib/i18n';
+import { getStoredLanguage, translateProjectName, translateState } from '../src/lib/i18n';
 
 export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
@@ -253,10 +253,14 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
             </div>
             <div className="max-w-md space-y-2">
               <h3 className="text-xl font-bold text-slate-800">
-                Ready to Optimize Capital Reallocation
+                {isHi ? "पूंजी पुनरावंटन अनुकूलन हेतु तैयार" : "Ready to Optimize Capital Reallocation"}
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Click <strong className="text-slate-700">"OPTIMIZE CAPITAL ALLOCATION"</strong> in the header above to compute the globally optimal simplex budget distribution across the 2,207 project portfolio.
+                {isHi ? (
+                  <>२,२०७ परियोजनाओं के पोर्टफोलियो में वैश्विक रूप से इष्टतम सिम्प्लेक्स बजट वितरण की गणना हेतु ऊपर हेडर में <strong className="text-slate-700">"पूंजी आवंटन अनुकूलित करें"</strong> पर क्लिक करें।</>
+                ) : (
+                  <>Click <strong className="text-slate-700">"OPTIMIZE CAPITAL ALLOCATION"</strong> in the header above to compute the globally optimal simplex budget distribution across the 2,207 project portfolio.</>
+                )}
               </p>
             </div>
 
@@ -265,24 +269,36 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
                 <div className="w-8 h-8 rounded-lg bg-emerald-100/60 text-emerald-700 flex items-center justify-center">
                   <Zap className="w-4 h-4" />
                 </div>
-                <h4 className="text-xs font-bold text-slate-700">Multi-Knapsack LP Solver</h4>
-                <p className="text-[11px] text-slate-500 leading-tight">Solves multi-constraint simplex optimization in &lt;10ms</p>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "मल्टी-नैपसैक एलपी सॉल्वर" : "Multi-Knapsack LP Solver"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "१० मिलीसेकंड से कम समय में बहु-प्रतिबंध सिम्प्लेक्स अनुकूलन हल करता है" : "Solves multi-constraint simplex optimization in <10ms"}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-100/60 text-purple-700 flex items-center justify-center">
                   <ShieldAlert className="w-4 h-4" />
                 </div>
-                <h4 className="text-xs font-bold text-slate-700">10% NER Statutory Floor</h4>
-                <p className="text-[11px] text-slate-500 leading-tight">Guarantees mandatory North-Eastern capital ringfencing</p>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "१०% पूर्वोत्तर सांविधिक कोटा" : "10% NER Statutory Floor"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "पूर्वोत्तर राज्यों के लिए अनिवार्य १०% पूंजी सुरक्षा की गारंटी देता है" : "Guarantees mandatory North-Eastern capital ringfencing"}
+                </p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-col items-center text-center space-y-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-100/60 text-amber-700 flex items-center justify-center">
                   <Sliders className="w-4 h-4" />
                 </div>
-                <h4 className="text-xs font-bold text-slate-700">Risk Dial (κ) Containment</h4>
-                <p className="text-[11px] text-slate-500 leading-tight">Fine-tune capital velocity against variance penalty</p>
+                <h4 className="text-xs font-bold text-slate-700">
+                  {isHi ? "जोखिम डायल (κ) नियंत्रण" : "Risk Dial (κ) Containment"}
+                </h4>
+                <p className="text-[11px] text-slate-500 leading-tight">
+                  {isHi ? "प्रसरण दंड के विरुद्ध पूंजी गति को सूक्ष्मता से समायोजित करें" : "Fine-tune capital velocity against variance penalty"}
+                </p>
               </div>
             </div>
           </div>
@@ -422,8 +438,8 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
                               className="text-left group cursor-pointer focus:outline-none"
                               title="Open project in Unified Cockpit"
                             >
-                              <div className="font-bold text-slate-800 group-hover:text-amber-700 transition-colors line-clamp-2" title={alloc.project_name}>
-                                {alloc.project_name}
+                              <div className="font-bold text-slate-800 group-hover:text-amber-700 transition-colors line-clamp-2" title={translateProjectName(alloc.project_name, lang)}>
+                                {translateProjectName(alloc.project_name, lang)}
                               </div>
                               <span className="text-[10px] text-slate-400 group-hover:text-amber-600 font-mono flex items-center gap-1">
                                 #{alloc.project_id} <span className="opacity-0 group-hover:opacity-100 transition-opacity">↗ {isHi ? "दस्तावेज़ खोलें" : "Open Dossier"}</span>
@@ -432,7 +448,7 @@ export default function VittaVyuhaView({ onOpenProject, lang: propLang }) {
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-slate-600">{alloc.state}</span>
+                              <span className="font-medium text-slate-600">{translateState(alloc.state, lang)}</span>
                               {alloc.is_ner && (
                                 <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-purple-50 text-purple-700 border border-purple-200">
                                   {isHi ? "पूर्वोत्तर कोटा" : "NER Quota"}

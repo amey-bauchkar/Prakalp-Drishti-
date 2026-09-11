@@ -6,6 +6,8 @@ import {
   ChevronRight, ArrowRight, ShieldCheck, Sparkles, AlertOctagon, HelpCircle,
   Building2, Calendar, Navigation, UploadCloud, Info, AlertCircle
 } from 'lucide-react';
+import { useLanguage } from '../lib/i18n';
+import { GRIEVANCE_STAGES } from '../lib/i18n/nagrikStrings.js';
 
 const PROCESS_STAGES = [
   {
@@ -58,9 +60,32 @@ const PROCESS_STAGES = [
   },
 ];
 
-export default function NagrikGrievanceDesk({ projects = [], lang = 'en', selectedProjectId = null }) {
-  const isHi = lang === 'hi';
+export default function NagrikGrievanceDesk({ projects = [], lang = null, selectedProjectId = null }) {
+  const { lang: contextLang, isHi: contextIsHi, t, tProjectName, tSector, tState } = useLanguage();
+  const effectiveLang = lang || contextLang;
+  const isHi = effectiveLang === 'hi';
   const [activeSubTab, setActiveSubTab] = useState('file'); // 'file' or 'track'
+
+  const stages = useMemo(() => {
+    return GRIEVANCE_STAGES.map((s) => {
+      const iconMap = {
+        ghost_progress: AlertOctagon,
+        safety_hazard: AlertTriangle,
+        environmental: ShieldAlert,
+        quality_defect: Building2,
+        land_compensation: FileText,
+        other: HelpCircle,
+      };
+      return {
+        id: s.id,
+        label: isHi ? s.label.hi : s.label.en,
+        sublabel: isHi ? s.sublabel.hi : s.sublabel.en,
+        icon: iconMap[s.id] || HelpCircle,
+        color: s.color,
+        activeRing: s.activeRing,
+      };
+    });
+  }, [isHi]);
 
   // Form State
   const [projectId, setProjectId] = useState(() => selectedProjectId || (projects[0]?.project_id ? String(projects[0].project_id) : '619092'));
@@ -198,9 +223,9 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    const stageMeta = PROCESS_STAGES.find((s) => s.id === processStage);
+    const stageMeta = stages.find((s) => s.id === processStage);
     const categoryLabel = processStage === 'other'
-      ? `Other (${otherCategoryText.trim() || 'Custom Observation'})`
+      ? (isHi ? `अन्य (${otherCategoryText.trim() || 'कस्टम अवलोकन'})` : `Other (${otherCategoryText.trim() || 'Custom Observation'})`)
       : (stageMeta?.label || processStage);
 
     const payload = {
@@ -388,18 +413,25 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
               </div>
 
               {/* Receipt Details Box */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs">
                 <div>
                   <span className="text-slate-500 block text-[10px] uppercase font-bold">{isHi ? 'ट्रैकिंग आईडी' : 'Official Tracking ID'}</span>
                   <span className="font-bold text-gov-navy text-sm">{submittedReceipt.trackingId}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px] uppercase font-bold">{isHi ? 'संबंधित परियोजना' : 'Associated Project'}</span>
-                  <span className="font-semibold text-slate-800 line-clamp-1">{submittedReceipt.projectName}</span>
+                  <span className="font-semibold text-slate-800 line-clamp-1">{tProjectName(submittedReceipt.projectName, effectiveLang)}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block text-[10px] uppercase font-bold">{isHi ? 'कानूनी समाधान समयसीमा' : 'CPGRAMS SLA Target'}</span>
                   <span className="font-bold text-emerald-700">30 Days (Mandatory ATR)</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-bold">{isHi ? 'डेटाबेस स्थिति' : 'Database Storage'}</span>
+                  <span className={`inline-flex items-center gap-1 font-bold ${submittedReceipt.storedInDb ? 'text-emerald-700' : 'text-amber-700'}`}>
+                    <span className={`w-2 h-2 rounded-full ${submittedReceipt.storedInDb ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                    {submittedReceipt.storedInDb ? (isHi ? 'सत्यापित (Supabase DB)' : 'Stored in Supabase DB') : (isHi ? 'स्थानीय बैकअप' : 'Local File Backup')}
+                  </span>
                 </div>
               </div>
 
@@ -515,7 +547,7 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                                 }`}
                               >
                                 <div className="min-w-0 flex-1">
-                                  <div className="text-xs font-bold text-slate-900 line-clamp-1">{p.project_name}</div>
+                                  <div className="text-xs font-bold text-slate-900 line-clamp-1">{tProjectName(p.project_name, effectiveLang)}</div>
                                   <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono mt-0.5">
                                     <span className="text-[#0060B6] font-bold">#{p.project_id}</span>
                                     <span>·</span>
@@ -523,7 +555,7 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                                     {p.state && (
                                       <>
                                         <span>·</span>
-                                        <span>{p.state}</span>
+                                        <span>{tState(p.state, effectiveLang)}</span>
                                       </>
                                     )}
                                   </div>
@@ -534,7 +566,7 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                                       ? 'bg-rose-50 text-rose-700 border-rose-200'
                                       : 'bg-slate-100 text-slate-600 border-slate-200'
                                   }`}>
-                                    {(p.delay_months || 0) > 0 ? `${p.delay_months}M Delay` : 'On Schedule'}
+                                    {(p.delay_months || 0) > 0 ? (isHi ? `${p.delay_months} माह विलंब` : `${p.delay_months}M Delay`) : (isHi ? 'समय पर' : 'On Schedule')}
                                   </span>
                                 </div>
                               </button>
@@ -557,16 +589,16 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                           {isHi ? 'चयनित परियोजना' : 'Currently Selected Project'}
                         </span>
                         <div className="font-bold text-slate-900 text-sm line-clamp-1 mt-0.5">
-                          {activeProject.project_name}
+                          {tProjectName(activeProject.project_name, effectiveLang)}
                         </div>
                         <div className="flex items-center gap-2 text-[11px] font-mono text-slate-600 mt-0.5 flex-wrap">
                           <span className="font-bold text-[#0060B6]">MoSPI ID: #{activeProject.project_id}</span>
                           <span>·</span>
                           <span>{activeProject.company || activeProject.implementing_agency || 'Agency'}</span>
                           <span>·</span>
-                          <span>{activeProject.state || 'National Corridor'}</span>
+                          <span>{tState(activeProject.state, effectiveLang) || (isHi ? 'राष्ट्रीय गलियारा' : 'National Corridor')}</span>
                           <span>·</span>
-                          <span>₹{activeProject.original_cost_cr || activeProject.total_sanctioned_cost_cr || '500'} Cr Sanctioned</span>
+                          <span>₹{activeProject.original_cost_cr || activeProject.total_sanctioned_cost_cr || '500'} {isHi ? 'करोड़ स्वीकृत' : 'Cr Sanctioned'}</span>
                         </div>
                       </div>
                       <div className="shrink-0 flex items-center gap-2">
@@ -575,7 +607,7 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                             ? 'bg-rose-100 text-rose-800 border-rose-300'
                             : 'bg-emerald-100 text-emerald-800 border-emerald-300'
                         }`}>
-                          {(activeProject.delay_months || 0) > 0 ? `${activeProject.delay_months}M DELAY` : 'ON SCHEDULE'}
+                          {(activeProject.delay_months || 0) > 0 ? (isHi ? `${activeProject.delay_months} माह विलंब` : `${activeProject.delay_months}M DELAY`) : (isHi ? 'समय पर' : 'ON SCHEDULE')}
                         </span>
                       </div>
                     </div>
@@ -614,7 +646,7 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {PROCESS_STAGES.map((s) => {
+                  {stages.map((s) => {
                     const Icon = s.icon;
                     const isSelected = processStage === s.id;
                     return (
@@ -918,12 +950,16 @@ export default function NagrikGrievanceDesk({ projects = [], lang = 'en', select
               <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-xs space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-mono font-bold text-[#0060B6] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                         {trackingData.record.trackingId}
                       </span>
                       <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 border font-semibold">
                         {trackingData.record.categoryLabel}
+                      </span>
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        {trackingData.record.storedInDb ? (isHi ? 'डेटाबेस: Supabase PostgreSQL' : 'Database: Supabase PostgreSQL') : (isHi ? 'डेटाबेस: स्थानीय बैकअप' : 'Database: Local Registry')}
                       </span>
                     </div>
                     <h3 className="text-base font-bold font-heading text-slate-900 mt-1">

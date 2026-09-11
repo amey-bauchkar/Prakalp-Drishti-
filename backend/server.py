@@ -20,8 +20,11 @@ if BACKEND_DIR not in sys.path:
 
 from analytics_engine.state_resolution import resolve_state
 
+from pydantic import BaseModel
 from fastapi import FastAPI, Query, HTTPException, Depends, Response, Request
-from backend.grievance_service import GrievanceCreate, save_grievance, list_recent_grievances, track_grievance
+from backend.grievance_service import (
+    GrievanceCreate, save_grievance, list_recent_grievances, track_grievance, update_grievance_action
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from backend import config
@@ -411,6 +414,11 @@ if os.path.exists(assets_dir):
     app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 # ── Citizen Grievance & Feedback Ingestion API (Supabase PostgreSQL) ────────
+class GrievanceActionPayload(BaseModel):
+    action: str  # ASSIGN, INSPECT, SHOW_CAUSE, RESOLVE
+    officer_name: Optional[str] = "MoSPI Nodal Officer"
+    notes: Optional[str] = None
+
 @app.post("/api/grievances")
 async def submit_grievance(payload: GrievanceCreate, request: Request):
     """Store citizen grievance in Supabase PostgreSQL (or local fallback)."""
@@ -418,9 +426,13 @@ async def submit_grievance(payload: GrievanceCreate, request: Request):
     return save_grievance(payload, client_ip=client_ip)
 
 @app.get("/api/grievances")
-def get_recent_grievances(limit: int = Query(50, ge=1, le=200)):
-    """Retrieve recent citizen grievances."""
-    return list_recent_grievances(limit=limit)
+def get_recent_grievances(
+    limit: int = Query(50, ge=1, le=200),
+    status: Optional[str] = Query(None),
+    project_id: Optional[str] = Query(None)
+):
+    """Retrieve recent citizen grievances with optional status and project_id filtering."""
+    return list_recent_grievances(limit=limit, status=status, project_id=project_id)
 
 @app.get("/api/grievances/track/{tracking_id:path}")
 def track_citizen_grievance(tracking_id: str):
@@ -428,6 +440,19 @@ def track_citizen_grievance(tracking_id: str):
     res = track_grievance(tracking_id)
     if not res:
         raise HTTPException(status_code=404, detail=f"Tracking ID '{tracking_id}' not found.")
+    return res
+
+@app.patch("/api/grievances/{tracking_id:path}/action")
+def take_grievance_action(tracking_id: str, payload: GrievanceActionPayload):
+    """Allows MoSPI officials to take departmental action and update CPGRAMS lifecycle."""
+    res = update_grievance_action(
+        tracking_id=tracking_id,
+        action=payload.action,
+        officer_name=payload.officer_name or "MoSPI Nodal Officer",
+        notes=payload.notes
+    )
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Tracking ID '{tracking_id}' not found or could not be updated.")
     return res
 
 # SPA Fallback: Serve index.html for all frontend routes (Single Unified URL)

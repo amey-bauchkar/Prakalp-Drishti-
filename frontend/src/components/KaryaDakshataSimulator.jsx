@@ -9,7 +9,7 @@ import {
 import { Card, Metric, BadgeDelta, Flex, ProgressBar } from '@tremor/react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 import LoginGate from '../../amey/LoginGate.jsx';
-import { getStoredLanguage } from '../lib/i18n';
+import { getStoredLanguage, translateAgency } from '../lib/i18n';
 
 export default function KaryaDakshataSimulator({ lang: propLang }) {
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
@@ -199,7 +199,7 @@ export default function KaryaDakshataSimulator({ lang: propLang }) {
                   {isHi ? 'सक्रिय एजेंसी' : 'Active Agency'}
                 </span>
                 <span className="text-base font-black text-white font-mono truncate block max-w-[200px]">
-                  {selectedAgency || (isHi ? 'कोई चयनित नहीं' : 'None Selected')}
+                  {selectedAgency ? translateAgency(selectedAgency, lang) : (isHi ? 'कोई चयनित नहीं' : 'None Selected')}
                 </span>
                 <span className="text-[10px] font-mono text-blue-300 block">
                   {selectedAgencyObj 
@@ -249,7 +249,7 @@ export default function KaryaDakshataSimulator({ lang: propLang }) {
                       const count = a.projects ?? a.project_count ?? a.total_projects ?? 0;
                       return (
                         <option key={a.name} value={a.name}>
-                          {a.name} ({count} {isHi ? 'परियोजनाएं' : 'projects'})
+                          {translateAgency(a.name, lang)} ({count} {isHi ? 'परियोजनाएं' : 'projects'})
                         </option>
                       );
                     })}

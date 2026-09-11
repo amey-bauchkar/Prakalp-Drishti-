@@ -7,6 +7,7 @@ import {
   DollarSign, GitBranch, CloudRain, Scale, Compass, ChevronLeft, Lock
 } from 'lucide-react';
 import LoginGate, { useSession } from './LoginGate';
+import { useLanguage } from '../src/lib/i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -97,15 +98,8 @@ function AnimatedMetric({ value }) {
 
 export default function AmeyMasterView() {
   const session = useSession();
+  const { lang, isHi, t, tDigits } = useLanguage();
   // Portfolio headline figures are READ FROM THE LIVE API, never typed here.
-  //
-  // These four numbers were previously hardcoded as 1,981 / Rs 42.78L Cr, which
-  // matched neither /api/health (2,209 / Rs 47.61L Cr) nor the sealed corpus
-  // (2,207 / Rs 47.44L Cr) nor the README. Three reachable figures for one portfolio
-  // is the kind of contradiction a reviewer finds by opening a second tab.
-  //
-  // The fallback below is the SEALED corpus baseline (Merkle root e659bf58...), used
-  // only when the API cannot be reached, and labelled as such by `live` state.
   const SEALED = { projects: '2,207', capex: '₹47.44L Cr' };
   const [portfolio, setPortfolio] = React.useState(SEALED);
 
@@ -135,71 +129,63 @@ export default function AmeyMasterView() {
     {
       name: 'SATYA-KAVACH',
       to: '/decision-hub?engine=satya_kavach',
-      title: 'Contract Compliance Forensics',
-      desc: 'McCrary (2008) density-discontinuity test at the 20% CCEA revision threshold, with a two-bin ratio reported beside it. Audits CPWD Clause 10CC escalation against the statutory formula.',
-      // A p-value, not a "spike": the test finds no discontinuity at 20%. Saying so is
-      // the finding. The previous "1.65x density spike" was a two-bin ratio whose 95% CI
-      // spanned 1.0 and which moved with the bin width.
-      finding: 'p = 0.68 at 20%',
-      findingLabel: 'No Density Discontinuity',
+      title: t('mod_satya_title'),
+      desc: t('mod_satya_desc'),
+      finding: t('mod_satya_finding'),
+      findingLabel: t('mod_satya_finding_label'),
       icon: ShieldCheck,
       accent: 'panel-accent',
     },
     {
       name: 'ARTHA-NETRA',
       to: '/decision-hub?engine=artha_nivaran',
-      title: 'PSU Financial Solvency',
-      desc: 'Screens executing PSUs against compiled debt-to-equity and Altman Z reference figures, tagged indicative rather than audited. Agencies with no published balance sheet are returned UNRATED, not scored.',
-      // "Granger-causal" removed: the backend (parth/service.py) explicitly declines
-      // the claim because no quarterly leverage series exists to test it on.
-      finding: 'D/E · Altman Z',
-      findingLabel: 'Indicative Solvency Tiers',
+      title: t('mod_artha_title'),
+      desc: t('mod_artha_desc'),
+      finding: t('mod_artha_finding'),
+      findingLabel: t('mod_artha_finding_label'),
       icon: TrendingUp,
       accent: 'panel-accent',
     },
     {
       name: 'VARSHA-SPEED',
       to: '/decision-hub?engine=setu_varsha',
-      title: 'Monsoon Weather Impact',
-      desc: 'Working-window scenario model: per-state monsoon downtime and rainfall elasticity are declared expert parameters, applied to a 20-year IMD departure record. Not a fitted regression.',
-      finding: '±15% scenario',
-      findingLabel: 'Working-Window Stretch',
+      title: t('mod_varsha_title'),
+      desc: t('mod_varsha_desc'),
+      finding: t('mod_varsha_finding'),
+      findingLabel: t('mod_varsha_finding_label'),
       icon: CloudRain,
       accent: 'panel-accent',
     },
     {
       name: 'NIVARAN',
       to: '/decision-hub?engine=artha_nivaran',
-      title: 'Contract & Legal Risk',
-      desc: 'Rule-based screening of CPWD GCC clause language and contractor dispute history for arbitration exposure.',
-      // The "78.5" was a `?? 78.5` fallback literal in NivaranView, not a computed value.
-      finding: 'Clause audit',
-      findingLabel: 'Dispute Exposure Screen',
+      title: t('mod_nivaran_title'),
+      desc: t('mod_nivaran_desc'),
+      finding: t('mod_nivaran_finding'),
+      findingLabel: t('mod_nivaran_finding_label'),
       icon: Scale,
       accent: 'panel-accent',
     },
     {
       name: 'ANUMATI',
       to: '/decision-hub?engine=satya_kavach',
-      title: 'Statutory Clearances (PARIVESH)',
-      desc: '5-stage PARIVESH clearance pipeline tracking with a Regulatory Stagnation Index per stage.',
-      // The "1.72x" was a hardcoded literal in AnumatiView.jsx; the headline now names
-      // the method rather than a number no engine computes.
-      finding: '5-stage RSI',
-      findingLabel: 'Clearance Pipeline',
+      title: t('mod_anumati_title'),
+      desc: t('mod_anumati_desc'),
+      finding: t('mod_anumati_finding'),
+      findingLabel: t('mod_anumati_finding_label'),
       icon: GitBranch,
       accent: 'panel-accent',
     },
   ];
 
   const circularPartners = [
-    { name: 'PM GatiShakti', sub: 'National Master Plan', logo: '/logos/pm_gatishakti.png', href: 'https://pmgatishakti.gov.in' },
-    { name: 'Make in India', sub: 'National Initiative', logo: '/logos/make_in_india.png', href: 'https://www.makeinindia.com' },
-    { name: 'Digital India', sub: 'Power to Empower', logo: '/logos/digital_india.png', href: 'https://www.digitalindia.gov.in' },
-    { name: 'MoSPI', sub: 'Govt. of India', logo: '/logos/mospi.png', href: 'https://mospi.gov.in' },
-    { name: 'NITI Aayog', sub: 'Think Tank', logo: '/logos/niti_aayog.png', href: 'https://niti.gov.in' },
-    { name: 'NIC MeghRaj', sub: 'Cloud Infrastructure', logo: '/logos/nic_meghraj.png', href: 'https://cloud.nic.in' },
-    { name: 'Open Data', sub: 'data.gov.in Platform', logo: '/logos/open_data.png', href: 'https://data.gov.in' },
+    { name: isHi ? 'पीएम गतिशक्ति' : 'PM GatiShakti', sub: isHi ? 'राष्ट्रीय मास्टर प्लान' : 'National Master Plan', logo: '/logos/pm_gatishakti.png', href: 'https://pmgatishakti.gov.in' },
+    { name: isHi ? 'मेक इन इंडिया' : 'Make in India', sub: isHi ? 'राष्ट्रीय पहल' : 'National Initiative', logo: '/logos/make_in_india.png', href: 'https://www.makeinindia.com' },
+    { name: isHi ? 'डिजिटल इंडिया' : 'Digital India', sub: isHi ? 'सशक्तिकरण' : 'Power to Empower', logo: '/logos/digital_india.png', href: 'https://www.digitalindia.gov.in' },
+    { name: isHi ? 'सांख्यिकी मंत्रालय' : 'MoSPI', sub: isHi ? 'भारत सरकार' : 'Govt. of India', logo: '/logos/mospi.png', href: 'https://mospi.gov.in' },
+    { name: isHi ? 'नीति आयोग' : 'NITI Aayog', sub: isHi ? 'थिंक टैंक' : 'Think Tank', logo: '/logos/niti_aayog.png', href: 'https://niti.gov.in' },
+    { name: isHi ? 'एनआईसी मेघराज' : 'NIC MeghRaj', sub: isHi ? 'क्लाउड अवसंरचना' : 'Cloud Infrastructure', logo: '/logos/nic_meghraj.png', href: 'https://cloud.gov.in/user/' },
+    { name: isHi ? 'ओपन डेटा' : 'Open Data', sub: isHi ? 'data.gov.in मंच' : 'data.gov.in Platform', logo: '/logos/open_data.png', href: 'https://data.gov.in' },
   ];
 
   return (
@@ -212,32 +198,6 @@ export default function AmeyMasterView() {
         {/* ═══════════════════════════════════════════════════════════════
             SLIDE 1: FRAMED SOVEREIGN BLUE HERO BOX (PAGE 1)
             ═══════════════════════════════════════════════════════════════ */}
-        {/* A returning officer should not have to read a landing page to get to work.
-            The home route serves two audiences — a first-time visitor who needs the
-            value proposition, and a signed-in officer who needs their queue — and this
-            band gives the second a one-click path without taking anything from the
-            first. It is the cheapest fix for a daily-use console whose work surface sat
-            three clicks and a login behind a hero. */}
-        {session && (
-          <motion.aside
-            variants={itemVariants}
-            className="panel flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 border-l-4 border-l-gov-accent"
-          >
-            <p className="text-[13px] text-gov-navy">
-              Signed in as <strong>{session.username}</strong>
-              {session.role && (
-                <span className="text-gov-soft"> ({String(session.role).replace(/_/g, ' ')})</span>
-              )}. Your early-warning queue is ready.
-            </p>
-            <Link
-              to="/decision-hub?engine=watchlist"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[40px] rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-xs font-bold transition-colors shrink-0"
-            >
-              See what needs attention
-              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
-          </motion.aside>
-        )}
 
         <motion.section variants={itemVariants} id="slide-1" className="py-2 sm:py-4 flex flex-col justify-center">
           <div className="hero-saffron-banner text-white relative overflow-hidden w-full mx-auto py-8 sm:py-12 px-6 sm:px-16 lg:px-20 rounded-2xl shadow-xl border border-[#163B5D]">
@@ -256,17 +216,17 @@ export default function AmeyMasterView() {
               <div className="w-full max-w-3xl mx-auto flex items-center justify-center text-[10px] sm:text-[11px] font-mono tracking-[0.14em] uppercase mb-1.5 select-none">
                 <div className="flex-1 flex items-center justify-end gap-2 sm:gap-2.5">
                   <span className="h-px w-6 sm:w-16 bg-gradient-to-r from-transparent to-amber-400/50 flex-1 max-w-[80px]" />
-                  <span className="text-slate-200 font-medium whitespace-nowrap">National Infrastructure Pipeline</span>
+                  <span className="text-slate-200 font-medium whitespace-nowrap">{t('slide1_eyebrow_nip')}</span>
                   <span className="text-amber-400/60">·</span>
                 </div>
 
                 <span className="px-1 text-amber-300 font-bold text-[10.5px] sm:text-[11px] shrink-0 tracking-wider">
-                  MoSPI
+                  {isHi ? 'सांख्यिकी मंत्रालय' : 'MoSPI'}
                 </span>
 
                 <div className="flex-1 flex items-center justify-start gap-2 sm:gap-2.5">
                   <span className="text-amber-400/60">·</span>
-                  <span className="text-slate-200 font-medium whitespace-nowrap">CCEA Sovereign Oversight</span>
+                  <span className="text-slate-200 font-medium whitespace-nowrap">{t('slide1_eyebrow_ccea')}</span>
                   <span className="h-px w-6 sm:w-16 bg-gradient-to-l from-transparent to-amber-400/50 flex-1 max-w-[80px]" />
                 </div>
               </div>
@@ -283,10 +243,10 @@ export default function AmeyMasterView() {
 
               <div className="flex flex-col items-center justify-center space-y-0.5">
                 <span className="text-[11px] sm:text-[12px] font-semibold text-white/90 tracking-wider uppercase font-sans">
-                  भारत सरकार · Government of India
+                  {t('slide1_india_banner')}
                 </span>
                 <span className="text-[12.5px] sm:text-[14px] font-bold text-amber-300/95 tracking-wide uppercase font-heading">
-                  Ministry of Statistics &amp; Programme Implementation (MoSPI)
+                  {t('slide1_ministry_banner')}
                 </span>
               </div>
             </div>
@@ -294,17 +254,16 @@ export default function AmeyMasterView() {
             {/* Centered Main Narrative & Action Buttons */}
             <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4 my-4">
               <h1 className="font-heading font-extrabold text-[28px] sm:text-[38px] lg:text-[44px] leading-[1.12] text-white tracking-[-0.025em]">
-                National Decision Intelligence for India's Infrastructure
+                {t('slide1_headline')}
               </h1>
 
               <p className="text-ink-200 text-[13.5px] sm:text-[15.5px] leading-relaxed max-w-3xl mx-auto font-sans">
-                PRAKALP-DRISHTI transforms national project monitoring from descriptive reporting into predictive, 
-                risk-aware decision intelligence for sovereign policymakers and project administrators.
+                {t('slide1_subhead')}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
                 <Link to="/decision-hub" className="btn-saffron-pill text-[12.5px] py-2.5 px-6 group shadow-md">
-                  <span>Enter Decision Hub</span>
+                  <span>{t('slide1_btn_enter')}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
 
@@ -312,7 +271,7 @@ export default function AmeyMasterView() {
                   onClick={() => scrollToSection('slide-3')}
                   className="inline-flex items-center gap-2 text-white/95 hover:text-white text-[12.5px] font-bold py-2.5 px-6 rounded-full bg-white/[0.12] hover:bg-white/[0.22] border border-white/30 hover:border-white/50 backdrop-blur-md shadow-sm transition-all duration-200 cursor-pointer group"
                 >
-                  <span>Explore Analytical Engines</span>
+                  <span>{t('slide1_btn_explore')}</span>
                   <ChevronRight className="w-4 h-4 text-white/80 group-hover:text-white group-hover:translate-x-0.5 transition-transform" />
                 </button>
               </div>
@@ -321,10 +280,10 @@ export default function AmeyMasterView() {
             {/* Bottom Centered 4-Metric Strip (MoSPI April 2026 Flash Report Aligned) */}
             <div className="relative z-10 pt-5 mt-2 border-t border-white/15 max-w-3xl w-full mx-auto grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/12 pb-1 gap-y-3 sm:gap-y-0">
               {[
-                { v: portfolio.projects, k: 'Monitored Projects' },
-                { v: portfolio.capex, k: 'Sanctioned Portfolio Capex' },
-                { v: '22', k: 'Infrastructure Sectors' },
-                { v: '17', k: 'Central Ministries' },
+                { v: isHi ? tDigits(portfolio.projects) : portfolio.projects, k: t('slide1_m1_label') },
+                { v: isHi ? '₹४७.४४ लाख करोड़' : portfolio.capex, k: t('slide1_m2_label') },
+                { v: isHi ? '२२' : '22', k: t('slide1_m3_label') },
+                { v: isHi ? '१७' : '17', k: t('slide1_m4_label') },
               ].map((m) => (
                 <div key={m.k} className="px-3 text-center">
                   <div className="font-heading text-[20px] sm:text-[23px] font-extrabold text-white leading-none tracking-tight">
@@ -356,31 +315,29 @@ export default function AmeyMasterView() {
                 </div>
                 <div>
                   <div className="font-devanagari font-extrabold text-[20px] sm:text-[22px] text-gov-navy leading-tight">
-                    आज़ादी का अमृत महोत्सव
+                    {t('slide2_azadi')}
                   </div>
                   <div className="text-[12.5px] font-semibold text-text-secondary mt-1">
-                    PM GatiShakti National Master Plan Integration
+                    {t('slide2_gatishakti_sub')}
                   </div>
                 </div>
               </div>
 
               <div className="lg:col-span-5 border-y lg:border-y-0 lg:border-x border-gov-gold-border/90 py-3 lg:py-0 lg:px-7">
                 <p className="text-[13.5px] sm:text-[14px] text-text-secondary leading-relaxed font-sans">
-                  Predictive decision support across <strong>2,043 ongoing infrastructure projects</strong> (₹45.64L Cr)
-                  anchored to MoSPI's April 2026 reporting, calibrated on a <strong>2,207-project master corpus</strong>
-                  to eliminate outcome-censoring bias in completion forecasting.
+                  {t('slide2_lede_a')} <strong>{isHi ? '२,०४३ चल रही परियोजनाएं' : '2,043 ongoing infrastructure projects'}</strong> ({isHi ? '₹४५.६४ लाख करोड़' : '₹45.64L Cr'}) {t('slide2_lede_b')} <strong>{isHi ? '२,२०७ परियोजना मास्टर संग्रह' : '2,207-project master corpus'}</strong>.
                 </p>
               </div>
 
               <div className="lg:col-span-3 flex flex-col items-center lg:items-end justify-center text-center lg:text-right">
                 <div className="text-[12.5px] font-bold text-gov-navy uppercase tracking-wider font-heading">
-                  Statutory PAIMANA Repository
+                  {t('slide2_paimana_title')}
                 </div>
                 <div className="text-[11.5px] text-text-secondary mt-1 font-sans">
-                  Active Monitoring: 2,043 Projects (&ge; ₹150 Cr)
+                  {t('slide2_paimana_sub')}
                 </div>
                 <div className="text-[10px] text-gov-saffron-dark font-bold uppercase tracking-widest mt-1">
-                  DIID / IPMD Division · MoSPI
+                  {t('slide2_paimana_div')}
                 </div>
               </div>
             </div>
@@ -393,31 +350,31 @@ export default function AmeyMasterView() {
               <div>
                 <h3 className="font-heading font-extrabold text-[17px] sm:text-[18px] text-gov-navy border-b border-border-default pb-3 mb-4 flex items-center gap-2">
                   <Layers className="w-4.5 h-4.5 text-gov-saffron" />
-                  <span>Statutory Directives &amp; Rules</span>
+                  <span>{t('slide2_directives_title')}</span>
                 </h3>
                 <ul className="space-y-3 text-[13px] sm:text-[13.5px] text-text-secondary">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-gov-success shrink-0 mt-0.5" />
-                    <span><strong>CCEA 20% Rule:</strong> Mandatory Cabinet Committee approval for cost overruns ≥ 20%.</span>
+                    <span><strong>{t('slide2_ccea_rule_title')}:</strong> {t('slide2_ccea_rule_desc')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-gov-success shrink-0 mt-0.5" />
-                    <span><strong>CPWD Clause 10CC:</strong> Formula-driven statutory material and labor escalation caps.</span>
+                    <span><strong>{t('slide2_cpwd_title')}:</strong> {t('slide2_cpwd_desc')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-gov-success shrink-0 mt-0.5" />
-                    <span><strong>PIB Clearances:</strong> Public Investment Board revised cost estimate guidelines.</span>
+                    <span><strong>{t('slide2_pib_title')}:</strong> {t('slide2_pib_desc')}</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-gov-success shrink-0 mt-0.5" />
-                    <span><strong>RTI Section 4:</strong> Proactive public transparency layer for sovereign capital outlays.</span>
+                    <span><strong>{t('slide2_rti_title')}:</strong> {t('slide2_rti_desc')}</span>
                   </li>
                 </ul>
               </div>
 
               <div className="pt-3.5 mt-4 border-t border-border-default text-[12px] text-text-muted flex items-center justify-between font-medium">
-                <span>Standard: MoSPI Flash Guidelines</span>
-                <span className="text-gov-navy font-bold">New Delhi</span>
+                <span>{t('slide2_standard_guidelines')}</span>
+                <span className="text-gov-navy font-bold">{t('slide2_location_delhi')}</span>
               </div>
             </div>
 
@@ -426,34 +383,32 @@ export default function AmeyMasterView() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10.5px] font-bold uppercase tracking-wider text-gov-saffron-dark bg-gov-saffron-light px-3 py-1 rounded border border-gov-gold-border">
-                    Autonomous Oversight
+                    {t('slide2_auto_badge')}
                   </span>
-                  <span className="text-[11px] text-text-muted font-mono font-semibold">Outcome-Aware ML Architecture</span>
+                  <span className="text-[11px] text-text-muted font-mono font-semibold">{t('slide2_auto_sub')}</span>
                 </div>
 
                 <h3 className="font-heading font-extrabold text-[19px] sm:text-[22px] text-gov-navy leading-snug">
-                  Transforming Infrastructure Delivery Through Mathematical Rigor &amp; Causal Analytics
+                  {t('slide2_rigor_title')}
                 </h3>
 
                 <p className="text-[13.5px] sm:text-[14px] text-text-secondary leading-relaxed font-sans">
-                  PRAKALP-DRISHTI bridges the critical gap between raw administrative project reports and actionable 
-                  executive policy. Active projects provide current-state telemetry, while historical completed projects provide 
-                  ground-truth outcome labels — enabling robust Conformal Prediction without outcome-censoring bias.
+                  {t('slide2_rigor_desc')}
                 </p>
 
                 {/* Corpus Pill Breakdown */}
                 <div className="grid grid-cols-3 gap-2.5 pt-2 font-sans">
                   <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
-                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">2,043</div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Active Ongoing</div>
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">{isHi ? '२,०४३' : '2,043'}</div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{t('slide2_corpus_active')}</div>
                   </div>
                   <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-center">
-                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">+ 164</div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Completed Labels</div>
+                    <div className="text-[16px] font-extrabold text-gov-navy font-heading">{isHi ? '+ १६४' : '+ 164'}</div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">{t('slide2_corpus_completed')}</div>
                   </div>
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
-                    <div className="text-[16px] font-extrabold text-emerald-800 font-heading">= 2,207</div>
-                    <div className="text-[10px] text-emerald-700 font-bold uppercase tracking-tight">Master Corpus</div>
+                    <div className="text-[16px] font-extrabold text-emerald-800 font-heading">{isHi ? '= २,२०७' : '= 2,207'}</div>
+                    <div className="text-[10px] text-emerald-700 font-bold uppercase tracking-tight">{t('slide2_corpus_master')}</div>
                   </div>
                 </div>
               </div>
@@ -463,10 +418,10 @@ export default function AmeyMasterView() {
                   to="/decision-hub"
                   className="text-[13.5px] font-bold text-gov-navy hover:text-gov-saffron transition-colors flex items-center gap-2"
                 >
-                  <span>Explore Core Mathematical Models</span>
+                  <span>{t('slide2_explore_models')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <span className="text-[11.5px] font-mono text-slate-500 font-bold">7 Connected Engines</span>
+                <span className="text-[11.5px] font-mono text-slate-500 font-bold">{t('slide2_engines_count')}</span>
               </div>
             </div>
           </div>
@@ -478,13 +433,13 @@ export default function AmeyMasterView() {
         <motion.section variants={itemVariants} id="slide-3" className="py-6 sm:py-10 space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <div className="text-[11px] font-bold uppercase tracking-widest text-gov-saffron">
-              Independent Analytical Engines
+              {t('slide3_eyebrow')}
             </div>
             <h2 className="font-heading font-extrabold text-[26px] sm:text-[30px] text-gov-navy tracking-tight leading-none">
-              OVERSIGHT PROGRAMMES
+              {t('slide3_title')}
             </h2>
             <p className="text-text-secondary text-[14px] sm:text-[15px]">
-              Empirical oversight engines built on econometric, statutory, and climate risk foundations.
+              {t('slide3_subhead')}
             </p>
           </div>
 
@@ -493,10 +448,6 @@ export default function AmeyMasterView() {
               const Icon = mod.icon;
               return (
                 <Link
-                  // Keyed on `name`, not `to`. Five module cards map onto three engine
-                  // routes (ARTHA-NETRA and NIVARAN both open artha_nivaran; SATYA-KAVACH
-                  // and ANUMATI both open satya_kavach), so keying on the destination gave
-                  // React duplicate keys and a console error on the landing page.
                   key={mod.name}
                   to={mod.to}
                   className={`panel ${mod.accent} p-4.5 sm:p-5 flex flex-col justify-between group rounded-2xl min-h-[320px] sm:min-h-[340px] shadow-xs hover:shadow-md transition-all`}
@@ -508,7 +459,7 @@ export default function AmeyMasterView() {
                       </div>
                       <span className="inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-500 bg-slate-100/90 px-2 py-0.5 rounded-full border border-slate-200/80">
                         <Lock className="w-2.5 h-2.5 text-slate-400" />
-                        <span>Govt Gate</span>
+                        <span>{t('slide3_govt_gate')}</span>
                       </span>
                     </div>
 
@@ -548,24 +499,20 @@ export default function AmeyMasterView() {
             <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
               <div className="lg:col-span-8 space-y-3">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron text-white text-[10.5px] font-bold uppercase tracking-widest">
-                  <span>Featured Empirical Finding</span>
+                  <span>{t('slide4_featured_badge')}</span>
                 </div>
                 <h2 className="font-heading font-extrabold text-[22px] sm:text-[26px] leading-tight text-white">
-                  Cost Revisions Cluster Just Below the 20% CCEA Boundary
+                  {t('slide4_cluster_title')}
                 </h2>
                 <p className="text-slate-300 text-[13.5px] sm:text-[14px] leading-relaxed max-w-2xl font-sans">
-                  1.65× more revisions land in 18.0%–19.9% than in 20.0%–21.9%, just below the threshold
-                  that triggers mandatory Cabinet Committee review — 28 projects against 17.
-                  At that sample size the 95% confidence interval is [0.90, 3.01], which spans 1.0, so this is
-                  a <strong className="text-amber-200">screening signal for audit triage, not a significant
-                  finding and not an allegation</strong>.
+                  {t('slide4_cluster_desc')}
                 </p>
                 <div className="pt-1.5">
                   <Link
                     to="/decision-hub?engine=satya_kavach"
                     className="inline-flex items-center gap-2 text-[13.5px] font-bold text-gov-saffron-light hover:text-white transition-colors"
                   >
-                    <span>Inspect Full SATYA-KAVACH Compliance Report</span>
+                    <span>{t('slide4_inspect_btn')}</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -574,9 +521,9 @@ export default function AmeyMasterView() {
               <div className="lg:col-span-4 flex justify-center lg:justify-end">
                 <div className="border border-white/15 bg-white/[0.04] rounded-2xl p-5 text-center w-full max-w-xs">
                   <div className="text-[44px] sm:text-[50px] font-extrabold text-white font-heading leading-none tracking-tight">1.65×</div>
-                  <div className="text-[13px] font-bold text-slate-200 mt-1.5 font-sans">Boundary Bin-Mass Ratio</div>
+                  <div className="text-[13px] font-bold text-slate-200 mt-1.5 font-sans">{t('slide4_ratio_label')}</div>
                   <div className="text-[11.5px] text-amber-300 mt-1 font-sans font-medium">95% CI [0.90, 3.01] · n = 28 vs 17</div>
-                  <div className="text-[10.5px] text-slate-400 mt-0.5 font-sans">not significant at 5% — triage signal</div>
+                  <div className="text-[10.5px] text-slate-400 mt-0.5 font-sans">{t('slide4_ratio_note')}</div>
                 </div>
               </div>
             </div>
@@ -588,15 +535,14 @@ export default function AmeyMasterView() {
             <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
-                  <span className="text-gov-saffron uppercase">Cabinet Flash</span>
-                  <span>August 2026</span>
+                  <span className="text-gov-saffron uppercase">{t('slide4_b1_tag')}</span>
+                  <span>{isHi ? 'अगस्त २०२६' : 'August 2026'}</span>
                 </div>
                 <h3 className="font-heading font-bold text-[15px] sm:text-[16px] text-gov-navy leading-snug">
-                  Quarterly CCEA Cost Overrun Threshold Audit Published
+                  {t('slide4_b1_title')}
                 </h3>
                 <p className="text-[12.5px] sm:text-[13px] text-text-secondary leading-relaxed">
-                  2,207 central projects evaluated. 307 projects identified with cumulative cost escalation exceeding 20%, 
-                  mandating revised administrative approval submission.
+                  {t('slide4_b1_desc')}
                 </p>
               </div>
             </div>
@@ -605,15 +551,14 @@ export default function AmeyMasterView() {
             <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
-                  <span className="text-emerald-700 uppercase">Solvency Alert</span>
-                  <span>August 2026</span>
+                  <span className="text-emerald-700 uppercase">{t('slide4_b2_tag')}</span>
+                  <span>{isHi ? 'अगस्त २०२६' : 'August 2026'}</span>
                 </div>
                 <h3 className="font-heading font-bold text-[15px] sm:text-[16px] text-gov-navy leading-snug">
-                  PSU Financial Leverage &amp; Altman Z-Score Advisory
+                  {t('slide4_b2_title')}
                 </h3>
                 <p className="text-[12.5px] sm:text-[13px] text-text-secondary leading-relaxed">
-                  Artha-Netra model flags 4 executing public sector enterprises experiencing interest coverage ratio 
-                  compression below 1.5x, signalling potential execution slowdowns.
+                  {t('slide4_b2_desc')}
                 </p>
               </div>
             </div>
@@ -622,15 +567,14 @@ export default function AmeyMasterView() {
             <div className="bulletin-paper-card p-5 sm:p-6 rounded-2xl">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-[10.5px] text-text-muted font-bold font-mono">
-                  <span className="text-blue-700 uppercase">Weather Advisory</span>
-                  <span>August 2026</span>
+                  <span className="text-blue-700 uppercase">{t('slide4_b3_tag')}</span>
+                  <span>{isHi ? 'अगस्त २०२६' : 'August 2026'}</span>
                 </div>
                 <h3 className="font-heading font-bold text-[15px] sm:text-[16px] text-gov-navy leading-snug">
-                  IMD Monsoon Anomaly Stretch Projections for Linear Projects
+                  {t('slide4_b3_title')}
                 </h3>
                 <p className="text-[12.5px] sm:text-[13px] text-text-secondary leading-relaxed">
-                  Varsha-Speed regression estimates 2 to 5 months additional slippage for coastal highway and railway packages 
-                  impacted by +22% monsoon precipitation anomaly.
+                  {t('slide4_b3_desc')}
                 </p>
               </div>
             </div>
@@ -647,13 +591,13 @@ export default function AmeyMasterView() {
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-gov-saffron/30 text-gov-saffron-light border border-gov-saffron/40 text-[10.5px] font-bold uppercase tracking-wider">
                   <Cpu className="w-4 h-4 text-gov-saffron" />
-                  <span>Interactive Simulation Hub</span>
+                  <span>{t('slide5_badge')}</span>
                 </div>
                 <h2 className="font-heading font-extrabold text-[24px] sm:text-[28px] text-white leading-tight">
-                  Enter the Sovereign Decision Intelligence Hub
+                  {t('slide5_title')}
                 </h2>
                 <p className="text-slate-300 text-[13.5px] sm:text-[14px] leading-relaxed font-sans">
-                  Run Monte Carlo timeline forecasts, calculate capital lockup graphs, rebalance budgets with linear programming, and inspect empirical model benchmarks across all 2,207 projects.
+                  {t('slide5_desc')}
                 </p>
               </div>
 
@@ -661,7 +605,7 @@ export default function AmeyMasterView() {
                 to="/decision-hub"
                 className="btn-saffron-pill text-[14px] py-3.5 px-8 shrink-0 group shadow-lg"
               >
-                <span>Launch Interactive Hub</span>
+                <span>{t('slide5_btn')}</span>
                 <ArrowRight className="w-4 h-4 text-gov-saffron-dark group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
@@ -671,7 +615,7 @@ export default function AmeyMasterView() {
           <div className="pt-8 sm:pt-12 space-y-6 sm:space-y-8 pb-4">
             <div className="text-center">
               <h3 className="font-heading font-bold text-[12px] sm:text-[13px] text-text-muted uppercase tracking-widest opacity-80">
-                National Infrastructure &amp; Government Partners
+                {t('slide5_partners_title')}
               </h3>
             </div>
 
