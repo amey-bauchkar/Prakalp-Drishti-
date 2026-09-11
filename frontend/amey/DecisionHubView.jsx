@@ -16,15 +16,11 @@ const KaalChakraView         = React.lazy(() => import('./KaalChakraView'));
 const VittaVyuhaView         = React.lazy(() => import('./VittaVyuhaView'));
 const PragatiSaarthiView     = React.lazy(() => import('./PragatiSaarthiView'));
 const UnifiedCockpitView     = React.lazy(() => import('./UnifiedCockpitView'));
-const AgencyIndexView        = React.lazy(() => import('./AgencyIndexView'));
-const GeocodePrecisionPanel  = React.lazy(() => import('./GeocodePrecisionPanel'));
 const ModelBenchmarkView     = React.lazy(() => import('./ModelBenchmarkView'));
 const SatyaKavachView        = React.lazy(() => import('../src/views/SatyaKavachView'));
-const ArthaNivaranView       = React.lazy(() => import('../src/views/ArthaNivaranView'));
 const SetuVarshaView         = React.lazy(() => import('../src/views/SetuVarshaView'));
 const KaryaDakshataSimulator = React.lazy(() => import('../src/components/KaryaDakshataSimulator'));
-import { getStoredLanguage, t, toHindiDigits } from '../src/lib/i18n';
-import { scrollToTop } from '../src/components/SmoothScrollProvider';
+import { getStoredLanguage, t } from '../src/lib/i18n';
 
 /** Shown while an engine's JavaScript is fetched. A blank frame on a slow office
     connection is indistinguishable from a failure. */
@@ -49,9 +45,12 @@ function normalizeEngine(id) {
     tanmay: 'satya_kavach',
     satyakavach: 'satya_kavach',
     anumati: 'satya_kavach',
-    parth: 'artha_nivaran',
-    arthanivaran: 'artha_nivaran',
-    nivaran: 'artha_nivaran',
+    parth: 'karya_dakshata',
+    arthanivaran: 'karya_dakshata',
+    artha_nivaran: 'karya_dakshata',
+    nivaran: 'karya_dakshata',
+    agency_index: 'karya_dakshata',
+    agency: 'karya_dakshata',
     janhavi: 'setu_varsha',
     setuvarsha: 'setu_varsha',
     aditya: 'setu_varsha',
@@ -98,7 +97,6 @@ export default function DecisionHubView() {
     const fromUrl = normalizeEngine(searchParams.get('engine'));
     if (fromUrl && fromUrl !== activeEngine) {
       setActiveEngine(fromUrl);
-      scrollToTop(true);
     }
   }, [searchParams]);
 
@@ -121,7 +119,6 @@ export default function DecisionHubView() {
     setActiveEngine(engineId);
     setSearchParams({ engine: engineId });
     setMobileDrawerOpen(false);
-    scrollToTop(true);
   };
 
   useEffect(() => {
@@ -161,8 +158,6 @@ export default function DecisionHubView() {
       engines: [
         { id: 'vitta_vyuha', label: t('eng_vitta_vyuha', lang), desc: t('eng_vitta_vyuha_desc', lang), icon: DollarSign },
         { id: 'karya_dakshata', label: t('eng_karya_dakshata', lang), desc: t('eng_karya_dakshata_desc', lang), icon: Compass },
-        { id: 'artha_nivaran', label: t('eng_artha_nivaran', lang), desc: t('eng_artha_nivaran_desc', lang), icon: Search },
-        { id: 'agency_index', label: t('eng_agency_index', lang), desc: t('eng_agency_index_desc', lang), icon: Building2 },
       ],
     },
     {
@@ -178,24 +173,6 @@ export default function DecisionHubView() {
   return (
     <LoginGate>
       <div className="space-y-4 pb-20">
-        {/* ── Console masthead telemetry ───────────────── */}
-        <div className="telemetry justify-between">
-          <span className="flex items-center gap-2 flex-wrap">
-            <b>{lang === 'hi' ? 'निर्णय आसूचना केंद्र' : 'DECISION INTELLIGENCE CONSOLE'}</b>
-            <span className="sep">/</span>
-            <span>{lang === 'hi' ? `${toHindiDigits(engines.length)} इंजन` : `${engines.length} ENGINES`}</span>
-            <span className="sep">/</span>
-            <span>{lang === 'hi' ? '२,२०७ परियोजनाएं' : '2,207 PROJECTS'}</span>
-            <span className="sep">/</span>
-            <span className="text-amber-400 font-bold">{currentEngineObj.label.toUpperCase()}</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-semibold text-white uppercase tracking-wider">
-              {t('system_operational', lang)}
-            </span>
-          </span>
-        </div>
 
         {/* ── Mobile Engine Selector Bar (collapsible drawer toggle) ───── */}
         <div className="lg:hidden panel p-3 flex items-center justify-between">
@@ -215,7 +192,7 @@ export default function DecisionHubView() {
             className="btn-outline text-[11px] py-1.5 px-3 shrink-0"
           >
             {mobileDrawerOpen ? <X className="w-3.5 h-3.5 mr-1" /> : <Menu className="w-3.5 h-3.5 mr-1" />}
-            <span>{lang === 'hi' ? `सभी इंजन (${toHindiDigits(engines.length)})` : `All Engines (${engines.length})`}</span>
+            <span>{lang === 'hi' ? `सभी इंजन (${engines.length})` : `All Engines (${engines.length})`}</span>
           </button>
         </div>
 
@@ -224,11 +201,11 @@ export default function DecisionHubView() {
           
           {/* ══ Left Vertical Engine Sidebar (Collapsible) ══ */}
           <aside
-            className={`transition-all duration-200 shrink-0 lg:sticky lg:top-[90px] ${
+            className={`transition-all duration-200 shrink-0 lg:sticky lg:top-[68px] ${
               isCollapsed ? 'lg:w-[68px]' : 'lg:w-[310px] xl:w-[330px]'
             } ${mobileDrawerOpen ? 'block w-full' : 'hidden lg:block'}`}
           >
-            <div className="panel flex flex-col max-h-[calc(100vh-115px)] overflow-hidden">
+            <div className="panel flex flex-col max-h-[calc(100vh-80px)] overflow-hidden">
               <div className={`panel-head shrink-0 flex items-center ${isCollapsed ? 'justify-center px-2 py-2' : 'justify-between'}`}>
                 {!isCollapsed && (
                   <span className="panel-title truncate">
@@ -240,7 +217,7 @@ export default function DecisionHubView() {
                 {/* << / >> Toggle Button */}
                 <button
                   onClick={toggleCollapse}
-                  className="p-1 text-gov-muted hover:text-gov-navy hover:bg-gov-surface-3 rounded-xs transition-colors"
+                  className="p-1 text-gov-muted hover:text-gov-navy hover:bg-gov-surface-3 rounded-xs transition-colors cursor-pointer"
                   title={isCollapsed ? (lang === 'hi' ? "साइडबार विस्तृत करें (>>)" : "Expand sidebar (>>)") : (lang === 'hi' ? "साइडबार संक्षिप्त करें (<<)" : "Collapse sidebar (<<)")}
                   aria-label={isCollapsed ? (lang === 'hi' ? "साइडबार विस्तृत करें" : "Expand sidebar") : (lang === 'hi' ? "साइडबार संक्षिप्त करें" : "Collapse sidebar")}
                 >
@@ -278,8 +255,6 @@ export default function DecisionHubView() {
                           role="tab"
                           aria-selected={isActive}
                           aria-controls="engine-panel"
-                          // Roving tabindex: the tablist is a single Tab stop and the
-                          // arrow keys move within it, per the WAI-ARIA tabs pattern.
                           tabIndex={isActive ? 0 : -1}
                           title={isCollapsed ? `${eng.label} — ${eng.desc}` : undefined}
                           onClick={() => selectEngine(eng.id)}
@@ -314,7 +289,7 @@ export default function DecisionHubView() {
 
               <div className={`panel-head border-t border-b-0 py-2 shrink-0 ${isCollapsed ? 'justify-center' : ''}`}>
                 {isCollapsed ? (
-                  <span className="font-mono text-[9px] text-gov-muted">{lang === 'hi' ? toHindiDigits(engines.length) : engines.length}</span>
+                  <span className="font-mono text-[9px] text-gov-muted">{engines.length}</span>
                 ) : (
                   <>
                     <span className="panel-meta">{lang === 'hi' ? 'सीसीईए / सांख्यिकी मंत्रालय अधिशासन' : 'CCEA / MoSPI Governed'}</span>
@@ -380,36 +355,10 @@ export default function DecisionHubView() {
                     }}
                   />
                 )}
-                {activeEngine === 'pragati_saarthi' && (
-                  <PragatiSaarthiView
-                    lang={lang}
-                    selectedProjectId={selectedProjectId}
-                    onSelectProject={(id) => {
-                      setSelectedProjectId(String(id));
-                      localStorage.setItem('prakalp:selectedProjectId', String(id));
-                    }}
-                  />
-                )}
+                {activeEngine === 'pragati_saarthi' && <PragatiSaarthiView lang={lang} selectedProjectId={selectedProjectId} />}
                 {activeEngine === 'benchmark' && <ModelBenchmarkView lang={lang} />}
-                {activeEngine === 'agency_index' && (
-                  <div className="space-y-6">
-                    <GeocodePrecisionPanel lang={lang} />
-                    <AgencyIndexView lang={lang} />
-                  </div>
-                )}
                 {activeEngine === 'satya_kavach' && (
                   <SatyaKavachView
-                    lang={lang}
-                    selectedProjectId={selectedProjectId}
-                    onSelectProject={(id) => {
-                      setSelectedProjectId(String(id));
-                      localStorage.setItem('prakalp:selectedProjectId', String(id));
-                      selectEngine('unified_cockpit');
-                    }}
-                  />
-                )}
-                {activeEngine === 'artha_nivaran' && (
-                  <ArthaNivaranView
                     lang={lang}
                     selectedProjectId={selectedProjectId}
                     onSelectProject={(id) => {

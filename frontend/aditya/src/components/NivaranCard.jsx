@@ -29,7 +29,7 @@ export default function NivaranCard({ data, onRunCustomText }) {
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="text-base font-bold text-white">NIVARAN ENGINE</h3>
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded">MODULE 1</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded">LEGAL RADAR</span>
             </div>
             <p className="text-xs text-slate-400">Contractual, Arbitration & Dispute Risk Engine</p>
           </div>

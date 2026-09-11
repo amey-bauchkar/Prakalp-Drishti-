@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Type, Contrast, Info, Languages } from 'lucide-react';
+import { Type, Contrast, Info, Languages, Sparkles } from 'lucide-react';
 import { getStoredLanguage, setStoredLanguage, t } from '../lib/i18n';
 
 /**
- * GIGW-style top utility strip.
+ * Sovereign Institutional Accessibility & Provenance Strip (GIGW 3.0 Standard)
  *
  * Jobs:
- *  1. TEXT SIZE. Accessible non-destructive font scaling (100% / 115% / 130%).
- *  2. HIGHER CONTRAST. Contrast booster for WCAG AAA conformance.
- *  3. BILINGUAL SWITCHER. Mandatory under GIGW 3.0 Section 5.1 (English / हिन्दी).
- *  4. PROTOTYPE NOTICE. Non-dismissible disclosure banner.
+ *  1. TEXT SIZE: Non-destructive font scaling (100% / 115% / 130%).
+ *  2. HIGHER CONTRAST: Contrast booster for WCAG AAA conformance.
+ *  3. BILINGUAL SWITCHER: Mandatory under GIGW 3.0 Section 5.1 (English / हिन्दी).
+ *  4. PROVENANCE TELEMETRY: Official MoSPI statutory disclosure.
  */
 
-// Titles are resolved at render time, not here, so they follow the language.
 const SIZES = [
   { id: 'normal', label: 'A',   titleKey: 'a11y_size_normal', scale: '100%' },
   { id: 'large',  label: 'A+',  titleKey: 'a11y_size_large',  scale: '115%' },
@@ -81,42 +80,44 @@ export default function AccessibilityBar() {
   }, []);
 
   return (
-    <div className="bg-[#071320] text-slate-200 border-b border-[#16304a] print:hidden">
+    <div className="bg-[#050D16] text-slate-300 border-b border-slate-800/90 text-[11px] font-sans print:hidden shadow-xs relative z-40 select-none">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-4 flex-wrap">
 
-        {/* ── Prototype provenance ── */}
-        <p className="flex items-start sm:items-center gap-2 text-[11px] leading-snug text-slate-300 min-w-0">
-          <Info className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-px sm:mt-0" aria-hidden="true" />
-          <span>
-            <strong className="text-amber-400 font-semibold">{t('proto_badge', lang)}</strong>
-            <span className="hidden sm:inline">
-              {' '}— {t('proto_desc', lang)}
-            </span>
-            {/* Was t('proto_badge') here, which rendered "Prototype - Prototype."
-                on every phone. This is the one string that stops a reader concluding
-                the site is an official MoSPI service, so the short form still has to
-                carry the claim. */}
-            <span className="sm:hidden"> — {t('proto_desc_short', lang)}</span>
-          </span>
-        </p>
+        {/* ── Prototype provenance with live operational badge ── */}
+        <div className="flex items-center gap-2.5 min-w-0">
 
-        {/* ── Accessibility & Language controls ── */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          {/* GIGW 3.0 Mandatory Bilingual Switcher */}
+          <p className="flex items-center gap-1.5 text-[11px] leading-snug text-slate-300 truncate">
+            <span className="text-amber-400 font-bold font-heading">{t('proto_badge', lang)}</span>
+            <span className="text-slate-600" aria-hidden="true">|</span>
+            <span className="hidden sm:inline text-slate-300 font-medium">
+              {t('proto_desc', lang)}
+            </span>
+            <span className="sm:hidden text-slate-300">
+              {t('proto_desc_short', lang)}
+            </span>
+          </p>
+        </div>
+
+        {/* ── Accessibility & Language Controls ── */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          {/* GIGW 3.0 Bilingual Switcher */}
           <button
             type="button"
             onClick={toggleLanguage}
             title={t('lang_title', lang)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 min-h-[24px] rounded border border-amber-400/80 bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 font-bold text-[11px] tracking-wide transition-colors font-heading"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 min-h-[22px] rounded-md border border-amber-400/40 bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 font-bold text-[10.5px] tracking-wide transition-all font-heading cursor-pointer active:scale-95"
           >
             <Languages className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
-            <span>{t('lang_toggle', lang)}</span>
+            <span className={lang === 'hi' ? 'font-devanagari font-bold' : ''}>{t('lang_toggle', lang)}</span>
             <span className="sr-only"> — {t('lang_title', lang)}</span>
           </button>
 
-          <div role="group" aria-label={t('a11y_size_group', lang)} className="flex items-center gap-1.5">
-            <Type className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
-            <div className="flex items-center rounded border border-slate-600 overflow-hidden">
+          <div className="h-3 w-px bg-slate-800" aria-hidden="true" />
+
+          {/* Typography Scaler */}
+          <div role="group" aria-label={t('a11y_size_group', lang)} className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 p-0.5 rounded-md">
+            <Type className="w-3 h-3 text-slate-400 ml-1" aria-hidden="true" />
+            <div className="flex items-center">
               {SIZES.map((s) => {
                 const active = fontSize === s.id;
                 return (
@@ -126,10 +127,10 @@ export default function AccessibilityBar() {
                     onClick={() => pickSize(s)}
                     aria-pressed={active}
                     title={t(s.titleKey, lang)}
-                    className={`px-2 min-h-[24px] min-w-[28px] text-[11px] font-bold leading-none transition-colors border-r border-slate-600 last:border-r-0 ${
+                    className={`px-1.5 py-0.5 min-h-[20px] min-w-[22px] text-[10px] font-extrabold leading-none rounded transition-all cursor-pointer ${
                       active
-                        ? 'bg-amber-400 text-[#071320]'
-                        : 'bg-transparent text-slate-200 hover:bg-slate-700'
+                        ? 'bg-amber-400 text-slate-950 shadow-xs'
+                        : 'text-slate-300 hover:text-white hover:bg-slate-800'
                     }`}
                   >
                     {s.label}
@@ -140,19 +141,20 @@ export default function AccessibilityBar() {
             </div>
           </div>
 
+          {/* Contrast Booster */}
           <button
             type="button"
             onClick={toggleContrast}
             aria-pressed={contrast}
-            title="Toggle higher contrast"
-            className={`inline-flex items-center gap-1.5 px-2 min-h-[24px] rounded border text-[11px] font-bold transition-colors ${
+            title="Toggle higher contrast mode"
+            className={`inline-flex items-center gap-1.5 px-2 py-0.5 min-h-[22px] rounded-md border text-[10.5px] font-bold transition-all cursor-pointer active:scale-95 ${
               contrast
-                ? 'bg-amber-400 text-[#071320] border-amber-400'
-                : 'bg-transparent text-slate-200 border-slate-600 hover:bg-slate-700'
+                ? 'bg-amber-400 text-slate-950 border-amber-400 shadow-xs'
+                : 'bg-slate-900/90 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white'
             }`}
           >
-            <Contrast className="w-3.5 h-3.5" aria-hidden="true" />
-            <span className="hidden sm:inline">{t('contrast_btn', lang)}</span>
+            <Contrast className="w-3 h-3" aria-hidden="true" />
+            <span className="hidden md:inline">{t('contrast_btn', lang)}</span>
             <span className="sr-only">
               {contrast ? t('a11y_contrast_on', lang) : t('a11y_contrast_off', lang)}
             </span>
@@ -165,3 +167,4 @@ export default function AccessibilityBar() {
     </div>
   );
 }
+

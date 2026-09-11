@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Scale, ShieldAlert, RefreshCw
+  Scale, ShieldAlert, BarChart3, RefreshCw,
+  CheckCircle2, AlertTriangle, FileText
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import SatyaKavachHeader from './components/SatyaKavachHeader';
 import BoundaryKpis from './components/BoundaryKpis';
@@ -14,8 +15,9 @@ import { getStoredLanguage } from '../src/lib/i18n';
 export default function SatyaKavachMasterView({ selectedProjectId: propProjectId = null, onSelectProject, lang: propLang }) {
   const [summaryData, setSummaryData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
+  const [projectList, setProjectList] = useState([]);
   const [loading, setLoading] = useState(false);
-  // Drawer must ONLY open when an officer explicitly clicks a project row in the table, NEVER automatically on tab mount
+  // Drawer opens when an officer explicitly clicks a project row in the table or selects via header search
   const [drawerProjectId, setDrawerProjectId] = useState(null);
   const [lang, setLang] = useState(() => propLang || getStoredLanguage());
 
@@ -32,18 +34,23 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const [sumRes, histRes] = await Promise.all([
+      const [sumRes, histRes, projRes] = await Promise.all([
         fetch('/api/tanmay/pattern-analysis'),
         fetch('/api/tanmay/bunching-histogram'),
+        fetch('/api/aditya/projects?limit=500')
       ]);
 
-      const [sum, hist] = await Promise.all([
+      const [sum, hist, projs] = await Promise.all([
         sumRes.ok ? sumRes.json() : null,
         histRes.ok ? histRes.json() : null,
+        projRes.ok ? projRes.json() : []
       ]);
 
       setSummaryData(sum);
       setHistogramData(hist);
+      if (Array.isArray(projs) && projs.length > 0) {
+        setProjectList(projs);
+      }
     } catch (e) {
       console.error('Failed to load Satya-Kavach data:', e);
     } finally {
@@ -57,15 +64,31 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
 
   const flagged = summaryData?.flagged_sample_projects || [];
 
+  const handleSelectProject = (id) => {
+    setDrawerProjectId(id);
+    if (onSelectProject) onSelectProject(id);
+  };
 
+  const comboboxProjects = projectList.length > 0
+    ? projectList
+    : flagged.map((p) => ({
+        project_id: p.project_id,
+        project_name: p.project_name,
+        total_sanctioned_cost_cr: p.cost_cr || 0
+      }));
 
   return (
     <div className="space-y-6 font-sans text-slate-900 dark:text-slate-100 pb-12">
-      {/* 1. Sovereign Command Header */}
+      {/* 1. Sovereign Command Header with Integrated Project Combobox */}
       <SatyaKavachHeader
         lang={lang}
         flaggedCount={flagged.length}
+        onRefresh={fetchAllData}
+        loading={loading}
         hasData={Boolean(summaryData)}
+        projects={comboboxProjects}
+        selectedProjectId={drawerProjectId || propProjectId}
+        onSelectProject={handleSelectProject}
       />
 
       {/* Loading State */}
@@ -95,29 +118,16 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
           </div>
           <div className="max-w-md space-y-2">
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-              {lang === 'hi' ? 'सांविधिक सीसीईए लेखापरीक्षा' : 'Statutory CCEA Audit Screen'}
+              {lang === 'hi' ? 'सांविधिक सीसीईए लेखापरीक्षा हेतु तैयार' : 'Ready to Execute Statutory CCEA Audit'}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              {lang === 'hi' ? (
-                <>
-                  मैकक्रैरी बंचिंग घनत्व परीक्षण, १९.९% पर कृत्रिम लागत संशोधनों की स्क्रीनिंग और खंड १०सीसी दावों के ऑडिट का सांख्यिकीय मूल्यांकन।
-                </>
-              ) : (
-                <>
-                  Statistical evaluation of McCrary bunching density jumps, artificial cost revisions at 19.9%, and Clause 10CC claims.
-                </>
-              )}
+              {lang === 'hi'
+                ? 'मैकक्रैरी बंचिंग घनत्व परीक्षण, १९.९% पर कृत्रिम लागत संशोधनों की स्क्रीनिंग और संविदात्मक दावों का स्वचालित ऑडिट।'
+                : 'Automated McCrary bunching density testing, screening for artificial cost revisions at the 19.9% CCEA boundary, and statutory compliance audits.'}
             </p>
-            <button
-              onClick={fetchAllData}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold font-mono tracking-wider transition-colors cursor-pointer"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              {lang === 'hi' ? 'डेटा पुनः लोड करें' : 'Reload Audit Data'}
-            </button>
           </div>
 
-          <div className="w-full max-w-md pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl pt-2">
             <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center space-y-2">
               <div className="w-8 h-8 rounded-lg bg-rose-100/60 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 flex items-center justify-center">
                 <ShieldAlert className="w-4 h-4" />
@@ -129,42 +139,52 @@ export default function SatyaKavachMasterView({ selectedProjectId: propProjectId
                 {lang === 'hi' ? '[१८%, २०%) स्वीकृति परिहार पट्टी में कृत्रिम बंचिंग का पता लगाता है' : 'Detects artificial bunching in the [18%, 20%) approval avoidance band'}
               </p>
             </div>
+
+            <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100/60 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center">
+                <BarChart3 className="w-4 h-4" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                {lang === 'hi' ? 'मैकक्रैरी घनत्व परीक्षण' : 'McCrary Density Distribution'}
+              </h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                {lang === 'hi' ? 'लागत संशोधन वितरणों में सांख्यिकीय विसंगतियों की पहचान करता है' : 'Identifies empirical clustering and statistical anomalies across cost revisions'}
+              </p>
+            </div>
           </div>
         </div>
       )}
 
-      {summaryData && !loading && (<>
-      {/* 2. Tremor Boundary KPI Cards */}
-      <BoundaryKpis summaryData={summaryData} lang={lang} />
+      {summaryData && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-6"
+        >
+          {/* 2. Boundary KPI Cards */}
+          <BoundaryKpis summaryData={summaryData} lang={lang} />
 
-      {/* 3. McCrary Bunching Density Histogram & Flagged Projects Table */}
-      <div className="space-y-6">
-        {/* McCrary Bunching Density Histogram */}
-        <BunchingHistogram histogramData={histogramData} lang={lang} />
+          {/* 3. McCrary Bunching Density Histogram */}
+          <BunchingHistogram histogramData={histogramData} lang={lang} />
 
-        {/* Flagged Projects Table */}
-        <FlaggedProjectsTable
-          lang={lang}
-          flaggedProjects={flagged}
-          onSelectProject={(id) => {
-            if (onSelectProject) {
-              onSelectProject(id);
-            } else {
-              setDrawerProjectId(id);
-            }
-          }}
-        />
-      </div>
+          {/* 4. Flagged Projects Audit Table */}
+          <FlaggedProjectsTable
+            lang={lang}
+            flaggedProjects={flagged}
+            onSelectProject={handleSelectProject}
+          />
 
-      {/* 5. Slide-over Project Inspector Dossier Drawer — only renders on explicit project row click */}
-      {drawerProjectId && (
-        <ProjectDossierDrawer
-          lang={lang}
-          projectId={drawerProjectId}
-          onClose={() => setDrawerProjectId(null)}
-        />
+          {/* 5. Slide-over Project Inspector Dossier Drawer — renders on explicit row click or header search */}
+          {drawerProjectId && (
+            <ProjectDossierDrawer
+              lang={lang}
+              projectId={drawerProjectId}
+              onClose={() => setDrawerProjectId(null)}
+            />
+          )}
+        </motion.div>
       )}
-      </>)}
     </div>
   );
 }

@@ -41,14 +41,10 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
     }
   };
 
-  // Sync with prop when selected externally and automatically run forecast
+  // Sync with prop when selected externally
   useEffect(() => {
-    const targetId = selectedProjectId || projectId;
-    if (targetId) {
-      if (selectedProjectId && selectedProjectId !== projectId) {
-        setProjectId(selectedProjectId);
-      }
-      fetchForecast(targetId);
+    if (selectedProjectId && selectedProjectId !== projectId) {
+      setProjectId(selectedProjectId);
     }
   }, [selectedProjectId]);
 
@@ -119,7 +115,7 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative z-30"
+        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-visible z-30"
       >
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
           <div className="absolute top-0 right-0 p-8 opacity-10">
@@ -129,15 +125,10 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
         <div className="space-y-3 max-w-2xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <Clock className="w-3.5 h-3.5 text-white" />
-            <span>{isHi ? "मॉड्यूल १ · समयसीमा पूर्वानुमान" : "MODULE 1 · TIMELINE FORECASTING"}</span>
+            <span>{isHi ? "समयसीमा पूर्वानुमान" : "TIMELINE FORECASTING"}</span>
           </div>
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight flex items-center gap-3">
-            <span>{isHi ? "काल-चक्र सिमुलेटर" : "KAAL-CHAKRA Simulator"}</span>
-            {(data?.project_id || projectId) && (
-              <span className="text-xs sm:text-[13px] px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 font-mono font-extrabold tracking-wider shadow-sm">
-                #{data?.project_id || projectId}
-              </span>
-            )}
+          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
+            {isHi ? "काल-चक्र सिमुलेटर" : "KAAL-CHAKRA Simulator"}
           </h2>
           <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
             {isHi

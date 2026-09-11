@@ -161,7 +161,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           ═══════════════════════════════════════════════════════════════ */}
       <motion.div 
         variants={itemVariants}
-        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/60 shadow-xl text-white relative z-20"
+        className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/60 shadow-xl text-white relative z-30 overflow-visible"
       >
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">

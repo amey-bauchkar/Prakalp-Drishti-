@@ -30,7 +30,7 @@ export default function AnumatiCard({ data }) {
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="text-base font-bold text-white">ANUMATI ENGINE</h3>
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded">MODULE 2</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded">CLEARANCES</span>
             </div>
             <p className="text-xs text-slate-400">Statutory Clearance & Regulatory Bottleneck Tracker</p>
           </div>
