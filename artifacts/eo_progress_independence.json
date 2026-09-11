@@ -1,7 +1,7 @@
 {
-  "computed_at": "2026-09-11T08:14:33+00:00",
+  "computed_at": "2026-09-11T13:19:14+00:00",
   "catalog_path": "paimana_extracted\\satellite_data\\ALL_2207_PROJECTS_SATELLITE_CATALOG.json",
-  "catalog_sha256": "b1293aa19ac2c1c27c4e49e9b376ea5f160c6545845f72fe115f80041c3bf635",
+  "catalog_sha256": "c2c7a45296d326830926f013196c3a20cc4d3e4c98d15422c930d856f64d7285",
   "n_catalog": 2207,
   "n_reliable": 1588,
   "overall": {
