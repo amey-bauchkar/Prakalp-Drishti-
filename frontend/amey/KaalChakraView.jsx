@@ -47,6 +47,13 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
     }
   }, [selectedProjectId]);
 
+  // Auto-fetch forecast when projectId changes (e.g. from Early Warning Queue)
+  useEffect(() => {
+    if (projectId) {
+      fetchForecast(projectId);
+    }
+  }, [projectId]);
+
   useEffect(() => {
     fetch('/api/projects?limit=2207')
       .then(res => res.json())

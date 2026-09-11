@@ -68,6 +68,20 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
       .catch(err => console.error("Failed to load project list", err));
   }, []);
 
+  // Sync with prop when selected externally (e.g. from Early Warning Queue)
+  useEffect(() => {
+    if (selectedProjectId && selectedProjectId !== projectId) {
+      setProjectId(selectedProjectId);
+    }
+  }, [selectedProjectId]);
+
+  // Auto-fetch briefing when projectId changes
+  useEffect(() => {
+    if (projectId) {
+      fetchBriefing(projectId);
+    }
+  }, [projectId]);
+
 
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
