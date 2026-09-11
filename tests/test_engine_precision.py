@@ -114,6 +114,29 @@ check("prob_target_met_official = F_loglogistic(t_official; P50, sigma_eff) x (1
 check("engine sigma equals the AFT artefact's sigma",
       abs(sigma - json.load(open(os.path.join(BASE_DIR, "artifacts", "aft_survival.json"), encoding="utf-8"))["sigma"]) < 1e-9)
 
+# Rebaselining detection must not depend on how the host's pandas stringifies a
+# missing value. On the Render deployment (pandas 3 string semantics) a NULL
+# RevisedCostReason was counted as a reason, marking ~70% of projects rebaselined
+# and moving 540 of them out of LOW. Recompute the flag under BOTH string modes
+# and require it to equal what the engine holds.
+_reason_raw = kc.df["RevisedCostReason"]
+_blank = {"", "nan", "none", "<na>", "nat", "null"}
+_cost_rev = (kc.df["RevisedCost"] > kc.df["OriginalCost"] * 1.01).fillna(False)
+_flags = {}
+for _mode in (False, True):
+    pd.options.future.infer_string = _mode
+    _r = pd.Series(_reason_raw.tolist())            # re-infer dtype under this mode
+    _txt = _r.notna() & ~_r.astype(str).str.strip().str.lower().isin(_blank)
+    _flags[_mode] = (_cost_rev.to_numpy() | _txt.to_numpy())
+pd.options.future.infer_string = False
+check("IsRebaselined is identical under pandas-2 and pandas-3 string semantics",
+      bool(np.array_equal(_flags[False], _flags[True])),
+      f"rebaselined={int(_flags[False].sum())} of {len(_flags[False])}")
+check("engine's IsRebaselined equals the version-independent recomputation",
+      bool(np.array_equal(kc.df["IsRebaselined"].to_numpy().astype(bool), _flags[False])))
+check("a NULL revision reason never counts as a reason",
+      not bool((_reason_raw.isna() & ~_cost_rev & kc.df["IsRebaselined"].astype(bool)).any()))
+
 # ═══════════════════════════════ B. AFT ═══════════════════════════════
 section("B. AFT SURVIVAL: artefact coefficients reproduce the likelihood and are optimal")
 from analytics_engine import aft_survival as aft                     # noqa: E402
@@ -220,6 +243,29 @@ check("Shapley values sum to total locked capital (efficiency in locked units)",
 lock_bad = sum(1 for n, d in G.nodes(data=True)
                if abs(d["locked_p50_cr"] - round((d.get("cost_cr", 1000.0) * d.get("delay_months", 0.0) / 48.0) if d.get("delay_months", 0.0) > 0 else 0.0, 2)) > 0.011)
 check("locked_p50_cr = cost x delay/48 on every node", lock_bad == 0, f"{lock_bad} mismatches")
+
+# Row-order independence: the CSV bootstrap and Postgres return the same rows in
+# different orders. Rebuild the engine on a shuffled copy of the corpus; the edge set
+# and every Shapley value must be identical. (Before the fix, 1,013 of 2,207 Shapley
+# values differed by >1% between hosts -- same seed, differently ordered nodes.)
+import analytics_engine.setu_graph as _sgmod                            # noqa: E402
+import analytics_engine.corpus_source as _csmod                         # noqa: E402
+_orig_load = _sgmod.load_corpus
+def _shuffled_load(*a, **k):
+    return _orig_load(*a, **k).sample(frac=1.0, random_state=99).reset_index(drop=True)
+_sgmod.load_corpus = _shuffled_load
+try:
+    _shuf = _sgmod.SetuGraphEngine()
+finally:
+    _sgmod.load_corpus = _orig_load
+_edges_a = sorted(f"{u}->{v}" for u, v in sg_eng.dag.edges)
+_edges_b = sorted(f"{u}->{v}" for u, v in _shuf.dag.edges)
+check("edge set is identical when the corpus rows arrive in a different order", _edges_a == _edges_b,
+      f"{len(_edges_a)} vs {len(_edges_b)} edges")
+_dmax = max(abs(sg_eng.shapley_scores[n] - _shuf.shapley_scores[n]) for n in sg_eng.dag.nodes)
+check("Shapley values are identical when the corpus rows arrive in a different order", _dmax == 0.0, f"max |diff| = {_dmax}")
+# The shuffled build rewrote the on-disk table; restore the canonical one.
+sg_eng._precompute_artifacts() if hasattr(sg_eng, "_precompute_artifacts") else None
 
 # ═══════════════════════════════ E. VITTA-VYUHA ═══════════════════════════════
 section("E. VITTA-VYUHA: LP feasibility, duals, tail")

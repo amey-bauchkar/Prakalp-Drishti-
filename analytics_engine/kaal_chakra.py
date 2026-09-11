@@ -168,8 +168,20 @@ class KaalChakraEngine:
 
         # Detect Rebaselining
         has_cost_revision = self.df["RevisedCost"] > self.df["OriginalCost"] * 1.01
-        has_text_reason = self.df["RevisedCostReason"].astype(str).str.strip().isin(["", "nan", "None"]) == False
-        self.df["IsRebaselined"] = has_cost_revision | has_text_reason
+        # A NULL reason must never count as a reason. The previous idiom,
+        #     astype(str).str.strip().isin(["", "nan", "None"]) == False
+        # relied on missing values stringifying to "nan"/"None". Under pandas 3 string
+        # semantics (and pandas 2 with future.infer_string) a missing value stays
+        # missing through astype(str), isin() returns False for it, and the == False
+        # negation flipped it to True -- so every project with no revision reason was
+        # marked rebaselined on any host running a newer pandas than the audited
+        # build. Measured on the Render deployment: +20 governance points and a heavier
+        # AFT reset multiplier on ~70% of projects, moving 540 projects out of LOW.
+        # notna() first, then a case-insensitive check of the sentinel spellings.
+        _reason = self.df["RevisedCostReason"]
+        _blank = {"", "nan", "none", "<na>", "nat", "null"}
+        has_text_reason = _reason.notna() & ~_reason.astype(str).str.strip().str.lower().isin(_blank)
+        self.df["IsRebaselined"] = (has_cost_revision.fillna(False) | has_text_reason).astype(bool)
         # NAMING CAVEAT, STATED WHERE IT IS COMPUTED: this is a 3-level SEVERITY TIER,
         # not a tally of actual baseline-reset events. The corpus records no reset
         # history, so no such tally can be derived from it.

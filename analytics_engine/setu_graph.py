@@ -169,7 +169,15 @@ class SetuGraphEngine:
                     pass
 
         projects_by_sector, projects_by_state = {}, {}
-        for pid, data in self.raw_graph.nodes(data=True):
+        # ROW-ORDER INDEPENDENCE. The corpus arrives in CSV order from the bootstrap and
+        # in whatever order Postgres returns from the database; the graph, the edge set
+        # and the Shapley sample must not depend on which. Every iteration below runs
+        # over id-sorted lists, and every distance sort breaks ties on the id, so two
+        # hosts with the same data build byte-identical artefacts. (Measured before
+        # this: 1,013 of 2,207 Shapley values differed by more than 1% between a CSV
+        # host and a Postgres host with identical data -- the same permutation seed
+        # applied to differently ordered nodes.)
+        for pid, data in sorted(self.raw_graph.nodes(data=True), key=lambda kv: str(kv[0])):
             projects_by_sector.setdefault(data["sector"], []).append(pid)
             projects_by_state.setdefault(data["state"], []).append(pid)
 
@@ -197,7 +205,7 @@ class SetuGraphEngine:
             return (a, b) if _sort_key(a) <= _sort_key(b) else (b, a)
 
         n_chain = n_adj = 0
-        for st, pids in projects_by_state.items():
+        for st, pids in sorted(projects_by_state.items(), key=lambda kv: str(kv[0])):
             in_state = set(pids)
             # Sector supply chain within the state, nearest downstream first when
             # coordinates allow, otherwise capped by list order.
@@ -205,9 +213,9 @@ class SetuGraphEngine:
                 ups = [p for p in projects_by_sector.get(up, []) if p in in_state]
                 downs = [p for p in projects_by_sector.get(down, []) if p in in_state]
                 for u in ups:
-                    ranked = downs
+                    ranked = downs                      # already id-sorted
                     if u in coords:
-                        ranked = sorted(downs, key=lambda d: _haversine_km(coords[u], coords[d]) if d in coords else 1e9)
+                        ranked = sorted(downs, key=lambda d: ((_haversine_km(coords[u], coords[d]) if d in coords else 1e9), str(d)))
                     for d in ranked[:cap]:
                         self.raw_graph.add_edge(u, d, edge_type="statutory", lead_time=lead,
                                                 basis="sector_supply_chain")
@@ -219,7 +227,7 @@ class SetuGraphEngine:
                 for a in members:
                     near = sorted(
                         ((_haversine_km(coords[a], coords[b]), b) for b in members if b != a),
-                        key=lambda t: t[0])
+                        key=lambda t: (t[0], str(t[1])))
                     for dist, b in near[:MAX_ADJ_OUT]:
                         if dist > ADJACENCY_KM:
                             break
@@ -412,7 +420,9 @@ class SetuGraphEngine:
         trivially and prove nothing. The previous docstring claimed the axiom on the
         strength of that division.
         """
-        nodes = list(self.dag.nodes())
+        # Sorted, so the seeded permutation stream is the same on every host regardless
+        # of the order the corpus rows arrived in (see the ROW-ORDER INDEPENDENCE note above the edge build).
+        nodes = sorted(self.dag.nodes(), key=str)
         N = len(nodes)
         if N == 0:
             return
@@ -508,9 +518,11 @@ class SetuGraphEngine:
             self.layout_from_cache = False
 
         # 2. Precompute Shapley Parquet
+        # Written in id order so the file is byte-stable across hosts and the
+        # artefact diff in git is a real change, not a row reshuffle.
         shapley_records = [
             {"project_id": str(n), "shapley_phi": self.shapley_scores.get(n, 0.0)}
-            for n in self.dag.nodes()
+            for n in sorted(self.dag.nodes(), key=str)
         ]
         shapley_df = pd.DataFrame(shapley_records)
         shapley_df.to_parquet(os.path.join(ARTIFACTS_DIR, "shapley.parquet"), index=False)
