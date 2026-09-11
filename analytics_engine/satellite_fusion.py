@@ -7,7 +7,8 @@ Scope, stated precisely because the previous version overclaimed it: this engine
 reports how much of the sampled ground structurally changed between the 2014 and 2026
 epochs, and where that ranks against sector peers. It does NOT estimate what fraction
 of a project is complete, and it does not assert over-reporting. Surface change and
-reported progress correlate at 0.007 across the site-level corpus, so no completion
+reported progress are uncorrelated across the site-level corpus (measured r in
+artifacts/eo_progress_independence.json, recomputed by eo_independence.py), so no completion
 figure is derivable from the imagery; the earlier one only appeared credible because
 45% of its value was copied from the claim it was supposed to audit.
 
@@ -320,7 +321,8 @@ class SatelliteFusionEngine:
 
 
         # There is deliberately no "observed progress %" here. Surface change and
-        # reported progress correlate at 0.007 across the site-level corpus, so imagery
+        # reported progress are uncorrelated across the site-level corpus (see
+        # artifacts/eo_progress_independence.json), so imagery
         # cannot support a completion figure; the previous one only looked plausible
         # because it was 45%-weighted on the claim it was auditing. The catalog is the
         # single source of truth -- no on-the-fly CV fallback, which used to reintroduce

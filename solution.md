@@ -1,7 +1,7 @@
 # 🛰️ PRAKALP-DRISHTI: The Complete Mathematical & Architectural Solution Specification
 ### Autonomous Infrastructure Intelligence & Sovereign Decision Cockpit
 **Smart India Hackathon 2026** | **Ministry of Statistics and Programme Implementation (MoSPI)**
-*Central Sector Mega-Projects Portfolio: 2,207 Projects | ₹31.4 Lakh Crore Public Capex*
+*Central Sector Mega-Projects Portfolio: 2,207 Projects | ₹47.44 Lakh Crore Public Capex*
 
 ---
 
@@ -27,7 +27,7 @@ It solves the fundamental crisis in Indian public infrastructure execution: **as
 │                                       PRAKALP-DRISHTI ARCHITECTURE                                     │
 ├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                                        │
-│   [ 2,207 Mega-Projects Database (₹31.4 Lakh Cr) ] ───► In-Memory Vector Store (<2.5ms Query Latency)   │
+│   [ 2,207 Mega-Projects Database (₹47.44 Lakh Cr) ] ───► In-Memory Vector Store (<2.5ms Query Latency)   │
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH & VARSHA    │      │ 3. VITTA-VYUHA           │   │

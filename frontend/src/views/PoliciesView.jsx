@@ -271,7 +271,7 @@ export default function PoliciesView() {
                     <span>MoSPI Official Portal (mospi.gov.in)</span>
                     <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
                   </a>
-                  <a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-300 flex items-center justify-between group">
+                  <a href="https://pmgatishakti.gov.in/pmgatishakti/login" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-300 flex items-center justify-between group">
                     <span>PM GatiShakti NMP (pmgatishakti.gov.in)</span>
                     <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
                   </a>

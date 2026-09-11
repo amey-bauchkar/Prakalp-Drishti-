@@ -296,7 +296,7 @@ Inside `/decision-hub`, policymakers have access to **10 dedicated analytical en
 
 ## 10. 🔢 Key Numbers, Formulas & Stats Every Teammate Must Memorize
 
-* **Total Monitored Portfolio**: 2,207 projects | **₹41.78 Lakh Crore** Total Revised Outlay.
+* **Total Monitored Portfolio**: 2,207 projects | **₹47.44 Lakh Crore** Total Portfolio Capex (₹41.78 Lakh Crore Original Sanctioned Outlay).
 * **National Delay Rate**: **44% to 55%** of mega-projects face delays of 12 to 140 months.
 * **Cumulative Cost Overrun**: **₹4.8 Lakh Crore+** locked in historical escalations.
 * **Cross-Project Exposure**: **₹23.97 Lakh Crore** locked in cross-project dependency cascades.

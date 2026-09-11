@@ -108,13 +108,53 @@ TEMPORAL_SPLIT = True
 MIN_MATURITY_YEARS = 5
 CURRENT_YEAR = 2026
 
-# Targets that survive out-of-time validation and may be served as point predictions.
-# slip_months is deliberately absent: measured chronologically it is 53-191% WORSE
-# than a train-mean baseline at every maturity gate. Schedule risk is served instead
-# by KAAL-CHAKRA's conformal intervals, which are separately validated at a measured
-# 93.3% coverage. Shipping a point predictor that loses to the mean would be
-# indefensible under questioning.
-DEPLOYABLE_TARGETS = {"cost_overrun_pct"}
+# Targets ELIGIBLE to be served as point predictions. Eligibility is not deployment:
+# a target ships only if `deployable_decision()` below passes on the measured
+# held-out numbers, so the flag on the artifact is a computed result, not a
+# declaration. slip_months is deliberately absent from the eligible set because
+# its apparent accuracy is a calendar identity (see calendar_identity in the
+# artifact); once the calendar anchor is removed it is 53-191% WORSE than a
+# train-mean baseline at every maturity gate. Schedule risk is served instead by
+# KAAL-CHAKRA's conformally calibrated fan, whose displayed 10-95% band covers a
+# measured 79.0% of held-out forward-looking targets at a nominal 85%.
+ELIGIBLE_TARGETS = {"cost_overrun_pct"}
+# Kept as an alias for older callers.
+DEPLOYABLE_TARGETS = ELIGIBLE_TARGETS
+
+
+def deployable_decision(target: str, dep_block: dict, cal_free_block: dict,
+                        calendar_identity_applies: bool) -> dict:
+    """Measured gate for serving a point predictor.
+
+    A model ships only if, on the chronological held-out slice, it beats BOTH
+    things an officer could do without it -- the train-mean and the sector-mean
+    baselines -- and, where the target is recoverable from a calendar identity,
+    the calendar-free refit still beats the train mean (otherwise the "skill" is
+    arithmetic, not learning). R-squared against the TEST mean is reported but
+    is not a criterion: nobody has the test mean at prediction time.
+    """
+    gbm = float(dep_block["gradient_boosting"]["mae"])
+    naive = float(dep_block["naive_train_mean"]["mae"])
+    sector = float(dep_block["sector_mean_baseline"]["mae"])
+    cal_gbm = float(cal_free_block["gradient_boosting"]["mae"])
+    cal_naive = float(cal_free_block["naive_train_mean"]["mae"])
+    criteria = {
+        "eligible_target": target in ELIGIBLE_TARGETS,
+        "beats_train_mean": gbm < naive,
+        "beats_sector_mean": gbm < sector,
+        "calendar_free_beats_train_mean": (not calendar_identity_applies) or (cal_gbm < cal_naive),
+    }
+    return {
+        "deployable": all(criteria.values()),
+        "criteria": criteria,
+        "held_out_mae": {"gradient_boosting": round(gbm, 3), "naive_train_mean": round(naive, 3),
+                          "sector_mean_baseline": round(sector, 3),
+                          "calendar_free_gradient_boosting": round(cal_gbm, 3),
+                          "calendar_free_naive_train_mean": round(cal_naive, 3)},
+        "note": ("Computed from the held-out slice; not a declaration. Negative R-squared "
+                 "against the test mean is reported alongside and is not a criterion, "
+                 "because the test mean is unavailable at prediction time."),
+    }
 
 # Columns that encode the answer. Never features.
 LEAKY_COLUMNS = {
@@ -483,7 +523,10 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
     # needed to rebuild an identical design matrix at inference time. Without this the
     # module is a benchmark report, not a model: there would be no way to answer
     # "predict the overrun for project X".
-    if target in DEPLOYABLE_TARGETS:
+    # Calendar identity is decided before the deploy gate because the gate needs it.
+    _cal_identity_applies = "slip" in target
+    _decision = deployable_decision(target, clean(dep), clean(cal_free), _cal_identity_applies)
+    if _decision["deployable"]:
         import joblib
         # WHICH model gets deployed is a measured decision, not an assumption.
         #
@@ -550,7 +593,8 @@ def benchmark_target(frame: pd.DataFrame, target: str, lo: float, hi: float) -> 
         "test_year_range": [int(d.iloc[te]["sanction_year"].min()), int(d.iloc[te]["sanction_year"].max())],
         "train_target_mean": round(float(np.mean(y[tr])), 2),
         "test_target_mean": round(float(np.mean(y[te])), 2),
-        "deployable": target in DEPLOYABLE_TARGETS,
+        "deployable": _decision["deployable"],
+        "deployable_basis": _decision,
         "headline_mae_lift_vs_naive_pct": None if lift is None else round(lift, 1),
         "headline_note": (
             "MAE lift over a train-mean baseline is the honest headline under temporal "

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility, ExternalLink } from 'lucide-react';
+import { Search, Menu, X, ChevronRight, ShieldCheck, LogOut, Sparkles, Building2, Layers, Facebook, Rss, Accessibility, ExternalLink, Languages } from 'lucide-react';
 
 // Routes are split so each audience downloads only its own surface. Vendor chunks
 // were already split in vite.config.js, but the application itself was one 1,510 kB
@@ -15,9 +15,8 @@ const PoliciesView         = React.lazy(() => import('./views/PoliciesView.jsx')
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
 import SmoothScrollProvider from './components/SmoothScrollProvider.jsx';
-import AccessibilityBar from './components/AccessibilityBar.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
-import { getStoredLanguage, t } from './lib/i18n';
+import { getStoredLanguage, setStoredLanguage, t } from './lib/i18n';
 
 
 
@@ -41,6 +40,11 @@ function InstitutionalHeader() {
     window.addEventListener('prakalp:languageChanged', onLang);
     return () => window.removeEventListener('prakalp:languageChanged', onLang);
   }, []);
+
+  const toggleLanguage = () => {
+    const next = currentLang === 'en' ? 'hi' : 'en';
+    setStoredLanguage(next);
+  };
 
   // Top-level Navigation: Sovereign Home, Government Decision Hub, Nagrik Portal
   // CORPUS ADMIN is offered only to a session holding `allocate_capital`. This is
@@ -73,9 +77,6 @@ function InstitutionalHeader() {
             <div className="flex items-center gap-1.5">
               <span lang="en" className="font-heading font-black text-[20px] sm:text-[22px] text-[#0060B6] tracking-tight leading-none">
                 prakalp<span className="text-[#FF9933]">.drishti</span>
-              </span>
-              <span className="hidden xl:inline-flex items-center px-1.5 py-0.2 rounded-sm text-[8px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-300 font-mono">
-                <span lang="en">MoSPI · CCEA AI</span>
               </span>
             </div>
             <div className="text-[10px] text-slate-500 font-medium tracking-tight mt-0.5">
@@ -120,11 +121,22 @@ function InstitutionalHeader() {
         </div>
 
         {/* Right side utility / login controls */}
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          {/* GIGW Bilingual Hindi / English Switcher */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            title={currentLang === 'en' ? 'Switch to Hindi / हिन्दी में देखें' : 'Switch to English / अंग्रेज़ी में देखें'}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-amber-500/50 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-[11.5px] tracking-wide transition-colors cursor-pointer shadow-2xs font-heading"
+          >
+            <Languages className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
+            <span>{currentLang === 'en' ? 'हिन्दी' : 'English'}</span>
+          </button>
+
           {/* Search Popover Trigger */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
-            className="p-1.5 text-slate-600 hover:text-[#0060B6] hover:bg-slate-100 rounded-full transition-colors"
+            className="p-1.5 text-slate-600 hover:text-[#0060B6] hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
             title="Search projects"
           >
             <Search className="w-4 h-4" />
@@ -167,6 +179,14 @@ function InstitutionalHeader() {
 
         {/* Mobile controls */}
         <div className="flex items-center gap-2 lg:hidden">
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="px-2 py-1 text-xs font-bold font-heading rounded border border-amber-500/50 bg-amber-50 text-amber-900"
+            title={currentLang === 'en' ? 'हिन्दी' : 'English'}
+          >
+            {currentLang === 'en' ? 'हिन्दी' : 'Eng'}
+          </button>
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="p-2 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200"
@@ -297,7 +317,6 @@ function InstitutionalFooter() {
 
               <div className="pt-2 text-[11.5px] text-slate-400 space-y-1.5 border-t border-slate-800/80">
                 <div><span className="text-slate-200 font-medium">{t('ft_nodal_division', lang)}</span> {t('ft_nodal_division_val', lang)}</div>
-                <div><span className="text-slate-200 font-medium">{t('ft_built_for', lang)}</span> {t('ft_built_for_val', lang)}</div>
               </div>
 
               {/* Official Social Channels & Network */}
@@ -397,7 +416,7 @@ function InstitutionalFooter() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://pmgatishakti.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                  <a href="https://pmgatishakti.gov.in/pmgatishakti/login" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
                     <span lang="en">PM GatiShakti NMP</span>
                   </a>
                 </li>
@@ -417,7 +436,7 @@ function InstitutionalFooter() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://cloud.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
+                  <a href="https://cloud.gov.in/user/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition-colors block">
                     <span lang="en">NIC MeghRaj Cloud</span>
                   </a>
                 </li>
@@ -488,12 +507,6 @@ function InstitutionalFooter() {
                 </li>
               </ul>
 
-              {/* Previously asserted NIC hosting. It is a prototype; stating the
-                  deployment target rather than a present fact keeps the claim true. */}
-              <div className="pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-300 space-y-1">
-                <div>{t('ft_deployment_target', lang)} <strong className="text-slate-200">National Informatics Centre (NIC)</strong></div>
-                <div>{t('ft_intended_owner', lang)} <strong className="text-slate-200">{t('ft_nodal_division_val', lang)}</strong></div>
-              </div>
             </div>
           </div>
         </div>
@@ -633,10 +646,6 @@ export default function App() {
         <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
           {/* WCAG 2.4.1 Bypass Blocks */}
           <a href="#main-content" className="skip-to-content">{t('skip_to_content', appLang)}</a>
-
-          {/* Prototype provenance + the text-size and contrast controls the
-              accessibility statement promises. Above the masthead, on every page. */}
-          <AccessibilityBar />
 
           <ErrorBoundary label="site header">
             <InstitutionalHeader />

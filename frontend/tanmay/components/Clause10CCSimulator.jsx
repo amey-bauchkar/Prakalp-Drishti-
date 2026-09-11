@@ -250,7 +250,7 @@ export default function Clause10CCSimulator({ lang = 'en' }) {
           <div className="space-y-1">
             <span className="font-mono text-xs font-bold uppercase tracking-wider block">
               {isCloseTo20
-                ? (isHi ? "संदेहास्पद: सीसीईए बचाव निकटता [18%, 20%)" : "SUSPICIOUS: CCEA EVASION PROXIMITY [18%, 20%)")
+                ? (isHi ? "सीसीईए सीमा से ठीक नीचे [18%, 20%)" : "JUST BELOW CCEA THRESHOLD [18%, 20%)")
                 : isOver20
                 ? (isHi ? "अनिवार्य सीसीईए कैबिनेट समीक्षा आवश्यक (≥20%)" : "CCEA MANDATORY REVIEW REQUIRED (≥20%)")
                 : (isHi ? "सामान्य अनुपालन संशोधन (<18%)" : "NORMAL COMPLIANT REVISION (<18%)")}

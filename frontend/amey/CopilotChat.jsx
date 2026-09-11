@@ -13,7 +13,7 @@ import { getStoredLanguage, t } from '../src/lib/i18n';
 
 const SUGGESTIONS = [
   { label: 'Timeline forecast & delay causes', q: 'What is the timeline forecast and what is driving the delay?' },
-  { label: 'CCEA 20% anti-gaming audit', q: 'Is the cost overrun within the statutory CCEA limit?' },
+  { label: 'CCEA 20% threshold check', q: 'Is the cost overrun within the statutory CCEA limit?' },
   { label: 'Monsoon work-window contraction', q: 'What is the monsoon impact on this project?' },
   { label: 'Satellite change-detection verdict', q: 'Give me the satellite ground-truth verdict.' },
 ];

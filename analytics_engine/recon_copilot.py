@@ -65,6 +65,14 @@ GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 GEMINI_ENDPOINT = ("https://generativelanguage.googleapis.com/v1beta/models/"
                    "{model}:generateContent")
 
+def _eo_statement() -> str:
+    try:
+        from analytics_engine.eo_independence import statement
+        return statement()
+    except Exception:  # pragma: no cover
+        return "surface change and reported progress are treated as independent"
+
+
 SYSTEM_PROMPT = (
     "You are the PRAKALP-DRISHTI satellite reconnaissance analyst briefing the "
     "Cabinet Secretariat of the Government of India on one infrastructure "
@@ -76,9 +84,8 @@ SYSTEM_PROMPT = (
     "Hard rules:\n"
     "1. Every number you state must appear verbatim in the TELEMETRY. Never "
     "compute, round, convert units, or infer a figure.\n"
-    "2. Describe what was OBSERVED. Do not state a completion percentage: "
-    "surface change and reported progress correlate at 0.007 across this "
-    "corpus, so imagery cannot support one.\n"
+    "2. Describe what was OBSERVED. Do not state a completion percentage: in "
+    "this corpus " + _eo_statement() + ", so imagery cannot support one.\n"
     "3. If the telemetry shows a discrepancy between reported progress and "
     "measured change, say so plainly in the second sentence.\n"
     "4. No preamble, no bullet points, no markdown, no headings. Two sentences.\n"

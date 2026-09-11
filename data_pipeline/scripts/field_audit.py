@@ -30,7 +30,7 @@ SETU_FIELDS = {
 VITTA_FIELDS = {
     'total_budget_pool_cr', 'total_allocated_cr', 'expected_completion_yield',
     'cvar90_tail_loss', 'ner_allocated_cr', 'ner_share_perc', 'ner_floor_met',
-    'shadow_price_budget_pi', 'shadow_price_ner_pi', 'agency_shadow_prices',
+    'shadow_price_budget_pi', 'shadow_price_ner_pi', 'agency_marginal_yield_indicator',
     'allocations', 'closure_error_perc', 'solve_time_ms'
 }
 

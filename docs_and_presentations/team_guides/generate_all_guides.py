@@ -577,7 +577,7 @@ def build_amey_doc():
         "3. High-Performance Full Stack Architecture:\n"
         "   • Backend: Python FastAPI with in-memory pandas cache delivering sub-10ms query responses.\n"
         "   • Solver: Open-source HiGHS Simplex LP solver (<2s full portfolio solve across 300 scenarios).\n"
-        "   • Persistence: Dual-path architecture—writes go to Supabase PostgreSQL (ap-south-1, Mumbai) with append-only Merkle hash chains; reads served from RAM.\n"
+        "   • Persistence: Dual-path architecture—writes go to Supabase PostgreSQL (ap-southeast-1, Singapore) with append-only Merkle hash chains; reads served from RAM.\n"
         "   • Frontend: React + Vite + TailwindCSS with route-level code splitting (initial bundle reduced to 65 kB)."
     )
 

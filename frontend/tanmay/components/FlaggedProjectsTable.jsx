@@ -10,7 +10,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
   const isHi = lang === 'hi';
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('ALL');
-  const [sortField, setSortField] = useState('suspicion_score');
+  const [sortField, setSortField] = useState('review_priority_score');
   const [sortAsc, setSortAsc] = useState(false);
 
   // Pagination state
@@ -19,7 +19,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
 
   const exportToCSV = () => {
     if (!sorted || !sorted.length) return;
-    const headers = ['Project ID', 'Project Name', 'Sector', 'Agency', 'State', 'Cost Overrun %', 'Suspicion Score', 'Clause 10CC Escalation (₹ Cr)', 'Status'];
+    const headers = ['Project ID', 'Project Name', 'Sector', 'Agency', 'State', 'Cost Overrun %', 'Review Priority (0-100)', 'Clause 10CC Escalation (₹ Cr)', 'Status'];
     const rows = sorted.map(p => [
       `"${p.project_id || ''}"`,
       `"${(p.project_name || '').replace(/"/g, '""')}"`,
@@ -27,7 +27,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
       `"${(p.agency || '').replace(/"/g, '""')}"`,
       `"${(p.state || '').replace(/"/g, '""')}"`,
       p.cost_overrun_pct != null ? Number(p.cost_overrun_pct).toFixed(2) : '',
-      p.suspicion_score != null ? Number(p.suspicion_score).toFixed(3) : '',
+      p.review_priority_score != null ? Number(p.review_priority_score).toFixed(0) : '',
       p.clause_10cc_risk_cr != null ? Number(p.clause_10cc_risk_cr).toFixed(2) : '',
       `"${(p.status || 'FLAGGED').replace(/"/g, '""')}"`
     ]);
@@ -230,11 +230,11 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                 {isHi ? "सांविधिक 10सीसी सीमा" : "Statutory 10CC Cap"}
               </TableHeaderCell>
               <TableHeaderCell
-                onClick={() => handleSort('suspicion_score')}
+                onClick={() => handleSort('review_priority_score')}
                 className="py-3 px-3 text-center cursor-pointer hover:text-slate-900"
               >
                 <div className="flex items-center justify-center gap-1">
-                  <span>{isHi ? "संदेह स्कोर" : "Suspicion Score"}</span>
+                  <span>{isHi ? "समीक्षा प्राथमिकता" : "Review Priority"}</span>
                   <ArrowUpDown className="w-3 h-3 opacity-60" />
                 </div>
               </TableHeaderCell>
@@ -246,7 +246,8 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
 
           <TableBody className="divide-y divide-slate-100 font-sans">
             {paginatedProjects.map((p, idx) => {
-              const isHighSuspicion = (p.suspicion_score || 0) >= 65;
+              const score = p.review_priority_score ?? p.priority_score ?? p.suspicion_score ?? 0;
+              const isHighSuspicion = score >= 65;
               const isUltraClose = (p.distance_to_boundary_pp || 0) <= 0.5;
 
               return (
@@ -314,23 +315,23 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                     </span>
                   </TableCell>
 
-                  {/* Suspicion Score */}
+                  {/* Review priority: a triage order with declared 60/40 weights, not a finding */}
                   <TableCell className="py-3.5 px-3 text-center">
                     <div className="flex flex-col items-center gap-1">
                       <span
                         className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono inline-block border ${
-                          p.suspicion_score >= 70
+                          score >= 70
                             ? 'bg-rose-50 text-rose-800 border-rose-300'
-                            : p.suspicion_score >= 40
+                            : score >= 40
                             ? 'bg-amber-50 text-amber-800 border-amber-300'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
-                        {p.suspicion_score ?? 'N/A'}/100
+                        {(p.review_priority_score ?? p.priority_score ?? p.suspicion_score) ?? 'N/A'}/100
                       </span>
-                      {p.suspicion_driver && (
-                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.suspicion_driver}>
-                          {p.suspicion_driver}
+                      {(p.review_priority_basis || p.priority_driver || p.suspicion_driver) && (
+                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.review_priority_basis || p.priority_driver || p.suspicion_driver}>
+                          {p.review_priority_basis || p.priority_driver || p.suspicion_driver}
                         </span>
                       )}
                     </div>

@@ -13,7 +13,8 @@
 -- WHAT IS DELIBERATELY ABSENT FROM THIS SCHEMA
 -- --------------------------------------------
 -- There is no `satellite_detected_progress_pct` column, and no `discrepancy_pct`.
--- Surface change and reported progress correlate at r = 0.007 in this corpus, so a
+-- Surface change and reported progress are uncorrelated in this corpus (measured r in
+-- artifacts/eo_progress_independence.json), so a
 -- satellite-derived completion figure cannot be computed honestly, and a
 -- claimed-minus-detected score would inherit that noise while looking authoritative.
 -- Such a figure existed in this system once and was removed for being 45%-weighted on
@@ -93,8 +94,8 @@ create table if not exists project_imagery_epochs (
 
 comment on column project_imagery_epochs.surface_change_pct is
     'Fraction of SAMPLED GROUND that structurally changed since the previous epoch. '
-    'NOT a completion estimate: surface change correlates with reported progress at '
-    'r=0.007 in this corpus. NULL means unmeasured, never zero.';
+    'NOT a completion estimate: surface change is uncorrelated with reported progress '
+    'in this corpus (artifacts/eo_progress_independence.json). NULL means unmeasured, never zero.';
 
 create index if not exists project_imagery_epochs_project_idx
     on project_imagery_epochs(project_id, captured_on);

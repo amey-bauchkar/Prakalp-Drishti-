@@ -30,13 +30,36 @@ class TestSatyaKavach(unittest.TestCase):
         self.assertEqual(summary["module"], "SATYA-KAVACH")
         self.assertEqual(summary["module_lead"], "Tanmay")
 
-        # Check Boundary Bin-Mass Ratio and 95% CI
-        signal = summary["mccrary_bunching_signal"]
+        # Descriptive two-bin ratio with its 95% CI (renamed from the misleading
+        # "mccrary_bunching_signal"; it is a count ratio, not a McCrary test)
+        signal = summary["boundary_bin_ratio"]
         self.assertGreater(signal["boundary_bin_mass_ratio"], 1.0)
         self.assertEqual(signal["numerator_count"], 28)
         self.assertEqual(signal["denominator_count"], 17)
         self.assertIn("interpretation", signal)
         self.assertIn("confidence_interval_95", signal)
+        self.assertIn("ci_method", signal)
+        self.assertNotIn("mccrary_bunching_signal", summary)
+
+        # The actual McCrary (2008) density-discontinuity test at the 20% cutoff
+        mcc = summary["mccrary_density_test"]
+        self.assertTrue(mcc["available"])
+        self.assertEqual(mcc["cutoff"], 20.0)
+        for k in ("theta_log_density_jump", "se", "z", "p_two_sided",
+                  "p_one_sided_bunching_below", "bandwidth", "bin_width"):
+            self.assertIn(k, mcc)
+        self.assertGreater(mcc["se"], 0.0)
+        self.assertTrue(0.0 <= mcc["p_two_sided"] <= 1.0)
+        # z must equal theta / se as reported
+        self.assertAlmostEqual(mcc["z"], mcc["theta_log_density_jump"] / mcc["se"], places=1)
+        # and the verdict flags must agree with the p-values
+        self.assertEqual(mcc["significant_at_5pct_two_sided"], mcc["p_two_sided"] < 0.05)
+        self.assertEqual(mcc["significant_at_5pct_one_sided"], mcc["p_one_sided_bunching_below"] < 0.05)
+        # The reading must disclaim intent, not assert it.
+        reading = mcc["reading"].lower()
+        self.assertIn("does not establish intent", reading)
+        for banned in ("artificial", "gaming", "fraud", "evasion"):
+            self.assertNotIn(banned, reading)
 
         # Check KPIs
         kpis = summary["kpi_metrics"]
@@ -93,7 +116,7 @@ class TestSatyaKavach(unittest.TestCase):
         )
         self.assertEqual(sim["inputs"]["original_cost_cr"], 1000.0)
         self.assertEqual(sim["claimed_overrun_pct"], 19.5)
-        self.assertTrue(sim["is_ccea_threshold_evasion"])
+        self.assertTrue(sim["is_just_below_ccea_threshold"])
         self.assertGreater(sim["statutory_allowed_escalation_cr"], 0.0)
 
     def test_project_dossier_inspection(self):

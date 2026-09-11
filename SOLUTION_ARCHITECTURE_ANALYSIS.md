@@ -57,7 +57,7 @@ MoSPI currently maintains **PAIMANA** (Project Appraisal, Implementation, and Mo
 │                                       PRAKALP-DRISHTI ARCHITECTURE                                     │
 ├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                                        │
-│   [ 2,207 Mega-Projects Database (₹31.4 Lakh Cr) ] ───► In-Memory RAM Store (<5ms Query Speed)         │
+│   [ 2,207 Mega-Projects Database (₹47.44 Lakh Cr) ] ───► In-Memory RAM Store (<5ms Query Speed)         │
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH             │      │ 3. VITTA-VYUHA           │   │

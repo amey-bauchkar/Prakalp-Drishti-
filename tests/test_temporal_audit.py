@@ -5,7 +5,8 @@ The rule this suite exists to defend
 ------------------------------------
 NO SATELLITE-DERIVED COMPLETION PERCENTAGE, AND NO CLAIMED-MINUS-DETECTED SCORE.
 
-Surface change and reported progress correlate at r = 0.007 in this corpus. A
+Surface change and reported progress are uncorrelated in this corpus (measured in
+artifacts/eo_progress_independence.json). A
 "satellite says 38.4% complete" figure is therefore a guess wearing the costume of a
 measurement, and a fraud badge computed from it would accuse named government
 contractors on the strength of noise. Such a figure existed in this system once and was
@@ -21,6 +22,7 @@ should, never fires where the sensor is blind, and always recommends inspection 
 than asserting wrongdoing.
 """
 
+import json
 import os
 import sys
 from datetime import date
@@ -91,8 +93,12 @@ check("the observed field is named for what it measures",
       all("observed_change_pct" in m for m in tl["milestones"]),
       "'observed_change_pct' is surface change, not completion")
 
-check("the payload states the r=0.007 limitation",
-      "0.007" in tl["methodology"])
+_eo = json.load(open(os.path.join(BASE_DIR, "artifacts", "eo_progress_independence.json"), encoding="utf-8"))
+_r = _eo["overall"]["pearson_r"]
+check("the payload states the measured EO/progress independence figure",
+      f"r = {_r:+.3f}" in tl["methodology"] and isinstance(tl.get("eo_progress_independence"), dict),
+      f"artifact r={_r}; methodology={tl['methodology'][:90]!r}")
+check("the cited figure is near zero", abs(_r) < 0.10, f"r={_r}")
 check("the payload disclaims a completion estimate",
       "not completion" in tl["methodology"].lower()
       or "no satellite-derived completion" in tl["methodology"].lower())

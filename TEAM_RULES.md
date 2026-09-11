@@ -82,7 +82,7 @@ import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 1. Master Projects Database (2,207 projects, ₹31.4 Lakh Cr capex)
+# 1. Master Projects Database (2,207 projects, ₹47.44 Lakh Cr capex)
 DATA_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MASTER_PROJECTS_DATABASE.csv")
 df = pd.read_csv(DATA_PATH)
 

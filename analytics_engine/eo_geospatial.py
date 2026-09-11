@@ -734,6 +734,14 @@ def construction_velocity(
     return out
 
 
+def _eo_statement() -> str:
+    try:
+        from analytics_engine.eo_independence import statement
+        return statement()
+    except Exception:  # pragma: no cover
+        return "surface change and reported progress are treated as independent"
+
+
 def pace_against_dpr(
     velocity: Dict[str, Any],
     planned_months: Optional[float],
@@ -787,9 +795,9 @@ def pace_against_dpr(
             if observed_pct_per_month > 1e-6 else None),
         "caveat": ("Progress pace uses the agency's REPORTED physical progress over "
                    "the imagery window; the imagery contributes the independent "
-                   "area figure beside it, not this ratio. Surface change and "
-                   "reported progress correlate at 0.007 across this corpus, so "
-                   "the two must be read together rather than substituted."),
+                   "area figure beside it, not this ratio. In this corpus "
+                   + _eo_statement() +
+                   ", so the two must be read together rather than substituted."),
     }
 
 

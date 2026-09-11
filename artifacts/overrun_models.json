@@ -51,6 +51,23 @@
       "train_target_mean": 19.58,
       "test_target_mean": 5.91,
       "deployable": true,
+      "deployable_basis": {
+        "deployable": true,
+        "criteria": {
+          "eligible_target": true,
+          "beats_train_mean": true,
+          "beats_sector_mean": true,
+          "calendar_free_beats_train_mean": true
+        },
+        "held_out_mae": {
+          "gradient_boosting": 16.24,
+          "naive_train_mean": 22.413,
+          "sector_mean_baseline": 18.495,
+          "calendar_free_gradient_boosting": 17.125,
+          "calendar_free_naive_train_mean": 22.413
+        },
+        "note": "Computed from the held-out slice; not a declaration. Negative R-squared against the test mean is reported alongside and is not a criterion, because the test mean is unavailable at prediction time."
+      },
       "headline_mae_lift_vs_naive_pct": 27.5,
       "headline_note": "MAE lift over a train-mean baseline is the honest headline under temporal distribution shift. R2 compares against the TEST mean, which nobody has at prediction time, so a negative R2 alongside a positive MAE lift means the model beats what an officer could actually do unaided.",
       "n_usable": 1057,
@@ -94,14 +111,14 @@
           "rmse": 26.044
         },
         "ols_linear_regression": {
-          "r2": -0.8838,
-          "mae": 23.272,
-          "rmse": 33.552
+          "r2": -0.4827,
+          "mae": 19.997,
+          "rmse": 29.766
         },
         "gradient_boosting": {
-          "r2": -0.1226,
-          "mae": 17.899,
-          "rmse": 25.901
+          "r2": -0.1147,
+          "mae": 16.854,
+          "rmse": 25.809
         }
       },
       "calendar_free": {
@@ -116,22 +133,22 @@
           "rmse": 26.044
         },
         "ols_linear_regression": {
-          "r2": -1.1702,
-          "mae": 25.859,
-          "rmse": 36.013
+          "r2": -0.6826,
+          "mae": 22.22,
+          "rmse": 31.709
         },
         "gradient_boosting": {
-          "r2": -0.2377,
-          "mae": 19.169,
-          "rmse": 27.197
+          "r2": -0.0996,
+          "mae": 17.125,
+          "rmse": 25.634
         }
       },
       "calendar_identity": {
         "applies": false,
         "explanation": "Not applicable: cost_overrun_pct is not recoverable from any feature, since RevisedCost is neither a feature nor derivable from OriginalCost.",
-        "r2_with_calendar": -0.1226,
-        "r2_calendar_free": -0.2377,
-        "r2_attributable_to_calendar": 0.1151
+        "r2_with_calendar": -0.1147,
+        "r2_calendar_free": -0.0996,
+        "r2_attributable_to_calendar": -0.0151
       },
       "ml_vs_conventional": {
         "evaluated_variant": "cuf_only",
@@ -144,9 +161,9 @@
       },
       "cuf_vs_external_ablation": {
         "cuf_only_mae": 16.24,
-        "with_external_mae": 17.899,
-        "mae_improvement": -1.659,
-        "mae_improvement_pct": -10.22,
+        "with_external_mae": 16.854,
+        "mae_improvement": -0.614,
+        "mae_improvement_pct": -3.78,
         "external_helps": false
       },
       "drivers": [
@@ -257,6 +274,23 @@
       "train_target_mean": 39.37,
       "test_target_mean": 19.71,
       "deployable": false,
+      "deployable_basis": {
+        "deployable": false,
+        "criteria": {
+          "eligible_target": false,
+          "beats_train_mean": true,
+          "beats_sector_mean": true,
+          "calendar_free_beats_train_mean": false
+        },
+        "held_out_mae": {
+          "gradient_boosting": 10.498,
+          "naive_train_mean": 20.57,
+          "sector_mean_baseline": 24.256,
+          "calendar_free_gradient_boosting": 45.021,
+          "calendar_free_naive_train_mean": 20.57
+        },
+        "note": "Computed from the held-out slice; not a declaration. Negative R-squared against the test mean is reported alongside and is not a criterion, because the test mean is unavailable at prediction time."
+      },
       "headline_mae_lift_vs_naive_pct": 49.0,
       "headline_note": "MAE lift over a train-mean baseline is the honest headline under temporal distribution shift. R2 compares against the TEST mean, which nobody has at prediction time, so a negative R2 alongside a positive MAE lift means the model beats what an officer could actually do unaided.",
       "n_usable": 971,
@@ -300,14 +334,14 @@
           "rmse": 27.088
         },
         "ols_linear_regression": {
-          "r2": 0.4146,
+          "r2": 0.4137,
           "mae": 7.648,
-          "rmse": 9.862
+          "rmse": 9.869
         },
         "gradient_boosting": {
-          "r2": -3.9148,
-          "mae": 26.26,
-          "rmse": 28.573
+          "r2": -3.6965,
+          "mae": 25.696,
+          "rmse": 27.932
         }
       },
       "calendar_free": {
@@ -322,22 +356,22 @@
           "rmse": 27.088
         },
         "ols_linear_regression": {
-          "r2": -9.686,
-          "mae": 39.452,
-          "rmse": 42.132
+          "r2": -9.7213,
+          "mae": 39.468,
+          "rmse": 42.202
         },
         "gradient_boosting": {
-          "r2": -13.1867,
-          "mae": 45.267,
-          "rmse": 48.546
+          "r2": -12.8942,
+          "mae": 45.021,
+          "rmse": 48.042
         }
       },
       "calendar_identity": {
         "applies": true,
         "explanation": "slip_months = RevisedDate - OriginalEndDate, and OriginalEndDate is recoverable from sanction_year + planned_months. RevisedDate is tightly clustered (std ~1.3y) while OriginalEndDate is not (std ~9.3y), so much of the apparent accuracy is an arithmetic identity rather than learned skill. The calendar_free block is the defensible skill estimate.",
-        "r2_with_calendar": -3.9148,
-        "r2_calendar_free": -13.1867,
-        "r2_attributable_to_calendar": 9.2719
+        "r2_with_calendar": -3.6965,
+        "r2_calendar_free": -12.8942,
+        "r2_attributable_to_calendar": 9.1977
       },
       "ml_vs_conventional": {
         "evaluated_variant": "cuf_only",
@@ -350,9 +384,9 @@
       },
       "cuf_vs_external_ablation": {
         "cuf_only_mae": 10.498,
-        "with_external_mae": 26.26,
-        "mae_improvement": -15.762,
-        "mae_improvement_pct": -150.14,
+        "with_external_mae": 25.696,
+        "mae_improvement": -15.198,
+        "mae_improvement_pct": -144.77,
         "external_helps": false
       },
       "drivers": [

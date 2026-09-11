@@ -61,7 +61,7 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 │   ┌────────────────────────────────────────────────────────────────────────────────────────────────┐   │
 │   │ 6. CAUSAL COCKPIT, GOVERNANCE & NAGRIK PUBLIC PORTAL                                           │   │
 │   │ • Unified Decision Cockpit: Delay Shock ──► Graph Contagion ──► Capital Re-Balancing           │   │
-│   │ • SATYA-KAVACH: 20% Cost Overrun Anti-Gaming & GCC Clause 10CC Evasion Audit                   │   │
+│   │ • SATYA-KAVACH: 20% CCEA Threshold Density-Discontinuity Test & GCC Clause 10CC Audit         │   │
 │   │ • ARTHA-NIVARAN: 225 Contractor PSU Balance-Sheet Stress & Leverage Tiers                      │   │
 │   │ • ANUMATI: Regulatory Stagnation Index across Forest, Land & Statutory Clearances             │   │
 │   │ • NAGRIK PORTAL (/nagrik): RTI §4(1)(b) Proactive Transparency for Indian Citizens             │   │
@@ -74,7 +74,7 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 ## 🚀 Key Modules & Capabilities
 
 ### 1. 🕒 KAAL-CHAKRA (Probabilistic Completion Quantiles)
-* **Mathematical Core**: Log-logistic **Accelerated Failure Time (AFT)** survival model, fitted by penalised maximum likelihood under **right-censoring** (160 observed completions, 1,988 censored) via `scipy` L-BFGS-B, then conditioned on on-ground completion pace. Sector and entity effects are shrunk under a Normal(0, tau^2) prior with tau selected by 5-fold cross-validation. Weibull is **not** fitted. See [CLAIMS.md](CLAIMS.md).
+* **Mathematical Core**: Log-logistic **Accelerated Failure Time (AFT)** survival model, fitted by penalised maximum likelihood under **right-censoring** (115 observed completions, 1,988 censored) via `scipy` L-BFGS-B, then conditioned on on-ground completion pace and wrapped in a split-conformal band calibrated on the engine's own median (79.0% measured coverage at a nominal 85%). The baseline multiplier is an upper-ish bound because the register is survivor-biased — see [CLAIMS.md](CLAIMS.md). Sector and entity effects are shrunk under a Normal(0, tau^2) prior with tau selected by 5-fold cross-validation. Weibull is **not** fitted. See [CLAIMS.md](CLAIMS.md).
 * **Finite-Sample Conformalized Quantile Regression (CQR)**: Guarantees strict non-crossing monotonicity:
   $$P_{10} \le P_{50} \le P_{80} \le P_{95}$$
 * **Competing Risks Attenuation**: Fine-Gray-*style* bounded foreclosure term for absorbing terminal states (abandonment, litigation stay, cancellation). No sub-distribution hazard or CIF is fitted - the corpus carries no competing-event labels. See [CLAIMS.md](CLAIMS.md).
@@ -130,7 +130,7 @@ SIH PS/
 │   │   ├── components/BaseMapLayer.jsx       # CartoDB Positron / Offline Fallback Tile Layer
 │   │   └── views/PublicDashboardView.jsx     # Nagrik Citizen Transparency Portal (/nagrik)
 │   ├── amey/                                 # Decision Hub, Satellite Viewer, LP Allocator & Copilot
-│   ├── tanmay/                               # Satya-Kavach Anti-Gaming & Dispute Audit Views
+│   ├── tanmay/                               # Satya-Kavach threshold-density & Clause 10CC audit views
 │   ├── parth/                                # Artha-Nivaran PSU Leverage & Financial Stress Views
 │   └── dist/                                 # Optimized Production Build (Pre-rendered Chunks)
 │

@@ -7,17 +7,19 @@ export default function BunchingHistogram({ histogramData }) {
   const bins = histogramData?.bins || [];
   const meta = histogramData?.population_metadata || {};
 
-  const totalProjects = meta.active_revised_count || 1183;
-  const excludedCount = meta.excluded_no_revision_count || 1024;
+  const totalProjects = meta.active_revised_count ?? 0;
+  const excludedCount = meta.excluded_no_revision_count ?? 0;
   const totalCapexCr = bins.reduce((acc, b) => acc + (b.total_capex_cr || 0), 0);
   const maxCount = Math.max(...bins.map((b) => b.project_count || 0), 1);
+  const belowCount = bins.find((b) => (b.bin_label || b.label || '').includes("18.0% - 19.99%"))?.project_count ?? 0;
+  const aboveCount = bins.find((b) => (b.bin_label || b.label || '').includes("20.0% - 22.0%"))?.project_count ?? 0;
 
   // Color mapping based on statutory risk and proximity
   const getBandTheme = (label) => {
     if (label.includes("18.0% - 19.99%")) {
       return {
         barColor: "bg-amber-500",
-        badge: "SUSPICIOUS BUNCHING ZONE",
+        badge: "JUST BELOW 20% THRESHOLD",
         badgeCls: "bg-amber-100 text-amber-900 border-amber-300 font-bold",
         textCls: "text-amber-800 font-bold"
       };
@@ -97,11 +99,14 @@ export default function BunchingHistogram({ histogramData }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+          {/* Counts come from the bins; no hardcoded 28/17 and no "spike" label -- the
+              McCrary test on this distribution gives p = 0.68 at 20%, so the band is
+              described by where it sits, not by an adjective. */}
           <span className="px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-semibold">
-            [18%, 20%): 28 Projects (Anomalous Spike)
+            [18%, 20%): {belowCount.toLocaleString('en-IN')} Projects (just below threshold)
           </span>
           <span className="px-2.5 py-1 rounded-md bg-rose-50 text-rose-800 border border-rose-200 font-semibold">
-            [20%, 22%): 17 Projects (CCEA Drop-off)
+            [20%, 22%): {aboveCount.toLocaleString('en-IN')} Projects (CCEA review triggered)
           </span>
           <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
             {excludedCount} Unrevised Excluded

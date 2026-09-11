@@ -1,535 +1,563 @@
 {
   "as_of": "2026-06-30",
+  "baseline_caveat": "The baseline multiplier is fitted on a register that retains ongoing projects and sheds completed ones. Treat it as an upper-ish bound, not a point estimate of typical overrun. See 'survivorship'.",
   "entity_default": 1.0,
   "entity_detail": {
     "AAI": {
-      "delta": -0.0483,
+      "delta": -0.0297,
       "evidence": "prior-dominated",
-      "multiplier": 0.9528,
+      "multiplier": 0.9707,
       "n_events": 1,
       "n_projects": 27,
-      "se": 0.1856
+      "se": 0.1441
     },
     "COAL_INDIA": {
-      "delta": 0.059,
+      "delta": 0.0423,
       "evidence": "prior-dominated",
-      "multiplier": 1.0607,
+      "multiplier": 1.0432,
       "n_events": 0,
       "n_projects": 89,
-      "se": 0.1868
-    },
-    "DEPARTMENT_OF_TELECOMMUNICATIO": {
-      "delta": -0.1554,
-      "evidence": "prior-dominated",
-      "multiplier": 0.856,
-      "n_events": 2,
-      "n_projects": 5,
-      "se": 0.1844
+      "se": 0.1429
     },
     "EDTK_MC_RB": {
-      "delta": -0.1004,
+      "delta": -0.0543,
       "evidence": "prior-dominated",
-      "multiplier": 0.9045,
+      "multiplier": 0.9471,
       "n_events": 1,
       "n_projects": 9,
-      "se": 0.1947
+      "se": 0.148
     },
     "EMPLOYEE_S_STATE_INSURANCE_COM": {
-      "delta": -0.093,
+      "delta": -0.0502,
       "evidence": "prior-dominated",
-      "multiplier": 0.9112,
+      "multiplier": 0.9511,
       "n_events": 1,
       "n_projects": 15,
-      "se": 0.1931
+      "se": 0.1473
     },
     "INDIAN_INSTITUTE_OF_TECHNOLOGY": {
-      "delta": 0.0128,
+      "delta": 0.0082,
       "evidence": "prior-dominated",
-      "multiplier": 1.0129,
+      "multiplier": 1.0082,
       "n_events": 0,
       "n_projects": 10,
-      "se": 0.1965
+      "se": 0.1484
     },
     "INDIAN_RAILWAYS": {
-      "delta": 0.0316,
+      "delta": 0.0243,
       "evidence": "prior-dominated",
-      "multiplier": 1.0321,
+      "multiplier": 1.0246,
       "n_events": 3,
       "n_projects": 264,
-      "se": 0.1639
+      "se": 0.1311
     },
     "IRRIGATION_AND_CAD_TG": {
-      "delta": -0.1067,
+      "delta": -0.0584,
       "evidence": "prior-dominated",
-      "multiplier": 0.8988,
+      "multiplier": 0.9433,
       "n_events": 1,
       "n_projects": 5,
-      "se": 0.1963
+      "se": 0.1488
     },
     "JAL_SHAKTI": {
-      "delta": 0.1238,
+      "delta": 0.0714,
       "evidence": "prior-dominated",
-      "multiplier": 1.1318,
+      "multiplier": 1.074,
       "n_events": 0,
       "n_projects": 36,
-      "se": 0.1785
+      "se": 0.1396
     },
     "MAHARASHTRA_METRO_RAIL_CORPORA": {
-      "delta": 0.0024,
+      "delta": 0.0015,
       "evidence": "prior-dominated",
-      "multiplier": 1.0024,
+      "multiplier": 1.0015,
       "n_events": 0,
       "n_projects": 6,
-      "se": 0.1993
+      "se": 0.1497
     },
     "MINISTRYOFPETROLEUMNATURALGAS": {
-      "delta": 0.0121,
+      "delta": 0.0077,
       "evidence": "prior-dominated",
-      "multiplier": 1.0122,
+      "multiplier": 1.0077,
       "n_events": 0,
       "n_projects": 23,
-      "se": 0.1966
+      "se": 0.1484
     },
     "MINISTRY_OF_COAL": {
-      "delta": 0.0668,
+      "delta": 0.0411,
       "evidence": "prior-dominated",
-      "multiplier": 1.069,
+      "multiplier": 1.042,
       "n_events": 0,
       "n_projects": 19,
-      "se": 0.1873
+      "se": 0.144
     },
     "MINISTRY_OF_RAILWAYS": {
-      "delta": 0.043,
+      "delta": 0.0262,
       "evidence": "prior-dominated",
-      "multiplier": 1.0439,
+      "multiplier": 1.0265,
       "n_events": 0,
       "n_projects": 7,
-      "se": 0.192
+      "se": 0.1466
     },
     "MOHFW": {
-      "delta": 0.0571,
+      "delta": 0.0371,
       "evidence": "prior-dominated",
-      "multiplier": 1.0588,
+      "multiplier": 1.0378,
       "n_events": 0,
       "n_projects": 17,
-      "se": 0.1879
+      "se": 0.1441
     },
     "MOHUA": {
-      "delta": -0.0843,
+      "delta": -0.0468,
       "evidence": "prior-dominated",
-      "multiplier": 0.9191,
+      "multiplier": 0.9542,
       "n_events": 2,
       "n_projects": 34,
-      "se": 0.1741
+      "se": 0.1384
     },
     "MoRTH": {
-      "delta": 0.0934,
+      "delta": 0.1528,
       "evidence": "data",
-      "multiplier": 1.0979,
-      "n_events": 26,
-      "n_projects": 378,
-      "se": 0.1205
+      "multiplier": 1.1651,
+      "n_events": 18,
+      "n_projects": 370,
+      "se": 0.1021
     },
     "NATIONAL_INDUSTRIAL_CORRIDOR_D": {
-      "delta": 0.0026,
+      "delta": 0.0017,
       "evidence": "prior-dominated",
-      "multiplier": 1.0026,
+      "multiplier": 1.0017,
       "n_events": 0,
       "n_projects": 6,
-      "se": 0.1992
+      "se": 0.1496
     },
     "NATIONAL_INSTITUTE_OF_TECHNOLO": {
+      "delta": 0.0026,
+      "evidence": "prior-dominated",
+      "multiplier": 1.0027,
+      "n_events": 0,
+      "n_projects": 5,
+      "se": 0.1494
+    },
+    "NATIONAL_MINERAL_DEVELOPMENT_C": {
+      "delta": 0.0028,
+      "evidence": "prior-dominated",
+      "multiplier": 1.0028,
+      "n_events": 0,
+      "n_projects": 5,
+      "se": 0.1494
+    },
+    "NATIONAL_MISSION_FOR_CLEAN_GAN": {
       "delta": 0.0041,
       "evidence": "prior-dominated",
       "multiplier": 1.0041,
       "n_events": 0,
-      "n_projects": 5,
-      "se": 0.1988
-    },
-    "NATIONAL_MINERAL_DEVELOPMENT_C": {
-      "delta": 0.0046,
-      "evidence": "prior-dominated",
-      "multiplier": 1.0047,
-      "n_events": 0,
-      "n_projects": 5,
-      "se": 0.1987
-    },
-    "NATIONAL_MISSION_FOR_CLEAN_GAN": {
-      "delta": 0.0072,
-      "evidence": "prior-dominated",
-      "multiplier": 1.0072,
-      "n_events": 0,
       "n_projects": 7,
-      "se": 0.1979
+      "se": 0.1491
     },
     "NHAI": {
-      "delta": -0.3214,
+      "delta": -0.2876,
       "evidence": "data",
-      "multiplier": 0.7251,
-      "n_events": 102,
-      "n_projects": 625,
-      "se": 0.1142
+      "multiplier": 0.7501,
+      "n_events": 66,
+      "n_projects": 589,
+      "se": 0.0952
     },
     "NHIDCL": {
-      "delta": -0.0166,
+      "delta": -0.0648,
       "evidence": "data",
-      "multiplier": 0.9836,
+      "multiplier": 0.9373,
       "n_events": 17,
       "n_projects": 184,
-      "se": 0.1242
+      "se": 0.1043
     },
     "NLC_INDIA_LIMITED_NLCIL": {
-      "delta": 0.0153,
+      "delta": 0.009,
       "evidence": "prior-dominated",
-      "multiplier": 1.0154,
+      "multiplier": 1.009,
       "n_events": 0,
       "n_projects": 11,
-      "se": 0.1958
+      "se": 0.1482
     },
     "NTPC": {
-      "delta": 0.0188,
+      "delta": 0.0097,
       "evidence": "prior-dominated",
-      "multiplier": 1.019,
+      "multiplier": 1.0097,
       "n_events": 0,
       "n_projects": 12,
-      "se": 0.1952
+      "se": 0.1482
     },
     "PETROLEUM_GAS": {
-      "delta": 0.1362,
+      "delta": 0.0867,
       "evidence": "prior-dominated",
-      "multiplier": 1.146,
+      "multiplier": 1.0906,
       "n_events": 0,
       "n_projects": 99,
-      "se": 0.1771
+      "se": 0.1381
     },
     "PMSSY_AND_INSTITUTE_OF_NATIONA": {
-      "delta": 0.0165,
+      "delta": 0.009,
       "evidence": "prior-dominated",
-      "multiplier": 1.0166,
+      "multiplier": 1.009,
       "n_events": 0,
       "n_projects": 7,
-      "se": 0.1956
+      "se": 0.1482
     },
     "POWERGRID": {
-      "delta": 0.0192,
+      "delta": 0.0104,
       "evidence": "prior-dominated",
-      "multiplier": 1.0194,
+      "multiplier": 1.0104,
       "n_events": 1,
       "n_projects": 74,
-      "se": 0.1784
+      "se": 0.1396
     },
     "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T": {
-      "delta": 0.0063,
+      "delta": 0.0034,
       "evidence": "prior-dominated",
-      "multiplier": 1.0063,
+      "multiplier": 1.0034,
       "n_events": 0,
       "n_projects": 6,
-      "se": 0.1982
+      "se": 0.1493
     },
     "SINGARENI_COLLIERIES_COMPANY_L": {
-      "delta": 0.0133,
+      "delta": 0.0101,
       "evidence": "prior-dominated",
-      "multiplier": 1.0134,
+      "multiplier": 1.0101,
       "n_events": 0,
       "n_projects": 10,
-      "se": 0.1963
+      "se": 0.148
     },
     "STEEL_MINISTRY": {
-      "delta": 0.0402,
+      "delta": 0.0223,
       "evidence": "prior-dominated",
-      "multiplier": 1.041,
+      "multiplier": 1.0226,
       "n_events": 0,
       "n_projects": 16,
-      "se": 0.1917
+      "se": 0.1464
     },
     "TELECOM_DOT": {
-      "delta": 0.025,
+      "delta": -0.0008,
       "evidence": "prior-dominated",
-      "multiplier": 1.0253,
+      "multiplier": 0.9992,
       "n_events": 1,
       "n_projects": 12,
-      "se": 0.1797
+      "se": 0.1419
     }
   },
   "entity_scales": {
-    "AAI": 0.9528,
-    "COAL_INDIA": 1.0607,
-    "DEPARTMENT_OF_TELECOMMUNICATIO": 0.856,
-    "EDTK_MC_RB": 0.9045,
-    "EMPLOYEE_S_STATE_INSURANCE_COM": 0.9112,
-    "INDIAN_INSTITUTE_OF_TECHNOLOGY": 1.0129,
-    "INDIAN_RAILWAYS": 1.0321,
-    "IRRIGATION_AND_CAD_TG": 0.8988,
-    "JAL_SHAKTI": 1.1318,
-    "MAHARASHTRA_METRO_RAIL_CORPORA": 1.0024,
-    "MINISTRYOFPETROLEUMNATURALGAS": 1.0122,
-    "MINISTRY_OF_COAL": 1.069,
-    "MINISTRY_OF_RAILWAYS": 1.0439,
-    "MOHFW": 1.0588,
-    "MOHUA": 0.9191,
-    "MoRTH": 1.0979,
-    "NATIONAL_INDUSTRIAL_CORRIDOR_D": 1.0026,
-    "NATIONAL_INSTITUTE_OF_TECHNOLO": 1.0041,
-    "NATIONAL_MINERAL_DEVELOPMENT_C": 1.0047,
-    "NATIONAL_MISSION_FOR_CLEAN_GAN": 1.0072,
-    "NHAI": 0.7251,
-    "NHIDCL": 0.9836,
-    "NLC_INDIA_LIMITED_NLCIL": 1.0154,
-    "NTPC": 1.019,
-    "PETROLEUM_GAS": 1.146,
-    "PMSSY_AND_INSTITUTE_OF_NATIONA": 1.0166,
-    "POWERGRID": 1.0194,
-    "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T": 1.0063,
-    "SINGARENI_COLLIERIES_COMPANY_L": 1.0134,
-    "STEEL_MINISTRY": 1.041,
-    "TELECOM_DOT": 1.0253
+    "AAI": 0.9707,
+    "COAL_INDIA": 1.0432,
+    "EDTK_MC_RB": 0.9471,
+    "EMPLOYEE_S_STATE_INSURANCE_COM": 0.9511,
+    "INDIAN_INSTITUTE_OF_TECHNOLOGY": 1.0082,
+    "INDIAN_RAILWAYS": 1.0246,
+    "IRRIGATION_AND_CAD_TG": 0.9433,
+    "JAL_SHAKTI": 1.074,
+    "MAHARASHTRA_METRO_RAIL_CORPORA": 1.0015,
+    "MINISTRYOFPETROLEUMNATURALGAS": 1.0077,
+    "MINISTRY_OF_COAL": 1.042,
+    "MINISTRY_OF_RAILWAYS": 1.0265,
+    "MOHFW": 1.0378,
+    "MOHUA": 0.9542,
+    "MoRTH": 1.1651,
+    "NATIONAL_INDUSTRIAL_CORRIDOR_D": 1.0017,
+    "NATIONAL_INSTITUTE_OF_TECHNOLO": 1.0027,
+    "NATIONAL_MINERAL_DEVELOPMENT_C": 1.0028,
+    "NATIONAL_MISSION_FOR_CLEAN_GAN": 1.0041,
+    "NHAI": 0.7501,
+    "NHIDCL": 0.9373,
+    "NLC_INDIA_LIMITED_NLCIL": 1.009,
+    "NTPC": 1.0097,
+    "PETROLEUM_GAS": 1.0906,
+    "PMSSY_AND_INSTITUTE_OF_NATIONA": 1.009,
+    "POWERGRID": 1.0104,
+    "SATLUJ_JAL_VIDYUT_NIGAM_SJVN_T": 1.0034,
+    "SINGARENI_COLLIERIES_COMPANY_L": 1.0101,
+    "STEEL_MINISTRY": 1.0226,
+    "TELECOM_DOT": 0.9992
   },
-  "event_rate": 0.0745,
+  "event_rate": 0.0547,
   "fixed_effects": {
-    "baseline_multiplier": 3.4721,
-    "cost_log10_elasticity": 0.0629,
-    "cost_log10_se": 0.1002,
-    "intercept_b0": 1.2448,
-    "intercept_se": 0.1716,
-    "reset_coefficient": 0.4503,
-    "reset_se": 0.1309
+    "baseline_multiplier": 3.3106,
+    "cost_log10_elasticity": 0.1204,
+    "cost_log10_se": 0.1134,
+    "intercept_b0": 1.1971,
+    "intercept_se": 0.1711,
+    "reset_coefficient": 0.5174,
+    "reset_se": 0.1363
   },
   "interpretation": "sector_scales already carry the intercept, so sector_scales[s] * entity_scales[e] = exp(b0 + gamma_s + delta_e). Groups with fewer than 5 observed completions are prior-dominated and sit near the pooled baseline by construction, not by evidence.",
   "method": "log-logistic AFT, penalised MLE with right-censoring (scipy L-BFGS-B)",
   "min_group_n": 5,
   "model": "log T = log(planned) + b0 + b_cost*log10(cost/100) + gamma_sector + delta_entity + b_reset*resets + sigma*Logistic(0,1)",
-  "n_events": 160,
-  "n_observations": 2148,
+  "n_events": 115,
+  "n_events_excluded_future_proxy": 45,
+  "n_observations": 2103,
   "n_right_censored": 1988,
-  "negative_log_likelihood": 1060.4682,
-  "sector_default": 3.4721,
+  "negative_log_likelihood": 804.6103,
+  "sector_default": 3.3106,
   "sector_detail": {
     "Aviation & Aviation Infrastructure": {
       "evidence": "prior-dominated",
-      "gamma": -0.0483,
-      "multiplier": 3.3083,
+      "gamma": -0.0297,
+      "multiplier": 3.2137,
       "n_events": 1,
       "n_projects": 27,
-      "se": 0.1856
+      "se": 0.1441
     },
     "Coal": {
       "evidence": "prior-dominated",
-      "gamma": 0.1451,
-      "multiplier": 4.0143,
+      "gamma": 0.0972,
+      "multiplier": 3.6487,
       "n_events": 0,
       "n_projects": 127,
-      "se": 0.1745
+      "se": 0.1364
     },
     "Education": {
       "evidence": "prior-dominated",
-      "gamma": 0.0712,
-      "multiplier": 3.7284,
+      "gamma": 0.043,
+      "multiplier": 3.4562,
       "n_events": 0,
       "n_projects": 34,
-      "se": 0.1832
+      "se": 0.1422
     },
     "Electricity Generation": {
       "evidence": "prior-dominated",
-      "gamma": 0.0688,
-      "multiplier": 3.7196,
+      "gamma": 0.0366,
+      "multiplier": 3.4339,
       "n_events": 0,
       "n_projects": 44,
-      "se": 0.1842
+      "se": 0.1435
     },
     "Energy Storage": {
       "evidence": "prior-dominated",
-      "gamma": 0.0311,
-      "multiplier": 3.5818,
+      "gamma": 0.018,
+      "multiplier": 3.3708,
       "n_events": 0,
       "n_projects": 19,
-      "se": 0.192
+      "se": 0.1466
     },
     "Healthcare": {
       "evidence": "prior-dominated",
-      "gamma": -0.0187,
-      "multiplier": 3.4077,
+      "gamma": -0.0038,
+      "multiplier": 3.2982,
       "n_events": 1,
       "n_projects": 40,
-      "se": 0.1799
+      "se": 0.1405
     },
     "Inland Waterways": {
       "evidence": "prior-dominated",
-      "gamma": -0.1141,
-      "multiplier": 3.0979,
+      "gamma": -0.0615,
+      "multiplier": 3.1131,
       "n_events": 1,
       "n_projects": 6,
-      "se": 0.1983
+      "se": 0.1494
     },
     "Metals & Mining": {
       "evidence": "prior-dominated",
-      "gamma": 0.009,
-      "multiplier": 3.5036,
+      "gamma": 0.0049,
+      "multiplier": 3.3268,
       "n_events": 0,
       "n_projects": 8,
-      "se": 0.1974
+      "se": 0.149
     },
     "Oil & Gas": {
       "evidence": "prior-dominated",
-      "gamma": 0.1362,
-      "multiplier": 3.9786,
+      "gamma": 0.0879,
+      "multiplier": 3.6149,
       "n_events": 0,
       "n_projects": 108,
-      "se": 0.1769
+      "se": 0.1378
     },
     "Railways": {
       "evidence": "prior-dominated",
-      "gamma": 0.0577,
-      "multiplier": 3.6784,
+      "gamma": 0.0457,
+      "multiplier": 3.4654,
       "n_events": 4,
       "n_projects": 305,
-      "se": 0.1552
+      "se": 0.1259
     },
     "Real Estate": {
       "evidence": "prior-dominated",
-      "gamma": 0.0243,
-      "multiplier": 3.5575,
+      "gamma": 0.0126,
+      "multiplier": 3.3526,
       "n_events": 0,
       "n_projects": 12,
-      "se": 0.1939
+      "se": 0.1476
     },
     "Roads & Highways": {
       "evidence": "data",
-      "gamma": -0.2529,
-      "multiplier": 2.6964,
-      "n_events": 145,
-      "n_projects": 1181,
-      "se": 0.1298
+      "gamma": -0.2043,
+      "multiplier": 2.6988,
+      "n_events": 101,
+      "n_projects": 1137,
+      "se": 0.1063
     },
     "Shipping": {
       "evidence": "prior-dominated",
-      "gamma": 0.0345,
-      "multiplier": 3.594,
+      "gamma": 0.02,
+      "multiplier": 3.3774,
       "n_events": 0,
       "n_projects": 11,
-      "se": 0.1912
+      "se": 0.1462
     },
     "Steel": {
       "evidence": "prior-dominated",
-      "gamma": 0.0447,
-      "multiplier": 3.6307,
+      "gamma": 0.025,
+      "multiplier": 3.3945,
       "n_events": 0,
       "n_projects": 20,
-      "se": 0.1907
+      "se": 0.1459
     },
     "Telecommunication": {
       "evidence": "prior-dominated",
-      "gamma": -0.1209,
-      "multiplier": 3.0766,
-      "n_events": 3,
-      "n_projects": 18,
-      "se": 0.1695
+      "gamma": -0.0472,
+      "multiplier": 3.1579,
+      "n_events": 2,
+      "n_projects": 17,
+      "se": 0.1394
     },
     "Transmission & Distribution": {
       "evidence": "prior-dominated",
-      "gamma": 0.0219,
-      "multiplier": 3.5491,
+      "gamma": 0.012,
+      "multiplier": 3.3505,
       "n_events": 1,
       "n_projects": 78,
-      "se": 0.1779
+      "se": 0.1394
     },
     "Urban Public Transport": {
       "evidence": "prior-dominated",
-      "gamma": -0.0321,
-      "multiplier": 3.3625,
+      "gamma": -0.0243,
+      "multiplier": 3.231,
       "n_events": 1,
       "n_projects": 29,
-      "se": 0.1816
+      "se": 0.1433
     },
     "Waste & Water": {
       "evidence": "prior-dominated",
-      "gamma": -0.0062,
-      "multiplier": 3.4505,
+      "gamma": -0.0038,
+      "multiplier": 3.2982,
       "n_events": 1,
       "n_projects": 33,
-      "se": 0.1794
+      "se": 0.1408
     },
     "Water Resources": {
       "evidence": "prior-dominated",
-      "gamma": 0.0231,
-      "multiplier": 3.5533,
+      "gamma": 0.0148,
+      "multiplier": 3.3599,
       "n_events": 1,
       "n_projects": 41,
-      "se": 0.1756
+      "se": 0.1386
     }
   },
   "sector_scales": {
-    "Aviation & Aviation Infrastructure": 3.3083,
-    "Coal": 4.0143,
-    "Education": 3.7284,
-    "Electricity Generation": 3.7196,
-    "Energy Storage": 3.5818,
-    "Healthcare": 3.4077,
-    "Inland Waterways": 3.0979,
-    "Metals & Mining": 3.5036,
-    "Oil & Gas": 3.9786,
-    "Railways": 3.6784,
-    "Real Estate": 3.5575,
-    "Roads & Highways": 2.6964,
-    "Shipping": 3.594,
-    "Steel": 3.6307,
-    "Telecommunication": 3.0766,
-    "Transmission & Distribution": 3.5491,
-    "Urban Public Transport": 3.3625,
-    "Waste & Water": 3.4505,
-    "Water Resources": 3.5533
+    "Aviation & Aviation Infrastructure": 3.2137,
+    "Coal": 3.6487,
+    "Education": 3.4562,
+    "Electricity Generation": 3.4339,
+    "Energy Storage": 3.3708,
+    "Healthcare": 3.2982,
+    "Inland Waterways": 3.1131,
+    "Metals & Mining": 3.3268,
+    "Oil & Gas": 3.6149,
+    "Railways": 3.4654,
+    "Real Estate": 3.3526,
+    "Roads & Highways": 2.6988,
+    "Shipping": 3.3774,
+    "Steel": 3.3945,
+    "Telecommunication": 3.1579,
+    "Transmission & Distribution": 3.3505,
+    "Urban Public Transport": 3.231,
+    "Waste & Water": 3.2982,
+    "Water Resources": 3.3599
   },
-  "shape_parameter_gamma": 3.0099,
+  "shape_parameter_gamma": 2.8668,
   "shrinkage_prior": "Normal(0, tau^2) on sector/entity effects",
-  "sigma": 0.3322,
+  "sigma": 0.3488,
   "sigma_note": "log-logistic dispersion; shape gamma = 1/sigma",
+  "survivorship": {
+    "by_cohort": [
+      {
+        "event_rate": 0.0,
+        "events": 0,
+        "n": 20,
+        "sanction_years": "1980-2004"
+      },
+      {
+        "event_rate": 0.1475,
+        "events": 9,
+        "n": 61,
+        "sanction_years": "2005-2009"
+      },
+      {
+        "event_rate": 0.1029,
+        "events": 7,
+        "n": 68,
+        "sanction_years": "2010-2014"
+      },
+      {
+        "event_rate": 0.1039,
+        "events": 48,
+        "n": 462,
+        "sanction_years": "2015-2019"
+      },
+      {
+        "event_rate": 0.0342,
+        "events": 51,
+        "n": 1492,
+        "sanction_years": "2020-2029"
+      }
+    ],
+    "reading": "Cohorts sanctioned before 2005 show ~0 completions. Projects that finished years ago are not in a register of ongoing projects; the sample is survivor-biased toward slow projects and the baseline multiplier is inflated accordingly."
+  },
   "target": "total project duration in months (sanction -> completion)",
   "target_caveat": "MoSPI records no actual completion date. Completed projects use the final revised target as the completion proxy; ongoing projects are right-censored at elapsed time since sanction.",
   "tau_profile": [
     {
-      "cv_heldout_nll": 1100.8217,
+      "cv_heldout_nll": 834.3892,
       "tau": 0.01
     },
     {
-      "cv_heldout_nll": 1096.3949,
+      "cv_heldout_nll": 832.3278,
       "tau": 0.02
     },
     {
-      "cv_heldout_nll": 1088.0806,
+      "cv_heldout_nll": 828.0095,
       "tau": 0.035
     },
     {
-      "cv_heldout_nll": 1081.2442,
+      "cv_heldout_nll": 823.8925,
       "tau": 0.05
     },
     {
-      "cv_heldout_nll": 1074.8425,
+      "cv_heldout_nll": 819.5111,
       "tau": 0.075
     },
     {
-      "cv_heldout_nll": 1072.1504,
+      "cv_heldout_nll": 817.6635,
       "tau": 0.1
     },
     {
-      "cv_heldout_nll": 1070.6047,
+      "cv_heldout_nll": 817.1768,
       "tau": 0.15
     },
     {
-      "cv_heldout_nll": 1070.4927,
+      "cv_heldout_nll": 817.9689,
       "tau": 0.2
     },
     {
-      "cv_heldout_nll": 1071.1403,
+      "cv_heldout_nll": 820.1798,
       "tau": 0.3
     },
     {
-      "cv_heldout_nll": 1073.4692,
+      "cv_heldout_nll": 824.6232,
       "tau": 0.5
     },
     {
-      "cv_heldout_nll": 1077.5916,
+      "cv_heldout_nll": 830.4169,
       "tau": 0.8
     }
   ],
-  "tau_selected": 0.2,
+  "tau_selected": 0.15,
   "tau_selection": "5-fold cross-validated held-out log-likelihood, stratified on the event indicator"
 }

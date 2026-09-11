@@ -29,6 +29,14 @@ GEO_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data", "ALL_22
 ENTITY_MAPPING_PATH = os.path.join(BASE_DIR, "paimana_extracted", "CANONICAL_ENTITIES_MAPPING.json")
 ARTIFACTS_DIR = os.path.join(BASE_DIR, "artifacts")
 
+# Heuristic constants for the "locked capital" figure. Declared here, not buried.
+LOCKED_FULL_AT_MONTHS = 48.0   # delay at which sanctioned capital counts as fully locked
+LOCKED_P95_STRETCH = 1.65      # P95 = P50 x this; a policy stretch, not a fitted tail
+HOP_ATTENUATION = 0.85         # share of excess delay passed to each successor; declared, not fitted
+NOMINAL_REMAINING_MONTHS = 24.0  # calendar months a 0%-progress project is assumed to still need
+                                 # in the climate cascade; declared expert constant, not estimated
+
+
 class SetuGraphEngine:
     def __init__(self):
         self.df = None
@@ -96,58 +104,140 @@ class SetuGraphEngine:
                 canonical_entity=entity
             )
 
-        # 3. Add Edges (Domain Dependencies + Sector Synergies)
-        # Power <-> Coal, Railways <-> Ports, Highways <-> Industrial Corridors
-        projects_by_sector = {}
-        projects_by_state = {}
+        # 3. Edges.
+        #
+        # WHAT THIS GRAPH IS, AND IS NOT
+        # ------------------------------
+        # MoSPI publishes no inter-project dependency register. Every edge here is
+        # therefore INFERRED from two stated heuristics, each carried on the edge as
+        # `basis` so the UI can show a reviewer why the link exists:
+        #
+        #   sector_supply_chain   Coal -> Electricity Generation -> Transmission &
+        #                         Distribution, and Shipping -> Railways, within a state.
+        #                         A physical input/output relationship between sectors.
+        #
+        #   geo_adjacency         Same sector, same state, site-precise coordinates
+        #                         within ADJACENCY_KM of each other, oriented from the
+        #                         earlier-sanctioned project to the later one. The
+        #                         corridor / network-segment reading of adjacency.
+        #
+        # The previous version looked up four sector names that do not exist in the
+        # corpus vocabulary ("Coal & Mining", "Power & Thermal", "Ports & Shipping",
+        # "Petroleum & Natural Gas"), so no cross-sector edge was ever built, and it
+        # chained road projects in CSV ROW ORDER within a state -- 1,147 of its 1,197
+        # edges encoded the order rows appeared in a spreadsheet. That graph carried
+        # Shapley criticality and cascade figures it had no basis to carry.
+        #
+        # Projects whose coordinate is a state or national centroid are never joined
+        # by adjacency: at a centroid every project in the state is "adjacent" to
+        # every other, which is the row-order defect in a different costume.
+        ADJACENCY_KM = 50.0
+        MAX_ADJ_OUT = 2          # nearest neighbours per node, keeps degree bounded
+        SITE_PRECISE = {
+            "SITE_PINPOINT", "OSM_LANDMARK_MATCH", "GAZETTEER_CITY_MATCH",
+            "GEONAMES_EXACT_MATCH", "GEONAMES_EXACT_UNCONSTRAINED",
+            "GEONAMES_TOKEN_MATCH", "OSM_CORRIDOR_MIDPOINT", "REGIONAL_COALFIELD_CENTROID",
+        }
+        SUPPLY_CHAIN = [
+            # (upstream sector, downstream sector, lead_time months, fan-out cap)
+            ("Coal", "Electricity Generation", 6.0, 4),
+            ("Electricity Generation", "Transmission & Distribution", 4.0, 3),
+            ("Shipping", "Railways", 4.0, 3),
+        ]
+        ADJACENCY_SECTORS = {"Roads & Highways", "Railways", "Oil & Gas",
+                             "Transmission & Distribution", "Inland Waterways"}
+
+        def _haversine_km(a, b):
+            import math as _m
+            la1, lo1, la2, lo2 = map(_m.radians, (a[0], a[1], b[0], b[1]))
+            h = (_m.sin((la2 - la1) / 2) ** 2
+                 + _m.cos(la1) * _m.cos(la2) * _m.sin((lo2 - lo1) / 2) ** 2)
+            return 6371.0 * 2 * _m.asin(_m.sqrt(h))
+
+        sanction = {}
+        coords = {}
+        for _, row in self.df.iterrows():
+            pid = str(row["ProjectId"])
+            sanction[pid] = pd.to_datetime(row.get("SanctionDate"), errors="coerce", dayfirst=True)
+            g = self.geo_data.get(pid) or {}
+            prec = str(g.get("geocode_precision") or g.get("precision") or "")
+            lat, lon = g.get("latitude"), g.get("longitude")
+            if prec in SITE_PRECISE and lat is not None and lon is not None:
+                try:
+                    coords[pid] = (float(lat), float(lon))
+                except (TypeError, ValueError):
+                    pass
+
+        projects_by_sector, projects_by_state = {}, {}
         for pid, data in self.raw_graph.nodes(data=True):
-            sec = data["sector"]
-            st = data["state"]
-            projects_by_sector.setdefault(sec, []).append(pid)
-            projects_by_state.setdefault(st, []).append(pid)
+            projects_by_sector.setdefault(data["sector"], []).append(pid)
+            projects_by_state.setdefault(data["state"], []).append(pid)
 
-        # Connect intra-state & regional supply-chain links (Coal -> Power, Railways -> Ports, Highways -> Industrial)
-        coal_pids = set(projects_by_sector.get("Coal & Mining", []))
-        power_pids = set(projects_by_sector.get("Power & Thermal", []))
-        rail_pids = set(projects_by_sector.get("Railways", []))
-        port_pids = set(projects_by_sector.get("Ports & Shipping", []))
-        road_pids = set(projects_by_sector.get("Roads & Highways", []))
-        petrol_pids = set(projects_by_sector.get("Petroleum & Natural Gas", []))
+        corpus_sectors = set(projects_by_sector)
+        for up, down, _lt, _cap in SUPPLY_CHAIN:
+            # Fail loudly, not silently, if the vocabulary ever drifts again.
+            missing = [x for x in (up, down) if x not in corpus_sectors]
+            if missing:
+                raise ValueError(f"SETU-GRAPH edge rule names sector(s) absent from the corpus: {missing}")
 
-        # 1. State-level Coal -> Power Plants (Energy Feeders)
+        def _sort_key(p):
+            # A TOTAL order: dated projects first by sanction date, undated after,
+            # project id as the final tie-break. A total order is what guarantees
+            # the adjacency edges can never form a cycle (every edge goes strictly
+            # "up" the order) and that the graph is identical from run to run.
+            # The previous tie rule "keep (a, b)" oriented a->b when a was processed
+            # and b->a when b was, producing 2-cycles between same-day neighbours
+            # that the cycle-breaker then removed in hash-seed-dependent order, so
+            # the DAG differed by a few edges between processes.
+            d = sanction.get(p)
+            return (0, d, str(p)) if pd.notna(d) else (1, pd.Timestamp.max, str(p))
+
+        def _order(a, b):
+            """Earlier in the total order -> later."""
+            return (a, b) if _sort_key(a) <= _sort_key(b) else (b, a)
+
+        n_chain = n_adj = 0
         for st, pids in projects_by_state.items():
-            state_coal = [p for p in pids if p in coal_pids]
-            state_power = [p for p in pids if p in power_pids]
-            for c in state_coal:
-                for pw in state_power[:4]:
-                    self.raw_graph.add_edge(c, pw, edge_type="statutory", lead_time=6.0)
+            in_state = set(pids)
+            # Sector supply chain within the state, nearest downstream first when
+            # coordinates allow, otherwise capped by list order.
+            for up, down, lead, cap in SUPPLY_CHAIN:
+                ups = [p for p in projects_by_sector.get(up, []) if p in in_state]
+                downs = [p for p in projects_by_sector.get(down, []) if p in in_state]
+                for u in ups:
+                    ranked = downs
+                    if u in coords:
+                        ranked = sorted(downs, key=lambda d: _haversine_km(coords[u], coords[d]) if d in coords else 1e9)
+                    for d in ranked[:cap]:
+                        self.raw_graph.add_edge(u, d, edge_type="statutory", lead_time=lead,
+                                                basis="sector_supply_chain")
+                        n_chain += 1
 
-            # 2. Port -> Railway Hinterland Connectivity
-            state_rails = [p for p in pids if p in rail_pids]
-            state_ports = [p for p in pids if p in port_pids]
-            for pt in state_ports:
-                for r in state_rails[:3]:
-                    self.raw_graph.add_edge(pt, r, edge_type="physical_network", lead_time=4.0)
+            # Geographic adjacency within sector, site-precise coordinates only.
+            for sec in ADJACENCY_SECTORS:
+                members = [p for p in projects_by_sector.get(sec, []) if p in in_state and p in coords]
+                for a in members:
+                    near = sorted(
+                        ((_haversine_km(coords[a], coords[b]), b) for b in members if b != a),
+                        key=lambda t: t[0])
+                    for dist, b in near[:MAX_ADJ_OUT]:
+                        if dist > ADJACENCY_KM:
+                            break
+                        u, v = _order(a, b)
+                        if not self.raw_graph.has_edge(u, v):
+                            self.raw_graph.add_edge(
+                                u, v, edge_type="spatial_corridor", lead_time=3.0,
+                                basis=f"geo_adjacency_{dist:.0f}km")
+                            n_adj += 1
 
-            # 3. Highway Corridor Clusters (Linear Progression & Toll Hubs)
-            state_roads = [p for p in pids if p in road_pids]
-            for i in range(len(state_roads) - 1):
-                self.raw_graph.add_edge(state_roads[i], state_roads[i+1], edge_type="spatial_corridor", lead_time=3.0)
-
-            # 4. Petroleum Refinery -> Pipeline Feeders
-            state_petrol = [p for p in pids if p in petrol_pids]
-            for i in range(len(state_petrol) - 1):
-                self.raw_graph.add_edge(state_petrol[i], state_petrol[i+1], edge_type="physical_network", lead_time=5.0)
-
-        # 5. Cross-State Freight Corridors (Western & Eastern Dedicated Freight Corridors)
-        # sorted(), not list(): converting a set straight to a list gives an order that
-        # depends on Python's per-process string hash randomization, so the specific edges
-        # built below (and therefore the whole graph's topology) would silently reshuffle
-        # every time the server restarts. Sorting makes construction deterministic.
-        rail_list = sorted(rail_pids)
-        for i in range(min(len(rail_list) - 1, 150)):
-            if i % 3 == 0:
-                self.raw_graph.add_edge(rail_list[i], rail_list[i+1], edge_type="statutory", lead_time=6.0)
+        self.edge_provenance = {
+            "sector_supply_chain": n_chain,
+            "geo_adjacency": n_adj,
+            "adjacency_km": ADJACENCY_KM,
+            "site_precise_nodes": len(coords),
+            "note": ("Inferred from stated heuristics; MoSPI publishes no dependency "
+                     "register. Every edge carries its basis."),
+        }
 
         # 4. Strongly-connected-component analysis.
         #
@@ -165,10 +255,15 @@ class SetuGraphEngine:
         self.dag = self.raw_graph.copy()
         # Break cycles one edge at a time. Each removal is guarded individually: a
         # single failure used to abandon the whole loop via one broad try/except.
-        for cycle in list(nx.simple_cycles(self.dag)):
+        # With the total-order edge orientation above there should be none; the
+        # loop is retained as a guard and its work is counted in edges_removed_for_acyclicity.
+        # Cycles are sorted so that any removal is deterministic across processes.
+        self.edges_removed_for_acyclicity = 0
+        for cycle in sorted(nx.simple_cycles(self.dag), key=lambda c: [str(x) for x in c]):
             if len(cycle) >= 2 and self.dag.has_edge(cycle[-1], cycle[0]):
                 try:
                     self.dag.remove_edge(cycle[-1], cycle[0])
+                    self.edges_removed_for_acyclicity += 1
                 except Exception:
                     continue
 
@@ -253,9 +348,15 @@ class SetuGraphEngine:
             absorbed = min(observed_delay, free_float)
             propagated = max(0.0, observed_delay - free_float)
 
+            # "Locked" capital is a POLICY normalisation, not a model output: a project
+            # delayed 48 months is treated as having its full sanctioned capital locked,
+            # scaled linearly below that. The P95 factor is a fixed 1.65x stretch. Both
+            # constants are exposed on the node so the UI can label the figure as
+            # indicative rather than estimated.
             cost_cr = self.dag.nodes[n].get("cost_cr", 1000.0)
-            locked_p50 = (cost_cr * (observed_delay / 48.0)) if observed_delay > 0 else 0.0
-            locked_p95 = locked_p50 * 1.65
+            locked_p50 = (cost_cr * (observed_delay / LOCKED_FULL_AT_MONTHS)) if observed_delay > 0 else 0.0
+            locked_p95 = locked_p50 * LOCKED_P95_STRETCH
+            self.dag.nodes[n]["locked_basis"] = f"cost x min(delay/{LOCKED_FULL_AT_MONTHS:.0f}mo, 1); p95 = x{LOCKED_P95_STRETCH}"
 
             self.dag.nodes[n]["es"] = es.get(n, 0.0)
             self.dag.nodes[n]["ef"] = ef.get(n, 0.0)
@@ -294,8 +395,15 @@ class SetuGraphEngine:
         part of any characteristic function, and a `(1 + 0.05 * out_degree)` multiplier
         that rescales each player's marginal and so destroys telescoping even when the
         set arithmetic is right. Both are gone. On the same test DAG the old estimator
-        ranked the wrong node as linchpin and assigned 8% of total mass to a SINK whose
-        true Shapley value is exactly zero, because a sink unblocks nothing.
+        ranked the wrong node as linchpin.
+
+        WHAT A SINK IS WORTH under this game. reach(i) includes i itself, so a sink's
+        value is not zero: it is the sink's OWN capital shared equally with the
+        projects that gate it, phi(sink) = cost / (1 + number of ancestors), and an
+        isolated project is worth exactly its own cost. The estimator reproduces that
+        closed form on the 6-node DAG in tests/test_math_audit.py. (An earlier
+        docstring said a sink's value is "exactly zero"; that is true of a game that
+        counts only DOWNSTREAM capital, which is not the game defined above.)
 
         ON "EFFICIENCY". The final rescaling to total_locked is a UNIT CONVERSION into
         locked-rupee terms, not evidence of the efficiency axiom. Efficiency is a
@@ -320,10 +428,15 @@ class SetuGraphEngine:
         # Reach set of a player: itself plus everything downstream of it.
         reach_map = {n: (descendants_map[n] | {n}) for n in nodes}
 
-        # M permutations. Measured rank stability across seeds at M=30 is Spearman
-        # rho ~ 0.998 with an identical argmax, so 30 is adequate for the ORDERING the
-        # product uses; it is not enough for a per-node value to be quoted to 2 d.p.
-        M = 30
+        # M permutations. Permutation Monte Carlo is unbiased for the Shapley value
+        # but not exact: at M=30 the max error on a 6-node test DAG was 14% of the
+        # value, and overall seed-to-seed Spearman rho on the full graph was 0.74 (the
+        # top-50 ranking and the argmax were stable). The earlier docstring's
+        # "rho ~ 0.998" did not reproduce. M=300 brings the top-200 ranking to
+        # rho > 0.99 across seeds at ~10x the cost, which is still sub-second on
+        # 2,207 nodes. Values are published to 1 d.p.; 2 d.p. would overstate the
+        # estimator's precision.
+        M = 300
         shapley_accum = {n: 0.0 for n in nodes}
         rng = np.random.default_rng(42)
 
@@ -341,7 +454,7 @@ class SetuGraphEngine:
         # below only re-expresses those shares in locked-rupee units.
         raw_sum = sum(shapley_accum.values()) or 1.0
         for n in nodes:
-            self.shapley_scores[n] = round((shapley_accum[n] / raw_sum) * total_locked, 2)
+            self.shapley_scores[n] = round((shapley_accum[n] / raw_sum) * total_locked, 1)
             self.dag.nodes[n]["shapley_phi"] = self.shapley_scores[n]
 
     def _topology_fingerprint(self) -> str:
@@ -443,7 +556,7 @@ class SetuGraphEngine:
                         if succ not in visited_cascade:
                             # Downstream receives the propagated delay (attenuated by edge lead time uncertainty)
                             edge_data = sub_g.edges[curr, succ] if sub_g.has_edge(curr, succ) else {}
-                            attenuation = 0.85  # ~15% absorbed per hop by schedule buffers
+                            attenuation = HOP_ATTENUATION  # ~15% absorbed per hop by schedule buffers (declared)
                             succ_shock = propagated_from_curr * attenuation
                             cascaded_shocks[succ] = cascaded_shocks.get(succ, 0.0) + succ_shock
                             visited_cascade.add(succ)
@@ -531,8 +644,10 @@ class SetuGraphEngine:
 
         This is a scenario projection, not a forecast. It answers "if the monsoon
         departs by X%, how much capital sits behind the resulting slippage", and
-        the elasticities behind it are calibrated constants, not fitted
-        coefficients. That is said plainly in the payload.
+        the elasticities behind it are declared expert constants (see
+        modules/janhavi/service.py STATE_GEO_PROFILES), not fitted coefficients,
+        and so are HOP_ATTENUATION and NOMINAL_REMAINING_MONTHS. That is said
+        plainly in the payload.
         """
         from modules.janhavi.service import get_varsha_speed_engine
 
@@ -561,7 +676,7 @@ class SetuGraphEngine:
                 continue
 
             progress = float(d.get("physical_progress", 0.0) or 0.0)
-            remaining_months = max(0.0, (100.0 - progress) / 100.0) * 24.0
+            remaining_months = max(0.0, (100.0 - progress) / 100.0) * NOMINAL_REMAINING_MONTHS
             shocks[str(n)] = remaining_months * (m_now - m_base)
 
         # Propagate. Free float absorbs first; only the excess reaches successors,
@@ -577,7 +692,7 @@ class SetuGraphEngine:
             if excess <= 0.0:
                 continue
             for succ in self.dag.successors(n):
-                propagated[str(succ)] = propagated.get(str(succ), 0.0) + excess * 0.85
+                propagated[str(succ)] = propagated.get(str(succ), 0.0) + excess * HOP_ATTENUATION
 
         locked = 0.0
         absorbed_nodes = 0
@@ -593,7 +708,8 @@ class SetuGraphEngine:
             tf = float(d.get("total_float", 0.0) or 0.0)
             cost = float(d.get("cost_cr", 0.0) or 0.0)
 
-            # 926 of 2,207 projects (42%) sit in the graph with no edges at all.
+            # Roughly half the projects (1,050 of 2,207 after the provenance rebuild)
+            # sit in the graph with no edges at all.
             # A delay to one of those is a real problem for that project, but it is
             # NOT contagion: there is no downstream for capital to be locked behind.
             # Counting them under "downstream locked capex" inflated the figure to
@@ -602,7 +718,7 @@ class SetuGraphEngine:
             has_network = (self.dag.out_degree(n) > 0 or self.dag.in_degree(n) > 0)
             if not has_network:
                 isolated_hit += 1
-                isolated_capex += cost * min(delay / 48.0, 1.0)
+                isolated_capex += cost * min(delay / LOCKED_FULL_AT_MONTHS, 1.0)
                 continue
 
             if delay <= ff:
@@ -624,7 +740,7 @@ class SetuGraphEngine:
             excess = max(0.0, delay - tf)
             if excess > 0.0:
                 breached_nodes += 1
-                locked += cost * min(excess / 48.0, 1.0)
+                locked += cost * min(excess / LOCKED_FULL_AT_MONTHS, 1.0)
             rows.append({
                 "project_id": n,
                 "project_name": d.get("project_name"),
@@ -639,6 +755,8 @@ class SetuGraphEngine:
             })
 
         rows.sort(key=lambda r: -r["capex_cr"])
+        _n_isolated = sum(1 for _n in self.dag.nodes
+                          if self.dag.in_degree(_n) == 0 and self.dag.out_degree(_n) == 0)
         return {
             "module": "SETU-VARSHA",
             "rainfall_anomaly_pct": rainfall_anomaly_pct,
@@ -655,10 +773,18 @@ class SetuGraphEngine:
             "isolated_projects_hit": isolated_hit,
             "isolated_direct_exposure_cr": round(isolated_capex, 2),
             "network_coverage_note": (
-                "926 of 2,207 projects carry no dependency edges, so contagion is "
-                "only defined for the 1,281 that do. Isolated projects are counted "
-                "as direct exposure, not as downstream lock-up."
+                f"{_n_isolated:,} of {self.dag.number_of_nodes():,} projects carry no "
+                f"dependency edges, so contagion is only defined for the "
+                f"{self.dag.number_of_nodes() - _n_isolated:,} that do. Isolated projects "
+                "are counted as direct exposure, not as downstream lock-up."
             ),
+            "parameter_basis": {
+                "state_elasticities": "declared expert parameters (STATE_GEO_PROFILES), not fitted to outcomes",
+                "hop_attenuation": HOP_ATTENUATION,
+                "nominal_remaining_months_at_zero_progress": NOMINAL_REMAINING_MONTHS,
+                "locked_full_at_months": LOCKED_FULL_AT_MONTHS,
+                "edges": getattr(self, "edge_provenance", None),
+            },
             "mean_climate_delay_months": round(
                 sum(r["climate_delay_months"] for r in rows) / len(rows), 1) if rows else 0.0,
             "affected": rows[:max_nodes_returned],
@@ -667,12 +793,13 @@ class SetuGraphEngine:
                 "(VARSHA-SPEED elasticities, IMD 2005-2025). Remaining project "
                 "duration is scaled by that contraction, the resulting delay is "
                 "absorbed by free float where available, and the excess propagates "
-                "to successors at 0.85 per hop. Capital is counted as locked only "
+                f"to successors at {HOP_ATTENUATION} per hop (declared constant). "
+                "Capital is counted as locked only "
                 "once a project's delay exceeds its TOTAL float."
             ),
             "caveat": (
                 "Scenario projection, not a forecast. The elasticities are "
-                "calibrated constants rather than fitted coefficients, and the "
+                "declared expert constants rather than fitted coefficients, and the "
                 "figure answers 'how much capital sits behind this much slippage', "
                 "not 'how likely is this monsoon'."
             ),

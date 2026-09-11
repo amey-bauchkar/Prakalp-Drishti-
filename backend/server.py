@@ -218,7 +218,8 @@ def load_in_memory_cache():
                 # which labelled a project satellite-corroborated on the strength
                 # of the very figure the satellite exists to check, with no
                 # imagery involved at any point. Surface change and reported
-                # progress correlate at 0.007 across this corpus, so the two are
+                # progress are uncorrelated across this corpus (measured in
+                # artifacts/eo_progress_independence.json), so the two are
                 # very nearly independent and the substitution was not even a
                 # rough approximation -- it was a restatement of the claim
                 # wearing the authority of an independent measurement.

@@ -40,7 +40,8 @@ WHAT THIS DOES NOT PRODUCE
 --------------------------
 No completion percentage, and no claimed-minus-observed score. `surface_change_pct` is
 the fraction of sampled ground that structurally changed between two dated images.
-Surface change and reported progress correlate at r = 0.007 in this corpus, so a
+Surface change and reported progress are uncorrelated in this corpus (measured in
+artifacts/eo_progress_independence.json), so a
 satellite-derived progress figure would be a guess formatted as a measurement.
 """
 
@@ -485,6 +486,14 @@ def resolve_project(pid: str, releases: List[Dict[str, Any]],
     }
 
 
+def _eo_statement() -> str:
+    try:
+        from analytics_engine.eo_independence import statement
+        return statement()
+    except Exception:  # pragma: no cover
+        return "surface change and reported progress are treated as independent"
+
+
 def main(pids: Optional[List[str]] = None, max_epochs: int = 6) -> Dict[str, Any]:
     pids = pids or SHOWCASE
     print("=" * 78)
@@ -507,8 +516,7 @@ def main(pids: Optional[List[str]] = None, max_epochs: int = 6) -> Dict[str, Any
                    "per Wayback release, then full-grid capture for selected epochs. "
                    "surface_change_pct is structural change on visible bands (ExG/VARI "
                    "vegetation exclusion + gradient-orientation differencing). It is "
-                   "NOT a completion estimate: surface change and reported progress "
-                   "correlate at r=0.007 in this corpus."),
+                   "NOT a completion estimate: in this corpus " + _eo_statement() + "."),
         "projects": results,
     }
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)

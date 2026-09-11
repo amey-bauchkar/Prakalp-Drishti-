@@ -17,9 +17,12 @@ fits
     log T = log(planned) + b0 + b_cost*log10(cost/100)
             + gamma_sector + delta_entity + b_reset*resets + sigma*Logistic(0,1)
 
-on 2,148 projects -- 160 observed completions and 1,988 right-censored -- by penalised
-MLE, with sector/entity effects shrunk under a Normal(0, tau^2) prior whose tau is chosen
-by 5-fold cross-validated held-out log-likelihood.
+on 2,103 projects -- 115 observed completions and 1,988 right-censored
+(a further 45 "completed" rows whose completion proxy lies after the as-of date are
+excluded as not yet observed) -- by penalised MLE, with sector/entity effects shrunk
+under a Normal(0, tau^2) prior whose tau is chosen by 5-fold cross-validated held-out
+log-likelihood. The counts above are read from artifacts/aft_survival.json, which is
+the source of record; the docstring is descriptive.
 
 "Bayesian Progress Conditioning" remains a convex blend between the top-down AFT prior
 and a bottom-up earned-value figure. It is correctly engineered, but there is still no
@@ -28,20 +31,29 @@ posterior, and it is not called one.
 What IS rigorous here
 ---------------------
   * A genuine censored-likelihood AFT fit. The 1,988 ongoing projects contribute
-    log S(t) rather than being discarded, which is why the fitted baseline (~3.5x
-    planned) exceeds the 1.64x median of the projects that happen to have FINISHED --
+    log S(t) rather than being discarded, which is why the fitted baseline (~3.3x
+    planned) exceeds the median of the projects that happen to have FINISHED --
     finishers are a biased-fast subsample, and the old constants were tuned to them.
+    Right-censoring does NOT correct the opposite bias: MoSPI's register retains
+    ongoing projects and sheds completed ones, so cohorts sanctioned before 2005 show
+    ~0 completions and the baseline is inflated by survivorship. aft_survival.json
+    carries that diagnostic under "survivorship" and the multiplier is labelled an
+    upper-ish bound, not a point estimate.
   * Monotone quantile rearrangement, so P10 <= P50 <= P80 <= P95 always holds.
-  * Split-conformal interval widths calibrated on 1,800 projects with observed
-    schedule slippage, achieving a MEASURED 93.3% coverage on a held-out test split
-    (84.7% uncalibrated). See analytics_engine/conformal_calibration.py.
+  * Split-conformal calibration of THIS engine's own raw median: log-ratio residual
+    quantiles from 596 forward-looking projects, measured end to end on
+    forecast_project() over 596 held-out projects. The displayed P10-P95 band
+    covers 79.0% at a nominal 85% (50.8% uncalibrated); P50 MAE
+    22.7 months against 100.0 raw. Overdue projects (616) are
+    excluded from calibration because an overdue official target is censored, not
+    observed, information. See analytics_engine/conformal_calibration.py.
   * Fine-Gray-style competing-risk attenuation for structural foreclosure.
 
 Known limit, stated rather than buried
 --------------------------------------
-At a 7.4% event rate the fitted MEDIAN is extrapolated past the observed follow-up
-window for most groups, and only Roads & Highways (145 completions) has enough events to
-move on its own evidence. Every other sector sits near the pooled baseline because the
+At a 5.5% event rate the fitted MEDIAN is extrapolated past the observed follow-up
+window for most groups, and only Roads & Highways has enough events to move on its own
+evidence (the per-sector event counts and "data"/"prior-dominated" tags are in the artefact). Every other sector sits near the pooled baseline because the
 prior put it there, not because the data did. aft_survival.json publishes each group's
 event count and an explicit "data" / "prior-dominated" tag so this is auditable rather
 than implied.
@@ -134,7 +146,7 @@ class KaalChakraEngine:
 
         # 5. Calculate Durations and Delays
         self._preprocess_features()
-        
+
         # 6. Fit Sector-Level & Entity-Level AFT Accelerated Failure Time Models
         self._fit_aft_models()
         self.fitted = True
@@ -145,7 +157,7 @@ class KaalChakraEngine:
         self.df["RevisedCost"] = pd.to_numeric(self.df["RevisedCost"], errors="coerce").fillna(self.df["OriginalCost"])
         self.df["Expenditure"] = pd.to_numeric(self.df["Expenditure"], errors="coerce").fillna(0.0)
         self.df["PhysicalProgress"] = pd.to_numeric(self.df["PhysicalProgress"], errors="coerce").fillna(25.0)
-        
+
         # Cost Overrun
         self.df["TrueCostOverrunCr"] = self.df["RevisedCost"] - self.df["OriginalCost"]
         self.df["TrueCostOverrunPerc"] = np.where(
@@ -153,7 +165,7 @@ class KaalChakraEngine:
             (self.df["TrueCostOverrunCr"] / self.df["OriginalCost"]) * 100.0,
             0.0
         )
-        
+
         # Detect Rebaselining
         has_cost_revision = self.df["RevisedCost"] > self.df["OriginalCost"] * 1.01
         has_text_reason = self.df["RevisedCostReason"].astype(str).str.strip().isin(["", "nan", "None"]) == False
@@ -195,12 +207,14 @@ class KaalChakraEngine:
         vocabulary, so 20 of 22 sectors (708 projects, 32.1% of the portfolio) silently
         took the 1.40 default. The table was not just unfitted, it was unreached.
 
-        The fitted baseline multiplier (~3.5x planned) sits well above the old ~1.9x
-        product. That gap is the censoring correction, not a regression: the 160 projects
+        The fitted baseline multiplier (~3.3x planned) sits well above the old ~1.9x
+        product. That gap is the censoring correction, not a regression: the 115 projects
         that have actually completed are a biased-FAST subsample, and a constant tuned to
         look like them understates the portfolio. Correcting for the 1,988 still-running
         projects is the entire reason to fit a survival model rather than average the
-        finishers.
+        finishers. The correction runs one way only; the register's survivorship bias
+        (completed projects drop out of it) pushes the other way and is not corrected,
+        which is why the multiplier is labelled an upper-ish bound.
 
         Fitting happens offline; this only reads the artefact, so the request path stays
         allocation-free. If the artefact is absent the engine degrades to the previous
@@ -224,7 +238,9 @@ class KaalChakraEngine:
                 "entity_default": float(a.get("entity_default", 1.0)),
                 "cost_elasticity": float(fixed.get("cost_log10_elasticity", 0.08)),
                 "reset_coefficient": float(fixed.get("reset_coefficient", 0.15)),
-                "shape_parameter_gamma": float(a.get("sigma", 0.35)),
+                # sigma: the log-logistic DISPERSION (the quantile function's exponent).
+                # The shape parameter proper is gamma = 1/sigma; the artefact carries both.
+                "sigma": float(a.get("sigma", 0.35)),
                 "competing_risk_foreclosure_base": 0.06,
                 "provenance": "fitted-mle",
             }
@@ -238,7 +254,7 @@ class KaalChakraEngine:
                 "entity_default": 1.35,
                 "cost_elasticity": 0.08,
                 "reset_coefficient": 0.15,
-                "shape_parameter_gamma": 0.35,
+                "sigma": 0.35,
                 "competing_risk_foreclosure_base": 0.06,
                 "provenance": "unfitted-fallback",
             }
@@ -246,7 +262,19 @@ class KaalChakraEngine:
         weights_str = json.dumps(self.model_weights, sort_keys=True)
         self.model_hash = hashlib.sha256(weights_str.encode("utf-8")).hexdigest()
 
-    def forecast_project(self, project_id: str, delay_shock_months: float = 0.0) -> ProjectForecast:
+    def raw_median_months(self, project_id: str, delay_shock_months: float = 0.0) -> float:
+        """
+        The engine's UNCALIBRATED median total duration, in months from sanction.
+
+        This is the single quantity the conformal module calibrates. Everything the
+        fan displays is this number times a calibrated multiplier, so calibrating it
+        is calibrating the fan -- which the previous design did not do: it borrowed a
+        Q from a different model of a different target and added it here.
+        """
+        fc = self._forecast_core(project_id, delay_shock_months)
+        return float(fc["median_expected_duration"])
+
+    def _forecast_core(self, project_id: str, delay_shock_months: float = 0.0) -> dict:
         row = self.df[self.df["ProjectId"].astype(str) == str(project_id)]
         if row.empty:
             # This previously fell back to self.df.iloc[[0]], which meant an unknown
@@ -263,86 +291,115 @@ class KaalChakraEngine:
         sector = str(p["SectorName"])
         state = resolve_state(p.get("ProjectId"), p.get("StateName"))[0]
         entity = str(p["CANONICAL_ENTITY"])
-        
+
         orig_cost = float(p["OriginalCost"])
         rev_cost = float(p["RevisedCost"])
         overrun_cr = float(p["TrueCostOverrunCr"])
         overrun_perc = float(p["TrueCostOverrunPerc"])
         reset_count = int(p["BaselineResetCount"])
         is_rebaselined = bool(p["IsRebaselined"])
-        
+
         sanction_dt = p["SanctionDate"] if pd.notna(p["SanctionDate"]) else pd.Timestamp("2021-01-01")
         orig_end_dt = p["OriginalEndDate"] if pd.notna(p["OriginalEndDate"]) else sanction_dt + pd.Timedelta(days=365*3)
         rev_end_dt = p["RevisedDate"] if pd.notna(p["RevisedDate"]) else orig_end_dt + pd.Timedelta(days=365*2)
-        
+
         planned_months = float(p["PlannedDurationMonths"])
         current_months = float(p["CurrentDurationMonths"]) + float(delay_shock_months)
         progress_perc = float(p["PhysicalProgress"]) if ("PhysicalProgress" in p and pd.notna(p["PhysicalProgress"])) else 25.0
-        
+
         # AFT Multiplier
         sec_mult = self.model_weights["sector_scales"].get(sector, self.model_weights["sector_default"])
         ent_mult = self.model_weights["entity_scales"].get(entity, self.model_weights["entity_default"])
-        cost_mult = 1.0 + self.model_weights["cost_elasticity"] * np.log10(max(orig_cost, 100.0) / 100.0)
-        rebase_mult = 1.0 + (reset_count * self.model_weights["reset_coefficient"])
-        
+        # exp(), not 1 + x: these are the fitted log-linear effects. The additive form
+        # that stood here was a first-order approximation that diverged from the fit
+        # by 23% at two baseline resets and 39% at three.
+        cost_mult = float(np.exp(self.model_weights["cost_elasticity"] * np.log10(max(orig_cost, 100.0) / 100.0)))
+        rebase_mult = float(np.exp(reset_count * self.model_weights["reset_coefficient"]))
+
         # Expected Total Duration in Months under AFT Log-Logistic with Bayesian Progress Conditioning
         # 1. Top-Down AFT Prior from Day 0
         prior_duration = planned_months * sec_mult * ent_mult * cost_mult * rebase_mult
-        
+
         # 2. Bottom-Up Empirical Earned Value & Progress-Conditioned Remaining Duration
         historical_pace = max(progress_perc, 5.0) / max(current_months, 3.0)
         rem_perc = max(100.0 - progress_perc, 0.5)
         rem_months = max((rem_perc / max(historical_pace, 0.12)) * (sec_mult ** 0.3), 1.0)
         duration_from_progress = current_months + rem_months
-        
+
         # 3. Dynamic Credibility Weight: As on-ground completion approaches 100%, physical reality dominates
         w_progress = float(np.clip(progress_perc / 100.0, 0.05, 0.95))
         median_expected_duration = (1.0 - w_progress) * prior_duration + w_progress * duration_from_progress
-        
+
         # Apply dynamic delay shock to expected duration if simulated
         if delay_shock_months > 0.0:
             median_expected_duration += float(delay_shock_months) * 1.15
 
         median_expected_duration = max(median_expected_duration, current_months + 1.0)
-        
+
+        return {k: v for k, v in locals().items() if k != "self"}
+
+    def forecast_project(self, project_id: str, delay_shock_months: float = 0.0) -> ProjectForecast:
+        core = self._forecast_core(project_id, delay_shock_months)
+        # Re-bind the core's locals so the remainder of this method reads as before.
+        (row, p, pid, pname, sector, state, entity, orig_cost, rev_cost, overrun_cr,
+         overrun_perc, reset_count, is_rebaselined, sanction_dt, orig_end_dt, rev_end_dt,
+         planned_months, current_months, progress_perc, sec_mult, ent_mult, cost_mult,
+         rebase_mult, prior_duration, historical_pace, rem_perc, rem_months,
+         duration_from_progress, w_progress, median_expected_duration) = (
+            core[k] for k in (
+                "row", "p", "pid", "pname", "sector", "state", "entity", "orig_cost",
+                "rev_cost", "overrun_cr", "overrun_perc", "reset_count", "is_rebaselined",
+                "sanction_dt", "orig_end_dt", "rev_end_dt", "planned_months",
+                "current_months", "progress_perc", "sec_mult", "ent_mult", "cost_mult",
+                "rebase_mult", "prior_duration", "historical_pace", "rem_perc", "rem_months",
+                "duration_from_progress", "w_progress", "median_expected_duration"))
+
         # Fine-Gray Competing Risk Absorbing State (Strict non-negative clamp [0.0, 0.35])
         progress_attenuation = max(1.0 - (progress_perc / 100.0), 0.05)
         foreclosure_raw = 0.02 + (reset_count * 0.03) + (overrun_perc / 2000.0) * progress_attenuation
         foreclosure_prob = float(np.clip(foreclosure_raw, 0.0, 0.35))
         pi_hat = 1.0 - foreclosure_prob # Probability of eventual completion
-        
-        # Generate Raw Quantiles from Log-Logistic AFT
-        gamma = self.model_weights["shape_parameter_gamma"] # dispersion
+
+        # ── THE FAN ──────────────────────────────────────────────────────────────
+        # Calibrated on THIS engine's median. conformal_calibration.py computes the
+        # log-ratio residual r = log(y / median) on a calibration split, where y is the
+        # observed months from sanction to the official revised completion date, and
+        # publishes the finite-sample quantile of r at each displayed level. The fan is
+        # then median * exp(q_alpha(r)).
+        #
+        # Two consequences a reviewer should see:
+        #   * the 0.50 multiplier is the engine's BIAS CORRECTION. If the raw median runs
+        #     late, q_0.50(r) < 0 and the displayed P50 is pulled earlier. The raw median
+        #     is still returned in the Fact block so the correction is visible.
+        #   * coverage is MEASURED for this fan on a held-out split, not borrowed. The
+        #     previous version added a Q calibrated for a gradient-boosting model of a
+        #     different target and reported that model's coverage here.
+        sigma = self.model_weights["sigma"]  # log-logistic dispersion, kept for the CDF
         rem_uncertainty_scale = max((100.0 - progress_perc) / 100.0, 0.15)
-        gamma_effective = gamma * np.sqrt(rem_uncertainty_scale)
-        
-        quantiles_u = np.array([0.10, 0.50, 0.80, 0.95])
+        sigma_effective = sigma * np.sqrt(rem_uncertainty_scale)
 
-        # Interval half-width from split-conformal calibration, not hand-picked numbers.
-        # The previous constants [-3, 0, 4.5, 9] carried a "90% coverage guarantee" that
-        # was never measured against anything. The calibrated Q is the empirical
-        # conformity quantile over 450 held-out projects with observed slippage, and it
-        # delivers a MEASURED 93.3% coverage (84.7% without the correction).
-        # See analytics_engine/conformal_calibration.py.
-        if self.conformal is not None:
-            Q = float(self.conformal["conformal_quantile_Q_months"])
-            # Widen outward from the median, scaled by how much work remains: a project
-            # at 95% progress has far less room to slip than one at 20%.
-            cqr_offsets = np.array([-Q, 0.0, 0.55 * Q, Q]) * rem_uncertainty_scale
+        raw_median = float(median_expected_duration)
+        if self.conformal is not None and "log_ratio_quantiles" in self.conformal:
+            lq = self.conformal["log_ratio_quantiles"]
+            mult = np.array([np.exp(float(lq["0.1"])), np.exp(float(lq["0.5"])),
+                             np.exp(float(lq["0.8"])), np.exp(float(lq["0.95"]))])
+            raw_durations = raw_median * mult
+            calibrated = True
         else:
-            # Uncalibrated fallback. Flagged in the Fact so the UI cannot present an
-            # unmeasured interval as if it were the calibrated one.
-            cqr_offsets = np.array([-3.0, 0.0, 4.5, 9.0]) * rem_uncertainty_scale
+            # Uncalibrated fallback: the log-logistic quantiles of the raw median.
+            # Flagged in the Fact so the UI cannot present it as calibrated.
+            quantiles_u = np.array([0.10, 0.50, 0.80, 0.95])
+            raw_durations = raw_median * np.power(quantiles_u / (1.0 - quantiles_u), sigma_effective)
+            calibrated = False
 
-        # Compute raw durations for quantiles
-        raw_durations = median_expected_duration * np.power(quantiles_u / (1.0 - quantiles_u), gamma_effective) + cqr_offsets
-        
-        # Fix M1: Monotone Rearrangement (np.maximum.accumulate guarantees strict non-decreasing quantiles)
+        # Monotone rearrangement, and nothing displayed earlier than time already elapsed.
         durations_monotone = np.maximum.accumulate(raw_durations)
         durations_monotone = np.maximum(durations_monotone, current_months + np.array([0.5, 1.0, 2.0, 4.0]) * rem_uncertainty_scale)
-        
+
         q10_m, q50_m, q80_m, q95_m = durations_monotone
-        
+        # The CDF below is centred on the CALIBRATED median.
+        median_expected_duration = float(q50_m)
+
         # Convert duration months to forecasted calendar dates
         # Safety cap: pandas Timestamp max is ~2262, cap durations to prevent overflow
         MAX_FORECAST_DAYS = 63_000  # ~172 years, keeps dates within pandas Timestamp range
@@ -350,22 +407,22 @@ class KaalChakraEngine:
         p50_dt = sanction_dt + pd.Timedelta(days=min(int(q50_m * 30.4375), MAX_FORECAST_DAYS))
         p80_dt = sanction_dt + pd.Timedelta(days=min(int(q80_m * 30.4375), MAX_FORECAST_DAYS))
         p95_dt = sanction_dt + pd.Timedelta(days=min(int(q95_m * 30.4375), MAX_FORECAST_DAYS))
-        
+
         # Target Date Compliance Probability
         # Probability of meeting official revised date: S(t_revised)
         t_revised_months = max((rev_end_dt - sanction_dt).days / 30.4375, 1.0)
         # Log-logistic CDF: F(t) = 1 / (1 + (mu / t)^(1/gamma))
-        prob_completion_before_revised = 1.0 / (1.0 + np.power(median_expected_duration / t_revised_months, 1.0 / gamma_effective))
+        prob_completion_before_revised = 1.0 / (1.0 + np.power(median_expected_duration / t_revised_months, 1.0 / sigma_effective))
         prob_target_met = float(np.clip(prob_completion_before_revised * pi_hat, 0.01, 0.99))
-        
+
         # Probability of meeting original DPR date
         t_orig_months = max((orig_end_dt - sanction_dt).days / 30.4375, 1.0)
-        prob_completion_before_orig = 1.0 / (1.0 + np.power(median_expected_duration / t_orig_months, 1.0 / gamma_effective))
+        prob_completion_before_orig = 1.0 / (1.0 + np.power(median_expected_duration / t_orig_months, 1.0 / sigma_effective))
         prob_orig_met = float(np.clip(prob_completion_before_orig * pi_hat, 0.001, 0.95))
 
         # Query & Distinct Lineage Factory (Prevents Aliasing)
         query_str = f"SELECT * FROM paimana WHERE ProjectId = '{pid}' AND Snapshot = 'June2026'"
-        
+
         def _make_distinct_lineage(fact_name: str) -> LineageRef:
             f_query = f"{query_str} -- fact={fact_name}"
             q_h = hashlib.sha256(f_query.encode("utf-8")).hexdigest()
@@ -378,7 +435,7 @@ class KaalChakraEngine:
                 merkle_path=[q_h[:16], self.dataset_hash[:16], self.model_hash[:16]],
                 merkle_proof=[]
             )
-        
+
         # Structured Audit Facts (Each fact receives a distinct, unshared LineageRef instance)
         facts = {
             "fact_cost": Fact(
@@ -420,15 +477,16 @@ class KaalChakraEngine:
                     p50=float(q50_m),
                     p80=float(q80_m),
                     p95=float(q95_m),
-                    alpha_coverage=0.90,
-                    # Measured, not asserted. None when running uncalibrated, so the UI
-                    # can say "unverified" rather than implying a guarantee.
+                    alpha_coverage=0.85,
+                    # Measured for THIS fan on a held-out split, not borrowed from another
+                    # model. None when running uncalibrated, so the UI says "unverified".
                     empirical_coverage=(
                         float(self.conformal["empirical_coverage_on_test"])
-                        if self.conformal else None),
+                        if (self.conformal and calibrated) else None),
                     calibration_method=(
-                        f"{self.conformal['method']}, n_test={self.conformal['n_test']}"
-                        if self.conformal else None),
+                        f"{self.conformal['method']}, n_test={self.conformal['n_test']}, "
+                        f"raw_median={raw_median:.1f}mo, bias_mult={np.exp(float(self.conformal['log_ratio_quantiles']['0.5'])):.2f}"
+                        if (self.conformal and calibrated) else "UNCALIBRATED log-logistic quantiles"),
                     is_monotone_guaranteed=True
                 ),
                 lineage=_make_distinct_lineage("p50_completion")

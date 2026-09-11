@@ -169,6 +169,14 @@ class SatyaKavachEngine:
         num_count = len(near_below)
         den_count = len(near_above)
 
+        # ── McCrary (2008) density discontinuity test at the 20% cutoff ──────────
+        # The test the engine NAMES. The two-bin ratio below is kept as a descriptive
+        # statistic; it is not a density test and no longer carries that label.
+        from analytics_engine.mccrary import mccrary_test
+        _ov = pd.to_numeric(active_revised["OverrunPct"], errors="coerce").to_numpy(float)
+        _ov = _ov[np.isfinite(_ov) & (_ov > -50.0) & (_ov < 200.0)]
+        mccrary = mccrary_test(_ov, 20.0)
+
         # Exact ratio and 95% Confidence Interval
         if den_count > 0:
             bin_mass_ratio = round(float(num_count / den_count), 2)
@@ -189,37 +197,42 @@ class SatyaKavachEngine:
             rev_c = float(r["RevisedCostEffective"])
             ov_pct = float(r["OverrunPct"])
             s_year = int(r.get("SanctionYear", 2018))
-            evasion_margin = round(20.0 - ov_pct, 2)
+            distance_pp = round(20.0 - ov_pct, 2)   # percentage points below the 20% threshold
             calc_10cc = self._calculate_10cc_cap(orig_c, s_year)
 
             esc_cr = calc_10cc["statutory_allowed_escalation_cr"]
             total_allowed = round(orig_c + esc_cr, 2)
             excess_claim = round(max(0.0, rev_c - total_allowed), 2)
-            
+
             # ----------------------------------------------------
-            # Forensic Suspicion Score Calculation (0-100)
+            # Review-priority score (0-100): a TRIAGE ORDER, not a probability
+            # and not a finding. Two declared components with declared weights:
+            #   * proximity  (max 60): linear in how close the revision sits under
+            #                          20%, 60 at 19.99%, 0 at 18.00%
+            #   * 10CC excess (max 40): revised cost above the Clause 10CC statutory
+            #                          cap, as a share of original cost, saturating
+            #                          at 15% of original cost
+            # The 60/40 split is a stated policy weight; nothing was fitted. The
+            # score orders which files an officer opens first. It says nothing
+            # about intent, and the labels below are chosen not to.
             # ----------------------------------------------------
-            # 1. Boundary Proximity Penalty (Max 60 points)
-            # Evasion margin is between 0.01 (19.99%) and 2.00 (18.00%)
-            proximity_score = max(0.0, (2.0 - evasion_margin) / 2.0 * 60.0)
-            
-            # 2. Statutory 10CC Deviation Penalty (Max 40 points)
-            # Penalize if excess claim is substantial relative to original cost
+            proximity_score = max(0.0, (2.0 - distance_pp) / 2.0 * 60.0)
             excess_ratio = (excess_claim / max(1.0, orig_c))
-            deviation_score = min(40.0, (excess_ratio / 0.15) * 40.0)
-            
-            total_suspicion_score = min(100, int(proximity_score + deviation_score))
-            
-            # Assign Severity Label
-            if total_suspicion_score >= 85:
-                suspicion_level = "CRITICAL"
-                suspicion_driver = f"Unjustified Claim & 0.0{int(evasion_margin*100)}pp from CCEA" if excess_claim > 0 else f"0.0{int(evasion_margin*100)}pp from CCEA boundary"
-            elif total_suspicion_score >= 65:
-                suspicion_level = "HIGH"
-                suspicion_driver = f"High statutory deviation" if deviation_score > proximity_score else f"Threshold hovering"
+            excess_score = min(40.0, (excess_ratio / 0.15) * 40.0)
+            review_priority = min(100, int(proximity_score + excess_score))
+
+            if review_priority >= 85:
+                priority_tier = "FIRST"
+            elif review_priority >= 65:
+                priority_tier = "SECOND"
             else:
-                suspicion_level = "ELEVATED"
-                suspicion_driver = "Irregular reporting pattern"
+                priority_tier = "THIRD"
+            parts = [f"{distance_pp:.2f} pp below the 20% threshold"]
+            if excess_claim > 0:
+                parts.append(f"Rs {excess_claim:,.0f} Cr above the Clause 10CC cap")
+            else:
+                parts.append("within the Clause 10CC cap")
+            priority_basis = "; ".join(parts)
 
             flagged_list.append({
                 "project_id": pid,
@@ -231,8 +244,7 @@ class SatyaKavachEngine:
                 "revised_cost_cr": round(rev_c, 2),
                 "cost_increase_cr": round(max(0.0, rev_c - orig_c), 2),
                 "overrun_pct": ov_pct,
-                "evasion_margin_pct": evasion_margin,
-                "distance_to_boundary_pp": evasion_margin,
+                "distance_to_boundary_pp": distance_pp,
                 "statutory_10cc_escalation_cr": esc_cr,
                 "total_allowed_10cc_cost_cr": total_allowed,
                 "statutory_10cc_cap_cr": total_allowed,
@@ -241,9 +253,20 @@ class SatyaKavachEngine:
                 "sanction_year": s_year,
                 "classification": "THRESHOLD_PROXIMITY",
                 "classification_label": "CCEA Threshold Proximity (18.0%–19.99%)",
-                "suspicion_score": total_suspicion_score,
-                "suspicion_level": suspicion_level,
-                "suspicion_driver": suspicion_driver,
+                "review_priority_score": review_priority,
+                "review_priority_tier": priority_tier,
+                "review_priority_basis": priority_basis,
+                "review_priority_components": {
+                    "proximity_max_60": round(proximity_score, 1),
+                    "clause_10cc_excess_max_40": round(excess_score, 1),
+                    "weights_note": "declared 60/40 policy weights; a triage order, not a probability or a finding",
+                },
+                "priority_score": review_priority,
+                "priority_level": priority_tier,
+                "priority_driver": priority_basis,
+                "suspicion_score": review_priority,
+                "suspicion_level": priority_tier,
+                "suspicion_driver": priority_basis,
             })
 
         return {
@@ -278,9 +301,11 @@ class SatyaKavachEngine:
                     "string": f"[{ci_lower}, {ci_upper}]" if ci_lower is not None else "N/A",
                 },
             },
-            "mccrary_bunching_signal": {
+            # Renamed from "mccrary_bunching_signal": a two-bin count ratio is not a
+            # McCrary test. The descriptive statistic is retained under an honest key
+            # and the real test is reported beside it.
+            "boundary_bin_ratio": {
                 "boundary_bin_mass_ratio": bin_mass_ratio,
-                "density_ratio": bin_mass_ratio,
                 "numerator_count": num_count,
                 "denominator_count": den_count,
                 "numerator_bin": "[18.0%, 20.0%)",
@@ -288,8 +313,15 @@ class SatyaKavachEngine:
                 "total_active_population": len(active_revised),
                 "excluded_no_revision_count": no_rev_count,
                 "confidence_interval_95": f"[{ci_lower}, {ci_upper}]" if ci_lower is not None else "N/A",
-                "interpretation": f"Boundary Bin-Mass Ratio of {bin_mass_ratio}x (95% CI: [{ci_lower}, {ci_upper}]) across active revised cohort.",
+                "ci_method": "log-Poisson ratio of two independent counts, se = sqrt(1/n1 + 1/n2)",
+                "significant_at_5pct": bool(ci_lower is not None and (ci_lower > 1.0 or ci_upper < 1.0)),
+                "bin_width_sensitivity": "ratio moves with the arbitrary 2-point bin width (1.22x at 1pt, 1.65x at 2pt, 1.49x at 5pt); treat as descriptive",
+                "interpretation": (
+                    f"{bin_mass_ratio}x more revisions land in [18%, 20%) than in [20%, 22%) "
+                    f"(95% CI [{ci_lower}, {ci_upper}]). The interval includes 1.0: the "
+                    f"difference is not statistically distinguishable from chance at this sample size."),
             },
+            "mccrary_density_test": mccrary,
             "flagged_sample_projects": flagged_list,
         }
 
@@ -500,7 +532,7 @@ class SatyaKavachEngine:
             "escalable_base_cr": calc["escalable_base_cr"],
             "statutory_allowed_escalation_cr": statutory_cap,
             "claimed_overrun_pct": overrun_pct,
-            "is_ccea_threshold_evasion": bool(18.0 <= overrun_pct < 20.0),
+            "is_just_below_ccea_threshold": bool(18.0 <= overrun_pct < 20.0),
             "cap_pct_of_original_cost": calc["cap_pct_of_original_cost"],
             "is_implausible_legacy_cap": calc["is_implausible_legacy_cap"],
             "legacy_cap_caveat": calc["legacy_cap_caveat"],

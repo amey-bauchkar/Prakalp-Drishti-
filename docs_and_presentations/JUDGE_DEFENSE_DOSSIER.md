@@ -44,13 +44,18 @@ because chronologically it loses to a train-mean baseline at every maturity gate
 lie, and the calibration proves the width is honest.
 
 **The numbers** (`artifacts/conformal_calibration.json`):
-- Target coverage 90%; **measured 93.3%** on 450 disjoint held-out projects
-- **Uncalibrated coverage was 84.7%** — the raw quantile model was overconfident
-- Conformal quantile Q = 5.185 months; mean interval width 61.78 months
-- Split: 900 train / 450 calibration / 450 test, disjoint
+- Nominal band coverage 85%; **measured 79.0%** on 596 disjoint held-out projects,
+  **measured on the fan the screen actually shows** (`forecast_project()` end to end)
+- **Uncalibrated coverage was 50.8%** — the raw AFT / earned-value fan was badly overconfident
+- P50 MAE 22.7 months against 100.0 for the raw median; mean band width 101 months
+- Split: 596 calibration / 596 test, disjoint, forward-looking targets only
+- The 93.3% figure quoted in earlier material belonged to a different interval on a
+  different target that the cockpit never displayed. **It is withdrawn.** Say so before
+  a judge finds it in an old deck.
 
-**The argument.** Split-conformal CQR (Romano, Patterson & Candès, NeurIPS 2019) gives a
-*finite-sample, distribution-free* coverage guarantee. We could produce a 12-month
+**The argument.** Split-conformal calibration gives a *finite-sample, distribution-free*
+coverage guarantee for the interval it is applied to — and it is now applied to the
+displayed one. We could produce a 12-month
 interval trivially — by narrowing until it looked decisive — and it would contain the
 truth about half the time. On a portfolio where the median slip among slipped projects
 is **19.4 months** and the maximum is **300 months (25 years)**, a wide interval is a
@@ -66,23 +71,25 @@ costs nothing and buys credibility.
 
 ---
 
-## 3. "Only 160 completions out of 2,148. Are your sector multipliers real?"
+## 3. "Only 115 completions out of 2,103. Are your sector multipliers real?"
 
 **The one-line answer:** For one sector, yes. For eighteen, no — and the artifact says
 so in a machine-readable field before anyone asks.
 
 **The numbers** (`artifacts/aft_survival.json`):
-- **160 observed completions, 1,988 right-censored** — a 7.4% event rate
-- τ = 0.2 (selected by 5-fold CV on held-out log-likelihood), σ = 0.332
-- Pooled baseline multiplier **3.4721×** planned duration
-- **Roads & Highways: 145 of the 160 events**, fits to **2.70×** on its own evidence
+- **115 observed completions, 1,988 right-censored** — a 5.5% event rate
+  (45 "completed" rows whose completion proxy lies after the as-of date are excluded)
+- τ = 0.15 (selected by 5-fold CV on held-out log-likelihood), σ = 0.349
+- Pooled baseline multiplier **3.3106×** planned duration — **an upper-ish bound**
+- **Roads & Highways: 101 of the 115 events**, fits to **2.70×** on its own evidence
 - **18 of 19 sectors are tagged `"prior-dominated"`** in the artifact
 
 **The argument.** Every group publishes `n_events`, `n_projects`, `se`, and an
 `evidence` tag that is either `"data"` or `"prior-dominated"`. A sector sitting near
 3.47× is sitting there *because the shrinkage prior put it there*, not because the data
 said so — and the artifact states which is which. **Read the tag before quoting a
-multiplier** is written into `CLAIMS.md`.
+multiplier** is written into `CLAIMS.md`. (Any figure near 3.47× or 0.2 for τ in older
+material predates the refit; the artefact is the source of record.)
 
 **Why τ was cross-validated, not chosen by hand.** An in-sample criterion monotonically
 preferred the loosest prior (τ = 0.8), which handed Coal a 5.57× multiplier off **zero
@@ -90,9 +97,13 @@ observed events**. 5-fold stratified CV on held-out log-likelihood selected τ =
 that artefact disappeared. This is a good story: it shows the team caught its own
 overfit.
 
-**On the 3.47× baseline being higher than reality.** The median *completed* project
-finished at 1.64× planned. 3.47× is higher because finishers are a biased-fast
-subsample — that is the censoring correction working, not an inflated number.
+**On the 3.31× baseline.** It is higher than the finishers' median because
+finishers are a biased-fast subsample — that is the censoring correction working. But
+concede the other half without being pushed: the register **sheds completed projects**,
+so cohorts sanctioned before 2005 show 0 completions in 20 projects and the sample is
+survivor-biased toward slow projects. Right-censoring cannot fix that. The artefact
+publishes the cohort table under `survivorship` and labels the multiplier an upper-ish
+bound, not a point estimate.
 
 ---
 
@@ -130,8 +141,10 @@ the LLM and every quantitative claim in the product survives unchanged.
 
 **No, and we refuse to claim it does.**
 
-Surface change and reported progress correlate at **r = 0.007** across this corpus —
-statistically indistinguishable from noise. A "satellite says 38.4% complete" figure
+Surface change and reported progress correlate at **r = +0.004** (Pearson, p = 0.87, n = 1,588)
+across this corpus — statistically indistinguishable from noise. The number is computed
+from the catalogue and persisted with the catalogue's hash in
+`artifacts/eo_progress_independence.json`; it is not a remembered literal. A "satellite says 38.4% complete" figure
 would be a guess wearing the costume of a measurement. **That figure existed here once
 and was removed** because it was 45%-weighted on the very claim it purported to audit.
 
@@ -154,7 +167,7 @@ for **2 of 70 surveyed sites**, and only those two are described as sub-metre.
 
 **Answer honestly — the weakness is known and bounded.**
 
-Writes go to Supabase PostgreSQL (ap-south-1, Mumbai) with append-only triggers, a
+Writes go to Supabase PostgreSQL (ap-southeast-1, Singapore) with append-only triggers, a
 `prev_hash` row chain and RLS. **Reads are served from a single in-memory pandas frame**,
 which is what delivers the measured **7 ms** forecast latency. That is correct at 2,207
 rows and would not survive continuous national ingestion — a shared cache or columnar
@@ -216,10 +229,13 @@ caught in internal audit and fixed — the engines now raise, the routers map to
 | Late vs **revised** date | 620 |
 | **Invisible to a revised-date dashboard** | **629 projects · ₹14.60 L Cr · 50.5% of all late projects** |
 | Cost-revised projects | 1,183 · +₹5.66 L Cr (+23.0%) |
-| Conformal coverage | 93.3% measured (84.7% uncalibrated) |
-| AFT events / censored | 160 / 1,988 (7.4%) |
+| Fan coverage (10–95% band, measured on the displayed fan) | 79.0% at nominal 85% (50.8% uncalibrated) |
+| AFT events / censored | 115 / 1,988 (5.5%) — baseline 3.31×, upper-ish bound |
+| McCrary test at 20% | θ = +0.076, z = 0.41, p = 0.68 — no discontinuity |
+| EO / progress correlation | r = +0.004 (n = 1,588) |
+| Dependency graph | 1,345 inferred edges (275 supply-chain, 1,070 geo-adjacency ≤ 50 km), every edge carries its basis |
 | MAE lift over sector-mean | 12.2% |
-| Test suite | 476 assertions, 19 suites, CI-enforced |
+| Test suite | 20 standalone suites + 2 pytest modules, CI-enforced |
 | API surface | 87 endpoints |
 | Satellite epochs | 26 dated, 5 sites, from 196 archive releases |
 | Measured GSD | 2.08–2.35 m/px |

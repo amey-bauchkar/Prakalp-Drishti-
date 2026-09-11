@@ -19,7 +19,11 @@ MASTER_PROJECTS_PATH = os.path.join(BASE_DIR, "paimana_extracted", "PAIMANA_MAST
 ENRICHED_PATH = os.path.join(BASE_DIR, "paimana_extracted", "advanced_macro", "PAIMANA_ENRICHED_WITH_ADVANCED_FACTORS.csv")
 
 # State Geo-Climatic & Terrain Archetypes
-# Base non-working monsoon days and excess rain elasticity calibrated to Indian climatic zones & terrain
+# Base non-working monsoon days and excess-rain elasticity per state. These are
+# DECLARED EXPERT PARAMETERS chosen by climatic zone and terrain; they are not
+# fitted to any outcome series (no per-state construction-downtime record exists
+# to fit against). The IMD 2005-2025 departure matrix supplies the historical
+# anomaly each state is evaluated at; it does not estimate these numbers.
 STATE_GEO_PROFILES = {
     "Arunachal Pradesh": {"region": "North-East", "base_lost_days": 88, "elasticity": 1.65, "risk_tier": "CRITICAL_TERRAIN_WINDOW", "terrain": "Steep Mountainous & Landslide-Prone"},
     "Assam": {"region": "North-East", "base_lost_days": 80, "elasticity": 1.50, "risk_tier": "SEVERE_FLOOD_PRONE", "terrain": "Brahmaputra Floodplain & Heavy Alluvial"},
@@ -213,6 +217,10 @@ class VarshaSpeedEngine:
             "simulated_rainfall_anomaly_pct": rainfall_anomaly_pct,
             "scenario_interpretation": scenario_note,
             "data_source": "IMD Historical Monsoon Departure Matrix (2005–2025) · 630 State-Years",
+            "parameter_basis": ("base_lost_days and excess_rain_elasticity are declared expert "
+                                "parameters by climatic zone and terrain, not coefficients fitted "
+                                "to a downtime series. The IMD matrix supplies the anomaly history "
+                                "they are applied to."),
             "total_states_modeled": len(results),
             "national_summary": {
                 "average_working_window_months": avg_working_window,

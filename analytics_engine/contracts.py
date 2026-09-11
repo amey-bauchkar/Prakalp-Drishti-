@@ -117,7 +117,7 @@ class AllocationRequest(BaseModel):
     # rather than silently producing an empty allocation.
     budget_pool_cr: float = Field(default=10000.0, gt=0, le=10_000_000,
                                   description="Available capex pool in Crore INR")
-    risk_dial_kappa: float = Field(default=0.70, ge=0.0, le=1.0, description="Weight on CVaR90 tail loss vs expected loss")
+    risk_dial_kappa: float = Field(default=0.70, ge=0.0, le=1.0, description="Convex weight on the CVaR90 tail term vs expected yield: 0 = maximise expected yield, 1 = maximise 90% tail-average yield")
     enforce_ner_floor: bool = Field(default=True, description="Enforce statutory 10% capex floor for North-Eastern Region")
     agency_absorption_multiplier: float = Field(default=1.25, description="Agency historical burn rate multiplier ceiling")
     delay_shock_months: float = Field(default=0.0, ge=0.0, description="Simulated delay shock in months to stress-test the allocation")
@@ -157,13 +157,22 @@ class AllocationResult(BaseModel):
         default=0.0, ge=0.0, le=100.0,
         description="Allocation-weighted mean completion propensity, clipped to "
                     "[0,100]. This is the figure that is a real percentage.")
-    cvar90_tail_loss: float
+    cvar90_tail_loss: float = Field(
+        description="Expected scenario return minus the 90% tail-average return of the "
+                    "solved allocation, in yield-weighted Cr. >= 0; falls as kappa rises.")
+    cvar_diagnostics: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Scenario probabilities/severities (declared policy), per-scenario "
+                    "returns at the optimum, VaR eta, zeta, and the Rockafellar-Uryasev "
+                    "cross-check.")
     ner_allocated_cr: float
     ner_share_perc: float
     ner_floor_met: bool
     shadow_price_budget_pi: float
     shadow_price_ner_pi: float
-    agency_shadow_prices: Dict[str, float]
+    # Derived indicator (agency yield x budget dual, clipped) -- NOT a constraint dual.
+    # The two genuine duals are shadow_price_budget_pi and shadow_price_ner_pi above.
+    agency_marginal_yield_indicator: Dict[str, float]
     allocations: List[ProjectAllocation]
     closure_error_perc: float
     solve_time_ms: float

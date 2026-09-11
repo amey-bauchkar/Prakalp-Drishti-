@@ -9,8 +9,9 @@ WHAT THIS DOES NOT DO, AND WHY
 It does not compute a satellite-derived completion percentage, and it therefore does not
 compute `claimed - detected` as a discrepancy score.
 
-Surface change and reported progress correlate at **r = 0.007** across this corpus
-(eo_geospatial.py, recon_copilot.py, and satellite_fusion.py all state it). That is
+Surface change and reported progress are uncorrelated across this corpus -- the
+measured figure lives in artifacts/eo_progress_independence.json and is recomputed by
+analytics_engine/eo_independence.py, never quoted from memory. That is
 statistically indistinguishable from noise: imagery explains essentially none of the
 variance in reported progress. A "satellite says 38.4% complete" figure would be a guess
 wearing the costume of a measurement, and a fraud badge computed from it would accuse
@@ -24,7 +25,7 @@ WHAT IT DOES INSTEAD
 --------------------
 It answers a question imagery CAN answer: **did anything happen?**
 
-Magnitude is unavailable (r = 0.007). Presence is not. A greenfield highway that claims
+Magnitude is unavailable (r ~ 0, see the artifact). Presence is not. A greenfield highway that claims
 +45 points of progress across a year, on a site whose two dated images are
 indistinguishable, is a real finding -- not "we measured 38.4%", but "45 points were
 claimed, this project type should show that, and the ground does not". That is a triage
@@ -122,6 +123,25 @@ INVISIBLE_NAME_TOKENS = (
 # ── THRESHOLDS ──────────────────────────────────────────────────────────────
 # Below this claimed delta, no optical signal should be expected at all, so silence is
 # uninformative rather than suspicious.
+
+def _eo_statement() -> str:
+    try:
+        from analytics_engine.eo_independence import statement
+        return statement()
+    except Exception:  # pragma: no cover
+        return "surface change and reported progress are treated as independent"
+
+
+def _eo_summary():
+    try:
+        from analytics_engine.eo_independence import load
+        a = load() or {}
+        return {"overall": a.get("overall"), "n_reliable": a.get("n_reliable"),
+                "catalog_sha256": (a.get("catalog_sha256") or "")[:16],
+                "artifact": "artifacts/eo_progress_independence.json"}
+    except Exception:  # pragma: no cover
+        return None
+
 MATERIAL_PROGRESS_DELTA_PCT = 15.0
 
 # Surface change at or below this is treated as "no detectable activity". It is not a
@@ -398,12 +418,13 @@ def build_timeline(milestones: List[Milestone],
         "verdict_counts": counts,
         "actionable_count": sum(1 for e in entries if e.actionable),
         "methodology": (
-            "Verdicts report EVIDENCE, not completion. Surface change and reported "
-            "progress correlate at r=0.007 in this corpus, so no satellite-derived "
-            "completion percentage is computed and no claimed-minus-detected "
-            "discrepancy score exists. NO_ACTIVITY_DETECTED recommends inspection; it "
-            "is not a finding of wrongdoing."
+            "Verdicts report EVIDENCE, not completion. In this corpus "
+            + _eo_statement() +
+            ", so no satellite-derived completion percentage is computed and no "
+            "claimed-minus-detected discrepancy score exists. NO_ACTIVITY_DETECTED "
+            "recommends inspection; it is not a finding of wrongdoing."
         ),
+        "eo_progress_independence": _eo_summary(),
         "thresholds": {
             "material_progress_delta_pct": MATERIAL_PROGRESS_DELTA_PCT,
             "activity_floor_pct": ACTIVITY_FLOOR_PCT,
