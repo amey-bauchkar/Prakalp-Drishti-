@@ -134,21 +134,21 @@ export const DICTIONARY = {
     ws_governance: 'Governance & Validation',
     eng_watchlist: 'Early Warning Queue',
     eng_watchlist_desc: 'Ranked portfolio watchlist across all 2,207 projects',
-    eng_satya_kavach: 'CCEA Cost Audit',
+    eng_satya_kavach: 'SATYA KAVACH',
     eng_satya_kavach_desc: '20% threshold proximity & Clause 10CC inflation audit',
-    eng_setu_varsha: 'Monsoon & Contagion',
+    eng_setu_varsha: 'SETU VARSHA',
     eng_setu_varsha_desc: 'Weather shock, river basin & dependency graph',
     eng_unified_cockpit: 'Unified Risk Cockpit',
     eng_unified_cockpit_desc: 'Survival curve, expenditure trajectory & satellite geocodes',
-    eng_kaal_chakra: 'Timeline & Delay Forecast',
+    eng_kaal_chakra: 'KAAL CHAKRA',
     eng_kaal_chakra_desc: 'Conformalized Weibull finish date & delay quantification',
-    eng_pragati_saarthi: 'Cabinet Briefing Memo',
+    eng_pragati_saarthi: 'PRAGATI SAARTHI',
     eng_pragati_saarthi_desc: 'Executive brief & cryptographically sealed SHA-256 audit trail',
-    eng_vitta_vyuha: 'Capital Reallocation',
+    eng_vitta_vyuha: 'VITTA VYUHA',
     eng_vitta_vyuha_desc: 'HiGHS linear programming solver with 10% NER statutory floor',
-    eng_karya_dakshata: 'Agency Capacity Simulation',
+    eng_karya_dakshata: 'KARYA DAKSHATA',
     eng_karya_dakshata_desc: 'Stress-test agency absorption rates and execution velocity',
-    eng_artha_nivaran: 'PSU Financial Health',
+    eng_artha_nivaran: 'ARTHA NIVARAN',
     eng_artha_nivaran_desc: 'Altman Z-Score solvency, working capital & dispute exposure',
     eng_agency_index: 'Agency Track Record',
     eng_agency_index_desc: 'MoSPI agency efficiency index & satellite coordinate precision',
@@ -363,33 +363,32 @@ export const DICTIONARY = {
     ws_allocator: 'पूंजी पुनरावंटन',
     ws_governance: 'शासन एवं सत्यापन',
     eng_watchlist: 'प्रारंभिक चेतावनी कतार',
-    eng_watchlist_desc: '2,207 परियोजनाओं में शीघ्र चेतावनी प्राथमिकता सूची',
-    eng_satya_kavach: 'CCEA लागत लेखापरीक्षा',
-    eng_satya_kavach_desc: 'CCEA 20% सीमा निकटता एवं Clause 10CC मूल्य वृद्धि',
-    eng_setu_varsha: 'मानसून व संक्रामकता',
+    eng_watchlist_desc: '२,२०७ परियोजनाओं में शीघ्र चेतावनी प्राथमिकता सूची',
+    eng_satya_kavach: 'SATYA KAVACH',
+    eng_satya_kavach_desc: 'CCEA २०% सीमा निकटता एवं Clause 10CC मूल्य वृद्धि',
+    eng_setu_varsha: 'SETU VARSHA',
     eng_setu_varsha_desc: 'मौसम आघात, नदी बेसिन एवं परियोजना संक्रामकता',
     eng_unified_cockpit: 'एकीकृत जोखिम कॉकपिट',
     eng_unified_cockpit_desc: 'उत्तरजीविता वक्र, व्यय प्रक्षेपवक्र एवं उपग्रह साक्ष्य',
-    eng_kaal_chakra: 'समयसीमा पूर्वानुमान',
+    eng_kaal_chakra: 'KAAL CHAKRA',
     eng_kaal_chakra_desc: 'वाइबुल फिनिश तिथि एवं परिमाणित विलंब जोखिम',
-    eng_pragati_saarthi: 'मंत्रिमंडल संक्षिप्त विवरण',
+    eng_pragati_saarthi: 'PRAGATI SAARTHI',
     eng_pragati_saarthi_desc: 'कार्यकारी विवरण एवं क्रिप्टोग्राफिक मर्कल ऑडिट ट्रेल',
-    eng_vitta_vyuha: 'पूंजी पुनरावंटन',
-    eng_vitta_vyuha_desc: 'HiGHS लीनियर प्रोग्रामिंग सॉल्वर एवं 10% पूर्वोत्तर सांविधिक कोटा',
-    eng_karya_dakshata: 'एजेंसी क्षमता सिमुलेशन',
+    eng_vitta_vyuha: 'VITTA VYUHA',
+    eng_vitta_vyuha_desc: 'HiGHS लीनियर प्रोग्रामिंग सॉल्वर एवं १०% पूर्वोत्तर सांविधिक कोटा',
+    eng_karya_dakshata: 'KARYA DAKSHATA',
     eng_karya_dakshata_desc: 'पूंजी अवशोषण एवं निष्पादन गति का विश्लेषण',
-    eng_artha_nivaran: 'पीएसयू वित्तीय स्वास्थ्य',
+    eng_artha_nivaran: 'ARTHA NIVARAN',
     eng_artha_nivaran_desc: 'ऑल्टमैन Z-स्कोर शोधनक्षमता एवं कानूनी विवाद',
     eng_agency_index: 'एजेंसी ट्रैक रिकॉर्ड',
     eng_agency_index_desc: 'मंत्रालय एजेंसी दक्षता सूचकांक एवं उपग्रह सटीकता',
     eng_benchmark: 'वैज्ञानिक मॉडल सत्यापन',
-    eng_benchmark_desc: '2,207 परियोजनाओं पर OLS व आधारभूत तुलना',
+    eng_benchmark_desc: '२,२०७ परियोजनाओं पर OLS व आधारभूत तुलना',
 
     // ── Prototype notice (short form for narrow viewports) ──
     proto_desc_short: 'यह भारत सरकार की आधिकारिक सेवा नहीं है।',
 
     // ── Nagrik: hero & framing ──
-    nagrik_eyebrow: 'नागरिक अधिकार-पत्र · मुक्त आंकड़ा पहल · सूचना का अधिकार अधिनियम §4(1)(ख)',
     nagrik_title: 'सार्वजनिक अवसंरचना पारदर्शिता एवं निगरानी',
     nagrik_lede: '₹150 करोड़ से अधिक की प्रत्येक केंद्रीय परियोजना, पूर्ण विवरण सहित प्रकाशित। देखिए कि निर्माण कहाँ हो रहा है, स्वीकृत लागत क्या थी, वर्तमान लागत क्या है, और क्या परियोजना विलंबित है।',
     nagrik_rti_note: 'यह जानकारी सूचना का अधिकार अधिनियम, 2005 की धारा 4(1)(ख) के अंतर्गत प्रकाशित है — इसे देखने के लिए आपको आरटीआई आवेदन करने की आवश्यकता नहीं है।',
@@ -470,6 +469,13 @@ export const DICTIONARY = {
     // ── Decision Hub chrome ──
   }
 };
+
+export function toHindiDigits(val) {
+  if (val === null || val === undefined) return '';
+  const str = String(val);
+  const hindiDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+  return str.replace(/[0-9]/g, (d) => hindiDigits[d]);
+}
 
 export function getStoredLanguage() {
   try {

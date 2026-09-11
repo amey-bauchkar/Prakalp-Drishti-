@@ -6,6 +6,23 @@ const LenisContext = createContext(null);
 export const useLenis = () => useContext(LenisContext);
 
 /**
+ * Universal Scroll-To-Top Helper
+ * Resets native browser scroll, document element, and Lenis virtual scroll instantly.
+ */
+export function scrollToTop(immediate = true) {
+  try {
+    window.scrollTo({ top: 0, left: 0, behavior: immediate ? 'instant' : 'smooth' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (window.__lenisInstance && typeof window.__lenisInstance.scrollTo === 'function') {
+      window.__lenisInstance.scrollTo(0, { immediate });
+    }
+  } catch (e) {
+    window.scrollTo(0, 0);
+  }
+}
+
+/**
  * SmoothScrollProvider
  * 
  * Enterprise-grade smooth scrolling provider leveraging Lenis.
@@ -44,6 +61,13 @@ export default function SmoothScrollProvider({ children, options = {} }) {
     });
 
     lenisRef.current = lenis;
+    window.__lenisInstance = lenis;
+
+    const handleScrollEvent = (e) => {
+      const immediate = e?.detail?.immediate !== false;
+      scrollToTop(immediate);
+    };
+    window.addEventListener('prakalp:scrollToTop', handleScrollEvent);
 
     // Synchronized RAF loop
     let rafId;
@@ -54,9 +78,11 @@ export default function SmoothScrollProvider({ children, options = {} }) {
     rafId = requestAnimationFrame(raf);
 
     return () => {
+      window.removeEventListener('prakalp:scrollToTop', handleScrollEvent);
       if (rafId) cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;
+      window.__lenisInstance = null;
     };
   }, []);
 
@@ -66,3 +92,4 @@ export default function SmoothScrollProvider({ children, options = {} }) {
     </LenisContext.Provider>
   );
 }
+

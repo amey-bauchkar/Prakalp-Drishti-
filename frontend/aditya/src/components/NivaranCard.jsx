@@ -112,7 +112,7 @@ export default function NivaranCard({ data, onRunCustomText }) {
 
       {/* DRAWER SLIDE-OVER */}
       {drawerOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[1000] flex justify-end bg-black/70 backdrop-blur-sm">
           <div className="w-full max-w-xl bg-slate-950 border-l border-slate-800 p-6 flex flex-col justify-between space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div className="flex items-center space-x-3">

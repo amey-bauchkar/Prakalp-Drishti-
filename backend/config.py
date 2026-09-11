@@ -31,7 +31,7 @@ def _load_dotenv() -> None:
         return
     try:
         from dotenv import load_dotenv
-        load_dotenv(env_path, override=False)
+        load_dotenv(env_path, override=True)
         return
     except Exception:
         pass
@@ -40,7 +40,7 @@ def _load_dotenv() -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         k, _, v = line.partition("=")
-        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+        os.environ[k.strip()] = v.strip().strip('"').strip("'")
 
 
 _load_dotenv()

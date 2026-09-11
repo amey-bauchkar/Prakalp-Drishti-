@@ -56,9 +56,9 @@ export default function SatyaKavachHeader({ flaggedCount = 28, hasData = true, l
           )}
         </p>
 
-        <div className="pt-2 flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-600 text-xs text-slate-200 font-mono">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono">
+          <span className="inline-flex items-center gap-1.5 text-slate-300">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             {lang === 'hi' ? (
               <><strong>२,२०७ मुख्य परियोजना संवर्ग</strong> पर मूल्यांकित (१,१८३ सक्रिय संशोधित)</>
             ) : (
@@ -67,8 +67,8 @@ export default function SatyaKavachHeader({ flaggedCount = 28, hasData = true, l
           </span>
 
           {hasData && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-xs text-amber-300 font-mono">
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+            <span className="inline-flex items-center gap-1.5 text-amber-300">
+              <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               {lang === 'hi' ? (
                 <><strong>{flaggedCount} परियोजनाएं</strong> [१८%, २०%) निकटता पट्टी में चिह्नित</>
               ) : (

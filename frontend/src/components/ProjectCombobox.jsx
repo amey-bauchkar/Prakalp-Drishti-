@@ -24,6 +24,8 @@ import { Search } from 'lucide-react';
  * then name prefix, then alphabetical.
  */
 
+import { getStoredLanguage, toHindiDigits } from '../lib/i18n';
+
 const MAX_RESULTS = 100;
 
 export default function ProjectCombobox({
@@ -37,6 +39,8 @@ export default function ProjectCombobox({
   busyLabel = 'Working…',
   label = 'Find a project',
   hint = 'Type a project name or MoSPI code, then use the arrow keys to choose.',
+  placeholder,
+  isHi = false,
   tone = 'dark',
   className = '',
 }) {
@@ -189,7 +193,7 @@ export default function ProjectCombobox({
           aria-activedescendant={isOpen && active >= 0 ? optId(active) : undefined}
           aria-describedby={hintId}
           autoComplete="off"
-          placeholder="Project name or MoSPI code"
+          placeholder={placeholder || (isHi ? "परियोजना नाम या एमओएसपीआई कोड" : "Project name or MoSPI code")}
           value={value}
           onChange={(e) => { onChange(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
@@ -214,8 +218,10 @@ export default function ProjectCombobox({
       <div role="status" aria-live="polite" className="sr-only">
         {open && value
           ? results.length
-            ? `${results.length} project${results.length === 1 ? '' : 's'} found. Use the arrow keys to review them.`
-            : 'No projects match that search.'
+            ? isHi 
+              ? `${toHindiDigits(results.length)} परियोजनाएं मिलीं। समीक्षा के लिए तीर कुंजियों का उपयोग करें।`
+              : `${results.length} project${results.length === 1 ? '' : 's'} found. Use the arrow keys to review them.`
+            : isHi ? 'कोई मेल खाती परियोजना नहीं मिली।' : 'No projects match that search.'
           : ''}
       </div>
 
@@ -224,9 +230,11 @@ export default function ProjectCombobox({
           id={listId}
           ref={listRef}
           role="listbox"
-          aria-label="Matching projects"
+          aria-label={isHi ? "मेल खाती परियोजनाएं" : "Matching projects"}
           data-lenis-prevent
-          className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-y-auto z-40 max-h-80 divide-y divide-slate-800/80 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+          className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl overflow-y-auto overscroll-contain z-50 max-h-80 divide-y divide-slate-800/80 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full"
         >
           {results.map((p, i) => (
             <li
@@ -242,7 +250,9 @@ export default function ProjectCombobox({
             >
               <span className="text-sm font-bold text-slate-100">{p.project_name}</span>
               <span className="flex items-center gap-2 text-[11px] font-mono">
-                <span className="text-amber-400 font-bold">ID: {p.project_id}</span>
+                <span className="text-amber-400 font-bold">
+                  {isHi ? `आईडी: ${toHindiDigits(p.project_id)}` : `ID: ${p.project_id}`}
+                </span>
                 <span className="text-slate-400" aria-hidden="true">·</span>
                 <span className="text-slate-300 font-medium truncate">{p.sector}</span>
               </span>
@@ -254,12 +264,16 @@ export default function ProjectCombobox({
       {/* An empty result set must say so. Previously the panel simply did not render,
           leaving the user to guess whether the search had run. */}
       {open && value && results.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl z-40 px-3.5 py-3">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700/80 rounded-xl shadow-2xl z-50 px-3.5 py-3">
           <p className="text-xs text-slate-200">
-            No project matches <span className="font-mono font-bold text-amber-400">{value}</span>.
+            {isHi ? (
+              <>कोई परियोजना <span className="font-mono font-bold text-amber-400">{value}</span> से मेल नहीं खाती।</>
+            ) : (
+              <>No project matches <span className="font-mono font-bold text-amber-400">{value}</span>.</>
+            )}
           </p>
           <p className="text-[11px] text-slate-300 mt-1">
-            Try part of the project name, or the numeric MoSPI code.
+            {isHi ? "परियोजना नाम का भाग या सांख्यिकी मंत्रालय कोड दर्ज करें।" : "Try part of the project name, or the numeric MoSPI code."}
           </p>
         </div>
       )}

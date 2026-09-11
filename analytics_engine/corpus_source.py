@@ -50,6 +50,11 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 
+try:
+    from backend import config  # noqa: F401 - ensures .env is loaded
+except Exception:
+    pass
+
 from analytics_engine.corpus_provenance import (
     COLUMN_MAP, CorpusSnapshot, build_snapshot,
 )

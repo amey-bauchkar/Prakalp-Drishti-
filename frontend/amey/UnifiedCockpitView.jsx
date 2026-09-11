@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import ProjectCombobox from '../src/components/ProjectCombobox';
 import DataUnavailable from '../src/components/DataUnavailable';
-import { getStoredLanguage, t } from '../src/lib/i18n';
+import { getStoredLanguage, t, toHindiDigits } from '../src/lib/i18n';
 
 export default function UnifiedCockpitView({ selectedProjectId = '', onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId || '619092');
@@ -25,6 +25,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
     window.addEventListener('prakalp:languageChanged', onLang);
     return () => window.removeEventListener('prakalp:languageChanged', onLang);
   }, []);
+  const isHi = lang === 'hi';
   const [delayShock, setDelayShock] = useState(0);
   const [budgetPool, setBudgetPool] = useState(15000);
   const [riskKappa, setRiskKappa] = useState(0.75);
@@ -40,7 +41,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
       .then((data) => {
         if (Array.isArray(data)) setProjectList(data);
       })
-      .catch(() => setListError('The project list could not be loaded, so search will not suggest anything. You can still enter a MoSPI code directly.'));
+      .catch(() => setListError(isHi ? 'परियोजना सूची लोड नहीं हो सकी।' : 'The project list could not be loaded, so search will not suggest anything. You can still enter a MoSPI code directly.'));
   }, []);
 
   // Sync when parent changes selectedProjectId
@@ -78,12 +79,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
         setLoading(false);
       })
       .catch(() => {
-        // console.error only: the button un-pressed itself and the officer was left
-        // staring at an unchanged screen with no idea the run had failed.
-        setSimError('The simulation could not be completed. The analytics service did not respond.');
+        setSimError(isHi ? 'सिमुलेशन पूर्ण नहीं हो सका। एनालिटिक्स सेवा ने उत्तर नहीं दिया।' : 'The simulation could not be completed. The analytics service did not respond.');
         setLoading(false);
       });
-  }, [projectId, delayShock, budgetPool, riskKappa, enforceNer]);
+  }, [projectId, delayShock, budgetPool, riskKappa, enforceNer, isHi]);
 
   // Automatically run simulation on initial mount or when projectId changes
   useEffect(() => {
@@ -101,14 +100,23 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
     return () => clearTimeout(timeout);
   }, [delayShock, budgetPool, riskKappa, enforceNer]);
 
-
-  const pct = (v, d = 1) => (Number.isFinite(v) ? (v * 100).toFixed(d) + '%' : '—');
-  const cr = (v) => (Number.isFinite(v) ? '₹' + v.toLocaleString('en-IN') + ' Cr' : '—');
-  const num = (v, suffix = '') => (Number.isFinite(v) ? v + suffix : '—');
+  const pct = (v, d = 1) => {
+    if (!Number.isFinite(v)) return '—';
+    const formatted = (v * 100).toFixed(d) + '%';
+    return isHi ? toHindiDigits(formatted) : formatted;
+  };
+  const cr = (v) => {
+    if (!Number.isFinite(v)) return '—';
+    const formatted = v.toLocaleString('en-IN');
+    return isHi ? `₹${toHindiDigits(formatted)} करोड़` : `₹${formatted} Cr`;
+  };
+  const num = (v, suffix = '') => {
+    if (!Number.isFinite(v)) return '—';
+    const formatted = v + suffix;
+    return isHi ? toHindiDigits(formatted) : formatted;
+  };
 
   const forecast = simData?.forecast;
-  // Cost movement against the original sanction. This was reachable only inside the
-  // executive-summary paragraph at roughly y=1291 on a 768px screen.
   const overrunPct = (() => {
     const o = Number(forecast?.original_cost_cr);
     const r = Number(forecast?.revised_cost_cr);
@@ -116,9 +124,6 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
     return ((r - o) / o) * 100;
   })();
   const targetProb = Number(forecast?.prob_target_met_official);
-  // Severity drives visual weight. A 1.0% chance of hitting the contractor date was
-  // previously rendered in the same size and colour as an 83% progress figure, so an
-  // officer scanning left to right read "healthy".
   const targetTone = !Number.isFinite(targetProb) ? 'neutral'
     : targetProb < 0.20 ? 'critical'
     : targetProb < 0.50 ? 'warn'
@@ -162,27 +167,25 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           <div className="space-y-2.5 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-400 text-xs font-mono font-bold tracking-wider uppercase">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>DECISION INTELLIGENCE // UNIFIED COCKPIT</span>
+              <span>{isHi ? "निर्णय आसूचना // एकीकृत कॉकपिट" : "DECISION INTELLIGENCE // UNIFIED COCKPIT"}</span>
             </div>
             
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-              <span>PROJECT RISK &amp; IMPACT SIMULATOR</span>
+              <span>{isHi ? "परियोजना जोखिम एवं प्रभाव सिमुलेटर" : "PROJECT RISK & IMPACT SIMULATOR"}</span>
               {forecast?.project_id && (
-                <span className="text-xs px-2.5 py-1 rounded-md bg-white/10 text-slate-300 font-mono font-normal">
+                <span className="text-xs sm:text-[13px] px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 font-mono font-extrabold tracking-wider shadow-sm">
                   #{forecast.project_id}
                 </span>
               )}
             </h1>
             
             <p className="text-sm text-slate-300 leading-relaxed font-sans max-w-xl">
-              Central executive war-room synthesizing survival timeline forecasts, Simplex LP capital rebalancing, Earth-Observation ground truth, and Merkle-verified PMO directives.
+              {isHi
+                ? "उत्तरजीविता समयसीमा पूर्वानुमान, सिम्प्लेक्स एलपी पूंजी पुनर्संतुलन, भू-अवलोकन उपग्रह साक्ष्य और मर्कल-सत्यापित पीएमओ निर्देशों को संश्लेषित करने वाला केंद्रीय कार्यकारी नियंत्रण-कक्ष।"
+                : "Central executive war-room synthesizing survival timeline forecasts, Simplex LP capital rebalancing, Earth-Observation ground truth, and Merkle-verified PMO directives."}
             </p>
           </div>
 
-          {/* Project lookup. The bespoke autocomplete that used to live here had no
-              accessible name, no combobox ARIA, and <div> options that no keyboard
-              could reach — on the entry point to every engine. ProjectCombobox
-              implements the WAI-ARIA pattern once for all three consoles. */}
           <ProjectCombobox
             className="w-full lg:w-96 shrink-0 z-30"
             projects={projectList}
@@ -199,22 +202,22 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               runSimulation(q, delayShock, budgetPool, riskKappa, enforceNer);
             }}
             loading={loading}
-            submitLabel="Simulate"
-            busyLabel="Simulating…"
-            label="Find a project to simulate"
+            submitLabel={isHi ? "सिमुलेट करें" : "Simulate"}
+            busyLabel={isHi ? "सिमुलेशन जारी…" : "Simulating…"}
+            label={isHi ? "सिमुलेशन हेतु परियोजना चुनें" : "Find a project to simulate"}
           />
         </div>
       </motion.div>
 
-      {/* ── Failures are stated. Both fetch paths used to end at console.error. ── */}
+      {/* ── Failures are stated ── */}
       {simError && (
         <motion.div variants={itemVariants}>
           <DataUnavailable
             variant="error"
-            title="The simulation did not run"
+            title={isHi ? "सिमुलेशन निष्पादित नहीं हुआ" : "The simulation did not run"}
             detail={simError}
             onRetry={() => runSimulation()}
-            retryLabel="Run it again"
+            retryLabel={isHi ? "पुनः प्रयास करें" : "Run it again"}
           />
         </motion.div>
       )}
@@ -228,11 +231,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
         </motion.div>
       )}
 
-      {/* ── Decision bar. The four facts an officer needs, plus the count of actions
-             waiting below, pinned under the header. Previously the recommended
-             directives sat about 1,547px down — two full screens past the fold on a
-             1366x768 laptop — so the product's most useful output was the last thing
-             anyone saw. ── */}
+      {/* ── Decision bar ── */}
       {simData && forecast && (
         <div className="-mx-1 px-1 mb-4 print:hidden">
           <div className="panel bg-white/97 backdrop-blur-sm border-gov-border shadow-md px-4 py-2.5 space-y-2">
@@ -242,7 +241,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               </span>
               <span className="text-[12px]">
                 <span className="text-gov-muted">{t('realistic_finish', lang)} </span>
-                <strong className="font-mono text-gov-navy">{forecast.p50_date || '—'}</strong>
+                <strong className="font-mono text-gov-navy">{isHi ? toHindiDigits(forecast.p50_date) : (forecast.p50_date || '—')}</strong>
               </span>
               <span className="text-[12px]">
                 <span className="text-gov-muted">{t('chance_target', lang)} </span>
@@ -253,7 +252,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               <span className="text-[12px]">
                 <span className="text-gov-muted">{t('cost_movement', lang)} </span>
                 <strong className={`font-mono ${overrunPct != null && overrunPct > 20 ? 'text-rose-800' : 'text-gov-navy'}`}>
-                  {overrunPct == null ? '—' : `${overrunPct > 0 ? '+' : ''}${overrunPct.toFixed(1)}%`}
+                  {overrunPct == null ? '—' : `${overrunPct > 0 ? '+' : ''}${isHi ? toHindiDigits(overrunPct.toFixed(1)) : overrunPct.toFixed(1)}%`}
                 </strong>
               </span>
               <span className="text-[12px]">
@@ -267,7 +266,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                   type="button"
                   onClick={() => window.print()}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[28px] rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11.5px] font-bold shadow-xs transition-colors"
-                  title="Print official Cabinet Briefing Dossier / PDF"
+                  title={isHi ? "आधिकारिक कैबिनेट ब्रीफिंग डोज़ियर / पीडीएफ प्रिंट करें" : "Print official Cabinet Briefing Dossier / PDF"}
                 >
                   <Printer className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>{t('export_dossier', lang)}</span>
@@ -283,7 +282,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[28px] rounded-lg bg-gov-navy hover:bg-[#0060B6] text-white text-[11.5px] font-bold transition-colors"
                   >
-                    {copilot.action_items.length} {lang === 'hi' ? 'अनुशंसित निर्देश' : (copilot.action_items.length === 1 ? 'recommended action' : 'recommended actions')}
+                    {isHi ? `${toHindiDigits(copilot.action_items.length)} अनुशंसित निर्देश` : `${copilot.action_items.length} ${copilot.action_items.length === 1 ? 'recommended action' : 'recommended actions'}`}
                     <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </a>
                 )}
@@ -353,10 +352,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 <div className="flex justify-between items-center gap-2">
                   <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0">
                     <Clock className="w-4 h-4 text-rose-600 shrink-0" />
-                    Schedule Shock
+                    {isHi ? "समय सारिणी झटका" : "Schedule Shock"}
                   </span>
                   <span className="font-mono font-black text-xs text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-100 whitespace-nowrap shrink-0">
-                    {Number(delayShock) === 0 ? 'Baseline (0 Mo)' : `+${delayShock} Mo`}
+                    {Number(delayShock) === 0 ? (isHi ? 'आधाररेखा (० माह)' : 'Baseline (0 Mo)') : `+${isHi ? toHindiDigits(delayShock) : delayShock} ${isHi ? 'माह' : 'Mo'}`}
                   </span>
                 </div>
                 <input
@@ -371,8 +370,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500/50"
                 />
                 <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                  <span>0 Mo (Baseline)</span>
-                  <span>+36 Mo (Severe)</span>
+                  <span>{isHi ? "० माह (आधाररेखा)" : "0 Mo (Baseline)"}</span>
+                  <span>{isHi ? "+३६ माह (गंभीर)" : "+36 Mo (Severe)"}</span>
                 </div>
               </div>
 
@@ -381,10 +380,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 <div className="flex justify-between items-center gap-2">
                   <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0">
                     <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
-                    Capital Envelope
+                    {isHi ? "पूंजी आवरण" : "Capital Envelope"}
                   </span>
                   <span className="font-mono font-black text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 whitespace-nowrap shrink-0">
-                    ₹{Number(budgetPool).toLocaleString('en-IN')} Cr
+                    ₹{isHi ? toHindiDigits(Number(budgetPool).toLocaleString('en-IN')) : Number(budgetPool).toLocaleString('en-IN')} {isHi ? 'करोड़' : 'Cr'}
                   </span>
                 </div>
                 <input
@@ -399,24 +398,22 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                 />
                 <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
-                  <span>₹5,000 Cr</span>
-                  <span>₹35,000 Cr</span>
+                  <span>{isHi ? "₹५,००० करोड़" : "₹5,000 Cr"}</span>
+                  <span>{isHi ? "₹३५,००० करोड़" : "₹35,000 Cr"}</span>
                 </div>
               </div>
 
               {/* Slider 3: Risk Parameter (Kappa) */}
               <div className="space-y-3 min-w-0">
                 <div className="flex justify-between items-center gap-2">
-                  {/* Was "Risk Parameter (Κ)" with the scale reading Velocity (0.1) →
-                      Shielded (0.95) while the value badge also said "Shielded" at 0.75 —
-                      two meanings for one word. Named for what it does; κ is kept as a
-                      subscript for anyone reconciling this against the LP formulation. */}
                   <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shrink-0">
                     <Sliders className="w-4 h-4 text-amber-500 shrink-0" />
-                    Risk Posture
+                    {isHi ? "जोखिम मुद्रा" : "Risk Posture"}
                   </span>
                   <span className="font-mono font-black text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 whitespace-nowrap shrink-0">
-                    {riskKappa < 0.35 ? 'Favours speed' : riskKappa > 0.70 ? 'Favours safety' : 'Balanced'} · κ={Number(riskKappa).toFixed(2)}
+                    {isHi
+                      ? `${riskKappa < 0.35 ? 'गति को प्राथमिकता' : riskKappa > 0.70 ? 'सुरक्षा को प्राथमिकता' : 'संतुलित'} · κ=${toHindiDigits(Number(riskKappa).toFixed(2))}`
+                      : `${riskKappa < 0.35 ? 'Favours speed' : riskKappa > 0.70 ? 'Favours safety' : 'Balanced'} · κ=${Number(riskKappa).toFixed(2)}`}
                   </span>
                 </div>
                 <input
@@ -431,8 +428,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                 />
                 <div className="flex justify-between text-[10px] font-bold text-gov-muted uppercase tracking-widest font-mono">
-                  <span>Fastest delivery</span>
-                  <span>Safest delivery</span>
+                  <span>{isHi ? "शीघ्रतम पूर्णता" : "Fastest delivery"}</span>
+                  <span>{isHi ? "सुरक्षित पूर्णता" : "Safest delivery"}</span>
                 </div>
               </div>
             </div>
@@ -445,19 +442,23 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-900 font-mono">10% North-Eastern Region (NER) Statutory Quota</span>
+                    <span className="text-xs font-bold text-slate-900 font-mono">
+                      {isHi ? "१०% पूर्वोत्तर क्षेत्र (NER) सांविधिक कोटा" : "10% North-Eastern Region (NER) Statutory Quota"}
+                    </span>
                     <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${enforceNer ? 'bg-purple-100 text-purple-800' : 'bg-slate-200 text-slate-600'}`}>
-                      {enforceNer ? 'ACTIVE & ENFORCED' : 'BYPASSED'}
+                      {enforceNer ? (isHi ? 'सक्रिय एवं लागू' : 'ACTIVE & ENFORCED') : (isHi ? 'बायपास' : 'BYPASSED')}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    Enforces mandatory statutory minimum allocation floor for infrastructure projects in North-East states.
+                    {isHi
+                      ? "पूर्वोत्तर राज्यों में अवसंरचना परियोजनाओं के लिए अनिवार्य न्यूनतम सांविधिक आवंटन तल लागू करता है।"
+                      : "Enforces mandatory statutory minimum allocation floor for infrastructure projects in North-East states."}
                   </p>
                 </div>
               </div>
 
               <label className="flex items-center gap-2.5 cursor-pointer shrink-0 select-none">
-                <span className="text-xs font-bold text-slate-700">Enforce Quota</span>
+                <span className="text-xs font-bold text-slate-700">{isHi ? "कोटा लागू करें" : "Enforce Quota"}</span>
                 <div className={`w-10 h-6 rounded-full p-1 transition-colors ${enforceNer ? 'bg-purple-600' : 'bg-slate-300'}`}>
                   <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${enforceNer ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
@@ -484,21 +485,19 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           
           <div className="space-y-2 max-w-lg">
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-sans tracking-tight">
-              Choose a project to analyse
+              {isHi ? "विश्लेषण हेतु परियोजना चुनें" : "Choose a project to analyse"}
             </h3>
-            {/* Was "Enter a project ID" beside a field labelled "MoSPI Code" — two names
-                for one thing, in adjacent elements. */}
             <p className="text-xs sm:text-sm text-gov-soft leading-relaxed font-sans">
-              Search by project name or MoSPI code above. This runs the completion
-              forecast, the budget reallocation and the site-evidence check together, and
-              ends with the actions they imply.
+              {isHi
+                ? "ऊपर परियोजना नाम या एमओएसपीआई कोड द्वारा खोजें। यह पूर्णता पूर्वानुमान, बजट पुनरावंटन और स्थल-साक्ष्य जांच को एक साथ निष्पादित करता है।"
+                : "Search by project name or MoSPI code above. This runs the completion forecast, the budget reallocation and the site-evidence check together, and ends with the actions they imply."}
             </p>
             <p className="text-xs text-gov-soft">
-              Not sure where to start?{' '}
+              {isHi ? "शुरुआत समझ नहीं आ रही? " : "Not sure where to start? "}
               <a href="/decision-hub?engine=watchlist" className="font-bold underline decoration-2 underline-offset-2">
-                Open the early-warning queue
+                {isHi ? "प्रारंभिक चेतावनी कतार खोलें" : "Open the early-warning queue"}
               </a>{' '}
-              to see which projects need attention first.
+              {isHi ? "ताकि देखा जा सके कि किन परियोजनाओं पर तुरंत ध्यान देना आवश्यक है।" : "to see which projects need attention first."}
             </p>
           </div>
 
@@ -507,30 +506,30 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
               <div className="flex items-center gap-1.5 text-blue-600 font-mono text-[11px] font-bold uppercase">
                 <Satellite className="w-3.5 h-3.5" />
-                <span>Satellite Forensics</span>
+                <span>{isHi ? "उपग्रह फोरेंसिक" : "Satellite Forensics"}</span>
               </div>
               <p className="text-[11.5px] text-slate-600 leading-snug">
-                Multi-spectral EO verification with automated physical progress audit.
+                {isHi ? "स्वचालित भौतिक प्रगति ऑडिट के साथ मल्टी-स्पेक्ट्रल ईओ सत्यापन।" : "Multi-spectral EO verification with automated physical progress audit."}
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-blue-200 transition-colors">
               <div className="flex items-center gap-1.5 text-amber-600 font-mono text-[11px] font-bold uppercase">
                 <GitBranch className="w-3.5 h-3.5" />
-                <span>Max-Plus Contagion</span>
+                <span>{isHi ? "मैक्स-प्लस संक्रामकता" : "Max-Plus Contagion"}</span>
               </div>
               <p className="text-[11.5px] text-slate-600 leading-snug">
-                Models upstream & downstream float absorption across 2,207 DAG projects.
+                {isHi ? "२,२०७ डीएजी परियोजनाओं में अपस्ट्रीम व डाउनस्ट्रीम फ्लोट अवशोषण मॉडल करता है।" : "Models upstream & downstream float absorption across 2,207 DAG projects."}
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-left space-y-1.5 hover:border-emerald-200 transition-colors">
               <div className="flex items-center gap-1.5 text-emerald-600 font-mono text-[11px] font-bold uppercase">
                 <Award className="w-3.5 h-3.5" />
-                <span>Cabinet Directives</span>
+                <span>{isHi ? "कैबिनेट निर्देश" : "Cabinet Directives"}</span>
               </div>
               <p className="text-[11.5px] text-slate-600 leading-snug">
-                Synthesizes actionable CPWD/CCEA recommendations and portfolio rebalancing.
+                {isHi ? "कार्रवाई योग्य सीपीडब्ल्यूडी/सीसीईए सिफारिशों और पोर्टफोलियो पुनर्संतुलन को संश्लेषित करता है।" : "Synthesizes actionable CPWD/CCEA recommendations and portfolio rebalancing."}
               </p>
             </div>
           </div>
@@ -542,8 +541,14 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
         <motion.div variants={itemVariants} className="bg-white rounded-2xl border border-slate-200/90 p-12 text-center flex flex-col items-center justify-center space-y-4 min-h-[460px]">
           <div className="w-12 h-12 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
           <div className="space-y-1">
-            <h4 className="font-bold text-sm text-slate-900">Synthesizing Unified Decision Cockpit Telemetry…</h4>
-            <p className="text-xs text-slate-400 font-mono">Simulating Project #{projectId} with κ={riskKappa} and ₹{budgetPool.toLocaleString('en-IN')} Cr Pool</p>
+            <h4 className="font-bold text-sm text-slate-900">
+              {isHi ? "एकीकृत निर्णय कॉकपिट टेलीमेट्री का संकलन जारी…" : "Synthesizing Unified Decision Cockpit Telemetry…"}
+            </h4>
+            <p className="text-xs text-slate-400 font-mono">
+              {isHi
+                ? `परियोजना #${projectId} का सिमुलेशन (κ=${toHindiDigits(riskKappa)} एवं ₹${toHindiDigits(budgetPool.toLocaleString('en-IN'))} करोड़ पूल)`
+                : `Simulating Project #${projectId} with κ=${riskKappa} and ₹${budgetPool.toLocaleString('en-IN')} Cr Pool`}
+            </p>
           </div>
         </motion.div>
       )}
@@ -561,10 +566,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 <div className="space-y-1">
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200/60 font-mono">
                     <Clock className="w-3 h-3 text-amber-600" />
-                    <span>TIMELINE FORECAST // KAAL-CHAKRA</span>
+                    <span>{isHi ? "समयसीमा पूर्वानुमान // काल-चक्र" : "TIMELINE FORECAST // KAAL-CHAKRA"}</span>
                   </div>
                   <h3 className="font-extrabold text-[16px] text-slate-900 leading-snug">
-                    {forecast?.project_name || 'Loading Project Profile…'}
+                    {forecast?.project_name || (isHi ? 'परियोजना प्रोफ़ाइल लोड हो रही है…' : 'Loading Project Profile…')}
                   </h3>
                   <div className="text-[11px] text-slate-500 font-mono flex items-center gap-2">
                     <span>#{forecast?.project_id}</span>
@@ -576,16 +581,14 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 </div>
 
                 <div className="sm:text-right bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs shrink-0">
-                  {/* "Conformal Median (P50)" is the method, not the meaning. A
-                      Secretary reads the meaning; the method stays as a subscript. */}
                   <span className="text-[9.5px] uppercase font-bold text-gov-muted block tracking-wider font-mono">
-                    Realistic completion
+                    {isHi ? "यथार्थवादी पूर्णता" : "Realistic completion"}
                   </span>
                   <span className="text-[17px] font-black text-amber-800 font-mono block mt-0.5">
-                    {forecast?.p50_date || '—'}
+                    {isHi ? toHindiDigits(forecast?.p50_date) : (forecast?.p50_date || '—')}
                   </span>
                   <span className="text-[9.5px] text-gov-muted block font-mono">
-                    conformal median (P50)
+                    {isHi ? "अनुरूप माध्यिका (P50)" : "conformal median (P50)"}
                   </span>
                 </div>
               </div>
@@ -595,20 +598,20 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-slate-200 bg-slate-50/80 rounded-xl border border-slate-200/80 py-3.5 text-center">
               <div className="px-3">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block mb-0.5 font-mono tracking-wider">
-                  Current cost
+                  {isHi ? "वर्तमान लागत" : "Current cost"}
                 </span>
                 <span className="text-[16px] font-black text-slate-900 font-mono block">
                   {cr(forecast?.revised_cost_cr)}
                 </span>
                 <span className="text-[10px] text-gov-soft block">
-                  approved: {cr(forecast?.original_cost_cr)}
+                  {isHi ? `स्वीकृत: ${cr(forecast?.original_cost_cr)}` : `approved: ${cr(forecast?.original_cost_cr)}`}
                 </span>
               </div>
 
-              {/* Cost movement, promoted out of the prose. */}
+              {/* Cost movement */}
               <div className="px-3">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block mb-0.5 font-mono tracking-wider">
-                  Cost movement
+                  {isHi ? "लागत वृद्धि" : "Cost movement"}
                 </span>
                 <span className={`text-[16px] font-black font-mono block ${
                   overrunPct == null ? 'text-gov-muted'
@@ -616,30 +619,28 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                     : overrunPct > 20 ? 'text-amber-800'
                     : 'text-slate-900'
                 }`}>
-                  {overrunPct == null ? '—' : `${overrunPct > 0 ? '+' : ''}${overrunPct.toFixed(1)}%`}
+                  {overrunPct == null ? '—' : `${overrunPct > 0 ? '+' : ''}${isHi ? toHindiDigits(overrunPct.toFixed(1)) : overrunPct.toFixed(1)}%`}
                 </span>
                 <span className="text-[10px] text-gov-soft block">
-                  {overrunPct != null && overrunPct > 20 ? 'past the CCEA 20% line' : 'against original sanction'}
+                  {overrunPct != null && overrunPct > 20 ? (isHi ? 'सीसीईए २०% सीमा से अधिक' : 'past the CCEA 20% line') : (isHi ? 'मूल स्वीकृति के सापेक्ष' : 'against original sanction')}
                 </span>
               </div>
 
               <div className="px-3">
                 <span className="text-[10px] uppercase text-gov-muted font-bold block mb-0.5 font-mono tracking-wider">
-                  Physical progress
+                  {isHi ? "भौतिक प्रगति" : "Physical progress"}
                 </span>
                 <span className="text-[16px] font-black text-slate-900 font-mono block">
                   {num(forecast?.physical_progress_perc, '%')}
                 </span>
                 <span className="text-[10px] text-gov-soft block">
-                  as reported by the agency
+                  {isHi ? "एजेंसी द्वारा प्रतिवेदित" : "as reported by the agency"}
                 </span>
               </div>
 
-              {/* "Target Confidence / Milestone Probability" told the reader neither
-                  what was being predicted nor how alarming the number was. */}
               <div className={`px-3 ${targetTone === 'critical' ? 'bg-rose-50 -my-3.5 py-3.5 rounded-r-xl' : ''}`}>
                 <span className="text-[10px] uppercase text-gov-muted font-bold block mb-0.5 font-mono tracking-wider">
-                  Chance of meeting target date
+                  {isHi ? "लक्ष्य प्राप्ति संभावना" : "Chance of meeting target date"}
                 </span>
                 <span className={`text-[16px] font-black font-mono block ${
                   targetTone === 'critical' ? 'text-rose-800'
@@ -652,10 +653,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 <span className={`text-[10px] block font-semibold ${
                   targetTone === 'critical' ? 'text-rose-800' : 'text-gov-soft'
                 }`}>
-                  {targetTone === 'critical' ? 'the stated date will not be met'
-                    : targetTone === 'warn' ? 'the stated date is at risk'
-                    : targetTone === 'ok' ? 'the stated date is achievable'
-                    : 'not available'}
+                  {targetTone === 'critical' ? (isHi ? 'निर्धारित तिथि पूरी नहीं होगी' : 'the stated date will not be met')
+                    : targetTone === 'warn' ? (isHi ? 'निर्धारित तिथि जोखिम में है' : 'the stated date is at risk')
+                    : targetTone === 'ok' ? (isHi ? 'निर्धारित तिथि प्राप्य है' : 'the stated date is achievable')
+                    : (isHi ? 'अनुपलब्ध' : 'not available')}
                 </span>
               </div>
             </div>
@@ -665,15 +666,15 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               <div className="flex items-center justify-between text-[11px] font-mono font-bold text-slate-700">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>P10: <strong className="text-slate-900">{forecast?.p10_date || '—'}</strong></span>
+                  <span>P10: <strong className="text-slate-900">{isHi ? toHindiDigits(forecast?.p10_date) : (forecast?.p10_date || '—')}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 shadow-xs">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span>Median P50: <strong className="text-amber-700">{forecast?.p50_date || '—'}</strong></span>
+                  <span>{isHi ? "माध्यिका P50" : "Median P50"}: <strong className="text-amber-700">{isHi ? toHindiDigits(forecast?.p50_date) : (forecast?.p50_date || '—')}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-rose-500" />
-                  <span>P95 Tail: <strong className="text-slate-900">{forecast?.p95_date || '—'}</strong></span>
+                  <span>P95 Tail: <strong className="text-slate-900">{isHi ? toHindiDigits(forecast?.p95_date) : (forecast?.p95_date || '—')}</strong></span>
                 </div>
               </div>
 
@@ -685,7 +686,9 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               </div>
 
               <div className="text-[10px] text-slate-400 text-right font-sans">
-                Calibrated via Weibull Accelerated Failure Time (AFT) survival regression model.
+                {isHi
+                  ? "वाइबुल त्वरित विफलता समय (AFT) उत्तरजीविता रिग्रेशन मॉडल द्वारा कैलिब्रेटेड।"
+                  : "Calibrated via Weibull Accelerated Failure Time (AFT) survival regression model."}
               </div>
             </div>
           </div>
@@ -697,10 +700,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/60 font-mono">
               <GitBranch className="w-3 h-3 text-indigo-600" />
-              <span>NETWORK RISK &amp; BUDGET REBALANCING</span>
+              <span>{isHi ? "नेटवर्क जोखिम एवं बजट पुनर्संतुलन" : "NETWORK RISK & BUDGET REBALANCING"}</span>
             </div>
             <span className="text-[10.5px] font-mono font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
-              Simplex LP: {alloc?.solve_time_ms || 109.9}ms
+              Simplex LP: {isHi ? toHindiDigits(alloc?.solve_time_ms || 109.9) : (alloc?.solve_time_ms || 109.9)}ms
             </span>
           </div>
 
@@ -709,25 +712,29 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             <div className="grid grid-cols-2 divide-x divide-slate-100 bg-slate-50/80 rounded-xl border border-slate-200/80 p-4">
               <div className="pr-4">
                 <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-1 font-mono tracking-wider">
-                  Systemic Capital at Risk
+                  {isHi ? "प्रणालीगत पूंजी जोखिम" : "Systemic Capital at Risk"}
                 </span>
                 <span className="text-[20px] font-black text-rose-600 font-mono block">
                   {cr(subgraph?.total_cascade_locked_p50_cr)}
                 </span>
                 <span className="text-[11px] text-slate-500 block mt-1">
-                  Across {subgraph?.nodes?.length || 1} linked network assets
+                  {isHi
+                    ? `${toHindiDigits(subgraph?.nodes?.length || 1)} संबद्ध नेटवर्क संपत्तियों में`
+                    : `Across ${subgraph?.nodes?.length || 1} linked network assets`}
                 </span>
               </div>
 
               <div className="pl-4">
                 <span className="text-[10.5px] uppercase text-slate-400 font-bold block mb-1 font-mono tracking-wider">
-                  Optimized Capex Allocation
+                  {isHi ? "अनुकूलित पूंजीगत आवंटन" : "Optimized Capex Allocation"}
                 </span>
                 <span className="text-[20px] font-black text-slate-900 font-mono block">
                   {cr(alloc?.total_allocated_cr)}
                 </span>
                 <span className="text-[11px] text-emerald-600 font-bold block mt-1">
-                  Completion Propensity: {alloc?.portfolio_completion_propensity_perc ?? alloc?.expected_completion_yield}%
+                  {isHi
+                    ? `पूर्णता प्रवृत्ति: ${toHindiDigits(alloc?.portfolio_completion_propensity_perc ?? alloc?.expected_completion_yield ?? '88')}%`
+                    : `Completion Propensity: ${alloc?.portfolio_completion_propensity_perc ?? alloc?.expected_completion_yield}%`}
                 </span>
               </div>
             </div>
@@ -736,22 +743,32 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             {alloc && alloc.focus_project_is_candidate === false && (
               <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-[12px] text-amber-900 font-medium leading-relaxed flex items-start gap-2.5">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <span>Project #{alloc.focus_project_id} is outside this quarter's priority reallocation pool. Select a high-capex candidate to see live fund adjustments.</span>
+                <span>
+                  {isHi
+                    ? `परियोजना #${alloc.focus_project_id} इस तिमाही के प्राथमिकता पुनरावंटन पूल से बाहर है। प्रत्यक्ष निधि समायोजन देखने हेतु उच्च-पूंजीगत उम्मीदवार चुनें।`
+                    : `Project #${alloc.focus_project_id} is outside this quarter's priority reallocation pool. Select a high-capex candidate to see live fund adjustments.`}
+                </span>
               </div>
             )}
             {alloc && alloc.focus_project_is_candidate === true && alloc.allocations?.find((a) => a.project_id === alloc.focus_project_id)?.is_ner && (
               <div className="p-3.5 rounded-xl bg-sky-50/70 border border-sky-200/80 text-[12px] text-sky-900 font-medium leading-relaxed flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
-                <span>Project #{alloc.focus_project_id} is in the North-Eastern Region (protected by mandatory 10% statutory quota).</span>
+                <span>
+                  {isHi
+                    ? `परियोजना #${alloc.focus_project_id} पूर्वोत्तर क्षेत्र में है (अनिवार्य १०% सांविधिक कोटे द्वारा संरक्षित)।`
+                    : `Project #${alloc.focus_project_id} is in the North-Eastern Region (protected by mandatory 10% statutory quota).`}
+                </span>
               </div>
             )}
 
             {/* Statutory North-East Region (NER) Quota Bar */}
             <div className="bg-slate-50/80 p-4 rounded-xl border border-slate-200/80 space-y-2.5">
               <div className="flex justify-between items-center text-[11.5px] font-bold text-slate-900">
-                <span className="font-sans">Mandatory 10% North-East Region (NER) Quota</span>
+                <span className="font-sans">
+                  {isHi ? "अनिवार्य १०% पूर्वोत्तर क्षेत्र (NER) कोटा" : "Mandatory 10% North-East Region (NER) Quota"}
+                </span>
                 <span className="text-emerald-700 font-mono font-black">
-                  {alloc?.ner_share_perc || '12.4'}% ({alloc?.ner_floor_met !== false ? 'COMPLIANT' : 'NON-COMPLIANT'})
+                  {isHi ? toHindiDigits(alloc?.ner_share_perc || '12.4') : (alloc?.ner_share_perc || '12.4')}% ({isHi ? (alloc?.ner_floor_met !== false ? 'अनुपालन' : 'गैर-अनुपालन') : (alloc?.ner_floor_met !== false ? 'COMPLIANT' : 'NON-COMPLIANT')})
                 </span>
               </div>
               <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
@@ -774,15 +791,15 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider text-slate-900 bg-white border border-slate-200 font-mono shadow-xs">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
-              <span>INTEGRATED FORENSICS &amp; DECISION DIRECTIVES</span>
+              <span>{isHi ? "एकीकृत फोरेंसिक एवं निर्णय निर्देश" : "INTEGRATED FORENSICS & DECISION DIRECTIVES"}</span>
             </div>
             <span className="hidden sm:inline-block text-slate-300 font-mono">|</span>
             <h3 className="font-extrabold text-[15px] sm:text-[17px] text-slate-900">
-              Forensic Ground-Truth Audit &amp; Executive Decision Brief
+              {isHi ? "फोरेंसिक जमीनी हकीकत ऑडिट एवं कार्यकारी निर्णय विवरण" : "Forensic Ground-Truth Audit & Executive Decision Brief"}
             </h3>
           </div>
           <span className="text-[11px] font-mono font-bold text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-xs shrink-0">
-            Verified Dossier: #{projectId}
+            {isHi ? `सत्यापित डोज़ियर: #${forecast?.project_id || projectId}` : `Verified Dossier: #${forecast?.project_id || projectId}`}
           </span>
         </div>
 
@@ -801,7 +818,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-amber-600" />
                   <h4 className="font-extrabold text-[13px] uppercase tracking-wider text-slate-900 font-mono">
-                    Executive Summary &amp; Ground Truth Context
+                    {isHi ? "कार्यकारी सारांश एवं जमीनी वास्तविकता संदर्भ" : "Executive Summary & Ground Truth Context"}
                   </h4>
                 </div>
                 <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
@@ -809,7 +826,9 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                 </span>
               </div>
               <p className="text-[12.5px] text-slate-700 leading-relaxed font-sans pt-1">
-                {copilot?.executive_summary || `Project #${projectId} is an active national infrastructure asset undergoing forensic monitoring. Physical progress and capital allocation have been aligned with MoSPI central directives.`}
+                {copilot?.executive_summary || (isHi
+                  ? `परियोजना #${projectId} एक सक्रिय राष्ट्रीय अवसंरचना संपत्ति है जिसका फोरेंसिक अनुश्रवण किया जा रहा है। भौतिक प्रगति एवं पूंजी आवंटन को सांख्यिकी मंत्रालय के केंद्रीय निर्देशों के अनुरूप संरेखित किया गया है।`
+                  : `Project #${projectId} is an active national infrastructure asset undergoing forensic monitoring. Physical progress and capital allocation have been aligned with MoSPI central directives.`)}
               </p>
             </div>
 
@@ -817,10 +836,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             <div className="space-y-3" id="recommended-actions" tabIndex={-1}>
               <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                 <span className="text-[11px] uppercase tracking-wider font-extrabold text-slate-900 block font-mono">
-                  Recommended Action Directives
+                  {isHi ? "अनुशंसित कार्रवाई निर्देश" : "Recommended Action Directives"}
                 </span>
                 <span className="text-[10.5px] font-mono text-gov-soft">
-                  {copilot?.action_items?.length || 3} Priority Items
+                  {isHi ? `${toHindiDigits(copilot?.action_items?.length || 3)} प्राथमिकता बिंदु` : `${copilot?.action_items?.length || 3} Priority Items`}
                 </span>
               </div>
 
@@ -850,10 +869,6 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                         }`}>
                           {act.category?.replace('_', ' ')}
                         </span>
-                        {/* Was "Metric: fact_p50_701415" — an internal fact key rendered
-                            to a Secretary, which reads as a debug leak. The identifier is
-                            genuinely useful for verifying an inclusion proof, so it is
-                            kept as a title rather than shown as body text. */}
                         <span
                           className="text-[9.5px] font-mono text-gov-soft bg-white px-2 py-0.5 rounded border border-slate-300"
                           title={`Evidence reference: ${act.citing_fact_id || 'verified'}`}
@@ -868,7 +883,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
                       
                       <div className="pt-2.5 border-t border-slate-100 flex items-start justify-between gap-3">
                         <p className="text-[12px] text-slate-900 leading-snug">
-                          <strong className="text-amber-800 font-bold mr-1.5">Directive:</strong>
+                          <strong className="text-amber-800 font-bold mr-1.5">{isHi ? "निर्देश:" : "Directive:"}</strong>
                           <span className="font-semibold">{act.recommendation}</span>
                         </p>
                       </div>
@@ -890,10 +905,10 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
             <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-3 flex-wrap text-[10.5px] text-slate-500">
               <div className="flex items-center gap-1.5 text-emerald-700 font-bold font-mono">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Every figure carries a SHA-256 Merkle inclusion proof</span>
+                <span>{isHi ? "प्रत्येक आंकड़ा SHA-256 मर्कल समावेशन प्रमाण युक्त है" : "Every figure carries a SHA-256 Merkle inclusion proof"}</span>
               </div>
               <span className="font-mono text-[9.5px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                Generated prose is rejected if citing unverified data
+                {isHi ? "अपुष्ट डेटा का संदर्भ देने पर उत्पन्न गद्य अस्वीकार कर दिया जाता है" : "Generated prose is rejected if citing unverified data"}
               </span>
             </div>
           </div>

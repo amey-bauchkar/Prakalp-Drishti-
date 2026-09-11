@@ -32,6 +32,8 @@ export const POLICY_TABS = [
   { id: 'grievance', label: 'Feedback & Grievance Redressal', subtitle: 'CPGRAMS Integration & Dispute Ticketing', icon: MessageSquare },
 ];
 
+import { scrollToTop } from '../components/SmoothScrollProvider';
+
 const CATEGORY_LABELS = {
   data_discrepancy: 'Ground Reality vs Reported Progress Mismatch',
   geocoding: 'Inaccurate GPS / Map Pinpoint',
@@ -62,6 +64,7 @@ export default function PoliciesView() {
     const qTab = searchParams.get('tab');
     if (qTab && POLICY_TABS.some(t => t.id === qTab)) {
       setTab(qTab);
+      scrollToTop(true);
     }
   }, [searchParams]);
 
@@ -69,7 +72,7 @@ export default function PoliciesView() {
     setTab(newTab);
     setSearchParams({ tab: newTab });
     setSubmittedReceipt(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(true);
   };
 
   const handleFormSubmit = async (e) => {

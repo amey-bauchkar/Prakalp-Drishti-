@@ -1,7 +1,7 @@
 """
 PRAKALP-DRISHTI: VARSHA-SPEED Engine
 Module Lead: Janhavi
-- Parses 20-year IMD monsoon rainfall departure dataset (2005–2025) covering 630 state-years across 30 states.
+- Parses 20-year IMD monsoon rainfall departure dataset (2005–2025) covering 756 state-years across 36 states & UTs.
 - Calculates lost construction days, effective working windows, and schedule stretch multipliers.
 - Integrates with 2,207 real mega-projects to project weather-adjusted completion schedules.
 """
@@ -54,7 +54,13 @@ STATE_GEO_PROFILES = {
     "Haryana": {"region": "North", "base_lost_days": 25, "elasticity": 0.80, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Semi-Arid Plains"},
     "Delhi": {"region": "North", "base_lost_days": 26, "elasticity": 0.85, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Urban Yamuna Floodplain"},
     "Gujarat": {"region": "West", "base_lost_days": 32, "elasticity": 0.95, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Saurashtra & Semi-Arid Coastal Plains"},
-    "Rajasthan": {"region": "West", "base_lost_days": 20, "elasticity": 0.70, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Thar Desert & Aravalli Rainshadow"}
+    "Rajasthan": {"region": "West", "base_lost_days": 20, "elasticity": 0.70, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Thar Desert & Aravalli Rainshadow"},
+    "Andaman and Nicobar Islands": {"region": "South", "base_lost_days": 90, "elasticity": 1.60, "risk_tier": "CYCLONIC_COASTAL", "terrain": "Tropical Maritime Island Archipelago & Marine Swells"},
+    "Puducherry": {"region": "South", "base_lost_days": 36, "elasticity": 1.15, "risk_tier": "CYCLONIC_COASTAL", "terrain": "Coromandel Coastal Delta & Retreating NE Monsoon Inundation"},
+    "Ladakh": {"region": "North", "base_lost_days": 18, "elasticity": 0.65, "risk_tier": "LANDSLIDE_TERRAIN", "terrain": "High-Altitude Trans-Himalayan Cold Desert & Glacial Valleys"},
+    "Lakshadweep": {"region": "South", "base_lost_days": 75, "elasticity": 1.45, "risk_tier": "HIGH_PRECIPITATION", "terrain": "Arabian Sea Coral Atolls & Maritime Surge Zone"},
+    "Dadra and Nagar Haveli and Daman and Diu": {"region": "West", "base_lost_days": 42, "elasticity": 1.10, "risk_tier": "MODERATE_SEASONAL", "terrain": "Estuarine Coastal Lowlands & Western Coastal Plains"},
+    "Chandigarh": {"region": "North", "base_lost_days": 28, "elasticity": 0.85, "risk_tier": "LOW_RAINFALL_ZONE", "terrain": "Shivalik Foothills & Urban Basin Drainage"}
 }
 
 # Sector weather sensitivities (high earthwork and outdoor linear works suffer highest downtime)
@@ -216,7 +222,7 @@ class VarshaSpeedEngine:
             "module_lead": "Janhavi",
             "simulated_rainfall_anomaly_pct": rainfall_anomaly_pct,
             "scenario_interpretation": scenario_note,
-            "data_source": "IMD Historical Monsoon Departure Matrix (2005–2025) · 630 State-Years",
+            "data_source": "IMD Historical Monsoon Departure Matrix (2005–2025) · 756 State-Years",
             "parameter_basis": ("base_lost_days and excess_rain_elasticity are declared expert "
                                 "parameters by climatic zone and terrain, not coefficients fitted "
                                 "to a downtime series. The IMD matrix supplies the anomaly history "

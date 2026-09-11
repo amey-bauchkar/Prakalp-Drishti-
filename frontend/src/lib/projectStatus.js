@@ -43,6 +43,8 @@
  * of Indian men with a red-green deficiency.
  */
 
+import { toHindiDigits, getStoredLanguage } from './i18n';
+
 export const COMPLETE_THRESHOLD = 99;   // physical progress % at which work is "finished"
 
 export const STATUS = {
@@ -246,30 +248,41 @@ export const sectorIsTranslated = (sec, lang = 'en') =>
    800,000 on another, and neither was reliably Indian on a machine set to
    en-US. These helpers are the single answer.                              */
 
-export const formatCount = (n) =>
-  Number.isFinite(Number(n)) ? Number(n).toLocaleString('en-IN') : '—';
+export const formatCount = (n, lang) => {
+  const currentLang = lang || getStoredLanguage();
+  if (!Number.isFinite(Number(n))) return '—';
+  const str = Number(n).toLocaleString('en-IN');
+  return currentLang === 'hi' ? toHindiDigits(str) : str;
+};
 
-export function formatCr(n, { lakhCrore = false, lang = 'en' } = {}) {
+export function formatCr(n, { lakhCrore = false, lang } = {}) {
+  const currentLang = lang || getStoredLanguage();
   const v = Number(n);
   if (!Number.isFinite(v)) return '—';
   if (lakhCrore || Math.abs(v) >= 1e5) {
-    return lang === 'hi' ? `₹${(v / 1e5).toFixed(2)} लाख करोड़` : `₹${(v / 1e5).toFixed(2)}L Cr`;
+    const numVal = (v / 1e5).toFixed(2);
+    return currentLang === 'hi' ? `₹${toHindiDigits(numVal)} लाख करोड़` : `₹${numVal}L Cr`;
   }
-  return lang === 'hi'
-    ? `₹${v.toLocaleString('en-IN', { maximumFractionDigits: 0 })} करोड़`
-    : `₹${v.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`;
+  const formatted = v.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  return currentLang === 'hi'
+    ? `₹${toHindiDigits(formatted)} करोड़`
+    : `₹${formatted} Cr`;
 }
 
 /** Dates as an Indian reader writes them, not as the database stores them. */
-export function formatDate(iso) {
+export function formatDate(iso, lang) {
+  const currentLang = lang || getStoredLanguage();
   if (!iso) return '—';
   const d = new Date(String(iso).slice(0, 10));
   if (Number.isNaN(d.getTime())) return '—';
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  const str = d.toLocaleDateString(currentLang === 'hi' ? 'hi-IN' : 'en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return currentLang === 'hi' ? toHindiDigits(str) : str;
 }
 
-export const formatMonths = (m) => {
+export const formatMonths = (m, lang) => {
+  const currentLang = lang || getStoredLanguage();
   const v = Number(m);
-  if (!Number.isFinite(v) || v <= 0) return 'No delay';
-  return `${v.toFixed(1).replace(/\.0$/, '')} months late`;
+  if (!Number.isFinite(v) || v <= 0) return currentLang === 'hi' ? 'समय पर' : 'No delay';
+  const numStr = v.toFixed(1).replace(/\.0$/, '');
+  return currentLang === 'hi' ? `${toHindiDigits(numStr)} माह विलंब` : `${numStr} months late`;
 };

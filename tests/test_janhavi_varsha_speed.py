@@ -19,18 +19,24 @@ class TestVarshaSpeedModule(unittest.TestCase):
         self.engine = get_varsha_speed_engine()
 
     def test_dataset_ingestion(self):
-        """Verify 630 state-years are loaded across 30 states."""
-        self.assertGreaterEqual(len(self.engine.monsoon_records), 600, "Should have loaded ~630 IMD records")
-        self.assertEqual(len(self.engine.state_statistics), 30, "Should contain exactly 30 unique states/UTs")
+        """Verify 756 state-years are loaded across 36 states & UTs."""
+        self.assertGreaterEqual(len(self.engine.monsoon_records), 750, "Should have loaded ~756 IMD records")
+        self.assertEqual(len(self.engine.state_statistics), 36, "Should contain exactly 36 unique states/UTs")
         self.assertIn("Assam", self.engine.state_statistics)
         self.assertIn("Maharashtra", self.engine.state_statistics)
         self.assertIn("Rajasthan", self.engine.state_statistics)
+        self.assertIn("Ladakh", self.engine.state_statistics)
+        self.assertIn("Andaman and Nicobar Islands", self.engine.state_statistics)
+        self.assertIn("Puducherry", self.engine.state_statistics)
+        self.assertIn("Lakshadweep", self.engine.state_statistics)
+        self.assertIn("Dadra and Nagar Haveli and Daman and Diu", self.engine.state_statistics)
+        self.assertIn("Chandigarh", self.engine.state_statistics)
 
     def test_historical_profile_calculations(self):
         """Verify historical statistical metrics for states."""
         profiles = self.engine.get_state_historical_profiles()
         self.assertEqual(profiles["module"], "VARSHA-SPEED")
-        self.assertEqual(profiles["total_states"], 30)
+        self.assertEqual(profiles["total_states"], 36)
 
         assam = self.engine.state_statistics.get("Assam")
         self.assertIsNotNone(assam)
@@ -43,7 +49,7 @@ class TestVarshaSpeedModule(unittest.TestCase):
         """Verify working window compression and stretch multiplier math."""
         # Test normal monsoon (0% anomaly)
         normal_res = self.engine.get_monsoon_impact_summary(rainfall_anomaly_pct=0.0)
-        self.assertEqual(normal_res["total_states_modeled"], 30)
+        self.assertEqual(normal_res["total_states_modeled"], 36)
         self.assertIn("state_impact_records", normal_res)
 
         # Test extreme monsoon (+30% anomaly)
