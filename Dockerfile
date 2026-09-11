@@ -46,9 +46,10 @@ RUN useradd --create-home --uid 10001 prakalp \
     && chown -R prakalp:prakalp /app
 USER prakalp
 
+# PRAKALP_PORT is deliberately NOT baked in: the server falls back to the PORT
+# variable a PaaS (Render) injects, and to 8000 when neither is set.
 ENV PYTHONUNBUFFERED=1 \
     PRAKALP_HOST=0.0.0.0 \
-    PRAKALP_PORT=8000 \
     PRAKALP_WORKERS=1
 
 EXPOSE 8000
@@ -56,6 +57,6 @@ EXPOSE 8000
 # Engines build their in-memory state on first request; ~16s cold start with the
 # cached force-directed layout. start-period accommodates that before probing.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
-    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health',timeout=4).status==200 else 1)"
+    CMD python -c "import os,urllib.request,sys; p=os.environ.get('PRAKALP_PORT') or os.environ.get('PORT') or '8000'; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:'+p+'/api/health',timeout=4).status==200 else 1)"
 
 CMD ["python", "backend/server.py"]

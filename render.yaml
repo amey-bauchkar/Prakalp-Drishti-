@@ -1,0 +1,50 @@
+# Render Blueprint — PRAKALP-DRISHTI API (backend only; the frontend lives on Vercel).
+#
+# Free-tier facts this file is written around:
+#   * 512 MB RAM, 0.1 CPU. The warm API measures ~240 MB RSS with all engines built;
+#     the one-worker default keeps it there. Never raise PRAKALP_WORKERS on this plan.
+#   * The instance spins down after 15 minutes without traffic and takes ~1-2 minutes
+#     to come back (container start + engine initialisation). healthCheckPath makes
+#     Render hold traffic until /api/health answers, so users see a slow first load
+#     rather than a 502.
+#   * Docker runtime, so the image carries libGL for OpenCV and the baked artefacts.
+#     .dockerignore trims the build context to what the request path serves.
+#
+# Apply: Render dashboard -> New -> Blueprint -> pick this repository.
+services:
+  - type: web
+    name: prakalp-api
+    runtime: docker
+    plan: free
+    region: singapore          # closest Render region to India
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PRAKALP_HOST
+        value: 0.0.0.0
+      # PORT is injected by Render; backend/config.py falls back to it.
+      - key: PRAKALP_WORKERS
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # Signs time-limited satellite imagery URLs. Generated once by Render and
+      # never shown in the repository.
+      - key: PRAKALP_SECRET_KEY
+        generateValue: true
+      # Comma-separated browser origins allowed to call the API directly. Fill in the
+      # Vercel production URL (and any preview URL you demo from) after the first
+      # Vercel deploy. Harmless when the Vercel rewrite proxy is used, required if
+      # the frontend ever calls Render directly.
+      - key: PRAKALP_ALLOWED_ORIGINS
+        value: https://prakalp-drishti.vercel.app
+      # Sovereign default: blank means the copilot answers from Merkle-signed local
+      # facts and makes no outbound call. Set in the dashboard for a connected demo.
+      - key: GROQ_API_KEY
+        sync: false
+      # Leave unset for the demo: the corpus then boots from the committed CSV
+      # (csv-bootstrap). A Supabase free project pauses after inactivity and would
+      # turn every cold start into a database timeout.
+      - key: DATABASE_URL
+        sync: false

@@ -1,0 +1,26 @@
+# Keep the build context to what the runtime serves. Measured before this file
+# existed: 4.2 GB context, of which 1.24 GB was satellite_data/raw_tiles (pipeline
+# intermediates never read on the request path) and 1.5 GB was .git.
+.git
+.github
+**/__pycache__
+**/*.pyc
+frontend/node_modules
+frontend/dist
+docs
+docs_and_presentations
+problem_statement_research
+tests
+*.md
+*.pdf
+*.docx
+.env
+.env.*
+!.env.example
+paimana_extracted/satellite_data/raw_tiles
+paimana_extracted/satellite_data/wayback_cache
+paimana_extracted/satellite_data/imagery_test
+paimana_extracted/satellite_data/source_tests
+paimana_extracted/satellite_data/highres_source_tests
+paimana_extracted/satellite_data/*.backup_precentroid.json
+artifacts/_pre_audit_backup

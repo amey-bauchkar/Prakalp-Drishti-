@@ -52,7 +52,9 @@ def _csv(name: str, default: str) -> list[str]:
 
 # ── Network ──────────────────────────────────────────────────────────────
 HOST = os.getenv("PRAKALP_HOST", "127.0.0.1")
-PORT = int(os.getenv("PRAKALP_PORT", "8000"))
+# PaaS hosts (Render, Railway, Heroku) hand the listening port over as PORT.
+# An explicit PRAKALP_PORT still wins; PORT is the fallback; 8000 is the laptop default.
+PORT = int(os.getenv("PRAKALP_PORT") or os.getenv("PORT") or "8000")
 
 ALLOWED_ORIGINS = _csv(
     "PRAKALP_ALLOWED_ORIGINS",

@@ -492,7 +492,7 @@ if __name__ == "__main__":
     # into the source. Defaults to 1 for laptop demos.
     workers = int(os.environ.get("PRAKALP_WORKERS", "1"))
     host = os.environ.get("PRAKALP_HOST", "127.0.0.1")
-    port = int(os.environ.get("PRAKALP_PORT", "8000"))
+    port = int(os.environ.get("PRAKALP_PORT") or os.environ.get("PORT") or "8000")
 
     print(f"Starting PRAKALP-DRISHTI FastAPI Server on http://{host}:{port} "
           f"({workers} worker{'s' if workers != 1 else ''})")
