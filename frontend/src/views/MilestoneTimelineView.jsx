@@ -376,16 +376,19 @@ function TimelineInner({ projectId }) {
 
         {/* Quick Optical Sensor Status Pill */}
         <div className="bg-black/40 border border-white/20 rounded-xl p-4 text-xs text-slate-200 shrink-0 space-y-1.5 min-w-[220px] backdrop-blur-md shadow-inner relative z-10">
+          {/* Names the source the catalogue actually records. "Sentinel-2 & Cartosat-3"
+              stood here briefly; neither is served on this screen -- the epochs are
+              ESRI World Imagery Wayback releases at a measured 2.08-2.35 m/px. */}
           <div className="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold flex items-center gap-1.5">
             <Satellite size={14} className="text-amber-400" />
-            <span>Optical Sensors Active</span>
+            <span>Optical Source</span>
           </div>
           <div className="font-bold text-white text-sm font-heading">
-            Sentinel-2 &amp; Cartosat-3
+            ESRI World Imagery · Wayback releases
           </div>
           <div className="text-[11px] text-amber-300 font-mono flex items-center gap-1">
             <CheckCircle2 size={12} className="text-emerald-400" />
-            <span>Wayback Imagery Stream</span>
+            <span>RGB, 2.08–2.35 m/px measured</span>
           </div>
         </div>
       </motion.header>

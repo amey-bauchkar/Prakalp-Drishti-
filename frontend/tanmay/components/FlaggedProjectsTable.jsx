@@ -247,8 +247,8 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
 
           <TableBody className="divide-y divide-slate-100 font-sans">
             {paginatedProjects.map((p, idx) => {
-              const score = p.review_priority_score ?? p.priority_score ?? p.suspicion_score ?? 0;
-              const isHighSuspicion = score >= 65;
+              const score = p.review_priority_score ?? p.priority_score ?? 0;
+              const isHighPriority = score >= 65;
               const isUltraClose = (p.distance_to_boundary_pp || 0) <= 0.5;
 
               return (
@@ -256,7 +256,7 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                   key={p.project_id || idx}
                   onClick={() => onSelectProject && onSelectProject(p.project_id)}
                   className={`hover:bg-slate-50 cursor-pointer transition-colors ${
-                    isHighSuspicion ? 'bg-amber-50/30' : ''
+                    isHighPriority ? 'bg-amber-50/30' : ''
                   }`}
                 >
                   {/* Project & Agency */}
@@ -328,11 +328,11 @@ export default function FlaggedProjectsTable({ flaggedProjects = [], onSelectPro
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
-                        {(p.review_priority_score ?? p.priority_score ?? p.suspicion_score) ?? 'N/A'}/100
+                        {(p.review_priority_score ?? p.priority_score) ?? 'N/A'}/100
                       </span>
-                      {(p.review_priority_basis || p.priority_driver || p.suspicion_driver) && (
-                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.review_priority_basis || p.priority_driver || p.suspicion_driver}>
-                          {p.review_priority_basis || p.priority_driver || p.suspicion_driver}
+                      {(p.review_priority_basis || p.priority_driver) && (
+                        <span className="text-[9.5px] text-slate-500 max-w-[120px] truncate" title={p.review_priority_basis || p.priority_driver}>
+                          {p.review_priority_basis || p.priority_driver}
                         </span>
                       )}
                     </div>
