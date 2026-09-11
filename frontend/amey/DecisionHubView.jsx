@@ -23,7 +23,8 @@ const SatyaKavachView        = React.lazy(() => import('../src/views/SatyaKavach
 const ArthaNivaranView       = React.lazy(() => import('../src/views/ArthaNivaranView'));
 const SetuVarshaView         = React.lazy(() => import('../src/views/SetuVarshaView'));
 const KaryaDakshataSimulator = React.lazy(() => import('../src/components/KaryaDakshataSimulator'));
-import { getStoredLanguage, t } from '../src/lib/i18n';
+import { getStoredLanguage, t, toHindiDigits } from '../src/lib/i18n';
+import { scrollToTop } from '../src/components/SmoothScrollProvider';
 
 /** Shown while an engine's JavaScript is fetched. A blank frame on a slow office
     connection is indistinguishable from a failure. */
@@ -97,6 +98,7 @@ export default function DecisionHubView() {
     const fromUrl = normalizeEngine(searchParams.get('engine'));
     if (fromUrl && fromUrl !== activeEngine) {
       setActiveEngine(fromUrl);
+      scrollToTop(true);
     }
   }, [searchParams]);
 
@@ -119,6 +121,7 @@ export default function DecisionHubView() {
     setActiveEngine(engineId);
     setSearchParams({ engine: engineId });
     setMobileDrawerOpen(false);
+    scrollToTop(true);
   };
 
   useEffect(() => {
@@ -180,7 +183,7 @@ export default function DecisionHubView() {
           <span className="flex items-center gap-2 flex-wrap">
             <b>{lang === 'hi' ? 'निर्णय आसूचना केंद्र' : 'DECISION INTELLIGENCE CONSOLE'}</b>
             <span className="sep">/</span>
-            <span>{lang === 'hi' ? `${engines.length} इंजन` : `${engines.length} ENGINES`}</span>
+            <span>{lang === 'hi' ? `${toHindiDigits(engines.length)} इंजन` : `${engines.length} ENGINES`}</span>
             <span className="sep">/</span>
             <span>{lang === 'hi' ? '२,२०७ परियोजनाएं' : '2,207 PROJECTS'}</span>
             <span className="sep">/</span>
@@ -212,7 +215,7 @@ export default function DecisionHubView() {
             className="btn-outline text-[11px] py-1.5 px-3 shrink-0"
           >
             {mobileDrawerOpen ? <X className="w-3.5 h-3.5 mr-1" /> : <Menu className="w-3.5 h-3.5 mr-1" />}
-            <span>{lang === 'hi' ? `सभी इंजन (${engines.length})` : `All Engines (${engines.length})`}</span>
+            <span>{lang === 'hi' ? `सभी इंजन (${toHindiDigits(engines.length)})` : `All Engines (${engines.length})`}</span>
           </button>
         </div>
 
@@ -311,7 +314,7 @@ export default function DecisionHubView() {
 
               <div className={`panel-head border-t border-b-0 py-2 shrink-0 ${isCollapsed ? 'justify-center' : ''}`}>
                 {isCollapsed ? (
-                  <span className="font-mono text-[9px] text-gov-muted">{engines.length}</span>
+                  <span className="font-mono text-[9px] text-gov-muted">{lang === 'hi' ? toHindiDigits(engines.length) : engines.length}</span>
                 ) : (
                   <>
                     <span className="panel-meta">{lang === 'hi' ? 'सीसीईए / सांख्यिकी मंत्रालय अधिशासन' : 'CCEA / MoSPI Governed'}</span>
@@ -377,7 +380,16 @@ export default function DecisionHubView() {
                     }}
                   />
                 )}
-                {activeEngine === 'pragati_saarthi' && <PragatiSaarthiView lang={lang} selectedProjectId={selectedProjectId} />}
+                {activeEngine === 'pragati_saarthi' && (
+                  <PragatiSaarthiView
+                    lang={lang}
+                    selectedProjectId={selectedProjectId}
+                    onSelectProject={(id) => {
+                      setSelectedProjectId(String(id));
+                      localStorage.setItem('prakalp:selectedProjectId', String(id));
+                    }}
+                  />
+                )}
                 {activeEngine === 'benchmark' && <ModelBenchmarkView lang={lang} />}
                 {activeEngine === 'agency_index' && (
                   <div className="space-y-6">

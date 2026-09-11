@@ -14,7 +14,7 @@ const MilestoneTimelineView = React.lazy(() => import('./views/MilestoneTimeline
 const PoliciesView         = React.lazy(() => import('./views/PoliciesView.jsx'));
 import ProjectSearchBar from './components/ProjectSearchBar.jsx';
 import LoginGate, { useSession, clearSession } from '../amey/LoginGate.jsx';
-import SmoothScrollProvider from './components/SmoothScrollProvider.jsx';
+import SmoothScrollProvider, { useLenis, scrollToTop } from './components/SmoothScrollProvider.jsx';
 import AccessibilityBar from './components/AccessibilityBar.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { getStoredLanguage, t } from './lib/i18n';
@@ -616,6 +616,34 @@ function AnimatedRoutes() {
   );
 }
 
+/* ─── Global Scroll-To-Top Route & Search Watcher ─────────── */
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+  const lenis = useLenis();
+
+  useEffect(() => {
+    // Immediate top reset
+    scrollToTop(true);
+
+    // Frame synchronization for lazy chunks and layout shifts
+    const rafId = requestAnimationFrame(() => {
+      scrollToTop(true);
+    });
+
+    // Secondary timer to guarantee top landing even after suspenseful chunk load
+    const timer = setTimeout(() => {
+      scrollToTop(true);
+    }, 60);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timer);
+    };
+  }, [pathname, search, lenis]);
+
+  return null;
+}
+
 /* ─── Main Application Shell ─────────────────────────────────── */
 export default function App() {
   // The skip link is the first thing a keyboard or screen-reader user meets, so it
@@ -630,6 +658,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <SmoothScrollProvider>
+        <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-[#FAFAF9]">
           {/* WCAG 2.4.1 Bypass Blocks */}
           <a href="#main-content" className="skip-to-content">{t('skip_to_content', appLang)}</a>

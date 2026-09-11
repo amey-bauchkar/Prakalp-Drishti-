@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   AlertTriangle, ArrowRight, RefreshCw, Filter, Info, Loader2,
   ShieldAlert, TrendingUp, Clock, Building2, ChevronDown, Lock,
+  ArrowUpDown,
 } from 'lucide-react';
 import { apiFetch, getSession } from './authClient';
 import DataUnavailable from '../src/components/DataUnavailable';
@@ -102,6 +103,19 @@ export default function WatchlistView({ onOpenProject }) {
   const [queueLoading, setQueueLoading] = useState(false);
   const [allSectors, setAllSectors] = useState([]);
   const [lang, setLang] = useState(() => getStoredLanguage());
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
+
+  useEffect(() => {
+    if (!sortOpen) return;
+    const onDocDown = (e) => {
+      if (sortRef.current && !sortRef.current.contains(e.target)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocDown);
+    return () => document.removeEventListener('mousedown', onDocDown);
+  }, [sortOpen]);
 
   useEffect(() => {
     const onLang = (e) => setLang(e.detail || getStoredLanguage());
@@ -160,7 +174,21 @@ export default function WatchlistView({ onOpenProject }) {
     return ['All', ...Array.from(new Set(alerts.map((a) => a.sector).filter(Boolean))).sort()];
   }, [allSectors, alerts]);
 
-  const matching = alerts;
+  const matching = useMemo(() => {
+    const BAND_ORDER = { CRITICAL: 0, HIGH: 1, MODERATE: 2, LOW: 3 };
+    return [...alerts].sort((a, b) => {
+      const bandA = String(a.risk_band || '').toUpperCase();
+      const bandB = String(b.risk_band || '').toUpperCase();
+      const rankA = BAND_ORDER[bandA] ?? 99;
+      const rankB = BAND_ORDER[bandB] ?? 99;
+      if (rankA !== rankB) {
+        return rankA - rankB;
+      }
+      const scoreA = Number(a.risk_score) || 0;
+      const scoreB = Number(b.risk_score) || 0;
+      return scoreB - scoreA;
+    });
+  }, [alerts]);
   const visible = useMemo(() => matching.slice(0, shown), [matching, shown]);
 
   useEffect(() => { setShown(20); }, [band, sector]);
@@ -381,63 +409,107 @@ export default function WatchlistView({ onOpenProject }) {
         )}
       </div>
 
-      {/* ── Filters ── */}
-      <div className="panel p-3.5 flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-gov-muted">
-          <Filter className="w-3.5 h-3.5" aria-hidden="true" />
-          {lang === 'hi' ? 'कतार फ़िल्टर करें' : 'Narrow the queue'}
-        </span>
-
-        <label className="inline-flex items-center gap-1.5 text-[12px] text-gov-soft">
-          <span className="font-semibold">{lang === 'hi' ? 'जोखिम श्रेणी' : 'Risk band'}</span>
-          <select
-            value={band}
-            onChange={(e) => setBand(e.target.value)}
-            className="field text-[12px] py-1.5 px-2.5 rounded-lg border border-[--line-field] bg-surface"
-          >
-            <option value="All">{lang === 'hi' ? 'सभी श्रेणियां' : 'All bands'}</option>
-            {Object.entries(BANDS).map(([k, v]) => (
-              <option key={k} value={k}>{lang === 'hi' ? `${v.labelHi} जोखिम` : v.label}</option>
-            ))}
-          </select>
-        </label>
-
-        <label className="inline-flex items-center gap-1.5 text-[12px] text-gov-soft">
-          <span className="font-semibold">{lang === 'hi' ? 'क्षेत्र' : 'Sector'}</span>
-          <select
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-            className="field text-[12px] py-1.5 px-2.5 rounded-lg border border-[--line-field] bg-surface max-w-[220px]"
-          >
-            {sectors.map((sx) => (
-              <option key={sx} value={sx}>
-                {sx === 'All' ? (lang === 'hi' ? 'सभी क्षेत्र' : 'All sectors') : getSectorName(sx, lang)}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <span className="text-[12px] text-gov-soft font-mono ml-auto">
+      {/* ── Toolbar: Sort & Filter Popover Button + Queue Metrics ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-1">
+        <span className="text-[12.5px] text-gov-soft font-mono font-medium">
           {lang === 'hi' ? (
             <>
-              {formatCount(data?.total_matching ?? matching.length)} में से {formatCount(visible.length)} प्रदर्शित
+              {formatCount(data?.total_matching ?? matching.length)} में से <strong className="text-gov-navy">{formatCount(visible.length)}</strong> प्रदर्शित
             </>
           ) : (
             <>
-              Showing {formatCount(visible.length)} of {formatCount(data?.total_matching ?? matching.length)}
+              Showing <strong className="text-gov-navy">{formatCount(visible.length)}</strong> of {formatCount(data?.total_matching ?? matching.length)}
             </>
           )}
         </span>
 
-        <button
-          type="button"
-          onClick={() => load(band, sector)}
-          disabled={queueLoading}
-          className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[34px] rounded-lg border border-slate-400 text-gov-navy hover:bg-surface-3 text-[11.5px] font-bold transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${queueLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
-          {lang === 'hi' ? 'ताज़ा करें' : 'Refresh'}
-        </button>
+        <div className="flex items-center gap-2.5">
+          {/* Sort & Filter Button with Dropdown Popover */}
+          <div ref={sortRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setSortOpen((v) => !v)}
+              aria-expanded={sortOpen}
+              className={`inline-flex items-center gap-2 px-3.5 py-2 min-h-[36px] rounded-lg border text-[12px] font-bold transition-all shadow-xs ${
+                (band !== 'All' || sector !== 'All' || sortOpen)
+                  ? 'bg-gov-navy text-white border-gov-navy shadow-sm'
+                  : 'bg-white border-slate-300 text-gov-navy hover:bg-slate-50'
+              }`}
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{lang === 'hi' ? 'क्रम एवं फ़िल्टर' : 'Sort & Filter'}</span>
+              {(band !== 'All' || sector !== 'All') && (
+                <span className="w-2 h-2 rounded-full bg-amber-400" title="Filters active" />
+              )}
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${sortOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+            </button>
+
+            {sortOpen && (
+              <div
+                onWheel={(e) => e.stopPropagation()}
+                className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 p-4 space-y-3.5 animate-in fade-in-50 duration-100"
+              >
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 font-mono">
+                    {lang === 'hi' ? 'क्रम एवं फ़िल्टर विकल्प' : 'Filter & Sort Queue'}
+                  </span>
+                  {(band !== 'All' || sector !== 'All') && (
+                    <button
+                      type="button"
+                      onClick={() => { setBand('All'); setSector('All'); }}
+                      className="text-[10.5px] font-semibold text-rose-600 hover:text-rose-700"
+                    >
+                      {lang === 'hi' ? 'रीसेट' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-slate-700">
+                    {lang === 'hi' ? 'जोखिम श्रेणी' : 'Risk Band'}
+                  </label>
+                  <select
+                    value={band}
+                    onChange={(e) => setBand(e.target.value)}
+                    className="w-full text-[12px] py-1.5 px-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-gov-navy"
+                  >
+                    <option value="All">{lang === 'hi' ? 'सभी श्रेणियां' : 'All bands'}</option>
+                    {Object.entries(BANDS).map(([k, v]) => (
+                      <option key={k} value={k}>{lang === 'hi' ? `${v.labelHi} जोखिम` : `${v.label} Risk`}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-slate-700">
+                    {lang === 'hi' ? 'क्षेत्र' : 'Sector'}
+                  </label>
+                  <select
+                    value={sector}
+                    onChange={(e) => setSector(e.target.value)}
+                    className="w-full text-[12px] py-1.5 px-2.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-gov-navy"
+                  >
+                    {sectors.map((sx) => (
+                      <option key={sx} value={sx}>
+                        {sx === 'All' ? (lang === 'hi' ? 'सभी क्षेत्र' : 'All sectors') : getSectorName(sx, lang)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => load(band, sector)}
+            disabled={queueLoading}
+            className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-lg border border-slate-300 bg-white text-gov-navy hover:bg-slate-50 text-[11.5px] font-bold transition-colors disabled:opacity-50 shadow-xs"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${queueLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
+            <span>{lang === 'hi' ? 'ताज़ा करें' : 'Refresh'}</span>
+          </button>
+        </div>
       </div>
 
       {/* ── The queue ── */}

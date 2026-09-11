@@ -5,7 +5,7 @@ import {
   Filter, BarChart3, Compass, Layers, ArrowUpRight, TrendingDown, Building2,
   MapPin, Clock, ShieldCheck, CheckCircle2, Info, ArrowRight, ChevronRight
 } from 'lucide-react';
-import { getStoredLanguage } from '../src/lib/i18n';
+import { getStoredLanguage, toHindiDigits } from '../src/lib/i18n';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -131,7 +131,17 @@ export default function VarshaSpeedView({ lang: propLang }) {
 
   // Filtered state list
   const filteredStates = (impactData?.state_impact_records || []).filter((item) => {
-    const matchesRegion = regionFilter === 'ALL' || item.region === regionFilter;
+    const matchesRegion =
+      regionFilter === 'ALL' ||
+      (item.region && item.region.toUpperCase().replace(/[^A-Z]/g, '').includes(regionFilter.replace(/[^A-Z]/g, ''))) ||
+      (regionFilter === 'NORTHERN' && item.region === 'North') ||
+      (regionFilter === 'SOUTHERN' && item.region === 'South') ||
+      (regionFilter === 'EASTERN' && item.region === 'East') ||
+      (regionFilter === 'WESTERN' && item.region === 'West') ||
+      (regionFilter === 'NORTHEAST' && (item.region === 'North-East' || item.region === 'Northeast')) ||
+      (regionFilter === 'HIMALAYAN' && (item.risk_tier?.includes('LANDSLIDE') || item.terrain?.toLowerCase().includes('himalay') || item.terrain?.toLowerCase().includes('alpine'))) ||
+      (regionFilter === 'COASTAL' && (item.risk_tier?.includes('COASTAL') || item.terrain?.toLowerCase().includes('coast') || item.terrain?.toLowerCase().includes('island') || item.terrain?.toLowerCase().includes('atoll')));
+
     const matchesSearch = !stateSearchTerm ||
                           item.state.toLowerCase().includes(stateSearchTerm.toLowerCase()) ||
                           item.terrain.toLowerCase().includes(stateSearchTerm.toLowerCase());
@@ -176,18 +186,18 @@ export default function VarshaSpeedView({ lang: propLang }) {
               Contraction &amp; Schedule Multiplier
             </h1>
             <p className="text-text-secondary text-[15px] sm:text-[15.5px] leading-relaxed max-w-2xl font-sans">
-              Powered by 20-year empirical IMD state-level rainfall departures (2005–2025 · 630 state-years). 
-              Calculates precise lost construction days, working-window compression, and schedule stretch 
-              multipliers across 2,207 mega-projects.
+              {isHi
+                ? "२०-वर्षीय अनुभवजन्य आईएमडी राज्य व केंद्र शासित प्रदेश स्तरीय वर्षा विचलन (२००५–२०२५ · ७५६ राज्य-वर्ष) द्वारा संचालित। २,२०७ महा-परियोजनाओं में मौसम-समायोजित कार्य दिवस, कार्य-अवधि संकुचन और समयसीमा विस्तार गुणकों की गणना करता है।"
+                : "Powered by 20-year empirical IMD state & UT-level rainfall departures (2005–2025 · 756 state-years). Calculates precise lost construction days, working-window compression, and schedule stretch multipliers across 2,207 mega-projects."}
             </p>
           </div>
 
           <div className="lg:col-span-4 flex justify-center lg:justify-end">
             <div className="bg-slate-50 border border-slate-200 rounded-3xl p-7 text-center w-full max-w-xs shadow-subtle">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-2 font-mono">Coverage</div>
-              <div className="text-[28px] font-heading font-black text-gov-navy leading-snug">630 State-Years</div>
-              <div className="text-[13.5px] text-text-secondary font-bold mt-2">30 states · 20-year IMD dataset</div>
-              <div className="text-[11px] font-mono text-gov-saffron-dark mt-1 font-bold">2005–2025 empirical rainfall data</div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-2 font-mono">{isHi ? 'कवरेज' : 'Coverage'}</div>
+              <div className="text-[28px] font-heading font-black text-gov-navy leading-snug">{isHi ? '७५६ राज्य-वर्ष' : '756 State-Years'}</div>
+              <div className="text-[13.5px] text-text-secondary font-bold mt-2">{isHi ? '३६ राज्य व केंद्र शासित प्रदेश · २०-वर्षीय आईएमडी डेटासेट' : '36 States & UTs · 20-Year IMD Dataset'}</div>
+              <div className="text-[11px] font-mono text-gov-saffron-dark mt-1 font-bold">{isHi ? '२००५–२०२५ अनुभवजन्य वर्षा डेटा' : '2005–2025 empirical rainfall data'}</div>
             </div>
           </div>
         </div>
@@ -394,14 +404,16 @@ export default function VarshaSpeedView({ lang: propLang }) {
           {/* Results Count and Reset Header */}
           <div className="flex items-center justify-between px-1 text-xs text-text-muted font-bold">
             <span>
-              Showing {filteredStates.length} of {impactData?.state_impact_records?.length || 30} Monitored States &amp; UTs
+              {isHi
+                ? `${toHindiDigits(filteredStates.length)} / ${toHindiDigits(impactData?.state_impact_records?.length || 36)} निगरानी किए गए राज्य एवं केंद्र शासित प्रदेश`
+                : `Showing ${filteredStates.length} of ${impactData?.state_impact_records?.length || 36} Monitored States & UTs`}
             </span>
             {(stateSearchTerm || regionFilter !== 'ALL') && (
               <button
                 onClick={() => { setStateSearchTerm(''); setRegionFilter('ALL'); }}
-                className="text-gov-saffron hover:underline flex items-center gap-1 font-bold"
+                className="text-gov-saffron hover:underline flex items-center gap-1 font-bold cursor-pointer"
               >
-                <RefreshCw className="w-3 h-3" /> Reset Filters
+                <RefreshCw className="w-3 h-3" /> {isHi ? "फ़िल्टर रीसेट करें" : "Reset Filters"}
               </button>
             )}
           </div>

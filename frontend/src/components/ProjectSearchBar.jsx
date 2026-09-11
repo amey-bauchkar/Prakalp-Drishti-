@@ -151,7 +151,12 @@ export default function ProjectSearchBar() {
             <span>MoSPI Database</span>
           </div>
 
-          <div data-lenis-prevent className="relative overflow-y-auto flex-1 divide-y divide-slate-100">
+          <div 
+            data-lenis-prevent 
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            className="relative overflow-y-auto overscroll-contain flex-1 divide-y divide-slate-100"
+          >
             {filteredProjects.length === 0 ? (
               <div className="px-4 py-8 text-center text-xs text-text-muted">
                 No projects found matching "<span className="font-bold text-gov-navy">{query}</span>"

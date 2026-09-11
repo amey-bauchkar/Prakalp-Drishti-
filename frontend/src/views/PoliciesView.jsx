@@ -32,6 +32,8 @@ export const POLICY_TABS = [
   { id: 'grievance', label: 'Feedback & Grievance Redressal', subtitle: 'CPGRAMS Integration & Dispute Ticketing', icon: MessageSquare },
 ];
 
+import { scrollToTop } from '../components/SmoothScrollProvider';
+
 export default function PoliciesView() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'disclaimer';
@@ -52,6 +54,7 @@ export default function PoliciesView() {
     const qTab = searchParams.get('tab');
     if (qTab && POLICY_TABS.some(t => t.id === qTab)) {
       setTab(qTab);
+      scrollToTop(true);
     }
   }, [searchParams]);
 
@@ -59,7 +62,7 @@ export default function PoliciesView() {
     setTab(newTab);
     setSearchParams({ tab: newTab });
     setSubmittedReceipt(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(true);
   };
 
   const handleFormSubmit = (e) => {

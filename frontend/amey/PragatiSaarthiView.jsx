@@ -1,10 +1,133 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { apiFetch } from './authClient';
 import { FileText, ShieldCheck, CheckCircle2, Globe, ArrowRight, X, Database, Lock, Search, Sparkles, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Text, Metric } from '@tremor/react';
 import ProjectCombobox from '../src/components/ProjectCombobox';
-import { getStoredLanguage } from '../src/lib/i18n';
+import { getStoredLanguage, toHindiDigits } from '../src/lib/i18n';
+
+const FACT_LABEL_HI = {
+  "Physical Progress": "भौतिक प्रगति",
+  "Approved Cost": "स्वीकृत लागत",
+  "Revised Cost": "संशोधित लागत",
+  "Time Overrun": "समय सीमा वृद्धि",
+  "Cost Escalation": "लागत वृद्धि",
+  "Cumulative Expenditure": "संचयी व्यय",
+  "Target Completion Date": "लक्षित पूर्णता तिथि",
+  "Realistic Finish Date": "यथार्थवादी पूर्णता तिथि",
+  "Realistic Completion (P50)": "यथार्थवादी पूर्णता (P50)",
+  "Chance of Target Met": "लक्ष्य पूर्ति संभावना",
+  "P50 Completion Date": "P50 पूर्णता तिथि",
+  "Executing Agency": "कार्यान्वयन एजेंसी",
+  "Nodal Ministry": "नोडल मंत्रालय",
+  "Project State": "परियोजना राज्य",
+  "Original Sanction Date": "मूल स्वीकृति तिथि",
+  "Original Cost": "मूल लागत",
+  "Anticipated Cost": "प्रत्याशित लागत",
+  "Original Date of Commissioning": "मूल कमीशनिंग तिथि",
+  "Anticipated Date of Commissioning": "प्रत्याशित कमीशनिंग तिथि",
+  "Optimized National Allocation (Stochastic LP, CVaR90)": "अनुकूलित राष्ट्रीय आवंटन (स्टोकेस्टिक एलपी, CVaR90)",
+  "Status": "स्थिति",
+  "Sector": "क्षेत्र",
+  "Current Status": "वर्तमान स्थिति",
+  "Sanctioned Capex": "स्वीकृत पूंजीगत व्यय",
+  "Total Capex": "कुल पूंजीगत व्यय"
+};
+
+const translateFactLabel = (label, isHi) => {
+  if (!label) return '';
+  if (!isHi) return label;
+  if (FACT_LABEL_HI[label]) return FACT_LABEL_HI[label];
+  let s = String(label);
+  for (const [k, v] of Object.entries(FACT_LABEL_HI)) {
+    s = s.replace(new RegExp(k, 'gi'), v);
+  }
+  return toHindiDigits(s);
+};
+
+const formatFactValue = (val, isHi) => {
+  if (!val && val !== 0) return '—';
+  if (!isHi) return String(val);
+  let s = String(val);
+  // Currency and Units
+  s = s.replace(/\bCr\b/gi, 'करोड़');
+  s = s.replace(/\bCrore\b/gi, 'करोड़');
+  s = s.replace(/\bCrores\b/gi, 'करोड़');
+  s = s.replace(/\bMonths\b/gi, 'माह');
+  s = s.replace(/\bMonth\b/gi, 'माह');
+  s = s.replace(/\bDays\b/gi, 'दिन');
+  s = s.replace(/\bDay\b/gi, 'दिन');
+  s = s.replace(/\bYears\b/gi, 'वर्ष');
+  s = s.replace(/\bYear\b/gi, 'वर्ष');
+  // Months of Year
+  s = s.replace(/\bJan\b|\bJanuary\b/gi, 'जनवरी');
+  s = s.replace(/\bFeb\b|\bFebruary\b/gi, 'फ़रवरी');
+  s = s.replace(/\bMar\b|\bMarch\b/gi, 'मार्च');
+  s = s.replace(/\bApr\b|\bApril\b/gi, 'अप्रैल');
+  s = s.replace(/\bMay\b/gi, 'मई');
+  s = s.replace(/\bJun\b|\bJune\b/gi, 'जून');
+  s = s.replace(/\bJul\b|\bJuly\b/gi, 'जुलाई');
+  s = s.replace(/\bAug\b|\bAugust\b/gi, 'अगस्त');
+  s = s.replace(/\bSep\b|\bSeptember\b/gi, 'सितंबर');
+  s = s.replace(/\bOct\b|\bOctober\b/gi, 'अक्टूबर');
+  s = s.replace(/\bNov\b|\bNovember\b/gi, 'नवंबर');
+  s = s.replace(/\bDec\b|\bDecember\b/gi, 'दिसंबर');
+  return toHindiDigits(s);
+};
+
+const formatHindiAgency = (agency) => {
+  if (!agency) return '';
+  const AGENCY_MAP = {
+    "Ministry of DoNER / MoSPI": "डोनर मंत्रालय / सांख्यिकी मंत्रालय",
+    "ISRO / MoSPI Earth Observation Cell": "इसरो / एमओएसपीआई उपग्रह अवलोकन प्रकोष्ठ",
+    "MoRTH": "सड़क परिवहन एवं राजमार्ग मंत्रालय (MoRTH)",
+    "NHAI": "भारतीय राष्ट्रीय राजमार्ग प्राधिकरण (NHAI)",
+    "Indian Railways": "भारतीय रेल",
+    "RVNL": "रेल विकास निगम लिमिटेड (RVNL)",
+    "NTPC": "एनटीपीसी लिमिटेड",
+    "CPWD": "केंद्रीय लोक निर्माण विभाग (CPWD)",
+    "National": "राष्ट्रीय स्तर",
+    "MoF": "वित्त मंत्रालय (MoF)"
+  };
+  return AGENCY_MAP[agency] || agency;
+};
+
+const formatHindiText = (text, isHi) => {
+  if (!text) return '';
+  if (!isHi) return text;
+  let s = String(text);
+  s = s.replace(/\bCr\b/gi, 'करोड़');
+  s = s.replace(/\bCrore\b/gi, 'करोड़');
+  s = s.replace(/\bCrores\b/gi, 'करोड़');
+  s = s.replace(/\bMonths\b/gi, 'माह');
+  s = s.replace(/\bMonth\b/gi, 'माह');
+  s = s.replace(/\bDays\b/gi, 'दिन');
+  s = s.replace(/\bDay\b/gi, 'दिन');
+  s = s.replace(/\bYears\b/gi, 'वर्ष');
+  s = s.replace(/\bYear\b/gi, 'वर्ष');
+  s = s.replace(/\bIST\b/g, 'भारतीय मानक समय');
+  s = s.replace(/\bProject\b/gi, 'परियोजना');
+  s = s.replace(/\bJan\b|\bJanuary\b/gi, 'जनवरी');
+  s = s.replace(/\bFeb\b|\bFebruary\b/gi, 'फ़रवरी');
+  s = s.replace(/\bMar\b|\bMarch\b/gi, 'मार्च');
+  s = s.replace(/\bApr\b|\bApril\b/gi, 'अप्रैल');
+  s = s.replace(/\bMay\b/gi, 'मई');
+  s = s.replace(/\bJun\b|\bJune\b/gi, 'जून');
+  s = s.replace(/\bJul\b|\bJuly\b/gi, 'जुलाई');
+  s = s.replace(/\bAug\b|\bAugust\b/gi, 'अगस्त');
+  s = s.replace(/\bSep\b|\bSeptember\b/gi, 'सितंबर');
+  s = s.replace(/\bOct\b|\bOctober\b/gi, 'अक्टूबर');
+  s = s.replace(/\bNov\b|\bNovember\b/gi, 'नवंबर');
+  s = s.replace(/\bDec\b|\bDecember\b/gi, 'दिसंबर');
+  return toHindiDigits(s);
+};
+
+const fromHindiDigits = (str) => {
+  if (!str) return '';
+  const map = { '०':'0', '१':'1', '२':'2', '३':'3', '४':'4', '५':'5', '६':'6', '७':'7', '८':'8', '९':'9' };
+  return String(str).replace(/[०-९]/g, (d) => map[d] || d);
+};
 
 export default function PragatiSaarthiView({ selectedProjectId = "618402", onSelectProject, lang: propLang }) {
   const [tamperState, setTamperState] = useState({ kind: 'idle' });
@@ -23,7 +146,6 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
   const handleLanguageSwitch = (newLang) => {
     setLang(newLang);
-    window.dispatchEvent(new CustomEvent('prakalp:languageChanged', { detail: newLang }));
   };
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -57,7 +179,17 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
     }
   };
 
-  // Removed auto-fetch on mount to require explicit user action
+  // Sync with prop when selected externally and automatically compile briefing
+  useEffect(() => {
+    const targetId = selectedProjectId || projectId;
+    if (targetId) {
+      if (selectedProjectId && selectedProjectId !== projectId) {
+        setProjectId(selectedProjectId);
+      }
+      fetchBriefing(targetId);
+    }
+  }, [selectedProjectId]);
+
   useEffect(() => {
     fetch('/api/projects?limit=2207')
       .then(res => res.json())
@@ -67,11 +199,25 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
       .catch(err => console.error("Failed to load project list", err));
   }, []);
 
-
   const handleOpenFact = (fact) => {
     setActiveFact(fact);
     setDrawerOpen(true);
   };
+
+  // Lock body scroll and handle Escape key when drawer is open
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setDrawerOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [drawerOpen]);
 
   return (
     <div className="space-y-8 font-sans relative pb-10">
@@ -82,19 +228,28 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="p-6 sm:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative overflow-hidden z-20"
+        className="p-6 sm:p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 shadow-xl border border-slate-700 relative z-30"
       >
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <FileText className="w-48 h-48 text-amber-500" />
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute top-0 right-0 p-8 opacity-10">
+            <FileText className="w-48 h-48 text-amber-500" />
+          </div>
         </div>
-        <div className="space-y-3 max-w-2xl relative z-10">
+        <div className="space-y-3 max-w-xl relative z-10">
           <div className="inline-flex items-center gap-2 pl-2 pr-2.5 py-0.5 rounded-sm bg-white/10 text-[10px] font-extrabold tracking-institutional uppercase text-amber-400 border-l-2 border-amber-400">
             <FileText className="w-3.5 h-3.5 text-white" />
             <span>{isHi ? "मॉड्यूल ४ · कार्यपालक शासन" : "MODULE 4 · EXECUTIVE GOVERNANCE"}</span>
           </div>
-          <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
-            {isHi ? "प्रगति-सारथी कैबिनेट टिप्पणी" : "PRAGATI-SAARTHI Cabinet Note"}
-          </h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-white leading-tight">
+              {isHi ? "प्रगति-सारथी कैबिनेट टिप्पणी" : "PRAGATI-SAARTHI Cabinet Note"}
+            </h2>
+            {(data?.project_id || projectId) && (
+              <span className="inline-flex items-center text-xs sm:text-[13px] px-3 py-1 rounded-lg bg-amber-500/20 border border-amber-400/50 text-amber-300 font-mono font-extrabold tracking-wider shadow-sm">
+                #{isHi ? toHindiDigits(data?.project_id || projectId) : (data?.project_id || projectId)}
+              </span>
+            )}
+          </div>
           <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
             {isHi
               ? "क्रिप्टोग्राफिक लेखापरीक्षा साक्ष्य सहित पीएमओ और कैबिनेट समीक्षाओं के लिए सटीक, १००% तथ्य-सत्यापित ब्रीफिंग नोट्स तैयार करता है।"
@@ -102,9 +257,9 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto z-30">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3.5 w-full xl:w-auto z-30">
           <ProjectCombobox
-            className="w-full sm:w-80 shrink-0"
+            className="w-full sm:w-80 md:w-96 shrink-0"
             projects={projectList}
             value={searchInput}
             onChange={setSearchInput}
@@ -115,34 +270,41 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
             }}
             onSubmitRaw={(q) => { setProjectId(q); fetchBriefing(q); }}
             loading={loading}
+            isHi={isHi}
             submitLabel={isHi ? "तैयार करें" : "Generate"}
             busyLabel={isHi ? "संकलन जारी…" : "Compiling…"}
             label={isHi ? "ब्रीफिंग हेतु परियोजना चुनें" : "Find a project to brief"}
+            placeholder={isHi ? "परियोजना नाम या एमओएसपीआई कोड" : "Project name or MoSPI code"}
           />
 
           {/* Bilingual Language Switcher */}
-          <div className="flex items-center gap-1.5 bg-black/25 p-1.5 rounded-xl border border-white/15 shrink-0 h-11">
-            <Globe className="w-4 h-4 text-amber-400 ml-1 mr-0.5" />
-            <button
-              onClick={() => handleLanguageSwitch('en')}
-              className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
-                lang === 'en'
-                  ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => handleLanguageSwitch('hi')}
-              className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
-                lang === 'hi'
-                  ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
-                  : 'text-slate-300 hover:text-white'
-              }`}
-            >
-              हिन्दी
-            </button>
+          <div className="flex flex-col gap-1 shrink-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">
+              {isHi ? "भाषा चुनें" : "Language"}
+            </span>
+            <div className="flex items-center gap-1.5 bg-black/40 p-1.5 rounded-xl border border-white/20 h-11">
+              <Globe className="w-4 h-4 text-amber-400 ml-1 mr-0.5" />
+              <button
+                onClick={() => handleLanguageSwitch('en')}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
+                  lang === 'en'
+                    ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                English
+              </button>
+              <button
+                onClick={() => handleLanguageSwitch('hi')}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer h-full ${
+                  lang === 'hi'
+                    ? 'bg-amber-400 text-slate-900 font-black shadow-sm'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                हिन्दी
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -155,7 +317,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               {isHi ? "तथ्य-सत्यापित कैबिनेट ब्रीफिंग का संकलन जारी…" : "Compiling Fact-Verified Cabinet Briefing…"}
             </p>
             <p className="text-xs text-slate-500">
-              {isHi ? "द्विभाषी नीति संक्षिप्त विवरण का संश्लेषण एवं SHA-256 मर्कल समावेशन प्रमाण उत्पन्न किए जा रहे हैं" : "Synthesizing bilingual policy briefs and generating SHA-256 Merkle inclusion proofs"}
+              {isHi ? "द्विभाषी नीति संक्षिप्त विवरण का संश्लेषण एवं एसएचए-२५६ मर्कल समावेशन प्रमाण उत्पन्न किए जा रहे हैं" : "Synthesizing bilingual policy briefs and generating SHA-256 Merkle inclusion proofs"}
             </p>
           </div>
         </div>
@@ -220,8 +382,10 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
       {denied && !loading && (
         <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
-          <strong>{denied}</strong>
-          <span className="block mt-1 text-rose-600">Cabinet briefings require the ministry officer or administrator role.</span>
+          <strong>{isHi ? "पहुंच अस्वीकृत" : denied}</strong>
+          <span className="block mt-1 text-rose-600">
+            {isHi ? "कैबिनेट ब्रीफिंग के लिए मंत्रालय अधिकारी या प्रशासक की भूमिका आवश्यक है।" : "Cabinet briefings require the ministry officer or administrator role."}
+          </span>
         </div>
       )}
 
@@ -238,23 +402,26 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
             <div className="panel p-5 sm:p-7 space-y-6 shadow-xl border border-slate-200">
               {/* Header Info */}
               <div className="border-b border-border-default pb-5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider"> Cabinet Review Reference Dossier: MoSPI Project Record #{data.project_id}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-[11px] font-mono font-bold text-text-muted uppercase tracking-wider">
+                    {isHi ? `कैबिनेट समीक्षा संदर्भ डोज़ियर: सांख्यिकी मंत्रालय परियोजना रिकॉर्ड #${toHindiDigits(data?.project_id || projectId)}` : `Cabinet Review Reference Dossier: MoSPI Project Record #${data?.project_id || projectId}`}
                   </span>
-                  <span className="text-[11.5px] font-mono text-text-muted font-bold">{data.generated_at}</span>
+                  <span className="text-[11.5px] font-mono text-text-muted font-bold shrink-0">
+                    {isHi ? formatHindiText(data.generated_at, isHi) : data.generated_at}
+                  </span>
                 </div>
                 <h2 className="text-[20px] font-extrabold text-gov-navy leading-snug font-heading">
-                  {lang === 'en' ? data.title_en : data.title_hi}
+                  {isHi ? formatHindiText(data.title_hi || data.title_en, isHi) : data.title_en}
                 </h2>
               </div>
 
               {/* Executive Summary */}
               <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                 <span className="text-[11px] font-bold text-gov-navy uppercase tracking-wider block font-heading">
-                  {lang === 'en' ? 'Executive Summary & Key Takeaways' : 'कार्यपालक सारांश एवं मुख्य निष्कर्ष'}
+                  {isHi ? 'कार्यपालक सारांश एवं मुख्य निष्कर्ष' : 'Executive Summary & Key Takeaways'}
                 </span>
                 <p className="text-[13.5px] text-text-secondary leading-relaxed font-sans">
-                  {lang === 'en' ? data.summary_en : data.summary_hi}
+                  {isHi ? formatHindiText(data.summary_hi || data.summary_en, isHi) : data.summary_en}
                 </p>
               </div>
 
@@ -263,10 +430,10 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                 {data.bilingual_sections.map((sec) => (
                   <div key={sec.section_id} className="p-5 rounded-2xl border border-border-default bg-white space-y-2 shadow-subtle">
                     <h3 className="text-[14px] font-bold text-gov-navy font-heading">
-                      {lang === 'en' ? sec.heading_en : sec.heading_hi}
+                      {isHi ? formatHindiText(sec.heading_hi || sec.heading_en, isHi) : sec.heading_en}
                     </h3>
                     <p className="text-[13px] text-text-secondary leading-relaxed font-sans">
-                      {lang === 'en' ? sec.content_en : sec.content_hi}
+                      {isHi ? formatHindiText(sec.content_hi || sec.content_en, isHi) : sec.content_en}
                     </p>
                   </div>
                 ))}
@@ -295,9 +462,13 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                         className="group relative cursor-pointer overflow-hidden border border-slate-200 transition-all hover:border-emerald-400/50 hover:shadow-[0_0_15px_rgba(52,211,153,0.15)] bg-white p-4 h-full flex flex-col justify-between"
                         onClick={() => handleOpenFact(fact)}
                       >
-                        <Text className="text-[11px] font-bold text-text-muted uppercase tracking-wide mb-2 line-clamp-2">{fact.label}</Text>
+                        <Text className="text-[11px] font-bold text-text-muted uppercase tracking-wide mb-2 line-clamp-2">
+                          {translateFactLabel(fact.label, isHi)}
+                        </Text>
                         <div className="flex flex-col gap-1">
-                          <Metric className="text-xl font-black text-gov-navy font-mono truncate">{fact.formatted_value}</Metric>
+                          <Metric className="text-xl font-black text-gov-navy font-mono truncate">
+                            {formatFactValue(fact.formatted_value || fact.value, isHi)}
+                          </Metric>
                           <div className="flex justify-end mt-2">
                             <ArrowRight className="w-4 h-4 text-gov-saffron transform transition-transform group-hover:translate-x-1" />
                           </div>
@@ -317,7 +488,7 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
               <div className="flex items-center gap-2 border-b border-border-default pb-4">
                 <Sparkles className="w-4 h-4 text-gov-saffron" />
                 <h3 className="text-[14px] font-extrabold text-gov-navy uppercase tracking-wider font-heading">
-                  {lang === 'en' ? 'High-Level Executive Directives for Cabinet Review' : 'कैबिनेट समीक्षा हेतु उच्च-स्तरीय कार्यपालक निर्देश'}
+                  {isHi ? 'कैबिनेट समीक्षा हेतु उच्च-स्तरीय कार्यपालक निर्देश' : 'High-Level Executive Directives for Cabinet Review'}
                 </h3>
               </div>
 
@@ -326,17 +497,23 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                   <div key={idx} className="p-4 bg-white rounded-2xl border border-slate-200 space-y-2 hover:scale-[1.02] transition-transform shadow-sm hover:shadow-md cursor-default group">
                     <div className="flex items-center justify-between gap-3">
                       <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-sm font-mono transition-colors shrink-0 ${
-                        dec.priority === 'HIGH' ? 'bg-rose-50 text-rose-800 border border-rose-300 group-hover:bg-rose-100' : 'bg-amber-50 text-amber-800 border border-amber-300 group-hover:bg-amber-100'
+                        dec.priority === 'HIGH' || dec.priority === 'CRITICAL' ? 'bg-rose-50 text-rose-800 border border-rose-300 group-hover:bg-rose-100' : 'bg-amber-50 text-amber-800 border border-amber-300 group-hover:bg-amber-100'
                       }`}>
-                        {isHi ? `${dec.priority === 'HIGH' ? 'उच्च' : 'मध्यम'} प्राथमिकता` : `${dec.priority} PRIORITY`}
+                        {isHi
+                          ? `${dec.priority === 'CRITICAL' ? 'अति गंभीर' : dec.priority === 'HIGH' ? 'उच्च' : dec.priority === 'LOW' ? 'निम्न' : 'मध्यम'} प्राथमिकता`
+                          : `${dec.priority} PRIORITY`}
                       </span>
-                      <span className="text-[11px] font-bold text-text-muted truncate text-right" title={dec.action_agency}>{dec.action_agency}</span>
+                      <span className="text-[11px] font-bold text-text-muted truncate text-right" title={dec.action_agency}>
+                        {isHi ? formatHindiAgency(dec.action_agency) : dec.action_agency}
+                      </span>
                     </div>
                     <p className="text-[12.5px] font-bold text-gov-navy leading-snug font-sans">
-                      {lang === 'en' ? dec.recommendation_en : dec.recommendation_hi}
+                      {isHi ? formatHindiText(dec.recommendation_hi || dec.recommendation_en, isHi) : dec.recommendation_en}
                     </p>
                     <div className="text-[11px] font-mono text-emerald-800 font-bold">
-                      {isHi ? `सुरक्षित अनुमानित पूंजी: ₹${dec.impact_cr.toLocaleString('en-IN')} करोड़` : `Estimated Capital Safeguarded: ₹${dec.impact_cr.toLocaleString('en-IN')} Cr`}
+                      {isHi
+                        ? `सुरक्षित अनुमानित पूंजी: ₹${toHindiDigits((dec.impact_cr ?? 0).toLocaleString('en-IN'))} करोड़`
+                        : `Estimated Capital Safeguarded: ₹${(dec.impact_cr ?? 0).toLocaleString('en-IN')} Cr`}
                     </div>
                   </div>
                 ))}
@@ -377,21 +554,33 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
         </motion.div>
       )}
 
-      {/* Slide-Out Audit Lineage Drawer */}
-      {drawerOpen && activeFact && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex justify-end transition-opacity">
-          <div data-lenis-prevent className="w-full max-w-md bg-white h-full shadow-2xl p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200">
+      {/* Slide-Out Audit Lineage Drawer (Rendered via createPortal to root document.body) */}
+      {drawerOpen && activeFact && typeof document !== 'undefined' && createPortal(
+        <div 
+          onClick={() => setDrawerOpen(false)}
+          className="fixed inset-0 top-0 left-0 right-0 bottom-0 w-screen h-screen bg-black/60 backdrop-blur-xs z-[99999] flex justify-end transition-opacity"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            data-lenis-prevent 
+            className="w-full max-w-md bg-white h-screen min-h-screen shadow-2xl p-6 sm:p-7 overflow-y-auto space-y-6 animate-in slide-in-from-right duration-200 border-l border-slate-200"
+          >
             <div className="flex items-center justify-between border-b border-border-default pb-4">
               <div className="flex items-center gap-2.5">
                 <Database className="w-5 h-5 text-gov-navy" />
                 <div>
-                  <h3 className="text-[16px] font-bold text-gov-navy font-heading">Data Source &amp; Audit Proof</h3>
-                  <span className="text-[10.5px] font-mono text-text-muted">Metric ID: {activeFact.fact_id}</span>
+                  <h3 className="text-[16px] font-bold text-gov-navy font-heading">
+                    {isHi ? "डेटा स्रोत एवं ऑडिट साक्ष्य" : "Data Source & Audit Proof"}
+                  </h3>
+                  <span className="text-[10.5px] font-mono text-text-muted">
+                    {isHi ? `मीट्रिक आईडी: #${toHindiDigits(activeFact.fact_id)}` : `Metric ID: ${activeFact.fact_id}`}
+                  </span>
                 </div>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-text-muted transition-colors"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-text-muted transition-colors cursor-pointer"
+                title="Close"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -399,53 +588,70 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
             {/* Fact Value Card */}
             <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5">
-              <span className="text-[11px] font-bold text-text-muted uppercase">{activeFact.label}</span>
-              <p className="text-[28px] font-black text-gov-navy font-mono">{activeFact.formatted_value}</p>
+              <span className="text-[11px] font-bold text-text-muted uppercase">
+                {translateFactLabel(activeFact.label, isHi)}
+              </span>
+              <p className="text-[28px] font-black text-gov-navy font-mono">
+                {formatFactValue(activeFact.formatted_value || activeFact.value, isHi)}
+              </p>
               <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Against Official Database
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                {isHi ? "आधिकारिक डेटाबेस के सापेक्ष सत्यापित" : "Verified Against Official Database"}
               </span>
             </div>
 
             {/* Cryptographic Hashes & Positional Proof */}
             <div className="space-y-4">
-              <h4 className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading border-b border-slate-200 pb-2">Source Verification Details</h4>
+              <h4 className="text-[13px] font-extrabold text-gov-navy uppercase tracking-widest font-heading border-b border-slate-200 pb-2">
+                {isHi ? "स्रोत सत्यापन विवरण" : "Source Verification Details"}
+              </h4>
               
               <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Query Verification Hash</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    {isHi ? "क्वेरी सत्यापन हैश" : "Query Verification Hash"}
+                  </span>
                   <p className="font-mono text-xs font-semibold text-slate-800">{formatHash(activeFact.lineage?.query_sha256)}</p>
                 </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.query_sha256, 'query')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors">
+                <button onClick={() => handleCopy(activeFact.lineage?.query_sha256, 'query')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors cursor-pointer">
                   {copiedHash === 'query' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 flex justify-between items-center group transition-colors hover:border-slate-300">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dataset Snapshot Fingerprint</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    {isHi ? "डेटासेट स्नैपशॉट फिंगरप्रिंट" : "Dataset Snapshot Fingerprint"}
+                  </span>
                   <p className="font-mono text-xs font-semibold text-slate-800">{formatHash(activeFact.lineage?.dataset_sha256)}</p>
                 </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.dataset_sha256, 'dataset')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors">
+                <button onClick={() => handleCopy(activeFact.lineage?.dataset_sha256, 'dataset')} className="p-2 bg-slate-50 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-gov-navy transition-colors cursor-pointer">
                   {copiedHash === 'dataset' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               <div className="p-4 bg-white rounded-xl shadow-sm border border-slate-200 space-y-3">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Step-by-Step Proof Path</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  {isHi ? "चरण-दर-चरण प्रमाण पथ" : "Step-by-Step Proof Path"}
+                </span>
                 <div data-lenis-prevent className="relative pl-3 space-y-3 max-h-40 overflow-y-auto">
-                  <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-400 to-emerald-200/20"></div>
+                  <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-400 to-emerald-200/20"></div>
                   {activeFact.lineage?.merkle_proof && activeFact.lineage.merkle_proof.length > 0 ? (
                     activeFact.lineage.merkle_proof.map((p, idx) => (
-                      <div key={idx} className="relative flex items-center justify-between text-[10px] font-mono pl-4">
-                        <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
+                      <div key={idx} className="relative flex items-center justify-between text-[10px] font-mono pl-5">
+                        <div className="absolute left-[3px] w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
                         <span className="text-slate-700 font-medium truncate max-w-[180px]">{formatHash(p.hash)}</span>
-                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold uppercase text-[9px] border border-slate-200">{p.position}</span>
+                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold uppercase text-[9px] border border-slate-200">
+                          {isHi ? (p.position === 'left' ? 'बायां नोड' : p.position === 'right' ? 'दायां नोड' : p.position) : p.position}
+                        </span>
                       </div>
                     ))
                   ) : (
-                    <div className="relative flex items-center text-[11px] font-mono pl-4">
-                      <div className="absolute left-[-3px] w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
-                      <span className="text-slate-500 font-semibold italic">Verified Leaf Record (No Parent Hops)</span>
+                    <div className="relative flex items-center text-[11px] font-mono pl-5">
+                      <div className="absolute left-[3px] w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.8)] border border-white"></div>
+                      <span className="text-slate-500 font-semibold italic">
+                        {isHi ? "सत्यापित लीफ रिकॉर्ड (कोई पैरेंट हॉप नहीं)" : "Verified Leaf Record (No Parent Hops)"}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -455,11 +661,12 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none"></div>
                 <div className="space-y-1.5 relative z-10">
                   <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                    <Lock className="w-3 h-3" /> Audit Security Key
+                    <Lock className="w-3 h-3" />
+                    {isHi ? "ऑडिट सुरक्षा कुंजी" : "Audit Security Key"}
                   </span>
                   <p className="font-mono text-xs font-black text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)] tracking-wide">{formatHash(activeFact.lineage?.merkle_root || data?.merkle_root)}</p>
                 </div>
-                <button onClick={() => handleCopy(activeFact.lineage?.merkle_root || data?.merkle_root, 'root')} className="relative z-10 p-2.5 bg-black/40 border border-slate-600 rounded-lg hover:border-emerald-400/50 hover:bg-emerald-900/20 text-slate-300 hover:text-emerald-400 transition-all">
+                <button onClick={() => handleCopy(activeFact.lineage?.merkle_root || data?.merkle_root, 'root')} className="relative z-10 p-2.5 bg-black/40 border border-slate-600 rounded-lg hover:border-emerald-400/50 hover:bg-emerald-900/20 text-slate-300 hover:text-emerald-400 transition-all cursor-pointer">
                   {copiedHash === 'root' ? <Check className="w-4 h-4 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
@@ -469,36 +676,32 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
             <div className="p-5 bg-gov-navy text-white rounded-2xl border border-slate-700 space-y-3.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <span className="text-xs font-bold text-gov-saffron-light uppercase flex items-center gap-1.5 font-heading leading-tight">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" /> Real-Time Cryptographic Merkle Verification Test
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  {isHi ? "रीयल-टाइम क्रिप्टोग्राफिक मर्कल सत्यापन परीक्षण" : "Real-Time Cryptographic Merkle Verification Test"}
                 </span>
-                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-sm font-mono shrink-0 self-start sm:self-auto"> Live Verification
+                <span className="text-[9.5px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-sm font-mono shrink-0 self-start sm:self-auto">
+                  {isHi ? "लाइव सत्यापन" : "Live Verification"}
                 </span>
               </div>
-              <p className="text-[12px] text-slate-300 leading-snug font-sans"> Try modifying the number below to test if the system automatically catches and rejects fake or edited data:
+              <p className="text-[12px] text-slate-300 leading-snug font-sans">
+                {isHi
+                  ? "यह जांचने के लिए नीचे दी गई संख्या को बदलें कि क्या प्रणाली स्वचालित रूप से फर्जी या संपादित डेटा को पकड़कर अस्वीकार करती है:"
+                  : "Try modifying the number below to test if the system automatically catches and rejects fake or edited data:"}
               </p>
               
               <div className="space-y-2">
-                <label className="text-[10.5px] font-bold text-slate-400 uppercase font-mono">Enter Value to Test</label>
+                <label className="text-[10.5px] font-bold text-slate-400 uppercase font-mono">
+                  {isHi ? "परीक्षण हेतु मान दर्ज करें" : "Enter Value to Test"}
+                </label>
                 <div className="flex flex-col gap-2.5">
                   <input
                     type="text"
-                    defaultValue={activeFact.value}
+                    defaultValue={isHi ? toHindiDigits(activeFact.value) : activeFact.value}
                     id="tamperInput"
                     className="w-full bg-black/40 border border-slate-600 rounded-xl px-3 py-2.5 text-xs font-mono text-white focus:outline-none focus:border-gov-saffron min-w-0"
                   />
                   <button
                     onClick={async () => {
-                      // Result goes through React state, never innerHTML.
-                      //
-                      // This block used to build the outcome string with
-                      // `resEl.innerHTML = ...` and interpolate `inputVal`, which
-                      // is whatever the user typed into the field above. Entering
-                      // `<img src=x onerror=alert(1)>` executed it. That is DOM
-                      // XSS in the tamper-verification widget specifically — the
-                      // control whose whole purpose is proving a value was not
-                      // altered. React escapes interpolated text by default, so
-                      // rendering from state removes the injection point rather
-                      // than trying to filter it.
                       const inputVal = document.getElementById('tamperInput').value;
                       setTamperState({ kind: 'checking' });
                       try {
@@ -511,7 +714,8 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
                         const serverValue = result.value;
                         const proofValid = result.proof_valid;
-                        const valuesMatch = parseFloat(inputVal) === parseFloat(serverValue);
+                        const cleanInput = fromHindiDigits(inputVal).replace(/[^0-9.-]/g, '');
+                        const valuesMatch = parseFloat(cleanInput) === parseFloat(serverValue);
 
                         if (proofValid && valuesMatch) {
                           setTamperState({ kind: 'authentic' });
@@ -524,27 +728,38 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
                         setTamperState({ kind: 'error', message: err.message });
                       }
                     }}
-                    className="btn-saffron-pill w-full justify-center px-3.5 py-2.5 text-xs font-bold uppercase transition-all shrink-0"
-                  > Validate Lineage Hash
+                    className="btn-saffron-pill w-full justify-center px-3.5 py-2.5 text-xs font-bold uppercase transition-all shrink-0 cursor-pointer"
+                  >
+                    {isHi ? "वंशावली हैश सत्यापित करें" : "Validate Lineage Hash"}
                   </button>
                 </div>
                 <div className="mt-2 text-[11.5px] leading-snug">
                   {tamperState.kind === 'checking' && (
-                    <span className="text-sky-400 font-bold animate-pulse">Checking proof against official database record...</span>
+                    <span className="text-sky-400 font-bold animate-pulse">
+                      {isHi ? "आधिकारिक डेटाबेस रिकॉर्ड के सापेक्ष प्रमाण की जांच जारी..." : "Checking proof against official database record..."}
+                    </span>
                   )}
                   {tamperState.kind === 'authentic' && (
-                    <span className="text-emerald-400 font-bold">AUTHENTIC RECORD: Value perfectly matches official verified database records.</span>
+                    <span className="text-emerald-400 font-bold">
+                      {isHi ? "प्रामाणिक रिकॉर्ड: मान आधिकारिक सत्यापित डेटाबेस रिकॉर्ड से पूर्णतः मेल खाता है।" : "AUTHENTIC RECORD: Value perfectly matches official verified database records."}
+                    </span>
                   )}
                   {tamperState.kind === 'tampered' && (
                     <span className="text-rose-400 font-bold">
-                      FAKE DATA DETECTED: Entered "{tamperState.entered}" does not match audited value "{tamperState.audited}". Edit rejected immediately!
+                      {isHi
+                        ? `फर्जी डेटा का पता चला: दर्ज "${toHindiDigits(tamperState.entered)}" ऑडिट किए गए मान "${toHindiDigits(tamperState.audited)}" से मेल नहीं खाता। संपादन तत्काल अस्वीकृत!`
+                        : `FAKE DATA DETECTED: Entered "${tamperState.entered}" does not match audited value "${tamperState.audited}". Edit rejected immediately!`}
                     </span>
                   )}
                   {tamperState.kind === 'proof_failed' && (
-                    <span className="text-rose-400 font-bold">VERIFICATION FAILED: Source proof did not validate on the server.</span>
+                    <span className="text-rose-400 font-bold">
+                      {isHi ? "सत्यापन विफल: स्रोत प्रमाण सर्वर पर मान्य नहीं हुआ।" : "VERIFICATION FAILED: Source proof did not validate on the server."}
+                    </span>
                   )}
                   {tamperState.kind === 'error' && (
-                    <span className="text-amber-400 font-bold">Verification check error: {tamperState.message}. Ensure backend is running.</span>
+                    <span className="text-amber-400 font-bold">
+                      {isHi ? `सत्यापन जांच त्रुटि: ${tamperState.message}। सुनिश्चित करें कि बैकएंड चल रहा है।` : `Verification check error: ${tamperState.message}. Ensure backend is running.`}
+                    </span>
                   )}
                 </div>
               </div>
@@ -552,11 +767,13 @@ export default function PragatiSaarthiView({ selectedProjectId = "618402", onSel
 
             <button
               onClick={() => setDrawerOpen(false)}
-              className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider"
-            > Close Drawer
+              className="btn-saffron-pill w-full justify-center py-3 text-xs font-bold uppercase tracking-wider cursor-pointer"
+            >
+              {isHi ? "ड्रेवर बंद करें" : "Close Drawer"}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
