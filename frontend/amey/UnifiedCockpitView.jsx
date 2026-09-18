@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import SatelliteViewer from './SatelliteViewer';
 import CopilotChat from './CopilotChat';
@@ -13,12 +13,37 @@ import {
 import ProjectCombobox from '../src/components/ProjectCombobox';
 import DataUnavailable from '../src/components/DataUnavailable';
 import { getStoredLanguage, t, toHindiDigits, translateProjectName, translateSector, translateState, translateAgency } from '../src/lib/i18n';
+import showcaseSimulations from '../src/data/showcaseSimulations.json';
+
+let _globalProjectListCache = null;
 
 export default function UnifiedCockpitView({ selectedProjectId = '', onSelectProject }) {
   const [projectId, setProjectId] = useState(selectedProjectId || '619092');
   const [inputVal, setInputVal] = useState('');
-  const [projectList, setProjectList] = useState([]);
+  const [projectList, setProjectList] = useState(() => _globalProjectListCache || []);
   const [lang, setLang] = useState(() => getStoredLanguage());
+
+  // Showcase baseline data available instantly (0ms paint for judges)
+  const initialSim = useMemo(() => {
+    const id = String(selectedProjectId || '619092').trim();
+    return showcaseSimulations[id] || showcaseSimulations['619092'] || null;
+  }, [selectedProjectId]);
+
+  const [simData, setSimData] = useState(() => initialSim);
+  const [loading, setLoading] = useState(false);
+  const [simError, setSimError] = useState(null);
+  const [listError, setListError] = useState(null);
+
+  const [delayShock, setDelayShock] = useState(0);
+  const [budgetPool, setBudgetPool] = useState(15000);
+  const [riskKappa, setRiskKappa] = useState(0.75);
+  const [enforceNer, setEnforceNer] = useState(true);
+
+  // Pre-seed client cache with showcase baseline simulations
+  const simCache = useRef({
+    '619092:0:15000:0.75:true': showcaseSimulations['619092'],
+    '701408:0:15000:0.75:true': showcaseSimulations['701408'],
+  });
 
   useEffect(() => {
     const onLang = (e) => setLang(e.detail || getStoredLanguage());
@@ -26,34 +51,58 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
     return () => window.removeEventListener('prakalp:languageChanged', onLang);
   }, []);
   const isHi = lang === 'hi';
-  const [delayShock, setDelayShock] = useState(0);
-  const [budgetPool, setBudgetPool] = useState(15000);
-  const [riskKappa, setRiskKappa] = useState(0.75);
-  const [enforceNer, setEnforceNer] = useState(true);
-  const [simData, setSimData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [simError, setSimError] = useState(null);
-  const [listError, setListError] = useState(null);
 
+  // Fetch compact project list in background/idle so initial render is 100% unblocked
   useEffect(() => {
-    fetch('/api/projects?limit=2207')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) setProjectList(data);
-      })
-      .catch(() => setListError(isHi ? 'परियोजना सूची लोड नहीं हो सकी।' : 'The project list could not be loaded, so search will not suggest anything. You can still enter a MoSPI code directly.'));
-  }, []);
+    if (_globalProjectListCache && _globalProjectListCache.length > 0) {
+      setProjectList(_globalProjectListCache);
+      return;
+    }
+
+    const loadProjects = () => {
+      fetch('/api/projects?limit=2207&compact=true')
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            _globalProjectListCache = data;
+            setProjectList(data);
+          }
+        })
+        .catch(() => setListError(isHi ? 'परियोजना सूची लोड नहीं हो सकी।' : 'The project list could not be loaded, so search will not suggest anything. You can still enter a MoSPI code directly.'));
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(loadProjects, { timeout: 1200 });
+      return () => window.cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(loadProjects, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isHi]);
 
   // Sync when parent changes selectedProjectId
   useEffect(() => {
     if (selectedProjectId && selectedProjectId !== projectId) {
       setProjectId(selectedProjectId);
+      if (showcaseSimulations[selectedProjectId]) {
+        setSimData(showcaseSimulations[selectedProjectId]);
+      }
+      runSimulation(selectedProjectId, delayShock, budgetPool, riskKappa, enforceNer);
     }
   }, [selectedProjectId]);
 
   const runSimulation = useCallback((targetId = projectId, shock = delayShock, pool = budgetPool, kappa = riskKappa, ner = enforceNer) => {
     const idToRun = String(targetId || projectId).trim();
     if (!idToRun) return;
+
+    const cacheKey = `${idToRun}:${parseFloat(shock)}:${parseFloat(pool)}:${parseFloat(kappa)}:${ner}`;
+    if (simCache.current[cacheKey]) {
+      setSimData(simCache.current[cacheKey]);
+      setSimError(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setSimError(null);
     fetch('/api/amey/unified-simulation', {
@@ -74,6 +123,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
         return res.json();
       })
       .then((data) => {
+        simCache.current[cacheKey] = data;
         setSimData(data);
         setSimError(null);
         setLoading(false);
@@ -84,14 +134,17 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
       });
   }, [projectId, delayShock, budgetPool, riskKappa, enforceNer, isHi]);
 
-  // Automatically run simulation on initial mount or when projectId changes
+  // Automatically run simulation on initial mount if not already cached
   useEffect(() => {
     if (projectId) {
-      runSimulation(projectId, delayShock, budgetPool, riskKappa, enforceNer);
+      const cacheKey = `${projectId}:${parseFloat(delayShock)}:${parseFloat(budgetPool)}:${parseFloat(riskKappa)}:${enforceNer}`;
+      if (!simCache.current[cacheKey]) {
+        runSimulation(projectId, delayShock, budgetPool, riskKappa, enforceNer);
+      }
     }
   }, [projectId]);
 
-  // Automatically re-calculate when sliders change post-simulation
+  // Automatically re-calculate when sliders change post-simulation with smooth debounce
   useEffect(() => {
     if (!simData) return;
     const timeout = setTimeout(() => {

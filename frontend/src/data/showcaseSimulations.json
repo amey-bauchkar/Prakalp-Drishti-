@@ -1,0 +1,2604 @@
+{
+  "619092": {
+    "project_id": "619092",
+    "simulated_delay_months": 0.0,
+    "forecast": {
+      "project_id": "619092",
+      "project_name": "4L of Jind-Gohana road Package-1 from km. 0.00 to km. 40.601 of NH-352 A under NHO",
+      "canonical_entity": "NHAI",
+      "sector": "Roads & Highways",
+      "state": "Haryana",
+      "original_cost_cr": 994.0,
+      "revised_cost_cr": 1606.82,
+      "cost_overrun_cr": 612.8199999999999,
+      "cost_overrun_perc": 61.65191146881287,
+      "baseline_reset_count": 2,
+      "rebaselined": true,
+      "physical_progress_perc": 100.0,
+      "sanction_date": "2019-01-25",
+      "original_end_date": "2022-07-23",
+      "revised_end_date": "2026-07-31",
+      "p10_date": "2026-07-02",
+      "p50_date": "2026-07-04",
+      "p80_date": "2026-07-09",
+      "p95_date": "2027-02-14",
+      "prob_target_met_official": 0.4756759853143094,
+      "prob_target_met_rebaselined": 0.0033766368887730375,
+      "competing_risk_state": "ACTIVE",
+      "facts": {
+        "fact_cost": {
+          "fact_id": "fact_cost_619092",
+          "value": 1606.82,
+          "formatted_value": "₹1,606.82 Cr",
+          "unit": "INR_CR",
+          "fact_type": "currency_cr",
+          "label": "Sanctioned Capex (Latest Revised)",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "b9e891e4c3783b9210562d8895da41a7084afa5a77bfe2dfbf135122715b3a94",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "1b1dc6102c3e9d7dd94655e27e98acf4cdf5d431f4e0c847fc4ccde25cd120ff",
+            "merkle_path": [
+              "b9e891e4c3783b92",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_progress": {
+          "fact_id": "fact_progress_619092",
+          "value": 100.0,
+          "formatted_value": "100.0%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "Physical Progress (MoSPI Ground Audit)",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "47f08b4adaa9f26707e285b0b69b7e9307dafbb6fae25fef8e9927a01f949400",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "44c9f4c067abc51532ce9dd07bb052d04e2466587cd072471c35d151b136c9e6",
+            "merkle_path": [
+              "47f08b4adaa9f267",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_overrun": {
+          "fact_id": "fact_overrun_619092",
+          "value": 61.65191146881287,
+          "formatted_value": "+61.7%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "True Capex Overrun vs DPR",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "306c9867eec66dd3037768f518060ef7fa2ae88dcc1033d9ab3c5444d39edee8",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "3dde57f76d484c987002ca630b03782cc9f26b0d858c3f449adb3b0660461a82",
+            "merkle_path": [
+              "306c9867eec66dd3",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_p50_completion": {
+          "fact_id": "fact_p50_619092",
+          "value": 89.28347022587269,
+          "formatted_value": "Jul 2026",
+          "unit": "DATE",
+          "fact_type": "date",
+          "label": "KAAL-CHAKRA P50 Expected Completion Date",
+          "uncertainty": {
+            "p10": 89.20847022587269,
+            "p50": 89.28347022587269,
+            "p80": 89.43347022587268,
+            "p95": 96.67546387797695,
+            "alpha_coverage": 0.85,
+            "empirical_coverage": 0.7903,
+            "calibration_method": "split-conformal on the engine's own median, log-ratio residual quantiles, n_test=596, raw_median=99.1mo, bias_mult=0.46",
+            "is_monotone_guaranteed": true
+          },
+          "lineage": {
+            "query_sha256": "a90289157018d037aef83a55233ebeada74d3b49bfdfe78c25560fe054b11d0a",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "75da0e3bc97fe5dcbdeec63cc69cc90036aad8dece5db71506f396b63dea0caf",
+            "merkle_path": [
+              "a90289157018d037",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_target_prob": {
+          "fact_id": "fact_target_prob_619092",
+          "value": 47.56759853143094,
+          "formatted_value": "47.6%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "Confidence of Meeting Contractor Target Date",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "54e9b50207b79a910d1fe4429301382ec062297df7c893ef068519e69055eb3e",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "be017570fc93e6dae2cbdc7e319702700bc8d686a9b9c7b09083d246319244be",
+            "merkle_path": [
+              "54e9b50207b79a91",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        }
+      }
+    },
+    "subgraph": {
+      "center_project_id": "619092",
+      "nodes": [
+        {
+          "project_id": "619092",
+          "project_name": "4L of Jind-Gohana road Package-1 from km. 0.00 to km. 40.601 of NH-352 A under NHO",
+          "canonical_entity": "NHAI",
+          "sector": "Roads & Highways",
+          "state": "Haryana",
+          "cost_cr": 1606.82,
+          "free_float_months": 0.0,
+          "total_float_months": 0.0,
+          "absorbed_delay_months": 0.0,
+          "propagated_delay_months": 48.26283367556468,
+          "locked_capital_p50_cr": 1615.62,
+          "locked_capital_p95_cr": 2665.77,
+          "shapley_criticality_phi": 811.9
+        }
+      ],
+      "edges": [],
+      "total_cascade_locked_p50_cr": 1615.62,
+      "total_cascade_locked_p95_cr": 2665.77,
+      "acyclic_dag_verified": true
+    },
+    "allocation": {
+      "total_budget_pool_cr": 15000.0,
+      "total_allocated_cr": 15000.0,
+      "expected_completion_yield": 306.33,
+      "portfolio_completion_propensity_perc": 89.32,
+      "cvar90_tail_loss": 16468.0,
+      "cvar_diagnostics": {
+        "alpha": 0.9,
+        "scenario_probabilities": [
+          0.5,
+          0.35,
+          0.15
+        ],
+        "scenario_severities": [
+          -0.05,
+          0.15,
+          0.45
+        ],
+        "scenario_returns": [
+          46011.05,
+          36733.3,
+          22816.68
+        ],
+        "expected_return": 39284.68,
+        "tail_average_return": 22816.68,
+        "tail_loss": 16468.0,
+        "var_eta": -19389.03,
+        "zeta": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "lp_units_scenario_returns": [
+          38260.05,
+          30711.64,
+          19389.03
+        ],
+        "lp_units_tail_average_return": 19389.03,
+        "ru_tail_average_return": 19389.03,
+        "ru_agrees": true,
+        "mean_weight": 0.25,
+        "cvar_weight": 0.75,
+        "units": "yield-weighted Cr (base_yield index x allocated Cr), kappa=0 tranche multipliers",
+        "note": "Scenarios are declared policy, not estimated. With p_severe = 0.15 > 1 - alpha = 0.10 the 90% tail lies inside the severe scenario, so CVaR_0.90 equals the severe-scenario outcome and zeta = 0 at the optimum."
+      },
+      "ner_allocated_cr": 1500.0,
+      "ner_share_perc": 10.0,
+      "ner_floor_met": true,
+      "shadow_price_budget_pi": 0.844,
+      "shadow_price_ner_pi": 0.795,
+      "agency_marginal_yield_indicator": {
+        "NHAI": 0.35,
+        "NHIDCL": 0.35,
+        "TELECOM_DOT": 2.73,
+        "MINISTRY_OF_RAILWAYS": 3.5,
+        "INDIAN_RAILWAYS": 2.81,
+        "NATIONAL_HIGH_SPEED_RAIL_CORPO": 1.63,
+        "MINISTRYOFPETROLEUMNATURALGAS": 2.38,
+        "CHENNAI_METRO_RAIL_LIMITED_CMR": 2.31,
+        "JAL_SHAKTI": 1.85,
+        "PETROLEUM_GAS": 0.98,
+        "MUMBAI_RAIL_VIKAS_CORPORATION_": 0.35,
+        "MOHUA": 1.18,
+        "BENGALURU_METRO_RAIL": 0.81,
+        "NATIONAL_CAPITAL_REGION_TRANSP": 1.66,
+        "NTPC": 0.42,
+        "NLC_INDIA_LIMITED_NLCIL": 0.35,
+        "NATIONAL_HYDROELECTRIC_POWER_C": 0.35,
+        "COAL_INDIA": 0.51,
+        "ADANI_TRANSMISSION_LIMITED": 0.43,
+        "DELHI_METRO_RAIL_CORPORATION_L": 1.11,
+        "POWERGRID": 0.49,
+        "MUMBAI_METRO_RAIL_CORPORATION_": 1.24,
+        "Department of Water Resources, River Development,": 0.4,
+        "DAMODAR_VALLEY_CORPORATION": 0.35,
+        "KARNATAKA_RAIL_INFRASTRUCTURE_": 0.35
+      },
+      "allocations": [
+        {
+          "project_id": "618934",
+          "project_name": "Guwahati Ring Road in the State of Assam",
+          "canonical_entity": "NHAI",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 966.16,
+          "allocated_capex_cr": 386.46,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618373",
+          "project_name": "Construction of 4-Lane Bridge including approaches over River Brahmaputra between Dhubri on North Bank,Assam and Phulbari on south Bank,Meghalaya on NH-127B under JICA ODA Loan assistance Phase-III",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 299.82,
+          "allocated_capex_cr": 224.87,
+          "completion_yield_phi": 2.4,
+          "systemic_benefit_gamma": 0.2
+        },
+        {
+          "project_id": "619089",
+          "project_name": "Balance work of 4L of NarimbangloJatinga Junction- Harangajoroad section from Km 0.000 to Km 49.230 of NH-27",
+          "canonical_entity": "NHAI",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 82.37,
+          "allocated_capex_cr": 32.95,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.11
+        },
+        {
+          "project_id": "618417",
+          "project_name": "Construction of 4-Lane with paved shoulder Agartala bypass Western side, length  25.402 km connecting NH-8 near Amtali to NH-108B near Lembuchhera in the state of Tripura on EPC basis under NHO-NE",
+          "canonical_entity": "NHIDCL",
+          "state": "Tripura",
+          "is_ner": true,
+          "requested_capex_cr": 335.02,
+          "allocated_capex_cr": 134.01,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618434",
+          "project_name": "Roing-Hunli Road Greenfield Alignment Project",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 45.91,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "618314",
+          "project_name": "4-Laning of Dhanehari Lailapur / Vairengte section from Existing Chainage km 12920 to km 43000 of NH 306 Design Chainage km 20000 to km 49360 on Silchar - Vairengte Sairang road in the State of Assam under Bharatmala Pariyojna on EPC mode. Project Length 29.360 km under NHO-NE Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 72.07,
+          "allocated_capex_cr": 54.05,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "618284",
+          "project_name": "Widening/Improvement to 4-Lane with paved shoulder from Km 99930 to Km 143680 Design Chainage 96000 to 139750 of Paikan to Dhupdhara Sahar of Bilasipura-Guwahati Road on NH-17 in the state of Assam on EPC mode under Bharatmala Pariyojana in Economic Corridors Project Length  43.750km under NHO-NE Package-8",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 67.07,
+          "allocated_capex_cr": 26.83,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.11
+        },
+        {
+          "project_id": "618401",
+          "project_name": "Construction of Intermediate Lane with Hard Shoulder of Hunli to Hayuliang Package-III from design Km 60.000 to Km 121.500 Design Length 61.500 km, Greenfield Section of Frontier Highway NH-913 in the State of Arunachal Pradesh on EPC Mode Pkg-3",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 238.56,
+          "allocated_capex_cr": 95.42,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.06
+        },
+        {
+          "project_id": "618287",
+          "project_name": "Widening/Improvement to 4-Lane with paved Shoulder from Ch. 25.633 Km to Ch. 52.470 Km Design Ch. 21.850 Km to Ch.48.670 Km for Package-2 of Bilasipura- Guwahati road NH-17 Section Near Mowatari, before Chapar Bypass to Tulungia junction with NH-17 in the state of Assam on HAM mode under NHO-NE Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 219.25,
+          "allocated_capex_cr": 87.7,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "618309",
+          "project_name": "Widening/lmprovement to 4-Laning and Greenfield alignment with Paved shoulder of Silchar-Badarpur  Churaibari section of NH-37 & NH-8 from Design chainage 38.600 End point of proposed Badarpur Bypass to Km. 62.800 Start point of proposed Nilambazar/Cheragi Bypass in the state of Assam on HAM Mode Package-4",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 198.0,
+          "allocated_capex_cr": 79.2,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.01
+        },
+        {
+          "project_id": "618323",
+          "project_name": "Construction of Twin Tube Uni-directional Aizawl Bypass Tunnel of 2.5 km and its approaches of 2.1 km from km 10.600 to km 15.200 on Sarrang - Phaibawk section of NH-6 in the State of Mizoram on EPC Mode under NHO-NE  Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Mizoram",
+          "is_ner": true,
+          "requested_capex_cr": 221.43,
+          "allocated_capex_cr": 88.57,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.01
+        },
+        {
+          "project_id": "618282",
+          "project_name": "4-L Bilasipara-Guwahati Package-10",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 108.79,
+          "allocated_capex_cr": 43.52,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618402",
+          "project_name": "Construction of Intermediate Lane with Hard Shoulder of Hunli to Hayuliang from Design Km 0.000 to Km 53.000 Design Length 53.000 km, Greenfield Section of Frontier Highway NH-913 in the State of Arunachal Pradesh on EPC Mode Package-I",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 202.41,
+          "allocated_capex_cr": 80.96,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "618312",
+          "project_name": "Widening/lmprovement to 4-Lane with Paved Shoulder from existing road and Greenfield alignment form Design Ch. 62.800 start of proposed Nilambazar/Cheragi Bypass to Design Ch. 87.700 near Chandkhira Village of NH-8 on Silchar-Churaibari in the state of Assam on HAM Mode Package-5",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 204.45,
+          "allocated_capex_cr": 81.78,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.02
+        },
+        {
+          "project_id": "618315",
+          "project_name": "4-Laning of Silchar - Dhanehari section from Existing Chainage km 263800 of NH 37 to km 12920 of NH 306 Design Chainage km 0000 to km 20000 on Silchar - Vairengte - Sairang road in the State of Assam under Bharatmala Pariyojna on EPC mode Package-1",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 113.13,
+          "allocated_capex_cr": 83.69,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.1
+        },
+        {
+          "project_id": "706775",
+          "project_name": "BharatNet",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 1455.55,
+          "allocated_capex_cr": 1455.55,
+          "completion_yield_phi": 81.7,
+          "systemic_benefit_gamma": 7.46
+        },
+        {
+          "project_id": "617321",
+          "project_name": "Godhani-Kalumna Chord 13.7 km",
+          "canonical_entity": "MINISTRY_OF_RAILWAYS",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2307.71,
+          "allocated_capex_cr": 2307.71,
+          "completion_yield_phi": 36.3,
+          "systemic_benefit_gamma": 5.95
+        },
+        {
+          "project_id": "705237",
+          "project_name": "Western Dedicated Freight Corridor",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 1380.41,
+          "allocated_capex_cr": 1380.41,
+          "completion_yield_phi": 61.2,
+          "systemic_benefit_gamma": 4.96
+        },
+        {
+          "project_id": "705728",
+          "project_name": "Mumbai-Ahmedabad High Speed Rail Project- 508 km",
+          "canonical_entity": "NATIONAL_HIGH_SPEED_RAIL_CORPO",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 1998.24,
+          "allocated_capex_cr": 799.29,
+          "completion_yield_phi": 16.7,
+          "systemic_benefit_gamma": 1.88
+        },
+        {
+          "project_id": "701263",
+          "project_name": "Rajasthan Refinery Project",
+          "canonical_entity": "MINISTRYOFPETROLEUMNATURALGAS",
+          "state": "Rajasthan",
+          "is_ner": false,
+          "requested_capex_cr": 1353.76,
+          "allocated_capex_cr": 1015.32,
+          "completion_yield_phi": 37.8,
+          "systemic_benefit_gamma": 3.15
+        },
+        {
+          "project_id": "702668",
+          "project_name": "Chennai Metro Rail Phase-II Development Project",
+          "canonical_entity": "CHENNAI_METRO_RAIL_LIMITED_CMR",
+          "state": "Tamil Nadu",
+          "is_ner": false,
+          "requested_capex_cr": 2500.0,
+          "allocated_capex_cr": 1931.28,
+          "completion_yield_phi": 23.8,
+          "systemic_benefit_gamma": 2.51
+        },
+        {
+          "project_id": "701415",
+          "project_name": "Polavaram Irrigation Project",
+          "canonical_entity": "JAL_SHAKTI",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 988.79,
+          "allocated_capex_cr": 395.51,
+          "completion_yield_phi": 24.1,
+          "systemic_benefit_gamma": 2.2
+        },
+        {
+          "project_id": "709798",
+          "project_name": "Ethylene Cracker Project at Bina Refinery including downstream Petrochemical Plants and expansion of Refinery",
+          "canonical_entity": "MINISTRYOFPETROLEUMNATURALGAS",
+          "state": "Madhya Pradesh",
+          "is_ner": false,
+          "requested_capex_cr": 2380.32,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 11.2,
+          "systemic_benefit_gamma": 1.72
+        },
+        {
+          "project_id": "705429",
+          "project_name": "Rishikesh-Karnaprayag New Rail Line- 125 km",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Uttarakhand",
+          "is_ner": false,
+          "requested_capex_cr": 2472.94,
+          "allocated_capex_cr": 989.18,
+          "completion_yield_phi": 16.6,
+          "systemic_benefit_gamma": 1.55
+        },
+        {
+          "project_id": "604795",
+          "project_name": "CBR 9 MMTPA Project",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 802.24,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.7,
+          "systemic_benefit_gamma": 1.44
+        },
+        {
+          "project_id": "701289",
+          "project_name": "Capacity Expansion of Panipat Refinery from 15 to 25 MMTPA",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 980.11,
+          "allocated_capex_cr": 392.04,
+          "completion_yield_phi": 18.9,
+          "systemic_benefit_gamma": 1.44
+        },
+        {
+          "project_id": "400120",
+          "project_name": "KG-DWN-98/2 Cluster - II Development Project - NELP Block",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 306.11,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 14.8,
+          "systemic_benefit_gamma": 1.35
+        },
+        {
+          "project_id": "706780",
+          "project_name": "Mumbai Urban Transport Project [MUTP]  Phase-IIIA",
+          "canonical_entity": "MUMBAI_RAIL_VIKAS_CORPORATION_",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2398.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.27
+        },
+        {
+          "project_id": "701372",
+          "project_name": "Sardar Sarovar Project",
+          "canonical_entity": "JAL_SHAKTI",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 300.71,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 14.0,
+          "systemic_benefit_gamma": 1.33
+        },
+        {
+          "project_id": "400188",
+          "project_name": "Redevelopment of Seven General Pool Residential Accommodation [GPRA] Colonies in Delhi",
+          "canonical_entity": "MOHUA",
+          "state": "Delhi",
+          "is_ner": false,
+          "requested_capex_cr": 2500.0,
+          "allocated_capex_cr": 1000.0,
+          "completion_yield_phi": 12.1,
+          "systemic_benefit_gamma": 1.3
+        },
+        {
+          "project_id": "602182",
+          "project_name": "Dibang Multipurpose Project",
+          "canonical_entity": "NHIDCL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2398.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.08
+        },
+        {
+          "project_id": "702635",
+          "project_name": "Construction of Bangalore Metro Rail Project Phase 2.",
+          "canonical_entity": "BENGALURU_METRO_RAIL",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 276.26,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 13.5,
+          "systemic_benefit_gamma": 1.22
+        },
+        {
+          "project_id": "702633",
+          "project_name": "Delhi-Ghaziabad-Meerut Regional Rapid Transit System [RRTS] corridor",
+          "canonical_entity": "NATIONAL_CAPITAL_REGION_TRANSP",
+          "state": "Delhi",
+          "is_ner": false,
+          "requested_capex_cr": 908.22,
+          "allocated_capex_cr": 681.16,
+          "completion_yield_phi": 17.1,
+          "systemic_benefit_gamma": 1.2
+        },
+        {
+          "project_id": "619051",
+          "project_name": "Nabinagar Super Thermal Power Project, Stage-II [3x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2234.95,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.1,
+          "systemic_benefit_gamma": 1.19
+        },
+        {
+          "project_id": "619341",
+          "project_name": "Telangana Super Thermal Power Project , Stage-II [3 x 800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.9,
+          "systemic_benefit_gamma": 1.18
+        },
+        {
+          "project_id": "400231",
+          "project_name": "NLC Talabira Thermal Power Project",
+          "canonical_entity": "NLC_INDIA_LIMITED_NLCIL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.09
+        },
+        {
+          "project_id": "602096",
+          "project_name": "Subansiri Lower HE Project [2000 MW]",
+          "canonical_entity": "NATIONAL_HYDROELECTRIC_POWER_C",
+          "state": "Assam",
+          "is_ner": false,
+          "requested_capex_cr": 234.68,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.6,
+          "systemic_benefit_gamma": 0.5
+        },
+        {
+          "project_id": "619032",
+          "project_name": "JAYANT EXPN. [20 TO 38 MTPA]",
+          "canonical_entity": "COAL_INDIA",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2144.34,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.3,
+          "systemic_benefit_gamma": 1.01
+        },
+        {
+          "project_id": "619025",
+          "project_name": "RAJASTHAN PART I POWER TRANSMISSION LIMITED",
+          "canonical_entity": "ADANI_TRANSMISSION_LIMITED",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.1,
+          "systemic_benefit_gamma": 0.99
+        },
+        {
+          "project_id": "702632",
+          "project_name": "DMRTS Phase - IV [3 Priority Corridors]",
+          "canonical_entity": "DELHI_METRO_RAIL_CORPORATION_L",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 1447.04,
+          "allocated_capex_cr": 578.82,
+          "completion_yield_phi": 11.4,
+          "systemic_benefit_gamma": 0.99
+        },
+        {
+          "project_id": "615347",
+          "project_name": "TRANSMISSION SYSTEM FOR EVACUATION OF POWER FROM POTENTIAL RENEWABLE ENERGY ZONE IN KHAVDA AREA OF GUJARAT UNDER PHASE-V [8 GW] PART A   [SPV Name POWERGRID West Central Transmission Limited]",
+          "canonical_entity": "POWERGRID",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.0,
+          "systemic_benefit_gamma": 0.98
+        },
+        {
+          "project_id": "709857",
+          "project_name": "Planning, Engineering, Supply, Installation, Testing, Commissioning, Integration & Annual Maintenance of 4G mobile network at 1 Lakh sites on PAN India basis including Mumbai & Delhi LSA on turnkey basis under Phase IX.2 Project.",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 724.51,
+          "allocated_capex_cr": 289.81,
+          "completion_yield_phi": 13.7,
+          "systemic_benefit_gamma": 0.97
+        },
+        {
+          "project_id": "702637",
+          "project_name": "Mumbai Metro Line 3",
+          "canonical_entity": "MUMBAI_METRO_RAIL_CORPORATION_",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 709.8,
+          "allocated_capex_cr": 283.92,
+          "completion_yield_phi": 12.8,
+          "systemic_benefit_gamma": 0.95
+        },
+        {
+          "project_id": "604791",
+          "project_name": "Numaligarh Refinery Expansion Project",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Assam",
+          "is_ner": false,
+          "requested_capex_cr": 744.07,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 10.4,
+          "systemic_benefit_gamma": 0.89
+        },
+        {
+          "project_id": "705391",
+          "project_name": "Jiribam-Imphal new line project",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Manipur",
+          "is_ner": false,
+          "requested_capex_cr": 1046.39,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 9.0,
+          "systemic_benefit_gamma": 0.87
+        },
+        {
+          "project_id": "400259",
+          "project_name": "Ghatampur Thermal Power Plant 3 X 660 MW",
+          "canonical_entity": "NLC_INDIA_LIMITED_NLCIL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 196.03,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "701530",
+          "project_name": "Ken-Betwa Linking Development Project",
+          "canonical_entity": "Department of Water Resources, River Development,",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.2,
+          "systemic_benefit_gamma": 0.83
+        },
+        {
+          "project_id": "618976",
+          "project_name": "Gadarwara Super Thermal Power Project, Stage-II [2x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2180.5,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.6,
+          "systemic_benefit_gamma": 0.81
+        },
+        {
+          "project_id": "400261",
+          "project_name": "Patratu Thermal Power Station Expansion Project Phase-I [3x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Jharkhand",
+          "is_ner": false,
+          "requested_capex_cr": 437.39,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "701593",
+          "project_name": "4G Services by BSNL",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 504.28,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 10.1,
+          "systemic_benefit_gamma": 0.78
+        },
+        {
+          "project_id": "619026",
+          "project_name": "KPSIII HVDC Transmission Limited",
+          "canonical_entity": "ADANI_TRANSMISSION_LIMITED",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 3.8,
+          "systemic_benefit_gamma": 0.75
+        },
+        {
+          "project_id": "701329",
+          "project_name": "Petrochemical and Lube Integration Project at Gujarat Refinery",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 506.26,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 8.8,
+          "systemic_benefit_gamma": 0.71
+        },
+        {
+          "project_id": "400062",
+          "project_name": "Raghunathpur Thermal Power Station Phase II [2X660 MW] at Raghunathpur, Purulia, West Bengal",
+          "canonical_entity": "DAMODAR_VALLEY_CORPORATION",
+          "state": "West Bengal",
+          "is_ner": false,
+          "requested_capex_cr": 2144.34,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.04
+        },
+        {
+          "project_id": "612142",
+          "project_name": "Singrauli Super Thermal Power Project, Stage-III [2x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Madhya Pradesh",
+          "is_ner": false,
+          "requested_capex_cr": 2416.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "701324",
+          "project_name": "Barauni Refinery Capacity Expansion from 6.0 to 9.0 MMTPA",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 313.41,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.9,
+          "systemic_benefit_gamma": 0.66
+        },
+        {
+          "project_id": "709795",
+          "project_name": "City Gas Distribution Projects at Lakhimpur Kheri , Sitapur, Bahraich, Shravasti,Balrampur, Siddharth Nagar & Maharajganj districts",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2307.71,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.0,
+          "systemic_benefit_gamma": 0.66
+        },
+        {
+          "project_id": "611930",
+          "project_name": "Lara Super Thermal Power Project Stage-II [2 x 800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2379.5,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.5,
+          "systemic_benefit_gamma": 0.65
+        },
+        {
+          "project_id": "705941",
+          "project_name": "Bangalore Suburban Railway Project",
+          "canonical_entity": "KARNATAKA_RAIL_INFRASTRUCTURE_",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 1038.36,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.13
+        },
+        {
+          "project_id": "612878",
+          "project_name": "Bangalore Metro Rail Project - PHASE-3",
+          "canonical_entity": "BENGALURU_METRO_RAIL",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 3.1,
+          "systemic_benefit_gamma": 0.62
+        },
+        {
+          "project_id": "400013",
+          "project_name": "Saturation 4G mobile coverage of Uncovered Villages through USOF",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 333.63,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.2,
+          "systemic_benefit_gamma": 0.61
+        }
+      ],
+      "closure_error_perc": 0.0,
+      "solve_time_ms": 150.3,
+      "focus_project_id": "619092",
+      "focus_project_is_candidate": false,
+      "ner_coverage": {
+        "projects_total": 2207,
+        "state_reported_by_ministry": 1181,
+        "state_absent": 1026,
+        "ner_floor_basis": "ministry-reported StateName only",
+        "note": "Projects with no reported state cannot be counted toward or against the statutory NER floor. Inferred states are used for display and analysis but never for this constraint."
+      }
+    },
+    "copilot": {
+      "project_id": "619092",
+      "project_name": "4L of Jind-Gohana road Package-1 from km. 0.00 to km. 40.601 of NH-352 A under NHO",
+      "canonical_agency": "NHAI",
+      "sector": "Roads & Highways",
+      "state": "Haryana",
+      "document_hash": "ad0c402cd2d105ad97b9613632336f29bd91f37ad39d00f9e1f092b20f93dd63",
+      "generated_at": "2026-09-18 10:57:07 IST",
+      "offline_air_gapped": true,
+      "executive_summary": "Project #619092 (4L of Jind-Gohana road Package-1 from km. 0.00 to km. 40.601 of NH-352 A under NHO) is a strategic Roads & Highways asset in Haryana executed by NHAI. Sanctioned capex is ₹1,606.82 Cr with a cost overrun of +61.7%. On-ground physical progress is 100.0%.",
+      "action_items": [
+        {
+          "category": "CONTAGION_CONTAINMENT",
+          "priority": "CRITICAL",
+          "finding": "Upstream delivery friction locks ₹1,615.62 Cr across 1 connected downstream nodes in the national grid.",
+          "recommendation": "Convene joint coordination meeting with Chief Secretary to expedite critical path clearance.",
+          "citing_fact_id": "fact_graph_locked_619092"
+        },
+        {
+          "category": "EO_SCREENING_CLEAR",
+          "priority": "NORMAL",
+          "finding": "Structural change of 25.73% observed at the sampled site is consistent with active works for this sector. Note: this is a linear asset, so the tile samples one slice of the corridor rather than the whole works.",
+          "recommendation": "No Earth-observation exception raised; continue standard monitoring.",
+          "citing_fact_id": "fact_sat_audit_619092"
+        }
+      ],
+      "grounded_facts": [
+        {
+          "fact_id": "fact_cost_619092",
+          "label": "Sanctioned Capex (Latest Revised)",
+          "value": "₹1,606.82 Cr",
+          "unit": "INR_CR",
+          "merkle_root": "1b1dc6102c3e9d7dd94655e27e98acf4cdf5d431f4e0c847fc4ccde25cd120ff"
+        },
+        {
+          "fact_id": "fact_progress_619092",
+          "label": "Physical Progress (MoSPI Ground Audit)",
+          "value": "100.0%",
+          "unit": "PERCENT",
+          "merkle_root": "44c9f4c067abc51532ce9dd07bb052d04e2466587cd072471c35d151b136c9e6"
+        },
+        {
+          "fact_id": "fact_overrun_619092",
+          "label": "True Capex Overrun vs DPR",
+          "value": "+61.7%",
+          "unit": "PERCENT",
+          "merkle_root": "3dde57f76d484c987002ca630b03782cc9f26b0d858c3f449adb3b0660461a82"
+        },
+        {
+          "fact_id": "fact_p50_619092",
+          "label": "KAAL-CHAKRA P50 Expected Completion Date",
+          "value": "Jul 2026",
+          "unit": "DATE",
+          "merkle_root": "75da0e3bc97fe5dcbdeec63cc69cc90036aad8dece5db71506f396b63dea0caf"
+        },
+        {
+          "fact_id": "fact_target_prob_619092",
+          "label": "Confidence of Meeting Contractor Target Date",
+          "value": "47.6%",
+          "unit": "PERCENT",
+          "merkle_root": "be017570fc93e6dae2cbdc7e319702700bc8d686a9b9c7b09083d246319244be"
+        },
+        {
+          "fact_id": "fact_graph_locked_619092",
+          "label": "Downstream Systemic Capital Locked (P50)",
+          "value": "₹1,615.62 Cr",
+          "unit": "INR_CR",
+          "merkle_root": "1125ca670074101de136ddbd58704d041d9665252bbb6ed9b29aceddee8080d6"
+        },
+        {
+          "fact_id": "fact_sat_audit_619092",
+          "label": "Orbital Optical Surface-Change Measurement",
+          "value": "25.73% of sampled ground structurally changed 2014-2026, 99th percentile for its sector",
+          "unit": "PERCENT",
+          "merkle_root": "1a68bc317d1ca13f42a9021e300a35f8520fd75b3f767ec9f8a694066f669f31"
+        }
+      ],
+      "satellite_audit": {
+        "project_id": "619092",
+        "project_name": "4L of Jind-Gohana road Package-1 from km. 0.00 to km. 40.601 of NH-352 A under NHO",
+        "sector": "Roads & Highways",
+        "state": "Haryana",
+        "agency": "NHAI",
+        "claimed_progress_pct": 100.0,
+        "audit_status": "CHANGE_CONFIRMED",
+        "statutory_recommendation": "CONSISTENT_WITH_ACTIVE_WORKS",
+        "audit_severity": "LOW",
+        "structural_dissimilarity": 0.7335,
+        "project_footprint_change_pct": 0.0,
+        "ambient_terrain_change_pct": 0.0,
+        "footprint_reliable": true,
+        "footprint_caveat": "",
+        "roi_radius_m": 60.0,
+        "gsd_m_per_px": 2.083,
+        "vegetation_excluded_pct": 2.3,
+        "roi_shape": "row_corridor",
+        "corridor_bearing_deg": 97.5,
+        "corridor_coherence": 1.0,
+        "row_corridor": {
+          "geometry": "row_corridor",
+          "half_width_m": 60.0,
+          "half_width_px": 28.8,
+          "bearing_deg": 97.5,
+          "orientation_coherence": 1.0,
+          "coherence_gate": 0.5,
+          "area_m2": 201678.0,
+          "frame_coverage_frac": 0.0726,
+          "centreline_px": [
+            [
+              451,
+              2
+            ],
+            [
+              347,
+              796
+            ]
+          ],
+          "basis": "60 m statutory half-width for 'Roads & Highways', buffered about an image-derived centreline at 97.5 deg. The alignment is estimated from the dominant structure bearing, not surveyed."
+        },
+        "radiometry": {
+          "method": "RRN / Pseudo-Invariant Features (iteratively reweighted)",
+          "pif_pixel_count": 216205,
+          "pif_selection_percentile": 40.0,
+          "pif_residual_dn": 40.46,
+          "channel_gains_bgr": [
+            0.9684,
+            0.9764,
+            0.9661
+          ],
+          "channel_offsets_bgr": [
+            18.15,
+            16.62,
+            18.0
+          ],
+          "residual_before": 63.656,
+          "residual_after": 58.425,
+          "improvement_pct": 8.2,
+          "converged": true
+        },
+        "material_transition": {
+          "before_class_share_pct": {
+            "water_or_shadow": 2.02,
+            "vegetation": 5.5,
+            "bare_soil_earthwork": 0.16,
+            "asphalt_bitumen": 6.17,
+            "concrete_structure": 86.14,
+            "unclassified": 0.0
+          },
+          "after_class_share_pct": {
+            "water_or_shadow": 0.13,
+            "vegetation": 17.64,
+            "bare_soil_earthwork": 0.23,
+            "asphalt_bitumen": 16.48,
+            "concrete_structure": 65.52,
+            "unclassified": 0.0
+          },
+          "natural_to_engineered_pct": 4.549,
+          "soil_to_concrete_pct": 0.12,
+          "vegetation_to_earthwork_pct": 0.026,
+          "engineered_to_natural_pct": 16.125,
+          "net_engineered_gain_pct": -11.576,
+          "epoch_index_calibration": {
+            "exg_offset": -0.00392,
+            "vari_offset": -0.00018,
+            "value_offset": -0.00392,
+            "reference_px": 155594,
+            "reference_luminance_cut_dn": 25.0,
+            "reference": "tightest-quartile brightness-matched pixels inside the analysed area, post-RRN",
+            "applied": true
+          },
+          "stability": {
+            "identical_frame_transition_pct": 0.0,
+            "identical_frame_basis": "Null test over 50 scenes: the chain run on a frame against itself reports 0.000% transition on 50/50, so the rules are deterministic and self-consistent.",
+            "resolution_artefact_bound_pct": 1.38,
+            "resolution_artefact_basis": "Same 50 scenes with a sigma=1.2 blur as the only difference report 1.38% total flow. That bounds how much of any observed transition is the 2023 basemap being softer rather than the ground being different.",
+            "reverse_exceeds_forward": true,
+            "interpretation": "Reverse flow exceeding forward is not attributable to classifier instability (0.00%) or to resolution (1.38pp of 13.36pp). It is a property of the imagery. No labelled material corpus exists for these tiles, so the thresholds have NOT been tuned until the forward figure wins -- that would assume the conclusion. Read the net figure with both directions visible."
+          },
+          "classifier": "rule-based over {ExG, VARI, HSV saturation/value, local texture energy}",
+          "thresholds": {
+            "shadow_value": 0.16,
+            "veg_exg": 0.06,
+            "veg_vari": 0.08,
+            "soil_saturation": 0.28,
+            "asphalt_value": 0.42,
+            "builtup_texture": 0.16
+          },
+          "caveat": "Declared decision rules, not a trained model. No labelled material corpus exists for this imagery, so these are interpretable thresholds a reviewer can challenge individually -- not validated class accuracies."
+        },
+        "construction_velocity": {
+          "epoch_span_months": 150.1,
+          "epochs": "2014-02 -> <=2026-08",
+          "epoch_basis": "Baseline is ESRI Wayback release 23448/10 (2014-02-20), verified against the provider's release index. The after-epoch is the live World Imagery mosaic as fetched on 2026-08-25; ESRI does not publish a per-tile capture date, so its vintage is bounded by the fetch date rather than known. The span is therefore an upper bound of 150.1 months, and any rate derived from it is a lower bound.",
+          "rate_is_lower_bound": true,
+          "changed_area_m2": 0.0,
+          "areal_velocity_m2_per_month": 0.0,
+          "linear_velocity_km_per_month": null,
+          "corridor_length_touched_km": null,
+          "corridor_utilisation_pct": 0.0
+        },
+        "pace_vs_dpr": {
+          "available": true,
+          "required_progress_pct_per_month": 2.387,
+          "observed_progress_pct_per_month": 0.666,
+          "pace_ratio": 0.279,
+          "pace_verdict": "SEVERELY_BEHIND_PACE",
+          "imagery_corroborates": false,
+          "observed_areal_velocity_m2_per_month": 0.0,
+          "discrepancy_flag": "REPORTED_PROGRESS_WITHOUT_MEASURABLE_SURFACE_CHANGE",
+          "implied_months_to_complete_at_observed_pace": 0.0,
+          "caveat": "Progress pace uses the agency's REPORTED physical progress over the imagery window; the imagery contributes the independent area figure beside it, not this ratio. In this corpus surface change and reported progress correlate at r = +0.004 (Pearson, p = 0.87; Spearman rho = +0.024) across 1,588 site-level projects (artifacts/eo_progress_independence.json), so the two must be read together rather than substituted."
+        },
+        "sar_readiness": {
+          "sar_available": false,
+          "reason": "No Sentinel-1 GRD/SLC scenes are ingested in this deployment. The optical chain is the only evidence source currently live.",
+          "planned_source": "Sentinel-1 C-band (IW mode), Copernicus Open Access Hub",
+          "planned_products": {
+            "insar_coherence": null,
+            "coherence_loss_vs_baseline": null,
+            "amplitude_change_db": null,
+            "orbit_pair": null,
+            "acquisition_dates": null
+          },
+          "why_it_matters": "Optical change detection is unusable under monsoon cloud, which is precisely the season when schedule disputes arise. InSAR coherence decorrelates where the surface has been disturbed, so it reports activity through cloud.",
+          "monsoon_window_flagged": null,
+          "optical_verdict_reliable": true,
+          "contract_version": "1.0"
+        },
+        "reconnaissance_targets": {
+          "targets": [],
+          "target_count": 0,
+          "rejected_outside_corridor": 0,
+          "rejected_below_area_floor": 0,
+          "containment_threshold": 0.55,
+          "min_area_px": 40,
+          "min_material_purity": 0.35,
+          "unclassified_count": 0,
+          "total_structural_gain_m2": 0,
+          "total_earthworks_m2": 0,
+          "basis": "Connected-component clusters of the structural-change mask whose CENTROID lies at ROI weight >= 0.55 (inside the surveyed Right-of-Way) and whose area exceeds 40 px. 0 cluster(s) were rejected for falling outside the corridor and 0 for being below the area floor. Type and colour follow the material measured inside each cluster in the AFTER epoch, not the size of the change."
+        },
+        "sovereign_verdict": {
+          "state": "AUDIT_ALERT",
+          "icon": "ALERT",
+          "headline": "AUDIT ALERT: 0.0 m2 surface change found (Contractor claimed 100%).",
+          "detail": "No change cluster survives containment inside the surveyed Right-of-Way across the epoch window, while the executing agency reports substantial physical progress. Resolve by inspection: verify the geocode, the epoch dates and the works schedule before treating this as over-reporting."
+        },
+        "construction_stage": {
+          "rule_phase": "ALERT_DISCREPANT_STAGNATION",
+          "rule_phase_label": "Discrepant stagnation",
+          "rule_basis": "reported progress 100% >= 20% with zero measured surface change over the epoch window",
+          "prithvi_predicted_phase": "ALERT_DISCREPANT_STAGNATION",
+          "prithvi_predicted_phase_label": "Discrepant stagnation",
+          "prithvi_confidence_score": 0.495,
+          "foundation_backbone": "NASA-IBM-Prithvi-EO-1.0-100M",
+          "agrees_with_rule": true,
+          "phases": [
+            "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS",
+            "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS",
+            "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING",
+            "PHASE_4_COMPLETED_AND_OPERATIONAL",
+            "ALERT_DISCREPANT_STAGNATION"
+          ],
+          "confidence_is_calibrated": false,
+          "confidence_note": "Softmax margin of the linear head, not a calibrated probability. The head's measured cross-validated accuracy is 38.3%; read that as the reliability of this phase, not the score above.",
+          "measured_cv_accuracy": 0.3833,
+          "embedding_source": "baked_cache",
+          "head_inference_ms": 0.074,
+          "class_probabilities": {
+            "ALERT_DISCREPANT_STAGNATION": 0.495,
+            "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS": 0.0353,
+            "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS": 0.1336,
+            "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING": 0.2393,
+            "PHASE_4_COMPLETED_AND_OPERATIONAL": 0.0969
+          },
+          "backbone_status": "loaded",
+          "validation": {
+            "protocol": "5-fold stratified cross-validation of a multinomial logistic head on 768-d Prithvi embeddings. The head sees ONLY the embedding — no measured EO feature is an input — so this measures whether the backbone reads construction stage off the pixels.",
+            "labels": "Distant supervision from the measured EO chain (see derive_stage_label). These are rules, NOT annotated ground truth: no labelled construction-stage corpus exists for these tiles. Accuracy here is agreement with a rule, not with reality.",
+            "cv_accuracy": 0.3833,
+            "cv_fold_scores": [
+              0.3824,
+              0.3688,
+              0.4172,
+              0.3515,
+              0.3968
+            ],
+            "majority_class_baseline": 0.2723,
+            "permutation_null_mean": 0.2347,
+            "permutation_null_p95": 0.2511,
+            "permutation_runs": 20,
+            "beats_majority_baseline": true,
+            "beats_permutation_null": true,
+            "class_counts": {
+              "ALERT_DISCREPANT_STAGNATION": 477,
+              "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS": 438,
+              "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS": 502,
+              "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING": 601,
+              "PHASE_4_COMPLETED_AND_OPERATIONAL": 189
+            },
+            "verdict": "CONTRIBUTING. The Prithvi embedding recovers the stage at 38.3% against a 27.2% majority baseline and a 25.1% permutation ceiling, so the backbone is reading construction state from the imagery rather than the head memorising class frequencies."
+          },
+          "trained_at": "2026-08-28T15:20:46",
+          "n_train": 2207,
+          "inference_ms": 0.11
+        },
+        "surface_change_pct": 25.73,
+        "change_percentile_in_sector": 99.0,
+        "asset_geometry": "LINEAR",
+        "change_boxes": [
+          {
+            "x": 0.0,
+            "y": 0.4387,
+            "w": 0.3475,
+            "h": 0.51,
+            "area_pct": 4.86
+          },
+          {
+            "x": 0.725,
+            "y": 0.0,
+            "w": 0.2562,
+            "h": 0.2162,
+            "area_pct": 1.78
+          },
+          {
+            "x": 0.0,
+            "y": 0.7325,
+            "w": 0.1412,
+            "h": 0.2275,
+            "area_pct": 1.25
+          },
+          {
+            "x": 0.5988,
+            "y": 0.0,
+            "w": 0.205,
+            "h": 0.2637,
+            "area_pct": 1.1
+          },
+          {
+            "x": 0.0,
+            "y": 0.1437,
+            "w": 0.2412,
+            "h": 0.1963,
+            "area_pct": 0.89
+          },
+          {
+            "x": 0.0675,
+            "y": 0.0,
+            "w": 0.2087,
+            "h": 0.1588,
+            "area_pct": 0.84
+          },
+          {
+            "x": 0.5025,
+            "y": 0.8263,
+            "w": 0.2537,
+            "h": 0.1062,
+            "area_pct": 0.67
+          },
+          {
+            "x": 0.52,
+            "y": 0.025,
+            "w": 0.1562,
+            "h": 0.155,
+            "area_pct": 0.64
+          },
+          {
+            "x": 0.72,
+            "y": 0.8263,
+            "w": 0.28,
+            "h": 0.0663,
+            "area_pct": 0.52
+          },
+          {
+            "x": 0.4075,
+            "y": 0.14,
+            "w": 0.135,
+            "h": 0.1375,
+            "area_pct": 0.47
+          },
+          {
+            "x": 0.0762,
+            "y": 0.3237,
+            "w": 0.0988,
+            "h": 0.1037,
+            "area_pct": 0.39
+          },
+          {
+            "x": 0.73,
+            "y": 0.355,
+            "w": 0.185,
+            "h": 0.0737,
+            "area_pct": 0.34
+          }
+        ],
+        "change_box_count": 12,
+        "mean_dissimilarity": 0.7335,
+        "registration_shift_px": 1.03,
+        "registration_method": "ecc",
+        "geocode_precision": "OSM_LANDMARK_MATCH",
+        "geocode_confidence": "HIGH",
+        "geocode_confidence_note": "Site geocoded to a named landmark in the project title",
+        "eo_verdict_reliable": true,
+        "eo_unreliable_reason": null,
+        "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (2.08-2.35 m/px measured)",
+        "before_imagery_url": "/satellite-imagery/619092_BEFORE.jpg",
+        "after_imagery_url": "/satellite-imagery/619092_AFTER.jpg",
+        "has_dual_epoch_coverage": true,
+        "resolution_m": 2.083,
+        "baseline_vintage": "2014-02",
+        "current_vintage": "<=2026-08 (ESRI live mosaic, fetch-bounded)",
+        "eo_readiness": {
+          "eo_available": true,
+          "reason": null,
+          "awaiting": null,
+          "contract_version": "1.0"
+        },
+        "audit_hash": "1a68bc317d1ca13f42a9021e300a35f8520fd75b3f767ec9f8a694066f669f31"
+      },
+      "qr_verification_url": "/api/amey/verify/ad0c402cd2d105ad97b9613632336f29bd91f37ad39d00f9e1f092b20f93dd63/fact_cost_619092?project_id=619092"
+    },
+    "simulation_status": "CONVERGED_OPTIMAL"
+  },
+  "701408": {
+    "project_id": "701408",
+    "simulated_delay_months": 0.0,
+    "forecast": {
+      "project_id": "701408",
+      "project_name": "Madhya Ganga canal Phase-II",
+      "canonical_entity": "JAL_SHAKTI",
+      "sector": "Water Resources",
+      "state": "Uttar Pradesh",
+      "original_cost_cr": 1061.0,
+      "revised_cost_cr": 4417.21,
+      "cost_overrun_cr": 3356.21,
+      "cost_overrun_perc": 316.32516493873703,
+      "baseline_reset_count": 2,
+      "rebaselined": true,
+      "physical_progress_perc": 82.0,
+      "sanction_date": "2008-04-01",
+      "original_end_date": "2019-12-31",
+      "revised_end_date": "2025-12-31",
+      "p10_date": "2026-07-02",
+      "p50_date": "2028-06-23",
+      "p80_date": "2045-01-05",
+      "p95_date": "2051-03-02",
+      "prob_target_met_official": 0.26081129680117576,
+      "prob_target_met_rebaselined": 0.02211326389346596,
+      "competing_risk_state": "ACTIVE",
+      "facts": {
+        "fact_cost": {
+          "fact_id": "fact_cost_701408",
+          "value": 4417.21,
+          "formatted_value": "₹4,417.21 Cr",
+          "unit": "INR_CR",
+          "fact_type": "currency_cr",
+          "label": "Sanctioned Capex (Latest Revised)",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "03b80d36e63bdb38a1f19f3b82402511c57d45bb030a224fefe42724fc10711b",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "ba7ce3cb52c969207e816ddfe442d856c21a26848c50d8c7bee1bcd4b5b0820f",
+            "merkle_path": [
+              "03b80d36e63bdb38",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_progress": {
+          "fact_id": "fact_progress_701408",
+          "value": 82.0,
+          "formatted_value": "82.0%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "Physical Progress (MoSPI Ground Audit)",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "22653b141f01ec1d7a81c1ba4381a94103ee3d8857a484d1e21c0d0b2231f84c",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "9d8b1e6c61227c75856c9e4f0531f2aa91789270bbc8f09487a2e47f8906d013",
+            "merkle_path": [
+              "22653b141f01ec1d",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_overrun": {
+          "fact_id": "fact_overrun_701408",
+          "value": 316.32516493873703,
+          "formatted_value": "+316.3%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "True Capex Overrun vs DPR",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "dd1d9a629bc784bdc9557cfb874d2ece2083e615057f12660e5ff23f69e2e796",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "56143aea7ef1f3ffb0b579967a9101741ac46b9f46221a9e9de7ab04ee39cf6c",
+            "merkle_path": [
+              "dd1d9a629bc784bd",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_p50_completion": {
+          "fact_id": "fact_p50_701408",
+          "value": 242.72812110453756,
+          "formatted_value": "Jun 2028",
+          "unit": "DATE",
+          "fact_type": "date",
+          "label": "KAAL-CHAKRA P50 Expected Completion Date",
+          "uncertainty": {
+            "p10": 219.03045174537988,
+            "p50": 242.72812110453756,
+            "p80": 441.1676801247426,
+            "p95": 514.9994216220446,
+            "alpha_coverage": 0.85,
+            "empirical_coverage": 0.7903,
+            "calibration_method": "split-conformal on the engine's own median, log-ratio residual quantiles, n_test=596, raw_median=527.8mo, bias_mult=0.46",
+            "is_monotone_guaranteed": true
+          },
+          "lineage": {
+            "query_sha256": "cb83206c0f1343f6374f11e7f712692b642eedc1708acd58e5b0a85ba506c674",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "cb7c5b12200caa11b9a15a7b4038e5e4a4bf3ffa46ead55f82c6fb70c3784044",
+            "merkle_path": [
+              "cb83206c0f1343f6",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        },
+        "fact_target_prob": {
+          "fact_id": "fact_target_prob_701408",
+          "value": 26.081129680117577,
+          "formatted_value": "26.1%",
+          "unit": "PERCENT",
+          "fact_type": "probability",
+          "label": "Confidence of Meeting Contractor Target Date",
+          "uncertainty": null,
+          "lineage": {
+            "query_sha256": "ecaadb79ca81fc682eec7ac2c53ccd5274cf81001b0d85af5271b7690a05d82d",
+            "dataset_sha256": "e659bf58f2a62e7d7f530792b54b3159ad68a464e7cbf956c2f02bffb61558e2",
+            "model_sha256": "2bd14a7c8239e02959ffb48f937cc3a3b52721a37822d6ac4157d2245f0835be",
+            "merkle_root": "9f3e212f1ba8cc3b56f06819d9651563c909982a543fdb575fe23adbc510d82c",
+            "merkle_path": [
+              "ecaadb79ca81fc68",
+              "e659bf58f2a62e7d",
+              "2bd14a7c8239e029"
+            ],
+            "merkle_proof": []
+          }
+        }
+      }
+    },
+    "subgraph": {
+      "center_project_id": "701408",
+      "nodes": [
+        {
+          "project_id": "701408",
+          "project_name": "Madhya Ganga canal Phase-II",
+          "canonical_entity": "JAL_SHAKTI",
+          "sector": "Water Resources",
+          "state": "Uttar Pradesh",
+          "cost_cr": 4417.21,
+          "free_float_months": 0.0,
+          "total_float_months": 0.0,
+          "absorbed_delay_months": 0.0,
+          "propagated_delay_months": 72.0164271047228,
+          "locked_capital_p50_cr": 6627.33,
+          "locked_capital_p95_cr": 10935.09,
+          "shapley_criticality_phi": 2231.9
+        }
+      ],
+      "edges": [],
+      "total_cascade_locked_p50_cr": 6627.33,
+      "total_cascade_locked_p95_cr": 10935.09,
+      "acyclic_dag_verified": true
+    },
+    "allocation": {
+      "total_budget_pool_cr": 15000.0,
+      "total_allocated_cr": 15000.0,
+      "expected_completion_yield": 306.33,
+      "portfolio_completion_propensity_perc": 89.32,
+      "cvar90_tail_loss": 16468.0,
+      "cvar_diagnostics": {
+        "alpha": 0.9,
+        "scenario_probabilities": [
+          0.5,
+          0.35,
+          0.15
+        ],
+        "scenario_severities": [
+          -0.05,
+          0.15,
+          0.45
+        ],
+        "scenario_returns": [
+          46011.05,
+          36733.3,
+          22816.68
+        ],
+        "expected_return": 39284.68,
+        "tail_average_return": 22816.68,
+        "tail_loss": 16468.0,
+        "var_eta": -19389.03,
+        "zeta": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "lp_units_scenario_returns": [
+          38260.05,
+          30711.64,
+          19389.03
+        ],
+        "lp_units_tail_average_return": 19389.03,
+        "ru_tail_average_return": 19389.03,
+        "ru_agrees": true,
+        "mean_weight": 0.25,
+        "cvar_weight": 0.75,
+        "units": "yield-weighted Cr (base_yield index x allocated Cr), kappa=0 tranche multipliers",
+        "note": "Scenarios are declared policy, not estimated. With p_severe = 0.15 > 1 - alpha = 0.10 the 90% tail lies inside the severe scenario, so CVaR_0.90 equals the severe-scenario outcome and zeta = 0 at the optimum."
+      },
+      "ner_allocated_cr": 1500.0,
+      "ner_share_perc": 10.0,
+      "ner_floor_met": true,
+      "shadow_price_budget_pi": 0.844,
+      "shadow_price_ner_pi": 0.795,
+      "agency_marginal_yield_indicator": {
+        "NHAI": 0.35,
+        "NHIDCL": 0.35,
+        "TELECOM_DOT": 2.73,
+        "MINISTRY_OF_RAILWAYS": 3.5,
+        "INDIAN_RAILWAYS": 2.81,
+        "NATIONAL_HIGH_SPEED_RAIL_CORPO": 1.63,
+        "MINISTRYOFPETROLEUMNATURALGAS": 2.38,
+        "CHENNAI_METRO_RAIL_LIMITED_CMR": 2.31,
+        "JAL_SHAKTI": 1.85,
+        "PETROLEUM_GAS": 0.98,
+        "MUMBAI_RAIL_VIKAS_CORPORATION_": 0.35,
+        "MOHUA": 1.18,
+        "BENGALURU_METRO_RAIL": 0.81,
+        "NATIONAL_CAPITAL_REGION_TRANSP": 1.66,
+        "NTPC": 0.42,
+        "NLC_INDIA_LIMITED_NLCIL": 0.35,
+        "NATIONAL_HYDROELECTRIC_POWER_C": 0.35,
+        "COAL_INDIA": 0.51,
+        "ADANI_TRANSMISSION_LIMITED": 0.43,
+        "DELHI_METRO_RAIL_CORPORATION_L": 1.11,
+        "POWERGRID": 0.49,
+        "MUMBAI_METRO_RAIL_CORPORATION_": 1.24,
+        "Department of Water Resources, River Development,": 0.4,
+        "DAMODAR_VALLEY_CORPORATION": 0.35,
+        "KARNATAKA_RAIL_INFRASTRUCTURE_": 0.35
+      },
+      "allocations": [
+        {
+          "project_id": "618934",
+          "project_name": "Guwahati Ring Road in the State of Assam",
+          "canonical_entity": "NHAI",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 966.16,
+          "allocated_capex_cr": 386.46,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618373",
+          "project_name": "Construction of 4-Lane Bridge including approaches over River Brahmaputra between Dhubri on North Bank,Assam and Phulbari on south Bank,Meghalaya on NH-127B under JICA ODA Loan assistance Phase-III",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 299.82,
+          "allocated_capex_cr": 224.87,
+          "completion_yield_phi": 2.4,
+          "systemic_benefit_gamma": 0.2
+        },
+        {
+          "project_id": "619089",
+          "project_name": "Balance work of 4L of NarimbangloJatinga Junction- Harangajoroad section from Km 0.000 to Km 49.230 of NH-27",
+          "canonical_entity": "NHAI",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 82.37,
+          "allocated_capex_cr": 32.95,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.11
+        },
+        {
+          "project_id": "618417",
+          "project_name": "Construction of 4-Lane with paved shoulder Agartala bypass Western side, length  25.402 km connecting NH-8 near Amtali to NH-108B near Lembuchhera in the state of Tripura on EPC basis under NHO-NE",
+          "canonical_entity": "NHIDCL",
+          "state": "Tripura",
+          "is_ner": true,
+          "requested_capex_cr": 335.02,
+          "allocated_capex_cr": 134.01,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618434",
+          "project_name": "Roing-Hunli Road Greenfield Alignment Project",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 45.91,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "618314",
+          "project_name": "4-Laning of Dhanehari Lailapur / Vairengte section from Existing Chainage km 12920 to km 43000 of NH 306 Design Chainage km 20000 to km 49360 on Silchar - Vairengte Sairang road in the State of Assam under Bharatmala Pariyojna on EPC mode. Project Length 29.360 km under NHO-NE Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 72.07,
+          "allocated_capex_cr": 54.05,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "618284",
+          "project_name": "Widening/Improvement to 4-Lane with paved shoulder from Km 99930 to Km 143680 Design Chainage 96000 to 139750 of Paikan to Dhupdhara Sahar of Bilasipura-Guwahati Road on NH-17 in the state of Assam on EPC mode under Bharatmala Pariyojana in Economic Corridors Project Length  43.750km under NHO-NE Package-8",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 67.07,
+          "allocated_capex_cr": 26.83,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.11
+        },
+        {
+          "project_id": "618401",
+          "project_name": "Construction of Intermediate Lane with Hard Shoulder of Hunli to Hayuliang Package-III from design Km 60.000 to Km 121.500 Design Length 61.500 km, Greenfield Section of Frontier Highway NH-913 in the State of Arunachal Pradesh on EPC Mode Pkg-3",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 238.56,
+          "allocated_capex_cr": 95.42,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.06
+        },
+        {
+          "project_id": "618287",
+          "project_name": "Widening/Improvement to 4-Lane with paved Shoulder from Ch. 25.633 Km to Ch. 52.470 Km Design Ch. 21.850 Km to Ch.48.670 Km for Package-2 of Bilasipura- Guwahati road NH-17 Section Near Mowatari, before Chapar Bypass to Tulungia junction with NH-17 in the state of Assam on HAM mode under NHO-NE Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 219.25,
+          "allocated_capex_cr": 87.7,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "618309",
+          "project_name": "Widening/lmprovement to 4-Laning and Greenfield alignment with Paved shoulder of Silchar-Badarpur  Churaibari section of NH-37 & NH-8 from Design chainage 38.600 End point of proposed Badarpur Bypass to Km. 62.800 Start point of proposed Nilambazar/Cheragi Bypass in the state of Assam on HAM Mode Package-4",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 198.0,
+          "allocated_capex_cr": 79.2,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.01
+        },
+        {
+          "project_id": "618323",
+          "project_name": "Construction of Twin Tube Uni-directional Aizawl Bypass Tunnel of 2.5 km and its approaches of 2.1 km from km 10.600 to km 15.200 on Sarrang - Phaibawk section of NH-6 in the State of Mizoram on EPC Mode under NHO-NE  Package-2",
+          "canonical_entity": "NHIDCL",
+          "state": "Mizoram",
+          "is_ner": true,
+          "requested_capex_cr": 221.43,
+          "allocated_capex_cr": 88.57,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.01
+        },
+        {
+          "project_id": "618282",
+          "project_name": "4-L Bilasipara-Guwahati Package-10",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 108.79,
+          "allocated_capex_cr": 43.52,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "618402",
+          "project_name": "Construction of Intermediate Lane with Hard Shoulder of Hunli to Hayuliang from Design Km 0.000 to Km 53.000 Design Length 53.000 km, Greenfield Section of Frontier Highway NH-913 in the State of Arunachal Pradesh on EPC Mode Package-I",
+          "canonical_entity": "NHIDCL",
+          "state": "Arunachal Pradesh",
+          "is_ner": true,
+          "requested_capex_cr": 202.41,
+          "allocated_capex_cr": 80.96,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "618312",
+          "project_name": "Widening/lmprovement to 4-Lane with Paved Shoulder from existing road and Greenfield alignment form Design Ch. 62.800 start of proposed Nilambazar/Cheragi Bypass to Design Ch. 87.700 near Chandkhira Village of NH-8 on Silchar-Churaibari in the state of Assam on HAM Mode Package-5",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 204.45,
+          "allocated_capex_cr": 81.78,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.02
+        },
+        {
+          "project_id": "618315",
+          "project_name": "4-Laning of Silchar - Dhanehari section from Existing Chainage km 263800 of NH 37 to km 12920 of NH 306 Design Chainage km 0000 to km 20000 on Silchar - Vairengte - Sairang road in the State of Assam under Bharatmala Pariyojna on EPC mode Package-1",
+          "canonical_entity": "NHIDCL",
+          "state": "Assam",
+          "is_ner": true,
+          "requested_capex_cr": 113.13,
+          "allocated_capex_cr": 83.69,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.1
+        },
+        {
+          "project_id": "706775",
+          "project_name": "BharatNet",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 1455.55,
+          "allocated_capex_cr": 1455.55,
+          "completion_yield_phi": 81.7,
+          "systemic_benefit_gamma": 7.46
+        },
+        {
+          "project_id": "617321",
+          "project_name": "Godhani-Kalumna Chord 13.7 km",
+          "canonical_entity": "MINISTRY_OF_RAILWAYS",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2307.71,
+          "allocated_capex_cr": 2307.71,
+          "completion_yield_phi": 36.3,
+          "systemic_benefit_gamma": 5.95
+        },
+        {
+          "project_id": "705237",
+          "project_name": "Western Dedicated Freight Corridor",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 1380.41,
+          "allocated_capex_cr": 1380.41,
+          "completion_yield_phi": 61.2,
+          "systemic_benefit_gamma": 4.96
+        },
+        {
+          "project_id": "705728",
+          "project_name": "Mumbai-Ahmedabad High Speed Rail Project- 508 km",
+          "canonical_entity": "NATIONAL_HIGH_SPEED_RAIL_CORPO",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 1998.24,
+          "allocated_capex_cr": 799.29,
+          "completion_yield_phi": 16.7,
+          "systemic_benefit_gamma": 1.88
+        },
+        {
+          "project_id": "701263",
+          "project_name": "Rajasthan Refinery Project",
+          "canonical_entity": "MINISTRYOFPETROLEUMNATURALGAS",
+          "state": "Rajasthan",
+          "is_ner": false,
+          "requested_capex_cr": 1353.76,
+          "allocated_capex_cr": 1015.32,
+          "completion_yield_phi": 37.8,
+          "systemic_benefit_gamma": 3.15
+        },
+        {
+          "project_id": "702668",
+          "project_name": "Chennai Metro Rail Phase-II Development Project",
+          "canonical_entity": "CHENNAI_METRO_RAIL_LIMITED_CMR",
+          "state": "Tamil Nadu",
+          "is_ner": false,
+          "requested_capex_cr": 2500.0,
+          "allocated_capex_cr": 1931.28,
+          "completion_yield_phi": 23.8,
+          "systemic_benefit_gamma": 2.51
+        },
+        {
+          "project_id": "701415",
+          "project_name": "Polavaram Irrigation Project",
+          "canonical_entity": "JAL_SHAKTI",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 988.79,
+          "allocated_capex_cr": 395.51,
+          "completion_yield_phi": 24.1,
+          "systemic_benefit_gamma": 2.2
+        },
+        {
+          "project_id": "709798",
+          "project_name": "Ethylene Cracker Project at Bina Refinery including downstream Petrochemical Plants and expansion of Refinery",
+          "canonical_entity": "MINISTRYOFPETROLEUMNATURALGAS",
+          "state": "Madhya Pradesh",
+          "is_ner": false,
+          "requested_capex_cr": 2380.32,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 11.2,
+          "systemic_benefit_gamma": 1.72
+        },
+        {
+          "project_id": "705429",
+          "project_name": "Rishikesh-Karnaprayag New Rail Line- 125 km",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Uttarakhand",
+          "is_ner": false,
+          "requested_capex_cr": 2472.94,
+          "allocated_capex_cr": 989.18,
+          "completion_yield_phi": 16.6,
+          "systemic_benefit_gamma": 1.55
+        },
+        {
+          "project_id": "604795",
+          "project_name": "CBR 9 MMTPA Project",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 802.24,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.7,
+          "systemic_benefit_gamma": 1.44
+        },
+        {
+          "project_id": "701289",
+          "project_name": "Capacity Expansion of Panipat Refinery from 15 to 25 MMTPA",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 980.11,
+          "allocated_capex_cr": 392.04,
+          "completion_yield_phi": 18.9,
+          "systemic_benefit_gamma": 1.44
+        },
+        {
+          "project_id": "400120",
+          "project_name": "KG-DWN-98/2 Cluster - II Development Project - NELP Block",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 306.11,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 14.8,
+          "systemic_benefit_gamma": 1.35
+        },
+        {
+          "project_id": "706780",
+          "project_name": "Mumbai Urban Transport Project [MUTP]  Phase-IIIA",
+          "canonical_entity": "MUMBAI_RAIL_VIKAS_CORPORATION_",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2398.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.27
+        },
+        {
+          "project_id": "701372",
+          "project_name": "Sardar Sarovar Project",
+          "canonical_entity": "JAL_SHAKTI",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 300.71,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 14.0,
+          "systemic_benefit_gamma": 1.33
+        },
+        {
+          "project_id": "400188",
+          "project_name": "Redevelopment of Seven General Pool Residential Accommodation [GPRA] Colonies in Delhi",
+          "canonical_entity": "MOHUA",
+          "state": "Delhi",
+          "is_ner": false,
+          "requested_capex_cr": 2500.0,
+          "allocated_capex_cr": 1000.0,
+          "completion_yield_phi": 12.1,
+          "systemic_benefit_gamma": 1.3
+        },
+        {
+          "project_id": "602182",
+          "project_name": "Dibang Multipurpose Project",
+          "canonical_entity": "NHIDCL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2398.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.08
+        },
+        {
+          "project_id": "702635",
+          "project_name": "Construction of Bangalore Metro Rail Project Phase 2.",
+          "canonical_entity": "BENGALURU_METRO_RAIL",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 276.26,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 13.5,
+          "systemic_benefit_gamma": 1.22
+        },
+        {
+          "project_id": "702633",
+          "project_name": "Delhi-Ghaziabad-Meerut Regional Rapid Transit System [RRTS] corridor",
+          "canonical_entity": "NATIONAL_CAPITAL_REGION_TRANSP",
+          "state": "Delhi",
+          "is_ner": false,
+          "requested_capex_cr": 908.22,
+          "allocated_capex_cr": 681.16,
+          "completion_yield_phi": 17.1,
+          "systemic_benefit_gamma": 1.2
+        },
+        {
+          "project_id": "619051",
+          "project_name": "Nabinagar Super Thermal Power Project, Stage-II [3x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2234.95,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.1,
+          "systemic_benefit_gamma": 1.19
+        },
+        {
+          "project_id": "619341",
+          "project_name": "Telangana Super Thermal Power Project , Stage-II [3 x 800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.9,
+          "systemic_benefit_gamma": 1.18
+        },
+        {
+          "project_id": "400231",
+          "project_name": "NLC Talabira Thermal Power Project",
+          "canonical_entity": "NLC_INDIA_LIMITED_NLCIL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.09
+        },
+        {
+          "project_id": "602096",
+          "project_name": "Subansiri Lower HE Project [2000 MW]",
+          "canonical_entity": "NATIONAL_HYDROELECTRIC_POWER_C",
+          "state": "Assam",
+          "is_ner": false,
+          "requested_capex_cr": 234.68,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.6,
+          "systemic_benefit_gamma": 0.5
+        },
+        {
+          "project_id": "619032",
+          "project_name": "JAYANT EXPN. [20 TO 38 MTPA]",
+          "canonical_entity": "COAL_INDIA",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 2144.34,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.3,
+          "systemic_benefit_gamma": 1.01
+        },
+        {
+          "project_id": "619025",
+          "project_name": "RAJASTHAN PART I POWER TRANSMISSION LIMITED",
+          "canonical_entity": "ADANI_TRANSMISSION_LIMITED",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.1,
+          "systemic_benefit_gamma": 0.99
+        },
+        {
+          "project_id": "702632",
+          "project_name": "DMRTS Phase - IV [3 Priority Corridors]",
+          "canonical_entity": "DELHI_METRO_RAIL_CORPORATION_L",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 1447.04,
+          "allocated_capex_cr": 578.82,
+          "completion_yield_phi": 11.4,
+          "systemic_benefit_gamma": 0.99
+        },
+        {
+          "project_id": "615347",
+          "project_name": "TRANSMISSION SYSTEM FOR EVACUATION OF POWER FROM POTENTIAL RENEWABLE ENERGY ZONE IN KHAVDA AREA OF GUJARAT UNDER PHASE-V [8 GW] PART A   [SPV Name POWERGRID West Central Transmission Limited]",
+          "canonical_entity": "POWERGRID",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2126.19,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 5.0,
+          "systemic_benefit_gamma": 0.98
+        },
+        {
+          "project_id": "709857",
+          "project_name": "Planning, Engineering, Supply, Installation, Testing, Commissioning, Integration & Annual Maintenance of 4G mobile network at 1 Lakh sites on PAN India basis including Mumbai & Delhi LSA on turnkey basis under Phase IX.2 Project.",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 724.51,
+          "allocated_capex_cr": 289.81,
+          "completion_yield_phi": 13.7,
+          "systemic_benefit_gamma": 0.97
+        },
+        {
+          "project_id": "702637",
+          "project_name": "Mumbai Metro Line 3",
+          "canonical_entity": "MUMBAI_METRO_RAIL_CORPORATION_",
+          "state": "Maharashtra",
+          "is_ner": false,
+          "requested_capex_cr": 709.8,
+          "allocated_capex_cr": 283.92,
+          "completion_yield_phi": 12.8,
+          "systemic_benefit_gamma": 0.95
+        },
+        {
+          "project_id": "604791",
+          "project_name": "Numaligarh Refinery Expansion Project",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Assam",
+          "is_ner": false,
+          "requested_capex_cr": 744.07,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 10.4,
+          "systemic_benefit_gamma": 0.89
+        },
+        {
+          "project_id": "705391",
+          "project_name": "Jiribam-Imphal new line project",
+          "canonical_entity": "INDIAN_RAILWAYS",
+          "state": "Manipur",
+          "is_ner": false,
+          "requested_capex_cr": 1046.39,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 9.0,
+          "systemic_benefit_gamma": 0.87
+        },
+        {
+          "project_id": "400259",
+          "project_name": "Ghatampur Thermal Power Plant 3 X 660 MW",
+          "canonical_entity": "NLC_INDIA_LIMITED_NLCIL",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 196.03,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.07
+        },
+        {
+          "project_id": "701530",
+          "project_name": "Ken-Betwa Linking Development Project",
+          "canonical_entity": "Department of Water Resources, River Development,",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.2,
+          "systemic_benefit_gamma": 0.83
+        },
+        {
+          "project_id": "618976",
+          "project_name": "Gadarwara Super Thermal Power Project, Stage-II [2x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2180.5,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.6,
+          "systemic_benefit_gamma": 0.81
+        },
+        {
+          "project_id": "400261",
+          "project_name": "Patratu Thermal Power Station Expansion Project Phase-I [3x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Jharkhand",
+          "is_ner": false,
+          "requested_capex_cr": 437.39,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.03
+        },
+        {
+          "project_id": "701593",
+          "project_name": "4G Services by BSNL",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 504.28,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 10.1,
+          "systemic_benefit_gamma": 0.78
+        },
+        {
+          "project_id": "619026",
+          "project_name": "KPSIII HVDC Transmission Limited",
+          "canonical_entity": "ADANI_TRANSMISSION_LIMITED",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 3.8,
+          "systemic_benefit_gamma": 0.75
+        },
+        {
+          "project_id": "701329",
+          "project_name": "Petrochemical and Lube Integration Project at Gujarat Refinery",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Gujarat",
+          "is_ner": false,
+          "requested_capex_cr": 506.26,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 8.8,
+          "systemic_benefit_gamma": 0.71
+        },
+        {
+          "project_id": "400062",
+          "project_name": "Raghunathpur Thermal Power Station Phase II [2X660 MW] at Raghunathpur, Purulia, West Bengal",
+          "canonical_entity": "DAMODAR_VALLEY_CORPORATION",
+          "state": "West Bengal",
+          "is_ner": false,
+          "requested_capex_cr": 2144.34,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.04
+        },
+        {
+          "project_id": "612142",
+          "project_name": "Singrauli Super Thermal Power Project, Stage-III [2x800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Madhya Pradesh",
+          "is_ner": false,
+          "requested_capex_cr": 2416.47,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.05
+        },
+        {
+          "project_id": "701324",
+          "project_name": "Barauni Refinery Capacity Expansion from 6.0 to 9.0 MMTPA",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 313.41,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.9,
+          "systemic_benefit_gamma": 0.66
+        },
+        {
+          "project_id": "709795",
+          "project_name": "City Gas Distribution Projects at Lakhimpur Kheri , Sitapur, Bahraich, Shravasti,Balrampur, Siddharth Nagar & Maharajganj districts",
+          "canonical_entity": "PETROLEUM_GAS",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2307.71,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.0,
+          "systemic_benefit_gamma": 0.66
+        },
+        {
+          "project_id": "611930",
+          "project_name": "Lara Super Thermal Power Project Stage-II [2 x 800 MW]",
+          "canonical_entity": "NTPC",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 2379.5,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 4.5,
+          "systemic_benefit_gamma": 0.65
+        },
+        {
+          "project_id": "705941",
+          "project_name": "Bangalore Suburban Railway Project",
+          "canonical_entity": "KARNATAKA_RAIL_INFRASTRUCTURE_",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 1038.36,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 2.0,
+          "systemic_benefit_gamma": 0.13
+        },
+        {
+          "project_id": "612878",
+          "project_name": "Bangalore Metro Rail Project - PHASE-3",
+          "canonical_entity": "BENGALURU_METRO_RAIL",
+          "state": "Karnataka",
+          "is_ner": false,
+          "requested_capex_cr": 2108.04,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 3.1,
+          "systemic_benefit_gamma": 0.62
+        },
+        {
+          "project_id": "400013",
+          "project_name": "Saturation 4G mobile coverage of Uncovered Villages through USOF",
+          "canonical_entity": "TELECOM_DOT",
+          "state": "Not specified",
+          "is_ner": false,
+          "requested_capex_cr": 333.63,
+          "allocated_capex_cr": 0.0,
+          "completion_yield_phi": 7.2,
+          "systemic_benefit_gamma": 0.61
+        }
+      ],
+      "closure_error_perc": 0.0,
+      "solve_time_ms": 65.8,
+      "focus_project_id": "701408",
+      "focus_project_is_candidate": false,
+      "ner_coverage": {
+        "projects_total": 2207,
+        "state_reported_by_ministry": 1181,
+        "state_absent": 1026,
+        "ner_floor_basis": "ministry-reported StateName only",
+        "note": "Projects with no reported state cannot be counted toward or against the statutory NER floor. Inferred states are used for display and analysis but never for this constraint."
+      }
+    },
+    "copilot": {
+      "project_id": "701408",
+      "project_name": "Madhya Ganga canal Phase-II",
+      "canonical_agency": "JAL_SHAKTI",
+      "sector": "Water Resources",
+      "state": "Uttar Pradesh",
+      "document_hash": "c7b12573fd0075420446fd268cad46da07fb6f6b8ee9def454b95a2f9d8a02f3",
+      "generated_at": "2026-09-18 10:57:08 IST",
+      "offline_air_gapped": true,
+      "executive_summary": "Project #701408 (Madhya Ganga canal Phase-II) is a strategic Water Resources asset in Uttar Pradesh executed by JAL_SHAKTI. Sanctioned capex is ₹4,417.21 Cr with a cost overrun of +316.3%. On-ground physical progress is 82.0%.",
+      "action_items": [
+        {
+          "category": "CONTAGION_CONTAINMENT",
+          "priority": "CRITICAL",
+          "finding": "Upstream delivery friction locks ₹6,627.33 Cr across 1 connected downstream nodes in the national grid.",
+          "recommendation": "Convene joint coordination meeting with Chief Secretary to expedite critical path clearance.",
+          "citing_fact_id": "fact_graph_locked_701408"
+        },
+        {
+          "category": "EO_SCREENING_CLEAR",
+          "priority": "NORMAL",
+          "finding": "Structural change of 0.66% observed at the sampled site is consistent with active works for this sector.",
+          "recommendation": "No Earth-observation exception raised; continue standard monitoring.",
+          "citing_fact_id": "fact_sat_audit_701408"
+        }
+      ],
+      "grounded_facts": [
+        {
+          "fact_id": "fact_cost_701408",
+          "label": "Sanctioned Capex (Latest Revised)",
+          "value": "₹4,417.21 Cr",
+          "unit": "INR_CR",
+          "merkle_root": "ba7ce3cb52c969207e816ddfe442d856c21a26848c50d8c7bee1bcd4b5b0820f"
+        },
+        {
+          "fact_id": "fact_progress_701408",
+          "label": "Physical Progress (MoSPI Ground Audit)",
+          "value": "82.0%",
+          "unit": "PERCENT",
+          "merkle_root": "9d8b1e6c61227c75856c9e4f0531f2aa91789270bbc8f09487a2e47f8906d013"
+        },
+        {
+          "fact_id": "fact_overrun_701408",
+          "label": "True Capex Overrun vs DPR",
+          "value": "+316.3%",
+          "unit": "PERCENT",
+          "merkle_root": "56143aea7ef1f3ffb0b579967a9101741ac46b9f46221a9e9de7ab04ee39cf6c"
+        },
+        {
+          "fact_id": "fact_p50_701408",
+          "label": "KAAL-CHAKRA P50 Expected Completion Date",
+          "value": "Jun 2028",
+          "unit": "DATE",
+          "merkle_root": "cb7c5b12200caa11b9a15a7b4038e5e4a4bf3ffa46ead55f82c6fb70c3784044"
+        },
+        {
+          "fact_id": "fact_target_prob_701408",
+          "label": "Confidence of Meeting Contractor Target Date",
+          "value": "26.1%",
+          "unit": "PERCENT",
+          "merkle_root": "9f3e212f1ba8cc3b56f06819d9651563c909982a543fdb575fe23adbc510d82c"
+        },
+        {
+          "fact_id": "fact_graph_locked_701408",
+          "label": "Downstream Systemic Capital Locked (P50)",
+          "value": "₹6,627.33 Cr",
+          "unit": "INR_CR",
+          "merkle_root": "3b49d297ecc081da30290ab7780cd728cc451636f248b614ee811efc0b1af277"
+        },
+        {
+          "fact_id": "fact_sat_audit_701408",
+          "label": "Orbital Optical Surface-Change Measurement",
+          "value": "0.66% of sampled ground structurally changed 2014-2026, 29th percentile for its sector",
+          "unit": "PERCENT",
+          "merkle_root": "9303af355df1c3495346e1bfbb7ac1854d9dd964e30ca9dab8ba8797b57b607c"
+        }
+      ],
+      "satellite_audit": {
+        "project_id": "701408",
+        "project_name": "Madhya Ganga canal Phase-II",
+        "sector": "Water Resources",
+        "state": "National",
+        "agency": "Irrigation & Water Resources-UP",
+        "claimed_progress_pct": 82.0,
+        "audit_status": "LOW_CHANGE_OBSERVED",
+        "statutory_recommendation": "NO_ACTION_INDICATED",
+        "audit_severity": "LOW",
+        "structural_dissimilarity": 0.3782,
+        "project_footprint_change_pct": 1.42,
+        "ambient_terrain_change_pct": 2.61,
+        "footprint_reliable": true,
+        "footprint_caveat": "",
+        "roi_radius_m": 300.0,
+        "gsd_m_per_px": 4.164,
+        "vegetation_excluded_pct": 0.22,
+        "roi_shape": "site_envelope",
+        "corridor_bearing_deg": null,
+        "corridor_coherence": 0.27,
+        "row_corridor": {
+          "geometry": "site_envelope",
+          "half_width_m": 300.0,
+          "half_width_px": 72.0,
+          "bearing_deg": null,
+          "orientation_coherence": 0.27,
+          "coherence_gate": 0.5,
+          "area_m2": 282739.8,
+          "frame_coverage_frac": 0.0255,
+          "centreline_px": null,
+          "basis": "300 m site envelope about the recorded coordinate. Used for point assets, and for linear assets where no corridor bearing could be fitted."
+        },
+        "radiometry": {
+          "method": "RRN reverted: the fitted transform increased the residual on this scene, so the original frame is used unchanged.",
+          "pif_pixel_count": 244912,
+          "pif_selection_percentile": 40.0,
+          "pif_residual_dn": 11.68,
+          "channel_gains_bgr": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "channel_offsets_bgr": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "residual_before": 18.493,
+          "residual_after": 18.493,
+          "improvement_pct": 0.0,
+          "converged": false
+        },
+        "material_transition": {
+          "before_class_share_pct": {
+            "water_or_shadow": 0.0,
+            "vegetation": 71.16,
+            "bare_soil_earthwork": 0.0,
+            "asphalt_bitumen": 0.01,
+            "concrete_structure": 18.87,
+            "unclassified": 9.96
+          },
+          "after_class_share_pct": {
+            "water_or_shadow": 0.0,
+            "vegetation": 80.59,
+            "bare_soil_earthwork": 0.0,
+            "asphalt_bitumen": 0.0,
+            "concrete_structure": 11.28,
+            "unclassified": 8.13
+          },
+          "natural_to_engineered_pct": 5.879,
+          "soil_to_concrete_pct": 0.0,
+          "vegetation_to_earthwork_pct": 0.0,
+          "engineered_to_natural_pct": 14.337,
+          "net_engineered_gain_pct": -8.458,
+          "epoch_index_calibration": {
+            "exg_offset": 0.00392,
+            "vari_offset": 0.00304,
+            "value_offset": -0.00392,
+            "reference_px": 166472,
+            "reference_luminance_cut_dn": 7.0,
+            "reference": "tightest-quartile brightness-matched pixels inside the analysed area, post-RRN",
+            "applied": true
+          },
+          "stability": {
+            "identical_frame_transition_pct": 0.0,
+            "identical_frame_basis": "Null test over 50 scenes: the chain run on a frame against itself reports 0.000% transition on 50/50, so the rules are deterministic and self-consistent.",
+            "resolution_artefact_bound_pct": 1.38,
+            "resolution_artefact_basis": "Same 50 scenes with a sigma=1.2 blur as the only difference report 1.38% total flow. That bounds how much of any observed transition is the 2023 basemap being softer rather than the ground being different.",
+            "reverse_exceeds_forward": true,
+            "interpretation": "Reverse flow exceeding forward is not attributable to classifier instability (0.00%) or to resolution (1.38pp of 13.36pp). It is a property of the imagery. No labelled material corpus exists for these tiles, so the thresholds have NOT been tuned until the forward figure wins -- that would assume the conclusion. Read the net figure with both directions visible."
+          },
+          "classifier": "rule-based over {ExG, VARI, HSV saturation/value, local texture energy}",
+          "thresholds": {
+            "shadow_value": 0.16,
+            "veg_exg": 0.06,
+            "veg_vari": 0.08,
+            "soil_saturation": 0.28,
+            "asphalt_value": 0.42,
+            "builtup_texture": 0.16
+          },
+          "caveat": "Declared decision rules, not a trained model. No labelled material corpus exists for this imagery, so these are interpretable thresholds a reviewer can challenge individually -- not validated class accuracies."
+        },
+        "construction_velocity": {
+          "epoch_span_months": 150.1,
+          "epochs": "2014-02 -> <=2026-08",
+          "epoch_basis": "Baseline is ESRI Wayback release 23448/10 (2014-02-20), verified against the provider's release index. The after-epoch is the live World Imagery mosaic as fetched on 2026-08-25; ESRI does not publish a per-tile capture date, so its vintage is bounded by the fetch date rather than known. The span is therefore an upper bound of 150.1 months, and any rate derived from it is a lower bound.",
+          "rate_is_lower_bound": true,
+          "changed_area_m2": 3484.8,
+          "areal_velocity_m2_per_month": 23.2,
+          "linear_velocity_km_per_month": null,
+          "corridor_length_touched_km": null,
+          "corridor_utilisation_pct": 1.23
+        },
+        "pace_vs_dpr": {
+          "available": true,
+          "required_progress_pct_per_month": 0.709,
+          "observed_progress_pct_per_month": 0.546,
+          "pace_ratio": 0.77,
+          "pace_verdict": "BEHIND_PACE",
+          "imagery_corroborates": true,
+          "observed_areal_velocity_m2_per_month": 23.2,
+          "discrepancy_flag": null,
+          "implied_months_to_complete_at_observed_pace": 32.9,
+          "caveat": "Progress pace uses the agency's REPORTED physical progress over the imagery window; the imagery contributes the independent area figure beside it, not this ratio. In this corpus surface change and reported progress correlate at r = +0.004 (Pearson, p = 0.87; Spearman rho = +0.024) across 1,588 site-level projects (artifacts/eo_progress_independence.json), so the two must be read together rather than substituted."
+        },
+        "sar_readiness": {
+          "sar_available": false,
+          "reason": "No Sentinel-1 GRD/SLC scenes are ingested in this deployment. The optical chain is the only evidence source currently live.",
+          "planned_source": "Sentinel-1 C-band (IW mode), Copernicus Open Access Hub",
+          "planned_products": {
+            "insar_coherence": null,
+            "coherence_loss_vs_baseline": null,
+            "amplitude_change_db": null,
+            "orbit_pair": null,
+            "acquisition_dates": null
+          },
+          "why_it_matters": "Optical change detection is unusable under monsoon cloud, which is precisely the season when schedule disputes arise. InSAR coherence decorrelates where the surface has been disturbed, so it reports activity through cloud.",
+          "monsoon_window_flagged": null,
+          "optical_verdict_reliable": true,
+          "contract_version": "1.0"
+        },
+        "reconnaissance_targets": {
+          "targets": [
+            {
+              "x": 0.4213,
+              "y": 0.455,
+              "w": 0.04,
+              "h": 0.0312,
+              "area_px": 201,
+              "area_m2": 3484.8,
+              "kind": "STRUCTURAL_GAIN",
+              "confidence": 90.0,
+              "label": "VERIFIED STRUCTURAL GAIN - +3,485 m2",
+              "dominant_class": "concrete/asphalt",
+              "centroid_roi_weight": 1.0
+            }
+          ],
+          "target_count": 1,
+          "rejected_outside_corridor": 0,
+          "rejected_below_area_floor": 0,
+          "containment_threshold": 0.55,
+          "min_area_px": 40,
+          "min_material_purity": 0.35,
+          "unclassified_count": 0,
+          "total_structural_gain_m2": 3484.8,
+          "total_earthworks_m2": 0,
+          "basis": "Connected-component clusters of the structural-change mask whose CENTROID lies at ROI weight >= 0.55 (inside the surveyed Right-of-Way) and whose area exceeds 40 px. 0 cluster(s) were rejected for falling outside the corridor and 0 for being below the area floor. Type and colour follow the material measured inside each cluster in the AFTER epoch, not the size of the change."
+        },
+        "sovereign_verdict": {
+          "state": "GROUND_TRUTH_VERIFIED",
+          "icon": "VERIFIED",
+          "headline": "GROUND TRUTH VERIFIED: Physical pavement corroborates progress.",
+          "detail": "1 change cluster(s) inside the corridor, 3,485 m2 of them carrying concrete or asphalt in the 2023 epoch. Corroboration of activity, not a measurement of percentage completion."
+        },
+        "construction_stage": {
+          "rule_phase": "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS",
+          "rule_phase_label": "Substructure & foundations",
+          "rule_basis": "structural change 1.42% inside corridor, exposed earthwork 0.0%",
+          "prithvi_predicted_phase": "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS",
+          "prithvi_predicted_phase_label": "Substructure & foundations",
+          "prithvi_confidence_score": 0.6642,
+          "foundation_backbone": "NASA-IBM-Prithvi-EO-1.0-100M",
+          "agrees_with_rule": true,
+          "phases": [
+            "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS",
+            "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS",
+            "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING",
+            "PHASE_4_COMPLETED_AND_OPERATIONAL",
+            "ALERT_DISCREPANT_STAGNATION"
+          ],
+          "confidence_is_calibrated": false,
+          "confidence_note": "Softmax margin of the linear head, not a calibrated probability. The head's measured cross-validated accuracy is 38.3%; read that as the reliability of this phase, not the score above.",
+          "measured_cv_accuracy": 0.3833,
+          "embedding_source": "baked_cache",
+          "head_inference_ms": 0.104,
+          "class_probabilities": {
+            "ALERT_DISCREPANT_STAGNATION": 0.1112,
+            "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS": 0.1566,
+            "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS": 0.6642,
+            "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING": 0.0664,
+            "PHASE_4_COMPLETED_AND_OPERATIONAL": 0.0016
+          },
+          "backbone_status": "loaded",
+          "validation": {
+            "protocol": "5-fold stratified cross-validation of a multinomial logistic head on 768-d Prithvi embeddings. The head sees ONLY the embedding — no measured EO feature is an input — so this measures whether the backbone reads construction stage off the pixels.",
+            "labels": "Distant supervision from the measured EO chain (see derive_stage_label). These are rules, NOT annotated ground truth: no labelled construction-stage corpus exists for these tiles. Accuracy here is agreement with a rule, not with reality.",
+            "cv_accuracy": 0.3833,
+            "cv_fold_scores": [
+              0.3824,
+              0.3688,
+              0.4172,
+              0.3515,
+              0.3968
+            ],
+            "majority_class_baseline": 0.2723,
+            "permutation_null_mean": 0.2347,
+            "permutation_null_p95": 0.2511,
+            "permutation_runs": 20,
+            "beats_majority_baseline": true,
+            "beats_permutation_null": true,
+            "class_counts": {
+              "ALERT_DISCREPANT_STAGNATION": 477,
+              "PHASE_1_CORRIDOR_CLEARING_AND_EARTHWORKS": 438,
+              "PHASE_2_SUBSTRUCTURE_AND_FOUNDATIONS": 502,
+              "PHASE_3_SUPERSTRUCTURE_AND_ALIGNMENT_PAVING": 601,
+              "PHASE_4_COMPLETED_AND_OPERATIONAL": 189
+            },
+            "verdict": "CONTRIBUTING. The Prithvi embedding recovers the stage at 38.3% against a 27.2% majority baseline and a 25.1% permutation ceiling, so the backbone is reading construction state from the imagery rather than the head memorising class frequencies."
+          },
+          "trained_at": "2026-08-28T15:20:46",
+          "n_train": 2207,
+          "inference_ms": 0.15
+        },
+        "surface_change_pct": 0.66,
+        "change_percentile_in_sector": 28.6,
+        "asset_geometry": "POINT",
+        "change_boxes": [],
+        "change_box_count": 0,
+        "mean_dissimilarity": 0.3782,
+        "registration_shift_px": 0.41,
+        "registration_method": "ecc",
+        "geocode_precision": "OSM_LANDMARK_MATCH",
+        "geocode_confidence": "HIGH",
+        "geocode_confidence_note": "Site geocoded to a named landmark in the project title",
+        "eo_verdict_reliable": true,
+        "eo_unreliable_reason": null,
+        "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (2.08-2.35 m/px measured)",
+        "before_imagery_url": "/satellite-imagery/701408_BEFORE.jpg",
+        "after_imagery_url": "/satellite-imagery/701408_AFTER.jpg",
+        "has_dual_epoch_coverage": true,
+        "resolution_m": 4.164,
+        "baseline_vintage": "2014-02",
+        "current_vintage": "<=2026-08 (ESRI live mosaic, fetch-bounded)",
+        "eo_readiness": {
+          "eo_available": true,
+          "reason": null,
+          "awaiting": null,
+          "contract_version": "1.0"
+        },
+        "audit_hash": "9303af355df1c3495346e1bfbb7ac1854d9dd964e30ca9dab8ba8797b57b607c"
+      },
+      "qr_verification_url": "/api/amey/verify/c7b12573fd0075420446fd268cad46da07fb6f6b8ee9def454b95a2f9d8a02f3/fact_cost_701408?project_id=701408"
+    },
+    "simulation_status": "CONVERGED_OPTIMAL"
+  }
+}

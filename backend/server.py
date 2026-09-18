@@ -334,7 +334,8 @@ def get_projects(
     sector: Optional[str] = None,
     state: Optional[str] = None,
     min_cost: Optional[float] = None,
-    limit: int = Query(default=100, ge=1, le=2207)
+    limit: int = Query(default=100, ge=1, le=2207),
+    compact: bool = False
 ):
     results = projects_cache
     if sector and sector != "All":
@@ -350,6 +351,17 @@ def get_projects(
     response.headers["Cache-Control"] = "private, max-age=120"
     # GZipMiddleware appends Accept-Encoding to Vary itself; only Authorization here.
     response.headers["Vary"] = "Authorization"
+    if compact:
+        return [
+            {
+                "project_id": p["project_id"],
+                "project_name": p["project_name"],
+                "sector": p["sector"],
+                "state": p["state"],
+                "revised_cost_cr": p["revised_cost_cr"]
+            }
+            for p in results[:limit]
+        ]
     return results[:limit]
 
 @app.get("/api/projects/{project_id}")

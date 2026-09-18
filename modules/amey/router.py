@@ -232,12 +232,23 @@ def get_pmo_copilot_brief(project_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+_SIMULATION_CACHE: Dict[str, Dict[str, Any]] = {}
+_SIMULATION_CACHE_MAX = 64
+
 @router.post("/unified-simulation")
 def run_unified_causal_simulation(sim: SimulationRequest):
     """
     Unified Causal Cockpit Simulation:
     Delay Shock -> SETU-GRAPH Contagion -> VITTA-VYUHA Re-optimization -> PRAGATI-SAARTHI Briefing
     """
+    cache_key = (
+        f"{sim.project_id}:{round(float(sim.delay_shock_months), 2)}:"
+        f"{round(float(sim.budget_pool_cr), 1)}:{round(float(sim.risk_dial_kappa), 2)}:"
+        f"{sim.enforce_ner_floor}"
+    )
+    if cache_key in _SIMULATION_CACHE:
+        return _SIMULATION_CACHE[cache_key]
+
     try:
         kaal = get_kaal_chakra_engine()
         graph = get_setu_graph_engine()
@@ -262,7 +273,7 @@ def run_unified_causal_simulation(sim: SimulationRequest):
         # 4. Copilot Brief with updated parameters
         copilot_res = copilot.query_copilot(sim.project_id)
 
-        return {
+        res = {
             "project_id": sim.project_id,
             "simulated_delay_months": sim.delay_shock_months,
             "forecast": forecast,
@@ -271,6 +282,13 @@ def run_unified_causal_simulation(sim: SimulationRequest):
             "copilot": copilot_res,
             "simulation_status": "CONVERGED_OPTIMAL"
         }
+        if len(_SIMULATION_CACHE) >= _SIMULATION_CACHE_MAX:
+            try:
+                _SIMULATION_CACHE.pop(next(iter(_SIMULATION_CACHE)), None)
+            except Exception:
+                _SIMULATION_CACHE.clear()
+        _SIMULATION_CACHE[cache_key] = res
+        return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -808,12 +826,24 @@ def get_eo_layer(project_id: str, layer: str,
 
 
 def prewarm_showcase_eo_layers():
-    """Background pre-warming of analytical layers for key showcase projects (701408 & 619092)."""
+    """Background pre-warming of analytical layers and unified simulations for key showcase projects (701408 & 619092)."""
     import threading
     def _warm():
         import time
         time.sleep(1.5)  # Let server finish boot
-        for pid in ("701408", "619092"):
+        for pid in ("619092", "701408"):
+            # Prewarm unified causal simulation so Unified Risk Cockpit loads in <5ms
+            try:
+                run_unified_causal_simulation(SimulationRequest(
+                    project_id=pid,
+                    delay_shock_months=0.0,
+                    budget_pool_cr=15000.0,
+                    risk_dial_kappa=0.75,
+                    enforce_ner_floor=True
+                ))
+            except Exception:
+                pass
+            # Prewarm analytical layers
             for l in _EO_LAYERS:
                 try:
                     get_eo_layer(pid, l, "standard")
@@ -822,7 +852,7 @@ def prewarm_showcase_eo_layers():
     threading.Thread(target=_warm, daemon=True, name="eo-layer-prewarm").start()
 
 
-# Fire pre-warm on module load so key showcase layers are hot in RAM
+# Fire pre-warm on module load so key showcase layers and simulations are hot in RAM
 prewarm_showcase_eo_layers()
 
 # ══════════════════════════════════════════════════════════════════════════
