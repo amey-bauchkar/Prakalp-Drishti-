@@ -14,6 +14,7 @@ import ProjectCombobox from '../src/components/ProjectCombobox';
 import DataUnavailable from '../src/components/DataUnavailable';
 import { getStoredLanguage, t, toHindiDigits, translateProjectName, translateSector, translateState, translateAgency } from '../src/lib/i18n';
 import showcaseSimulations from '../src/data/showcaseSimulations.json';
+import { apiFetch } from './authClient';
 
 let _globalProjectListCache = null;
 
@@ -105,9 +106,8 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
 
     setLoading(true);
     setSimError(null);
-    fetch('/api/amey/unified-simulation', {
+    apiFetch('/api/amey/unified-simulation', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         project_id: idToRun,
         delay_shock_months: parseFloat(shock),
@@ -117,19 +117,16 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
       }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.status === 404
-          ? `No project with code ${idToRun} exists in the sealed corpus.`
-          : `The analytics service responded with status ${res.status}.`);
-        return res.json();
-      })
-      .then((data) => {
-        simCache.current[cacheKey] = data;
-        setSimData(data);
+        if (!res.ok) {
+          throw new Error(res.error || (isHi ? 'सिमुलेशन पूर्ण नहीं हो सका।' : 'The simulation could not be completed.'));
+        }
+        simCache.current[cacheKey] = res.data;
+        setSimData(res.data);
         setSimError(null);
         setLoading(false);
       })
-      .catch(() => {
-        setSimError(isHi ? 'सिमुलेशन पूर्ण नहीं हो सका। एनालिटिक्स सेवा ने उत्तर नहीं दिया।' : 'The simulation could not be completed. The analytics service did not respond.');
+      .catch((err) => {
+        setSimError(err.message || (isHi ? 'सिमुलेशन पूर्ण नहीं हो सका। एनालिटिक्स सेवा ने उत्तर नहीं दिया।' : 'The simulation could not be completed. The analytics service did not respond.'));
         setLoading(false);
       });
   }, [projectId, delayShock, budgetPool, riskKappa, enforceNer, isHi]);

@@ -59,7 +59,7 @@ PORT = int(os.getenv("PRAKALP_PORT") or os.getenv("PORT") or "8000")
 ALLOWED_ORIGINS = _csv(
     "PRAKALP_ALLOWED_ORIGINS",
     "http://localhost:5173,http://127.0.0.1:5173,"
-    "http://localhost:8000,http://127.0.0.1:8000",
+    "http://localhost:8000,http://127.0.0.1:8000,https://prakalp-drishti.vercel.app",
 )
 
 SECRET_KEY = os.getenv("PRAKALP_SECRET_KEY", "")

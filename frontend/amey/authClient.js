@@ -76,39 +76,86 @@ export async function fetchRoles() {
   return res.json();
 }
 
+const DIRECT_BACKEND_URL = 'https://prakalp-api.onrender.com';
+let _preferDirectBackend = false;
+
 /**
- * Authenticated fetch. Returns { ok, status, data, forbidden, unauthorized }.
- * Never throws on an HTTP error — callers render the state instead of crashing,
- * which is what turned a 403 into a blank panel previously.
+ * Authenticated fetch with automatic resilience:
+ * - Automatically retries on 502/503/504 gateway/proxy blips
+ * - Automatically fails over to direct Render backend if Vercel proxy rewrite drops
+ * - Returns { ok, status, data, forbidden, unauthorized, error }
  */
-export async function apiFetch(path, options = {}) {
+export async function apiFetch(path, options = {}, maxRetries = 2) {
   const session = getSession();
   const headers = { ...(options.headers || {}) };
   if (session?.token) headers.Authorization = `Bearer ${session.token}`;
   if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
-  let res;
-  try {
-    res = await fetch(path.startsWith('http') ? path : `${API_BASE}${path}`, { ...options, headers });
-  } catch (networkError) {
-    return { ok: false, status: 0, data: null, networkError: true,
-             error: 'Cannot reach the API. Please ensure the backend server is running.' };
+  const isFullUrl = path.startsWith('http');
+  const getCandidateUrl = (useDirect) => {
+    if (isFullUrl) return path;
+    if (useDirect || _preferDirectBackend) {
+      return `${DIRECT_BACKEND_URL}${path}`;
+    }
+    return `${API_BASE}${path}`;
+  };
+
+  let lastStatus = 0;
+  let lastData = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const targetUrl = getCandidateUrl(attempt > 0);
+    try {
+      const res = await fetch(targetUrl, { ...options, headers });
+      lastStatus = res.status;
+
+      // If Vercel proxy timed out or dropped with 502/503/504, fail over to direct Render!
+      if ((res.status === 502 || res.status === 503 || res.status === 504) && attempt < maxRetries) {
+        _preferDirectBackend = true;
+        await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+        continue;
+      }
+
+      if (res.status === 401) {
+        clearSession();
+        return { ok: false, status: 401, data: null, unauthorized: true,
+                 error: 'Your session has expired. Please sign in again.' };
+      }
+      if (res.status === 403) {
+        const body = await res.json().catch(() => ({}));
+        return { ok: false, status: 403, data: null, forbidden: true,
+                 error: body.detail || 'Your role does not have access to this.' };
+      }
+
+      const data = await res.json().catch(() => null);
+      lastData = data;
+      if (res.ok) {
+        if (attempt > 0) _preferDirectBackend = true;
+        return { ok: true, status: res.status, data, error: null };
+      }
+
+      return {
+        ok: false,
+        status: res.status,
+        data,
+        error: data?.detail || `Request failed (${res.status})`
+      };
+    } catch (networkErr) {
+      if (attempt < maxRetries) {
+        _preferDirectBackend = true;
+        await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+        continue;
+      }
+    }
   }
 
-  if (res.status === 401) {
-    clearSession();
-    return { ok: false, status: 401, data: null, unauthorized: true,
-             error: 'Your session has expired. Please sign in again.' };
-  }
-  if (res.status === 403) {
-    const body = await res.json().catch(() => ({}));
-    return { ok: false, status: 403, data: null, forbidden: true,
-             error: body.detail || 'Your role does not have access to this.' };
-  }
-
-  const data = await res.json().catch(() => null);
-  return { ok: res.ok, status: res.status, data,
-           error: res.ok ? null : (data?.detail || `Request failed (${res.status})`) };
+  return {
+    ok: false,
+    status: lastStatus,
+    data: lastData,
+    networkError: true,
+    error: 'Cannot reach the API. Please ensure the backend server is running.'
+  };
 }
 
 /**
