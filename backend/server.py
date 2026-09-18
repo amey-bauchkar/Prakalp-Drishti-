@@ -237,6 +237,12 @@ def load_in_memory_cache():
             })
         projects_cache = records
         print(f"Loaded {len(projects_cache)} projects in RAM! Queries will execute in <5ms.")
+        try:
+            from analytics_engine.risk_index import get_risk_index_engine
+            get_risk_index_engine()
+            print("Risk Index Engine pre-loaded into RAM! Early Warning Queue ready.")
+        except Exception as _re:
+            print("Risk Index Engine pre-load deferred:", _re)
 
 # Dynamic Auto-Discovery of Member Routers (Zero-Conflict Protocol)
 MEMBERS = ["amey", "tanmay", "parth", "janhavi", "aditya", "karya_dakshata"]

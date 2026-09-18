@@ -57,6 +57,7 @@ CATALOG_PATH = os.path.join(BASE_DIR, "paimana_extracted", "satellite_data",
                             "ALL_2207_PROJECTS_SATELLITE_CATALOG.json")
 ENTITY_MAP_PATH = os.path.join(BASE_DIR, "paimana_extracted",
                                "CANONICAL_ENTITIES_MAPPING.json")
+RISK_CACHE_PATH = os.path.join(BASE_DIR, "artifacts", "risk_index_cache.json")
 
 # Declared policy weights. Sum to 1.0 over available components.
 COMPONENT_WEIGHTS = {
@@ -113,7 +114,28 @@ class RiskIndexEngine:
         self.scores: Dict[str, Dict[str, Any]] = {}
         self.ranked: List[Dict[str, Any]] = []
         self.coverage: Dict[str, Any] = {}
+        if os.path.exists(RISK_CACHE_PATH):
+            try:
+                with open(RISK_CACHE_PATH, "r", encoding="utf-8") as fh:
+                    cached = json.load(fh)
+                self.scores = cached.get("scores", {})
+                self.ranked = cached.get("ranked", [])
+                self.coverage = cached.get("coverage", {})
+                if self.scores and self.ranked:
+                    return
+            except Exception:
+                pass
         self._build()
+        try:
+            os.makedirs(os.path.dirname(RISK_CACHE_PATH), exist_ok=True)
+            with open(RISK_CACHE_PATH, "w", encoding="utf-8") as fh:
+                json.dump({
+                    "scores": self.scores,
+                    "ranked": self.ranked,
+                    "coverage": self.coverage,
+                }, fh)
+        except Exception:
+            pass
 
     # -- component scorers: each returns 0-100 or None if the signal is unavailable --
 

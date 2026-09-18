@@ -155,18 +155,6 @@ export default function WatchlistView({ onOpenProject }) {
     load(band, sector, !data);
   }, [band, sector]);
 
-  useEffect(() => {
-    fetch('/api/projects?limit=2207')
-      .then((res) => res.json())
-      .then((projects) => {
-        if (Array.isArray(projects)) {
-          const s = Array.from(new Set(projects.map((p) => p.sector).filter(Boolean))).sort();
-          setAllSectors((prev) => (prev.length > 0 ? prev : s));
-        }
-      })
-      .catch(() => {});
-  }, []);
-
   const alerts = data?.alerts || [];
 
   const sectors = useMemo(() => {
