@@ -1,8 +1,8 @@
 """
-PRAKALP-DRISHTI: z18 SUB-METRE SHOWCASE BAKE
+PRAKALP-DRISHTI: z18 SHOWCASE BAKE (resolution is measured per tile; no sub-metre claim)
 
 Fetches genuine 0.52 m/px dual-epoch mosaics for a small set of flagship
-projects, so the viewer's sub-metre badge is backed by real pixels.
+projects, so the viewer's resolution badge is backed by real, measured pixels.
 
 Run:
     python satellite_pipeline/fetch_showcase_z18.py --survey

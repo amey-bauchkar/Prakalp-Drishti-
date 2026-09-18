@@ -5,7 +5,7 @@ Features:
 2. Concurrent tile fetching per project (16 tiles in parallel)
 3. Parallel BEFORE & AFTER fetching
 4. 36 concurrent project workers with large HTTP connection pool (150 connections)
-5. Sub-meter ESRI World Imagery + Wayback Living Atlas (2018 vs 2023)
+5. ESRI World Imagery + Wayback Living Atlas (2018 vs 2023), 2.08-2.35 m/px measured
 6. Automatic crosshairs, precision coordinate annotation bars, and progress indicators
 """
 

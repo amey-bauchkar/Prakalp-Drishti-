@@ -157,7 +157,7 @@ js_logic = """<script>
                             <div class="sat-box" style="border: 1px solid #2ECC71; position: relative; overflow: hidden;">
                                 <img src="paimana_extracted/satellite_data/tight_optical_zooms/${p.project_id}_T1_AFTER_ZOOM.jpg" onerror="this.src='${p.tile_current_2023}'" alt="T1 After Natural Zoom" style="width: 100%; height: 100%; object-fit: cover;">
                                 <div class="target-reticle" style="width: 40px; height: 40px;"></div>
-                                <div class="sat-tag" style="background: rgba(46, 204, 113, 0.9); border-color: #2ECC71; z-index: 10;">⏭️ AFTER (Sub-Meter)</div>
+                                <div class="sat-tag" style="background: rgba(46, 204, 113, 0.9); border-color: #2ECC71; z-index: 10;">⏭️ AFTER (2.08–2.35 m/px measured)</div>
                             </div>
                         </div>
 
@@ -229,7 +229,7 @@ js_logic = """<script>
                             <img src="paimana_extracted/satellite_data/tight_optical_zooms/${p.project_id}_T1_AFTER_ZOOM.jpg" onerror="this.src='${p.tile_current_2023}'" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="target-reticle"></div>
                         </div>
-                        <div style="font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; color: #2ECC71;">⏭️ AFTER (Recent Maxar Sub-Meter Optical)</div>
+                        <div style="font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; color: #2ECC71;">⏭️ AFTER (recent basemap optical, 2.08–2.35 m/px measured)</div>
                     </div>
                 </div>
 

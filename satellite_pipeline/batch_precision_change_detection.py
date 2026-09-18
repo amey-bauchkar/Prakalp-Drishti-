@@ -150,7 +150,7 @@ def process_single_project(row):
         "agency": str(agency), "claimed_progress_pct": claimed,
         "geocode_precision": precision, "geocode_confidence": confidence,
         "geocode_confidence_note": conf_note,
-        "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter)",
+        "sensor": "ESRI ArcGIS World Imagery + Wayback Living Atlas (2.08-2.35 m/px measured)",
         "before_imagery_url": f"/satellite-imagery/{pid}_BEFORE.jpg",
         "after_imagery_url": f"/satellite-imagery/{pid}_AFTER.jpg",
         "resolution_m": 0.8, "baseline_vintage": "2018-02", "current_vintage": "2023-01",

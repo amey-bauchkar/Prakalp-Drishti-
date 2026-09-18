@@ -2,7 +2,7 @@
 PRATIBIMB ULTRA: High-Resolution Satellite Imagery Fetcher for All 2,207 Projects.
 
 Strategy:
-- Uses ESRI ArcGIS World Imagery (free, sub-meter resolution, no API key)
+- Uses ESRI ArcGIS World Imagery (free basemap; 2.08-2.35 m/px measured at the zooms used, no API key)
 - Fetches zoomed-in 800x800px tiles at zoom level 17 (~1.2m/pixel)  
 - For "BEFORE": Uses Wayback tiles from ESRI's Living Atlas (2018-2020 vintage)
 - For "AFTER": Uses current ESRI World Imagery (2022-2024 vintage)
@@ -297,7 +297,7 @@ def main():
     print("=" * 90)
     print("🛰️  PRATIBIMB ULTRA: HIGH-RESOLUTION PROJECT IMAGERY PIPELINE")
     print("   Source: ESRI ArcGIS World Imagery + Wayback Living Atlas")
-    print("   Resolution: Sub-meter (~0.5-1.2m/pixel at zoom 16-17)")
+    print("   Resolution: 2.08-2.35 m/px measured at the zooms used (not sub-metre)")
     print("   Coverage: 800x800px per project = ~500m x 500m ground footprint")
     print("=" * 90)
     

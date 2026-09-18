@@ -1,5 +1,5 @@
 """
-Demonstration of High-Resolution Sub-Meter Optical Satellite Imagery (0.5m/pixel)
+Demonstration of basemap optical imagery comparison (2.08-2.35 m/px measured; no sub-metre claim)
 vs Wide-Area Multi-Spectral Sentinel-2 (10m-40m/pixel).
 """
 
@@ -30,7 +30,7 @@ for p in projects:
         with open(f"{output_dir}/{p['name']}_1_WIDE_SENTINEL2_10M.jpg", "wb") as f:
             f.write(r_s2.content)
             
-    # B. Ultra Sharp Maxar High-Res Sub-Meter (0.5m/pixel - Razor sharp runway, roads, buildings)
+    # B. Higher-zoom basemap tile (2.08-2.35 m/px measured at the zooms used)
     d_tight = 0.012 # ~1.3 km tight box centered on the construction site
     url_maxar = f"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox={lon-d_tight},{lat-d_tight},{lon+d_tight},{lat+d_tight}&bboxSR=4326&imageSR=4326&size=1024,1024&f=image&format=jpg"
     r_maxar = requests.get(url_maxar, headers=headers)

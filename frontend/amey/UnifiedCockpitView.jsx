@@ -688,7 +688,7 @@ export default function UnifiedCockpitView({ selectedProjectId = '', onSelectPro
               <div className="text-[10px] text-slate-400 text-right font-sans">
                 {isHi
                   ? "वाइबुल त्वरित विफलता समय (AFT) उत्तरजीविता रिग्रेशन मॉडल द्वारा कैलिब्रेटेड।"
-                  : "Calibrated via Weibull Accelerated Failure Time (AFT) survival regression model."}
+                  : "Calibrated via a log-logistic Accelerated Failure Time (AFT) survival model with split-conformal correction."}
               </div>
             </div>
           </div>

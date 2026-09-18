@@ -2,7 +2,7 @@
 ULTRA-ZOOM DUAL HIGH-RESOLUTION OPTICAL SATELLITE PIPELINE
 ============================================================
 Fixes ALL issues:
-1. NO BLUR: Both T0 and T1 are crystal clear sub-meter optical imagery (0.5m/px).
+1. Both T0 and T1 are basemap optical imagery at 2.08-2.35 m/px measured (not sub-metre).
 2. T0 (Historical Baseline): Google Optical Satellite (earlier high-res pass).
 3. T1 (Current Status): ArcGIS Maxar World Imagery (recent high-res pass).
 4. Fallback: Bing Maps QuadKey aerial tiles.
@@ -183,7 +183,7 @@ def process_project(p, force=False):
     else:
         t0_success = True
 
-    # 2. Fetch T1: ArcGIS Maxar Sub-Meter High-Res
+    # 2. Fetch T1: ArcGIS World Imagery higher-zoom tile (2.08–2.35 m/px measured)
     t1_success = False
     if not os.path.exists(out_t1) or force:
         img_t1 = fetch_stitched_window(lat, lon, zoom, crop, "arcgis")

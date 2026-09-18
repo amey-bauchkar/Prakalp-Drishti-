@@ -371,7 +371,7 @@ export default function KaalChakraView({ selectedProjectId = "", onSelectProject
                     {isHi ? "अनुमानित पूर्णता अवधि" : "Estimated Completion Window"}
                   </h3>
                 </div>
-                <BadgeDelta deltaType="unchanged">{isHi ? "90% विश्वास स्तर" : "90% Confidence"}</BadgeDelta>
+                <BadgeDelta deltaType="unchanged">{isHi ? "P10–P95 विंडो · नाममात्र 85%" : "P10–P95 window · nominal 85%"}</BadgeDelta>
               </div>
 
               {/* Fan Chart Visualization - CLEAN LOGICAL TIMELINE */}

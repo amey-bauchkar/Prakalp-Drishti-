@@ -173,6 +173,7 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
 
   const frameRef = useRef(null);
   const objectUrls = useRef([]);
+  const preloadedLayers = useRef({});
 
   const tier = meta?.tier || localTier;
   const isOfficial = tier === 'official';
@@ -201,6 +202,7 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
   const revokeAll = useCallback(() => {
     objectUrls.current.forEach((u) => { try { URL.revokeObjectURL(u); } catch { /* already gone */ } });
     objectUrls.current = [];
+    preloadedLayers.current = {};
   }, []);
 
   // ── metadata ─────────────────────────────────────────────────────────
@@ -247,6 +249,7 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
     // Snapshot the URLs we are about to replace — revoke AFTER new ones land.
     const staleUrls = [...objectUrls.current];
     setActiveLayer(null); setLayerUrl(null); setTileError(null);
+    preloadedLayers.current = {};
 
     // No imagery request at all for a locator-only project. Not fetched and
     // discarded — never requested, so there is no tile in the cache, no entry
@@ -341,6 +344,31 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
     setActiveLayer((cur) => (cur === id ? null : id));
   }, []);
 
+  // ── background layer pre-fetch ─────────────────────────────────────────
+  // Silently fetches the 5 analytical layers in background as soon as tiles load
+  // so clicking any layer button is instant (0ms delay from browser cache).
+  useEffect(() => {
+    if (!isOfficial || !isCompound || !projectId || !beforeUrl) return undefined;
+    let dead = false;
+    const density = lowDensity ? 'low' : 'standard';
+    const layersToPreload = ['change', 'sam', 'builtup', 'corridor', 'materials'];
+
+    layersToPreload.forEach((layerId) => {
+      const cacheKey = `${projectId}:${layerId}:${density}`;
+      if (preloadedLayers.current[cacheKey]) return;
+
+      fetchBlobUrl(`${API}/api/amey/satellite/${projectId}/layer/${layerId}?density=${density}`)
+        .then((r) => {
+          if (dead || !r.ok || !r.objectUrl) return;
+          track(r.objectUrl);
+          preloadedLayers.current[cacheKey] = r.objectUrl;
+        })
+        .catch(() => {});
+    });
+
+    return () => { dead = true; };
+  }, [projectId, isOfficial, isCompound, lowDensity, beforeUrl]);
+
   useEffect(() => {
     // Change scoring is disabled outside compound framing. On a corridor the
     // frame is a fraction of the route, and on a locator there is no site — a
@@ -348,14 +376,41 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
     // ground the platform cannot claim is the project.
     if (!activeLayer || !isOfficial || !isCompound) { setLayerUrl(null); return undefined; }
     let dead = false;
-    setLayerBusy(true);
     const density = lowDensity ? 'low' : 'standard';
-    fetchBlobUrl(
-      `${API}/api/amey/satellite/${projectId}/layer/${activeLayer}?density=${density}`
-    ).then((r) => {
-      if (dead) { if (r.objectUrl) URL.revokeObjectURL(r.objectUrl); return; }
+    const cacheKey = `${projectId}:${activeLayer}:${density}`;
+
+    // Instant cache hit from preloaded layers: 0ms render!
+    if (preloadedLayers.current[cacheKey]) {
+      setLayerUrl(preloadedLayers.current[cacheKey]);
       setLayerBusy(false);
-      if (!r.ok) {
+      return undefined;
+    }
+
+    setLayerBusy(true);
+    let attempts = 0;
+    const maxAttempts = 2;
+
+    const doFetch = () => {
+      fetchBlobUrl(
+        `${API}/api/amey/satellite/${projectId}/layer/${activeLayer}?density=${density}`
+      ).then((r) => {
+        if (dead) { if (r.objectUrl) URL.revokeObjectURL(r.objectUrl); return; }
+        if (r.ok && r.objectUrl) {
+          setLayerBusy(false);
+          track(r.objectUrl);
+          preloadedLayers.current[cacheKey] = r.objectUrl;
+          setLayerUrl(r.objectUrl);
+          return;
+        }
+
+        // Auto-retry on transient 502/504 gateway timeouts (backend cold start / wake up)
+        if ((r.status === 502 || r.status === 504 || r.networkError) && attempts < maxAttempts) {
+          attempts++;
+          setTimeout(() => { if (!dead) doFetch(); }, 1200);
+          return;
+        }
+
+        setLayerBusy(false);
         setActiveLayer(null);
         // A 401 has already cleared the session inside fetchBlobUrl, which
         // notifies subscribers and flips this component to the public view on
@@ -369,12 +424,14 @@ export default function SatelliteViewer({ projectId = '619092', className = 'pan
               ? 'Analytical layers require an auditor credential.'
               : r.status === 401
                 ? 'Session expired — reverted to the public view. Sign in again for forensic layers.'
-                : r.error,
+                : r.status === 502 || r.status === 504
+                  ? 'Imagery service is warming up. Please click again in a few seconds.'
+                  : r.error,
         });
-        return;
-      }
-      setLayerUrl(track(r.objectUrl));
-    });
+      });
+    };
+
+    doFetch();
     return () => { dead = true; };
   }, [activeLayer, lowDensity, projectId, isOfficial, isCompound]);
 

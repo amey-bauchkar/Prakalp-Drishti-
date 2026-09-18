@@ -5,8 +5,7 @@
 
 [![CI](https://github.com/amey-bauchkar/Prakalp-Drishti-/actions/workflows/ci.yml/badge.svg)](https://github.com/amey-bauchkar/Prakalp-Drishti-/actions/workflows/ci.yml)
 [![System Health](https://img.shields.io/badge/System%20Health-100%25%20Operational-emerald?style=flat-square)](http://127.0.0.1:8000/api/health)
-[![Test Suite](https://img.shields.io/badge/Test%20Suite-476%2F476%20Passed%20(100%25)-blue?style=flat-square)](http://127.0.0.1:8000)
-[![In-Memory Latency](https://img.shields.io/badge/In--Memory%20Latency-%3C2.5ms-purple?style=flat-square)](http://127.0.0.1:8000)
+[![Test Suite](https://img.shields.io/badge/Tests-152%20passed%20%C2%B7%201%20skipped%20%C2%B7%2021%20suites-blue?style=flat-square)](tests/)
 [![Air-Gapped Readiness](https://img.shields.io/badge/Deployment-100%25%20Air--Gapped%20Sovereign-amber?style=flat-square)](http://127.0.0.1:8000)
 
 ---
@@ -28,7 +27,7 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 │                                  PRAKALP-DRISHTI ENTERPRISE ARCHITECTURE                               │
 ├────────────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                                        │
-│   [ 2,207 Central Sector Projects (₹47.44 Lakh Cr) ] ──► In-Memory Vector & Column Store (<2.5ms)      │
+│   [ 2,207 Central Sector Projects (₹47.44 Lakh Cr) ] ──► In-Memory Column Store                │
 │                                                                                                        │
 │   ┌───────────────────────────┐      ┌───────────────────────────┐      ┌──────────────────────────┐   │
 │   │ 1. KAAL-CHAKRA            │      │ 2. SETU-GRAPH & VARSHA    │      │ 3. VITTA-VYUHA           │   │
@@ -81,10 +80,10 @@ It replaces static quarterly PDF reports with **real-time probabilistic forecast
 * **DPR Baseline Reset Tracker**: Detects repeated baseline revisions and computes true cumulative cost overruns ($+₹\text{Cr}$) against original Cabinet approvals.
 
 ### 2. 🔗 SETU-GRAPH & SETU-VARSHA (Supply-Chain DAG & Climate Contagion)
-* **Network Graph**: 1,197 multi-modal dependency links across 2,207 projects spanning **Statutory Clearances, Raw Materials (Coal $\to$ Thermal), Spatial Corridors, and Power Evacuation**.
-* **Tarjan Condensation**: Eliminates cyclic dependencies to ensure an acyclic DAG ($G^*$).
+* **Network Graph**: 1,345 *inferred* dependency edges across 2,207 projects — 275 state-level supply-chain links (Coal → Thermal → Transmission) and 1,070 site-adjacency links (≤ 50 km). These are hypothesised linkages, not Ministry-verified dependencies; see [CLAIMS.md](CLAIMS.md).
+* **Acyclic by construction**: edges are oriented by a total order on (sanction date, project id), so the graph is a DAG without cycle-breaking heuristics.
 * **Max-Plus Schedule Algebra**: Calculates exact **Free Float** (harmless delay absorption) vs **Total Float** (critical chain breach) and downstream Rupee Contagion (Locked Capital).
-* **Permutation Monte Carlo Shapley Criticality ($\varphi_j$)**: Allocates systemic risk contribution across network nodes ($\sum \varphi_j = ₹23.97\text{ Lakh Cr}$).
+* **Permutation Monte Carlo Shapley Criticality ($\varphi_j$)**: Allocates systemic-risk contribution across nodes of the inferred graph ($M = 300$, seed 42). The totals are properties of the inferred graph, not measured national exposure.
 * **SETU-VARSHA**: Integrates historical IMD precipitation Departure (% LPA) to model seasonal working-window contractions and monsoon flood shock waves.
 
 ### 3. 💰 VITTA-VYUHA (Two-Stage Stochastic Capital Optimization)
@@ -136,7 +135,7 @@ SIH PS/
 │
 ├── data_pipeline/                            # ⚙️ Data Ingestion, Scraping & Normalization Scripts
 ├── satellite_pipeline/                       # 🛰️ Basemap Tile Fetchers & EO Image Processing
-├── tests/                                    # 🧪 Automated Test Suite (476 Comprehensive Unit/API Tests)
+├── tests/                                    # 🧪 Automated Test Suite (21 suites · 152 pytest checks passed, 1 skipped)
 │   └── verify_features.py                    # Master Verification Runner (100% Pass Enforced)
 ├── paimana_extracted/                        # 📊 Shared Data Lake (2,207 projects, IMD monsoon, stocks)
 │   └── geonames_IN.txt                       # 68MB Offline GeoNames India Gazetteer
@@ -149,7 +148,7 @@ SIH PS/
 
 | Member | Engine / Module | Backend Path | Frontend View | Key Mathematical & Technical Deliverables |
 | :--- | :--- | :--- | :--- | :--- |
-| **Amey** | `KAAL-CHAKRA`<br>`SETU-GRAPH`<br>`VITTA-VYUHA`<br>`PRAGATI-SAARTHI` | `backend/amey_engine.py`<br>`modules/amey/` | `frontend/amey/`<br>`DecisionHubView.jsx` | Censored-MLE Log-Logistic AFT + Conformal $P_{10}$-$P_{95}$, Tarjan SCC Dependency DAG, HiGHS Stochastic LP ($<10\text{ms}$), RFC 6962 Merkle Audit Proofs |
+| **Amey** | `KAAL-CHAKRA`<br>`SETU-GRAPH`<br>`VITTA-VYUHA`<br>`PRAGATI-SAARTHI` | `backend/amey_engine.py`<br>`modules/amey/` | `frontend/amey/`<br>`DecisionHubView.jsx` | Censored-MLE Log-Logistic AFT + Conformal $P_{10}$-$P_{95}$, inferred dependency DAG, HiGHS LP, RFC 6962 Merkle Audit Proofs |
 | **Aditya** | `PRATIBIMB-EO`<br>`PRITHVI-FOUNDATION` | `backend/eo_geospatial.py`<br>`modules/aditya/` | `frontend/amey/`<br>`SatelliteViewer.jsx` | NASA-IBM Prithvi Geospatial ViT Stage Classifier, Dual-Epoch Optical Registration, 5-Tier Geocoding, RRN Radiometry |
 | **Tanmay** | `SATYA-KAVACH`<br>`ANUMATI` | `backend/tanmay_engine.py`<br>`modules/tanmay/` | `frontend/tanmay/`<br>`SatyaKavachView.jsx` | 20% Cost Overrun Bunching Detector, GCC Clause 10CC Dispute Risk Index, Regulatory Stagnation Index (RSI) |
 | **Parth** | `ARTHA-NIVARAN`<br>`ARTHA-NETRA` | `backend/parth_engine.py`<br>`modules/parth/` | `frontend/parth/`<br>`ArthaNetraView.jsx` | 225 Contractor PSU Entity Deduplication, 4-Tier Debt-to-Equity Balance Sheet Stress Model, Financial Risk Contagion |
@@ -179,7 +178,7 @@ python -m uvicorn backend.server:app --host 127.0.0.1 --port 8000
 ```powershell
 python tests/verify_features.py
 ```
-*Expected Output: `TOTAL: 476 passed, 0 failed (100.0%)`*
+*Expected Output: `TEST SUMMARY: 21 PASSED (with assertions), 0 WEAK, 0 FAILED`; `python -m pytest -q tests` → `152 passed, 1 skipped`*
 
 ---
 

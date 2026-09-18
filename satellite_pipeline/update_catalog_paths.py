@@ -50,7 +50,7 @@ def main():
             if pid in available_pids:
                 entry["tile_baseline_2020"] = f"paimana_extracted/satellite_data/project_imagery/{pid}_BEFORE.jpg"
                 entry["tile_current_2023"] = f"paimana_extracted/satellite_data/project_imagery/{pid}_AFTER.jpg"
-                entry["satellite_sensor"] = "ESRI ArcGIS World Imagery + Wayback Living Atlas (Sub-meter Resolution)"
+                entry["satellite_sensor"] = "ESRI ArcGIS World Imagery + Wayback Living Atlas (2.08-2.35 m/px measured)"
                 updated += 1
         
         with open(CATALOG_PATH, "w", encoding="utf-8") as f:

@@ -1,0 +1,21 @@
+name: Keep Render Backend Awake
+
+on:
+  schedule:
+    # Runs every 7 minutes (Render sleeps after 15 minutes of inactivity)
+    - cron: '*/7 * * * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
+
+jobs:
+  ping-backend:
+    name: Ping Render Health & Keep Awake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API Status
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://prakalp-api.onrender.com/api/amey/status)
+          echo "Render Backend Response: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Non-200 status, waking up Render..."
+            curl -s https://prakalp-api.onrender.com/api/health > /dev/null || true
+          fi

@@ -88,7 +88,7 @@ def main():
         out_t0 = os.path.join(ZOOM_CACHE_DIR, f"{pid}_T0_BEFORE_ZOOM.jpg")
         fetch_image(url_t0, out_t0)
         
-        # 2. T1 After: Recent High-Res Optical Zoom (Maxar Sub-Meter 0.5m / True Color)
+        # 2. T1 After: recent higher-zoom optical tile (2.08–2.35 m/px measured)
         url_t1 = f"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox={min_lon},{min_lat},{max_lon},{max_lat}&bboxSR=4326&imageSR=4326&size=1024,1024&f=image&format=jpg"
         out_t1 = os.path.join(ZOOM_CACHE_DIR, f"{pid}_T1_AFTER_ZOOM.jpg")
         fetch_image(url_t1, out_t1)

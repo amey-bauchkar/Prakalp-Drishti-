@@ -3,7 +3,7 @@ PRATIBIMB: 100% Real Live Orbital Satellite Photo Fetcher & Multi-Temporal Audit
 Directly downloads authentic space-sensor satellite photographs from:
 1. European Space Agency (ESA) Copernicus Sentinel-2 Cloudless (2020 vs 2024 Multi-Temporal)
 2. NASA GIBS (Global Imagery Browse Services) True Color VIIRS
-3. Maxar / Airbus Sub-Meter High-Resolution Orbital Satellite Photography
+3. ESRI World Imagery basemap tiles (2.08–2.35 m/px measured; provider imagery, not sub-metre)
 Computes empirical pixel-level spectral delta and generates authentic 4-panel audit evidence panels.
 """
 
@@ -58,7 +58,7 @@ def fetch_real_sentinel2_cloudless(min_lon, min_lat, max_lon, max_lat, year=2020
 
 def fetch_real_maxar_hires(min_lon, min_lat, max_lon, max_lat, retries=3):
     """
-    Downloads authentic sub-meter High-Resolution satellite photography from Maxar / World Imagery.
+    Downloads ESRI World Imagery basemap tiles (2.08-2.35 m/px measured at the zooms used).
     """
     url = (
         f"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?"
@@ -236,7 +236,7 @@ def main():
             raw_maxar_path = os.path.join(RAW_PHOTOS_DIR, f"{pid}_MAXAR_SUBMETER_HIRES.jpg")
             with open(raw_maxar_path, "wb") as f:
                 f.write(maxar_raw)
-            print(f"      [Downloaded] Maxar Sub-Meter High-Res Satellite Photo: {len(maxar_raw):,} bytes")
+            print(f"      [Downloaded] Higher-zoom basemap tile: {len(maxar_raw):,} bytes")
             
         # 4. Fetch Real NASA GIBS True Color Satellite Photo
         nasa_rgb, nasa_raw = fetch_real_nasa_gibs(min_lon, min_lat, max_lon, max_lat)

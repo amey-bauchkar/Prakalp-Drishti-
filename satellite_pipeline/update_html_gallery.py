@@ -41,7 +41,7 @@ card_new = """                        <!-- 2-Window Natural Optical Zoom Satelli
                             </div>
                             <div class="sat-box" style="border: 1px solid #2ECC71;">
                                 <img src="paimana_extracted/satellite_data/tight_optical_zooms/${p.project_id}_T1_AFTER_ZOOM.jpg" onerror="this.src='${p.tile_current_2023}'" alt="T1 After Natural Zoom">
-                                <div class="sat-tag" style="background: rgba(46, 204, 113, 0.9); border-color: #2ECC71;">📸 AFTER (Sub-Meter)</div>
+                                <div class="sat-tag" style="background: rgba(46, 204, 113, 0.9); border-color: #2ECC71;">📸 AFTER (2.08–2.35 m/px measured)</div>
                             </div>
                         </div>"""
 html = html.replace(card_old, card_new)
@@ -70,7 +70,7 @@ modal_new = """                <div style="display: grid; grid-template-columns:
                     </div>
                     <div style="background: #070f1e; padding: 12px; border-radius: 10px; border: 2px solid #2ECC71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);">
                         <img src="paimana_extracted/satellite_data/tight_optical_zooms/${p.project_id}_T1_AFTER_ZOOM.jpg" onerror="this.src='${p.tile_current_2023}'" style="width: 100%; height: 350px; object-fit: cover; border-radius: 8px;">
-                        <div style="font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; color: #2ECC71;">📸 AFTER (Recent Maxar Sub-Meter Optical Zoom)</div>
+                        <div style="font-size: 13px; font-weight: bold; margin-top: 12px; text-align: center; color: #2ECC71;">📸 AFTER (recent basemap optical zoom, 2.08–2.35 m/px measured)</div>
                     </div>
                 </div>"""
 html = html.replace(modal_old, modal_new)

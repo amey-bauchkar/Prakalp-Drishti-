@@ -1,6 +1,6 @@
 """
 Demonstrate High-Precision Multi-Spectral Change Detection Heatmap
-and Tight Sub-Meter Zoom for Project #400188 (GPRA Redevelopment, Delhi).
+and a tight zoom (2.08-2.35 m/px measured) for Project #400188 (GPRA Redevelopment, Delhi).
 Shows exact Nauroji Nagar World Trade Center & Netaji Nagar High-Rise Towers.
 """
 
@@ -35,7 +35,7 @@ img_2023_path = f"{output_dir}/GPRA_DELHI_2023_CURRENT.jpg"
 with open(img_2023_path, "wb") as f:
     f.write(r_2023.content)
 
-# 3. Download Ultra High-Res Maxar Sub-Meter (0.5m)
+# 3. Download the higher-zoom basemap tile (2.08-2.35 m/px measured)
 url_maxar = f"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox={lon-d},{lat-d},{lon+d},{lat+d}&bboxSR=4326&imageSR=4326&size=1024,1024&f=image&format=jpg"
 r_maxar = requests.get(url_maxar, headers=headers)
 img_maxar_path = f"{output_dir}/GPRA_DELHI_MAXAR_HIGHRES.jpg"
@@ -81,9 +81,9 @@ axes[2].imshow(blended)
 axes[2].set_title("Multi-Spectral Change Heatmap (ΔNDBI)\n🔥 Red/Yellow = New Concrete Construction", color="#F1C40F", fontsize=10, pad=8, weight='bold')
 axes[2].axis('off')
 
-# Panel 4: Sub-Meter Optical Zoom
+# Panel 4: Higher-zoom optical tile
 axes[3].imshow(Image.open(img_maxar_path))
-axes[3].set_title("Sub-Meter Maxar High-Res Zoom (0.5m/px)\nMulti-Story High-Rise Commercial Towers", color="#2ECC71", fontsize=10, pad=8, weight='bold')
+axes[3].set_title("Higher-zoom basemap tile (2.08–2.35 m/px measured)\nMulti-Story High-Rise Commercial Towers", color="#2ECC71", fontsize=10, pad=8, weight='bold')
 axes[3].axis('off')
 
 out_panel = f"{output_dir}/GPRA_DELHI_CHANGE_DETECTION_PANEL.png"

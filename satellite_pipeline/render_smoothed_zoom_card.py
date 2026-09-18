@@ -36,7 +36,7 @@ for spine in axes[0].spines.values():
 
 # Panel 2: After
 axes[1].imshow(img_after)
-axes[1].set_title("📸 AFTER (Recent Maxar Sub-Meter Optical Zoom)\nNew Multi-Story World Trade Center & High-Rise Tower Blocks", color="#2ECC71", fontsize=12, pad=10, weight='bold')
+axes[1].set_title("📸 AFTER (recent basemap optical zoom, 2.08–2.35 m/px measured)\nNew Multi-Story World Trade Center & High-Rise Tower Blocks", color="#2ECC71", fontsize=12, pad=10, weight='bold')
 axes[1].axis('off')
 for spine in axes[1].spines.values():
     spine.set_edgecolor('#2ECC71')
