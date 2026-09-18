@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 PRAKALP-DRISHTI: Amey's Decision Intelligence API Router
 Exposes KAAL-CHAKRA, SETU-GRAPH, VITTA-VYUHA, and PRAGATI-SAARTHI endpoints.
@@ -7,7 +9,7 @@ import json
 import os
 import re
 from fastapi import APIRouter, Query, HTTPException, Depends
-from typing import Optional, List, Dict, Tuple
+from typing import Optional, List, Dict, Tuple, Any
 
 from analytics_engine.contracts import (
     ProjectForecast, DependencySubGraph, AllocationRequest,

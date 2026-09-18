@@ -256,7 +256,12 @@ for member in MEMBERS:
                 print(f"Mounted auto-discovered router: {candidate}")
                 mounted = True
                 break
+        except ModuleNotFoundError:
+            continue
         except Exception as e:
+            print(f"FAILED to mount member router candidate '{candidate}': {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
             continue
     if not mounted:
         print(f"Member router for '{member}' pending implementation")
