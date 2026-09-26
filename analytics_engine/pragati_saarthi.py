@@ -233,6 +233,7 @@ class PragatiSaarthiEngine:
         ]
 
         briefing = CabinetBriefing(
+            project_id=str(focus_project_id),
             doc_hash=doc_hash,
             merkle_root=merkle_root,
             generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S IST"),

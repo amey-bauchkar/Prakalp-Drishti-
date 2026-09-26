@@ -192,3 +192,4 @@ class CabinetBriefing(BaseModel):
     binding_constraints: List[Dict[str, Any]]
     bilingual_sections: List[Dict[str, Any]]
     audit_facts: Dict[str, Fact]
+    project_id: Optional[str] = None
