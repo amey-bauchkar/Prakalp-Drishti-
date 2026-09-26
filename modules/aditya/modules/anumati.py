@@ -71,7 +71,8 @@ class AnumatiEngine:
             benchmark_days=benchmark,
             stagnation_ratio=stagnation_ratio,
             is_stagnated=is_stagnated,
-            paperwork_loopback_detected=paperwork_loopback
+            paperwork_loopback_detected=paperwork_loopback,
+            status=stage.status
         )
 
     def calculate_regulatory_stagnation_index(self, breakdowns: List[StageStagnationBreakdown]) -> Tuple[float, bool, str, int]:

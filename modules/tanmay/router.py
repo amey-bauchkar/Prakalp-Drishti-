@@ -119,9 +119,9 @@ def get_project_dossier(project_id: str = Path(..., description="Project ID")):
 
 _CLEARANCE_CACHE = None
 
-def _get_or_build_clearance_cache():
+def _get_or_build_clearance_cache(force_refresh: bool = False):
     global _CLEARANCE_CACHE
-    if _CLEARANCE_CACHE is not None:
+    if _CLEARANCE_CACHE is not None and not force_refresh:
         return _CLEARANCE_CACHE
 
     import sqlite3
@@ -195,10 +195,11 @@ def get_clearance_portfolio(
     sector: Optional[str] = None,
     status: Optional[str] = None,
     q: Optional[str] = None,
+    refresh: bool = Query(default=False),
 ):
     """PARIVESH Stage-I / Stage-II clearance pipeline with bottleneck analysis across all 2,207 projects."""
     try:
-        cache = _get_or_build_clearance_cache()
+        cache = _get_or_build_clearance_cache(force_refresh=refresh)
         if not cache:
             return {"available": False,
                     "reason": "PARIVESH clearance database not found.",

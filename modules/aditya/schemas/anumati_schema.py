@@ -29,6 +29,7 @@ class StageStagnationBreakdown(BaseModel):
     stagnation_ratio: float = Field(..., description="days_pending / benchmark_days")
     is_stagnated: bool
     paperwork_loopback_detected: bool
+    status: Optional[str] = Field("SUBMITTED", description="Stage statutory clearance status")
 
 
 class ClearanceStatusResponse(BaseModel):
