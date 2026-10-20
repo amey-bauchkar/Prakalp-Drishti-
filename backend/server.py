@@ -514,7 +514,7 @@ if __name__ == "__main__":
     # deliberate memory-vs-throughput trade the operator makes, not a constant baked
     # into the source. Defaults to 1 for laptop demos.
     workers = int(os.environ.get("PRAKALP_WORKERS", "1"))
-    host = os.environ.get("PRAKALP_HOST", "127.0.0.1")
+    host = os.environ.get("PRAKALP_HOST", "0.0.0.0")
     port = int(os.environ.get("PRAKALP_PORT") or os.environ.get("PORT") or "8000")
 
     print(f"Starting PRAKALP-DRISHTI FastAPI Server on http://{host}:{port} "

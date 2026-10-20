@@ -47,11 +47,16 @@ _load_dotenv()
 
 
 def _csv(name: str, default: str) -> list[str]:
-    return [x.strip() for x in os.getenv(name, default).split(",") if x.strip()]
+    raw = [x.strip() for x in os.getenv(name, default).split(",") if x.strip()]
+    normalized = set()
+    for o in raw:
+        normalized.add(o)
+        normalized.add(o.rstrip("/"))
+    return [o for o in normalized if o]
 
 
 # ── Network ──────────────────────────────────────────────────────────────
-HOST = os.getenv("PRAKALP_HOST", "127.0.0.1")
+HOST = os.getenv("PRAKALP_HOST", "0.0.0.0")
 # PaaS hosts (Render, Railway, Heroku) hand the listening port over as PORT.
 # An explicit PRAKALP_PORT still wins; PORT is the fallback; 8000 is the laptop default.
 PORT = int(os.getenv("PRAKALP_PORT") or os.getenv("PORT") or "8000")

@@ -76,7 +76,7 @@ export async function fetchRoles() {
   return res.json();
 }
 
-const DIRECT_BACKEND_URL = 'https://prakalp-api.onrender.com';
+const DIRECT_BACKEND_URL = 'https://prakalp-drishti-afeva3b6dgd6dgg4.indiasouthcentral-01.azurewebsites.net';
 let _preferDirectBackend = false;
 
 /**

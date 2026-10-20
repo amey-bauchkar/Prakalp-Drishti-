@@ -4,8 +4,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://prakalp-api.onrender.com/api/:path*" },
-    { "source": "/satellite-imagery/:path*", "destination": "https://prakalp-api.onrender.com/satellite-imagery/:path*" },
+    { "source": "/api/:path*", "destination": "https://prakalp-drishti-afeva3b6dgd6dgg4.indiasouthcentral-01.azurewebsites.net/api/:path*" },
+    { "source": "/satellite-imagery/:path*", "destination": "https://prakalp-drishti-afeva3b6dgd6dgg4.indiasouthcentral-01.azurewebsites.net/satellite-imagery/:path*" },
     { "source": "/((?!api/|satellite-imagery/).*)", "destination": "/index.html" }
   ],
   "headers": [
